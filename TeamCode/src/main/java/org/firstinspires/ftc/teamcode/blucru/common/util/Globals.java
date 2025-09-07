@@ -92,4 +92,19 @@ public class Globals {
         return pos/encoderRes;
     }
 
+    public static int convertMotorAngleToPosition(double rpm, double angle){
+
+        //find motor index
+        int i = 0;
+        for (i = 0; i<motors.length; i++){
+            if (motors[i] == rpm){
+                break;
+            }
+        }
+
+        double encoderRes = encoderResPerRPM[i];
+
+        return (int)(encoderRes * angle/360);
+    }
+
 }
