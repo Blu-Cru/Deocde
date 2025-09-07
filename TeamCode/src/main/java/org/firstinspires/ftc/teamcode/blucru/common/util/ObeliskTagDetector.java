@@ -28,6 +28,7 @@ public class ObeliskTagDetector implements BluSubsystem {
     AprilTagProcessor obeliskDetection;
 
     private String[] pattern = {"p","p","p"};
+    int greenIndex;
 
 
     public static ObeliskTagDetector getInstance(){
@@ -89,7 +90,8 @@ public class ObeliskTagDetector implements BluSubsystem {
                 if (id > 21 && id < 23){
                     //tag is obelisk, set correct array pos
                     Globals.telemetry.addData("id", id);
-                    pattern[id-21] = "g";
+                    greenIndex = id-21;
+                    pattern[greenIndex] = "g";
                 }
             }
         }
@@ -113,5 +115,8 @@ public class ObeliskTagDetector implements BluSubsystem {
 
     public String[] getPattern(){
         return pattern;
+    }
+    public int getGreenIndex(){
+        return greenIndex;
     }
 }
