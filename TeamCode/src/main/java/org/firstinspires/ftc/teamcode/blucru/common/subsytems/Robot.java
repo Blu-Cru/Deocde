@@ -5,7 +5,9 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class Robot {
     //list of subsystems
     static ArrayList<BluSubsystem> subsystems;
     public Drivetrain drivetrain;
+    public Turret turret;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -107,6 +110,12 @@ public class Robot {
         drivetrain = new Drivetrain();
         subsystems.add(drivetrain);
         return drivetrain;
+    }
+
+    public Turret addTurret(){
+        turret = new Turret(new BluMotorWithEncoder("turret"));
+        subsystems.add(turret);
+        return turret;
     }
 
 

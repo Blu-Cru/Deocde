@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.SinglePressGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public abstract class BluLinearOpMode extends LinearOpMode {
@@ -17,6 +18,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     protected boolean reportTelemetry = true;
 
     public Drivetrain drivetrain;
+    public Turret turret;
 
     //add all of the subsystems that need to be added to the robot here
 
@@ -164,6 +166,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     }
 
     public void addDrivetrain(){drivetrain = robot.addDrivetrain();}
+    public void addTurret(){turret = robot.addTurret();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;
