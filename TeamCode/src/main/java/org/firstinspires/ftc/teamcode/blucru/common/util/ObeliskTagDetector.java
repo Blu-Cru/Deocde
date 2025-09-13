@@ -21,8 +21,8 @@ public class ObeliskTagDetector implements BluSubsystem {
     private static ObeliskTagDetector instance;
     private final String cameraName = "atagCam";
 
-    private final int cameraResWidth = 1000;
-    private final int cameraResHeight = 1000;
+    private final int cameraResWidth = 1280;
+    private final int cameraResHeight = 720;
     VisionPortal obeliskTagPortal;
 
     AprilTagProcessor obeliskDetection;
@@ -41,7 +41,8 @@ public class ObeliskTagDetector implements BluSubsystem {
 
 
     private ObeliskTagDetector(){
-        int[] id = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+
+        int[] ids = VisionPortal.makeMultiPortalView(2, VisionPortal.MultiPortalLayout.HORIZONTAL);
 
         obeliskDetection = new AprilTagProcessor.Builder()
                 .setDrawAxes(false)
@@ -56,7 +57,8 @@ public class ObeliskTagDetector implements BluSubsystem {
                 .setCameraResolution(new Size(cameraResWidth, cameraResHeight))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(obeliskDetection)
-                .setLiveViewContainerId(id[0])
+                .enableLiveView(true)
+                .setLiveViewContainerId(ids[0])
                 .build();
 
         obeliskTagPortal.setProcessorEnabled(obeliskDetection, true);
@@ -64,6 +66,7 @@ public class ObeliskTagDetector implements BluSubsystem {
         //stop tag streaming bc uneccessary
         try{
             obeliskTagPortal.stopStreaming();
+            obeliskTagPortal.setProcessorEnabled(obeliskDetection, false);
         } catch (Exception e){
             Log.e("AprilTags", "Could not stop obelisk tag portal streaming at init");
         }
@@ -75,6 +78,13 @@ public class ObeliskTagDetector implements BluSubsystem {
         //enable processor
         obeliskTagPortal.setProcessorEnabled(obeliskDetection, true);
     }
+    public void stopTagDetection(){
+        obeliskTagPortal.stopStreaming();
+        obeliskTagPortal.setProcessorEnabled(obeliskDetection, false);
+    }
+    public boolean enabled(){
+        return obeliskTagPortal.getProcessorEnabled(obeliskDetection);
+    }
 
     @Override
     public void init() {
@@ -85,9 +95,11 @@ public class ObeliskTagDetector implements BluSubsystem {
     public void read() {
         if (obeliskTagPortal.getProcessorEnabled(obeliskDetection)){
             ArrayList<AprilTagDetection> ids = obeliskDetection.getDetections();
+            Globals.telemetry.addData("detection sizes", ids.size());
             for (AprilTagDetection tag: ids){
                 int id = tag.id;
-                if (id > 21 && id < 23){
+                Globals.telemetry.addData("id", id);
+                if (id >= 21 && id <= 23){
                     //tag is obelisk, set correct array pos
                     Globals.telemetry.addData("id", id);
                     greenIndex = id-21;
