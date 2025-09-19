@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class Robot {
     static ArrayList<BluSubsystem> subsystems;
     public Drivetrain drivetrain;
     public ObeliskTagDetector obeliskTagDetector;
+    public LimelightObeliskTagDetector llTagDetector;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -115,6 +117,12 @@ public class Robot {
         obeliskTagDetector = ObeliskTagDetector.getInstance();
         subsystems.add(obeliskTagDetector);
         return obeliskTagDetector;
+    }
+
+    public LimelightObeliskTagDetector addLLTagDetector(){
+        llTagDetector = new LimelightObeliskTagDetector();
+        subsystems.add(llTagDetector);
+        return llTagDetector;
     }
 
 

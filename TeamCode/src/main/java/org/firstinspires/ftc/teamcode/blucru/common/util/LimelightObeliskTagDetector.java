@@ -60,6 +60,11 @@ public class LimelightObeliskTagDetector implements BluSubsystem {
 
     }
 
+    public String[] getPattern(){
+        return pattern;
+    }
+
+
     @Override
     public void reset() {
 

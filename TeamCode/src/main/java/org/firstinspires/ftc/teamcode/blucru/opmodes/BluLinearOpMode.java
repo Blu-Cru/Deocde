@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.SinglePressGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
 public abstract class BluLinearOpMode extends LinearOpMode {
@@ -19,6 +20,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
     public Drivetrain drivetrain;
     public ObeliskTagDetector obeliskTagDetector;
+    public LimelightObeliskTagDetector llTagDetector;
 
     //add all of the subsystems that need to be added to the robot here
 
@@ -167,6 +169,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
     public void addDrivetrain(){drivetrain = robot.addDrivetrain();}
     public void addObeliskTagDetector(){obeliskTagDetector = robot.addObeliskTagDetector();}
+    public void addLLTagDetector(){llTagDetector = robot.addLLTagDetector();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;
