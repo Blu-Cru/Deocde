@@ -55,6 +55,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         robot = Robot.getInstance();
         robot.setHwMap(Globals.hwMap);
         Globals.updateVoltage(robot.getVoltage());
+        robot.clear();
 
 
         initialize();

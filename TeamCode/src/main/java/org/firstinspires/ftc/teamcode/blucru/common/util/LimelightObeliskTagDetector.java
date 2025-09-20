@@ -23,6 +23,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem {
         limelight.start();
         limelight.pipelineSwitch(0);
         pattern = new String[]{"p","p","p"};
+        botpose = new Pose2d(0,0,0);
     }
 
     @Override
@@ -63,6 +64,8 @@ public class LimelightObeliskTagDetector implements BluSubsystem {
     public String[] getPattern(){
         return pattern;
     }
+
+    public Pose2d getLLBotPose(){return botpose;}
 
 
     @Override
