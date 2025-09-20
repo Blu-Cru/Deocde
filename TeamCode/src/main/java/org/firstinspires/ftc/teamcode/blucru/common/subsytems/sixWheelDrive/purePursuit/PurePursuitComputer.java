@@ -1,15 +1,27 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.purePursuit;
 
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
+
+
+/**
+ * Guide from https://wiki.purduesigbots.com/software/control-algorithms/basic-pure-pursuit
+ * */
 public class PurePursuitComputer {
     double[][] points;
     double lookAheadDist;
+    int lastFoundIndex;
 
     public PurePursuitComputer(double[][] points, double lookAheadDist){
         this.points = points;
         this.lookAheadDist = lookAheadDist;
+        lastFoundIndex = 0;
+    }
+
+    public void resetLastFoundIndex(){
+        lastFoundIndex = 0;
     }
 
     public double sgn(double x){
@@ -59,8 +71,77 @@ public class PurePursuitComputer {
         } else if (!sol1InRange && !sol2InRange){
             return new Point2d[0];
         } else {
+
             return new Point2d[]{sol2};
         }
+    }
+
+    private double findDistBetween2Points(Point2d p1, Point2d p2){
+        double deltaX = p2.getX() - p1.getX();
+        double deltaY = p2.getY() - p1.getY();
+
+        return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    }
+    public Point2d findOptimalGoToPoint(Pose2d robotPose, Point2d[] path, double lookAheadDist){
+        boolean foundIntersection = false;
+        Point2d goalPoint = null;
+        Point2d[][] pointsSols = new Point2d[path.length-1][2];
+        for (int i = 0; i < path.length - 1; i++) {
+            pointsSols[i] = getLineIntersections(path[i], path[i+1],robotPose, lookAheadDist);
+        }
+
+        for (int i=0; i<pointsSols.length - 1; i++){
+            Point2d[] sols = pointsSols[i];
+            if (sols.length == 1){
+                //only 1 val
+                if (findDistBetween2Points(sols[0], path[i+1]) >
+                        findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[i+1])){
+                    //going there would be bad, dont pick it
+                    //there should be a better point
+                    //setting lastFoundIndex to always be the point ahead in case the robot cant find a point in later sols
+                    lastFoundIndex = i + 1;
+                } else {
+                    lastFoundIndex = i;
+                    goalPoint = sols[0];
+                    break;
+                }
+            } else {
+                //2 vals
+                //find closer point
+
+                Point2d closerPoint = sols[1];
+
+                if (findDistBetween2Points(sols[0], path[i+1]) < findDistBetween2Points(sols[1], path[i+1])){
+                    closerPoint = sols[0];
+                }
+
+                if (findDistBetween2Points(closerPoint, path[i+1]) >
+                        findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), closerPoint)){
+                    //going to point would be bad, dont pick it
+                    //there should be a better point
+                    //setting lastFoundIndex to always be the point ahead in case the robot cant find a point in later sols
+                    lastFoundIndex = i + 1;
+                } else {
+                    lastFoundIndex = i;
+                    goalPoint = closerPoint;
+                    break;
+                }
+
+            }
+        }
+
+        if (goalPoint == null){
+            //no goal point chosen, then go to last found index of intersection on path
+            goalPoint = path[lastFoundIndex];
+        }
+
+        return goalPoint;
+    }
+
+    public void moveTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint){
+
+        //get robot heading between 0 and 360
+        double robotHeading = Globals.normalize(robotPose.getH());
     }
 
 }
