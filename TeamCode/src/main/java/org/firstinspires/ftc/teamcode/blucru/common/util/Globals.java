@@ -76,6 +76,9 @@ public class Globals {
     public static double convertServoPosToAngle(double range, double servoPos){
         return (servoPos - 0.5) * range;
     }
+    public static double convertAngleToServoPos(double range, double angle){
+        return (angle)/range + 0.5;
+    }
 
     public static double convertMotorPositionToRotations(double rpm, double pos){
 

@@ -2,14 +2,18 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class Shooter implements BluSubsystem {
 
     BluMotorWithEncoder shooter;
+    BluServo hood;
 
     public Shooter(){
         shooter = new BluMotorWithEncoder("shooter");
+        hood = new BluServo("hood");
     }
 
     @Override
@@ -25,6 +29,7 @@ public class Shooter implements BluSubsystem {
     @Override
     public void write() {
         shooter.write();
+        hood.write();
     }
 
     public void shoot(double power){
@@ -34,6 +39,13 @@ public class Shooter implements BluSubsystem {
     public void rampDownShooter(){
         shooter.setPower(0.5);
     }
+    public void setHoodAngle(double angle){
+        hood.setPos(Globals.convertAngleToServoPos(255, angle));
+    }
+    public void setHoodServoPos(double pos){
+        hood.setPos(pos);
+    }
+
 
     @Override
     public void telemetry(Telemetry telemetry) {
