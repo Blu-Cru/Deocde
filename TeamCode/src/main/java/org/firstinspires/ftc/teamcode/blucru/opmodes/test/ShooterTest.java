@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class ShooterTest extends BluLinearOpMode {
     double hoodAngle;
     public void initialize(){
+        robot.clear();
         addShooter();
         hoodAngle = 0.5;
     }
