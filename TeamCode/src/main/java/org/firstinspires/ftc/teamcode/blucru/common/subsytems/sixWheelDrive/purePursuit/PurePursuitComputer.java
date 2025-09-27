@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.purePursuit;
 
-import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -10,13 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
  * Guide from https://wiki.purduesigbots.com/software/control-algorithms/basic-pure-pursuit
  * */
 public class PurePursuitComputer {
-    double[][] points;
-    double lookAheadDist;
     int lastFoundIndex;
-
-    public PurePursuitComputer(double[][] points, double lookAheadDist){
-        this.points = points;
-        this.lookAheadDist = lookAheadDist;
+    public PurePursuitComputer(){
         lastFoundIndex = 0;
     }
 
@@ -138,10 +132,24 @@ public class PurePursuitComputer {
         return goalPoint;
     }
 
-    public void moveTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint){
+    public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel, SixWheelPID pid){
+        return pid.getHeadingVel(robotPose, goalPoint, angleVel);
+    }
 
-        //get robot heading between 0 and 360
-        double robotHeading = Globals.normalize(robotPose.getH());
+    public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid){
+        Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
+
+        return getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, angleVel, pid);
+    }
+
+    public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist, SixWheelPID pid){
+        Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
+
+        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
+
+        double linear = pid.getLinearVel(robotPose, goalPoint, robotVel);
+
+        return new double[]{linear, rot};
     }
 
 }
