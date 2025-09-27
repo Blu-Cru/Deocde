@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
+import android.graphics.Point;
+
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -8,7 +10,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitComputer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class SixWheelDrive implements BluSubsystem {
@@ -16,7 +21,10 @@ public class SixWheelDrive implements BluSubsystem {
     BluMotor[] dtMotors;
 
     RobotLocalizer localizer;
-
+    PurePursuitComputer computer;
+    Point2d[] path;
+    double lookAheadDist = 10;
+    SixWheelPID pid;
     public enum State{
         IDLE,
         PID,
@@ -37,6 +45,9 @@ public class SixWheelDrive implements BluSubsystem {
         br.setDirection(DcMotorSimple.Direction.REVERSE);
         localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
+        computer = new PurePursuitComputer();
+        path = null;
+        pid = new SixWheelPID();
     }
 
     @Override
@@ -56,6 +67,17 @@ public class SixWheelDrive implements BluSubsystem {
 
     @Override
     public void write() {
+
+        switch(dtState){
+            case IDLE:
+                break;
+            case PID:
+                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), lookAheadDist, pid);
+                drive(powers[0], powers[1]);
+            case TELE_DRIVE:
+                break;
+        }
+
         for (BluMotor motors: dtMotors){
             motors.write();
         }
@@ -92,6 +114,10 @@ public class SixWheelDrive implements BluSubsystem {
             drive(x,r);
         }
 
+    }
+
+    public void setPath(Point2d[] path){
+        this.path = path;
     }
 
     @Override
