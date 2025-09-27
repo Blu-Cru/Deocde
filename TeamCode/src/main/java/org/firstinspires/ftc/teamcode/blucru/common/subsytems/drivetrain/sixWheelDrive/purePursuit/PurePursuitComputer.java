@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.purePursuit;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;

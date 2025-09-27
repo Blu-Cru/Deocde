@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
 public class SixWheelKinematics {
 

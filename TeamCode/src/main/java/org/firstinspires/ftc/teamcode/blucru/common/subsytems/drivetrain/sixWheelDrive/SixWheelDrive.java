@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.localization.RobotLocalizer;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.localization.Pinpoint;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 

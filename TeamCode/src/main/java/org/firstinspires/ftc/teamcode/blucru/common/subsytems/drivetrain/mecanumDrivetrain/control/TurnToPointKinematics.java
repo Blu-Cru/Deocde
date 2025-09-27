@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;

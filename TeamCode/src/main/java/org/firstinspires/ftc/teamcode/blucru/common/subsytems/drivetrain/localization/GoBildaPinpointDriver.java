@@ -20,7 +20,7 @@
  *   SOFTWARE.
  */
 
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
 import static com.qualcomm.robotcore.util.TypeConversion.byteArrayToInt;
 

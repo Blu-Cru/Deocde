@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.SinglePressGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public abstract class BluLinearOpMode extends LinearOpMode {

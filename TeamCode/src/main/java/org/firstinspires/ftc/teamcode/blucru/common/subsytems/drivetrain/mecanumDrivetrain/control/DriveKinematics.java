@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control;
 
 
 import com.acmerobotics.dashboard.config.Config;

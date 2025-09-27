@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control.DriveKinematics;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.Pinpoint;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.RobotLocalizer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control.DriveKinematics;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;

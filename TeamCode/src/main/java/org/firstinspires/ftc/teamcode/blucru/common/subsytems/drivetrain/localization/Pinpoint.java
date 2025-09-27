@@ -1,34 +1,32 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.sixWheelDrive.localization;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-public class Pinpoint implements RobotLocalizer {
+public class Pinpoint implements RobotLocalizer{
     //TODO TUNE PER ROBOT
     public static double parallelYOffset = -144.675, perpXOffset = -70;
-    org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver pinpoint;
+    GoBildaPinpointDriver pinpoint;
     double headingOffset;
 
     Pose2D pinpointPose;
 
     public Pinpoint(String name){
-        this(Globals.hwMap.get(org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver.class, name));
+        this(Globals.hwMap.get(GoBildaPinpointDriver.class, name));
     }
 
-    public Pinpoint(org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver pinpoint){
+    public Pinpoint(GoBildaPinpointDriver pinpoint){
         this.pinpoint = pinpoint;
         headingOffset = 0;
         //TODO UPDATE PER ROBOT
         pinpoint.setEncoderDirections(
-                org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver.EncoderDirection.FORWARD,
-                org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization.GoBildaPinpointDriver.EncoderDirection.REVERSED);
+                GoBildaPinpointDriver.EncoderDirection.FORWARD,
+                GoBildaPinpointDriver.EncoderDirection.REVERSED);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(parallelYOffset, perpXOffset, DistanceUnit.MM);
 

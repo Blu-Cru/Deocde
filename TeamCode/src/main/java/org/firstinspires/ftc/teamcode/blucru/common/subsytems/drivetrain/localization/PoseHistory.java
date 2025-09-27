@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
