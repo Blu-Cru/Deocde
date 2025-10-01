@@ -64,6 +64,7 @@ public class BluMotor extends DcMotorImplEx implements BluHardwareDevice {
         return power;
     }
     public double getCurrent(){return current;}
+
     public double getDcMotorPower(){
         return super.getPower();
     }

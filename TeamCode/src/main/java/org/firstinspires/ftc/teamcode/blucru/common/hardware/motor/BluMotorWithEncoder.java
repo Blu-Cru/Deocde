@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorImplEx;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
@@ -12,6 +13,7 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
     String name;
     double power=0, lastPower=0;
     double encoderTicks=0, vel=0;
+    double current = 0;
     public BluMotorWithEncoder(String name){
         this(name, Direction.FORWARD);
     }
@@ -58,6 +60,7 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
     public void read() {
         encoderTicks = super.getCurrentPosition();
         vel = super.getVelocity();
+        current = super.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
     @Override
@@ -80,6 +83,9 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
 
     public double getPower(){
         return power;
+    }
+    public double getCurrent(){
+        return current;
     }
     public double getDcMotorPower(){
         return super.getPower();
