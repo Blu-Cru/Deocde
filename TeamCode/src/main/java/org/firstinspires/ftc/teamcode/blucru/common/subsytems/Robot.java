@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDriveBase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +20,8 @@ public class Robot {
 
     //list of subsystems
     static ArrayList<BluSubsystem> subsystems;
-    public Drivetrain drivetrain;
+    public Drivetrain mecanumDrivetrain;
+    public SixWheelDrive sixWheelDrivetrain;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -104,9 +107,15 @@ public class Robot {
     }
 
     public Drivetrain addDrivetrain(){
-        drivetrain = new Drivetrain();
-        subsystems.add(drivetrain);
-        return drivetrain;
+        mecanumDrivetrain = new Drivetrain();
+        subsystems.add(mecanumDrivetrain);
+        return mecanumDrivetrain;
+    }
+
+    public SixWheelDriveBase addSixWheelDrivetrain(){
+        sixWheelDrivetrain = new SixWheelDrive();
+        subsystems.add(sixWheelDrivetrain);
+        return sixWheelDrivetrain;
     }
 
 

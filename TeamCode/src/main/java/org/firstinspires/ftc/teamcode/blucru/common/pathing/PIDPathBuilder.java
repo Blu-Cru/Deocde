@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.InstantCommand;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -90,7 +88,7 @@ public class PIDPathBuilder{
     }
 
     public PIDPathBuilder setPower(double power){
-        return schedule(new DrivetrainSetPowerCommand(power));
+        return schedule(new MecanumDrivetrainSetPowerCommand(power));
     }
 
     public PIDPathBuilder callback(Callback callback){

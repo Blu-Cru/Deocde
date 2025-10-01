@@ -34,9 +34,9 @@ public class GoToPointSegment implements PathSegment{
     public boolean isDone() {
 
         boolean velGood = !stopRequiredToEnd ||
-                (Robot.getInstance().drivetrain.vel.vec().getMag() < STOP_VEL);
+                (Robot.getInstance().mecanumDrivetrain.vel.vec().getMag() < STOP_VEL);
 
-        return Robot.getInstance().drivetrain.inRange(xyTol, xyTol * 0.07)
+        return Robot.getInstance().mecanumDrivetrain.inRange(xyTol, xyTol * 0.07)
                 && velGood;
     }
 
@@ -60,6 +60,6 @@ public class GoToPointSegment implements PathSegment{
 
     @Override
     public void runSegment() {
-        Robot.getInstance().drivetrain.pidTo(targetPose);
+        Robot.getInstance().mecanumDrivetrain.pidTo(targetPose);
     }
 }
