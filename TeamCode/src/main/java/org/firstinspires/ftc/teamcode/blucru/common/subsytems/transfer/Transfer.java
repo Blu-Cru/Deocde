@@ -19,7 +19,13 @@ public class Transfer implements BluSubsystem {
     }
 
     public void down(){
+        setAngle(-10); //TODO: find correct angle, -10 degrees is just a random number
+        state = State.DOWN;
+    }
 
+    public void up(){
+        setAngle(30); //TODO: find correct angle, 30 degrees is just a random number
+        state = State.UP;
     }
 
     @Override
@@ -54,7 +60,7 @@ public class Transfer implements BluSubsystem {
 
     @Override
     public void reset() {
-
+        down();
     }
     public void setAngle(double degrees){
         for(TransferServo servo:transferServos){
