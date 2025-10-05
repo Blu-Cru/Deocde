@@ -1,12 +1,14 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
+import com.arcrobotics.ftclib.command.Subsystem;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-public class Shooter implements BluSubsystem {
+public class Shooter implements BluSubsystem, Subsystem {
 
     BluMotorWithEncoder shooter;
     BluServo hood;
@@ -44,6 +46,10 @@ public class Shooter implements BluSubsystem {
     }
     public void setHoodServoPos(double pos){
         hood.setPos(pos);
+    }
+
+    public double getHoodAngle(){
+        return Globals.convertServoPosToAngle(255,hood.getPos());
     }
 
 
