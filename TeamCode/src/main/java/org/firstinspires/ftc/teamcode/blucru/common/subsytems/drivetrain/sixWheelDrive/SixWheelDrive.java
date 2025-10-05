@@ -76,6 +76,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
     public void followPath(Point2d[] path){
         this.path = path;
+        computer.resetLastFoundIndex();
         dtState = State.PID;
     }
 
