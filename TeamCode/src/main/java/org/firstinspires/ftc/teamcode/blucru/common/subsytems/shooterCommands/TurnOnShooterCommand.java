@@ -8,7 +8,7 @@ public class TurnOnShooterCommand extends InstantCommand {
 
     public TurnOnShooterCommand(double power) {
         super(() -> {
-            Robot.getInstance().shooter.shoot(1);
+            Robot.getInstance().shooter.rampDownShooter();
         });
 
         addRequirements(Robot.getInstance().shooter);

@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class Shooter implements BluSubsystem, Subsystem {
 
-    BluMotorWithEncoder shooter;
-    BluServo hood;
+    private BluMotorWithEncoder shooter;
+    private BluServo hood;
 
     public Shooter(){
         shooter = new BluMotorWithEncoder("shooter");
@@ -39,7 +39,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public void rampDownShooter(){
-        shooter.setPower(0.5);
+        shooter.setPower(0);
     }
     public void setHoodAngle(double angle){
         hood.setPos(Globals.convertAngleToServoPos(255, angle));
