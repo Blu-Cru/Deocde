@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
  * Guide from https://wiki.purduesigbots.com/software/control-algorithms/basic-pure-pursuit
  * */
 public class PurePursuitComputer {
-    int lastFoundIndex;
+    private int lastFoundIndex;
     public PurePursuitComputer(){
         lastFoundIndex = 0;
     }

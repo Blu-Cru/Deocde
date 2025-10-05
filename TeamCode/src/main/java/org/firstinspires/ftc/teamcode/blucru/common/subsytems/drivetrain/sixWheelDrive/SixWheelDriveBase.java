@@ -16,12 +16,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class SixWheelDriveBase implements BluSubsystem{
 
-    BluMotor[] dtMotors;
+    private BluMotor[] dtMotors;
 
     RobotLocalizer localizer;
-    PurePursuitComputer computer;
-    double lookAheadDist = 10;
-    SixWheelPID pid;
     public enum State{
         IDLE,
         PID,
@@ -42,8 +39,6 @@ public class SixWheelDriveBase implements BluSubsystem{
         br.setDirection(DcMotorSimple.Direction.REVERSE);
         localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
-        computer = new PurePursuitComputer();
-        pid = new SixWheelPID();
     }
 
     @Override

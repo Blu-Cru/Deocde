@@ -8,10 +8,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 public class SixWheelPID {
 
-    PDController xy;
-    PDController r;
-    double kXY = 0, dXY = 0;
-    double kR = 0, dR = 0;
+    private PDController xy;
+    private PDController r;
+    private double kXY = 0, dXY = 0;
+    private double kR = 0, dR = 0;
 
     public SixWheelPID(){
         xy = new PDController(kXY, dXY);

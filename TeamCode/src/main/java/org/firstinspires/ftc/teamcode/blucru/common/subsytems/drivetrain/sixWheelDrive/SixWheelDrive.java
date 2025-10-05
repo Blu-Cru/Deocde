@@ -4,16 +4,23 @@ import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitComputer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
-    double drivePower;
-    Point2d[] path;
+    private double drivePower;
+    private Point2d[] path;
+    private PurePursuitComputer computer;
+    private final double LOOK_AHEAD_DIST = 10;
+    private SixWheelPID pid;
     public SixWheelDrive(){
         super();
         drivePower = 1;
         path = null;
+        computer = new PurePursuitComputer();
+        pid = new SixWheelPID();
     }
 
     @Override
@@ -30,7 +37,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
             case IDLE:
                 break;
             case PID:
-                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), lookAheadDist, pid);
+                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
                 drive(powers[0], powers[1]);
             case TELE_DRIVE:
                 break;

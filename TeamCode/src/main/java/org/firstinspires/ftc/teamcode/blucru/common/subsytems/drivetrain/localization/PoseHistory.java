@@ -6,9 +6,9 @@ import java.util.LinkedList;
 
 public class PoseHistory {
 
-    static double STORAGE_NANOSECONDS = Math.pow(10,9);
+    private static double STORAGE_NANOSECONDS = Math.pow(10,9);
 
-    LinkedList<PoseMarker> poseList;
+    private LinkedList<PoseMarker> poseList;
 
 
     public PoseHistory(){
