@@ -3,13 +3,14 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake;
 import static org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake.Intake.State.IN;
 import static org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake.Intake.State.OUT;
 
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
-public class Intake implements BluSubsystem {
+public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
     private static final double JAM_CURRENT_THRESHOLD = 2500; // milliamps, adjust as needed
     public enum State{

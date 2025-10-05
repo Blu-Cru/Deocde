@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
 
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Transfer implements BluSubsystem {
+public class Transfer implements BluSubsystem, Subsystem {
 
     TransferServo[] transferServos;
     public enum State {
