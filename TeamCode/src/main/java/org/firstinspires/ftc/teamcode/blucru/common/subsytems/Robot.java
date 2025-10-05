@@ -6,8 +6,10 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluPIDServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +115,7 @@ public class Robot {
     }
 
     public Turret addTurret(){
-        turret = new Turret(new BluMotorWithEncoder("turret"));
+        turret = new Turret(new BluPIDServo("servo1", new PDController(0,0)), new BluPIDServo("servo2", new PDController(0,0)));
         subsystems.add(turret);
         return turret;
     }
