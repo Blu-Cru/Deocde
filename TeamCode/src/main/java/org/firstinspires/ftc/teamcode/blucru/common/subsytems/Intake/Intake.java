@@ -18,7 +18,23 @@ public class Intake implements BluSubsystem, Subsystem {
         OUT,
         IDlE
     }
-    public State state;
+    private State state;
+
+    public void setIn() {
+        state = State.IN;
+    }
+
+    public void setOut() {
+        state = State.OUT;
+    }
+
+    public void setIdle() {
+        state = State.IDlE;
+    }
+
+    public State getState() {
+        return state;
+    }
 
     public Intake(String motorName) {
         motor = new BluMotor(motorName);

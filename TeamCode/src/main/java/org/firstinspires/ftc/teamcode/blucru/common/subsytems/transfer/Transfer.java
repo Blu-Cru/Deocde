@@ -14,19 +14,23 @@ public class Transfer implements BluSubsystem, Subsystem {
         DOWN,
         UP
     }
-    public State state;
+    private State state;
     public Transfer(HardwareMap hardwareMap) {
         transferServos =  new TransferServo[]{new LeftTransferServo(), new MiddleTransferServo(), new RightTransferServo()};
     }
 
-    public void down(){
-        setAngle(-10); //TODO: find correct angle, -10 degrees is just a random number
+    public void setDown() {
         state = State.DOWN;
+        setAngle(-10); //TODO: find correct angle, -10 degrees is just a random number
     }
 
-    public void up(){
-        setAngle(30); //TODO: find correct angle, 30 degrees is just a random number
+    public void setUp() {
         state = State.UP;
+        setAngle(30); //TODO: find correct angle, 30 degrees is just a random number
+    }
+
+    public State getState() {
+        return state;
     }
 
     @Override
@@ -61,7 +65,7 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     @Override
     public void reset() {
-        down();
+        setDown();
     }
     public void setAngle(double degrees){
         for(TransferServo servo:transferServos){
