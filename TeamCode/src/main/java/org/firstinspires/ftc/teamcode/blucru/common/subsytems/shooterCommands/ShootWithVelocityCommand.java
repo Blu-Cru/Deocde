@@ -4,12 +4,9 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
-public class TurnOnShooterCommand extends InstantCommand {
-
-    public TurnOnShooterCommand(double power) {
-        super(() -> {
-            Robot.getInstance().shooter.shoot(power);
-        });
+public class ShootWithVelocityCommand extends InstantCommand {
+    public ShootWithVelocityCommand(double vel){
+        super (() -> Robot.getInstance().shooter.shootWithVelocity(vel));
 
         addRequirements(Robot.getInstance().shooter);
     }
