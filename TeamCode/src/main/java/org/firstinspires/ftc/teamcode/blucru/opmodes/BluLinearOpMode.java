@@ -8,7 +8,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.SinglePressGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public abstract class BluLinearOpMode extends LinearOpMode {
@@ -17,6 +20,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     protected boolean reportTelemetry = true;
 
     public Drivetrain drivetrain;
+    public Intake intake;
+    public Elevator elevator;
+    public Transfer transfer;
 
     //add all of the subsystems that need to be added to the robot here
 
@@ -164,6 +170,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     }
 
     public void addDrivetrain(){drivetrain = robot.addDrivetrain();}
+    public void addIntake(){intake = robot.addIntake();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;

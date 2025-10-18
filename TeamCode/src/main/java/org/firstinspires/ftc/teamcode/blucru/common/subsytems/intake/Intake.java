@@ -1,10 +1,6 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake;
-
-import static org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake.Intake.State.IN;
-import static org.firstinspires.ftc.teamcode.blucru.common.subsytems.Intake.Intake.State.OUT;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake;
 
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
@@ -12,6 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
+    public boolean jammed;
     private static final double JAM_CURRENT_THRESHOLD = 2500; // milliamps, adjust as needed
     public enum State{
         IN,
@@ -39,6 +36,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public Intake(String motorName) {
         motor = new BluMotor(motorName);
         state = State.IDlE;
+        jammed = false;
     }
 
     @Override
@@ -50,23 +48,28 @@ public class Intake implements BluSubsystem, Subsystem {
     public void read() {
         motor.read();
         if (state == State.IN && motor.getCurrent() > JAM_CURRENT_THRESHOLD) {
-            state = State.OUT; // Jam detected, spit out the ball
+            jammed = true; // Jam detected, spit out the ball
         }
     }
 
     @Override
     public void write() {
-        switch(state){
-            case IN:
-                motor.setPower(1);
-                break;
-            case OUT:
-                motor.setPower(-1);
-                break;
-            case IDlE:
-                motor.setPower(0);
-                break;
+        if (jammed){
+            motor.setPower(-1);
+        } else {
+            switch(state){
+                case IN:
+                    motor.setPower(1);
+                    break;
+                case OUT:
+                    motor.setPower(-1);
+                    break;
+                case IDlE:
+                    motor.setPower(0);
+                    break;
+            }
         }
+
         motor.write();
     }
 
