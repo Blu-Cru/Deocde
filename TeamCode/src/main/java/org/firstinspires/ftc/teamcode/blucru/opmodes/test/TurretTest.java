@@ -12,7 +12,7 @@ public class TurretTest extends BluLinearOpMode {
 
     public void periodic(){
         //positive power is left
-        turret.moveWithPower(-gamepad1.left_stick_y);
+        turret.setPower(-gamepad1.left_stick_y);
     }
 
     public void telemetry(){
