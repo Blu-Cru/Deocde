@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double p = 0, d = 0;
-    public static double limit = 0.00005;
+    public static double p = 0.2, d = 0.1;
+    public static double limit = 20;
 
     private BluMotorWithEncoder shooter;
     private BluServo hood;
@@ -50,7 +50,7 @@ public class Shooter implements BluSubsystem, Subsystem {
                 targetVel = 0;
                 break;
             case VELOCITY:
-                if (Math.abs(shooter.getVel()- targetVel) > limit){
+                if (Math.abs(shooter.getVel()- targetVel) >= limit){
                     shooter.setPower(shooter.getPower() + pid.calculateDeltaPower(shooter.getVel(), targetVel));
                     Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter.getVel(), targetVel));
                 }
