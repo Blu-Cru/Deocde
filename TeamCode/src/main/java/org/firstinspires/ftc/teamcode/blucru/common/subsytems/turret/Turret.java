@@ -55,7 +55,7 @@ public class Turret implements BluSubsystem, Subsystem {
             case IDLE:
                 break;
             case PID:
-                servos.setPower(controller.calculate(encoder.getCurrentPos(), position, servos.getPower(), 0));
+                servos.setPower(controller.calculate(getRotateError(encoder.getCurrentPos(), position), -servos.getPower()));
                 break;
         }
 
@@ -81,6 +81,19 @@ public class Turret implements BluSubsystem, Subsystem {
         double targetAngle = goalPose.vec().subtractNotInPlace(robotPose.vec()).getHeading();
 
         setFieldCentricPosition(targetAngle, robotPose.getH());
+    }
+
+    public double getRotateError(double currAngle, double targetAngle){
+
+        double delta = Globals.normalize(targetAngle - currAngle);
+
+        if (delta > 180) {
+            delta -= 180;
+        } else if (delta < -180){
+            delta += 180;
+        }
+
+        return delta;
     }
 
 
