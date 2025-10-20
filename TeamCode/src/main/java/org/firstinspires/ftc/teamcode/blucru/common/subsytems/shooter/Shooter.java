@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double p = 0.2, d = 0.1;
+    public static double p = 0.2, d = 0.1, f = 0.01;
     public static double limit = 20;
 
     private BluMotorWithEncoder shooter;
@@ -30,7 +30,7 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter = new BluMotorWithEncoder("shooter");
         hood = new BluServo("hood");
         state = State.IDLE;
-        pid = new ShooterVelocityPID(p,d);
+        pid = new ShooterVelocityPID(p,d,f);
     }
 
     @Override

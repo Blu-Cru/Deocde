@@ -5,19 +5,21 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 public class ShooterVelocityPID{
     PDController controller;
     double currAccel;
-    public ShooterVelocityPID(PDController controller){
+    double f;
+    public ShooterVelocityPID(PDController controller, double f){
         this.controller = controller;
+        this.f = f;
         currAccel = 0;
     }
 
-    public ShooterVelocityPID(double p, double d){
-        this(new PDController(p,d));
+    public ShooterVelocityPID(double p, double d, double f){
+        this(new PDController(p,d),f);
     }
 
     public double calculateDeltaPower(double currVel, double targetVel){
 
         //this should keep currAccel always updated
-        currAccel = controller.calculate(currVel, targetVel, currAccel ,0);
+        currAccel = controller.calculate(currVel, targetVel, currAccel ,0) + f;
 
         return currAccel;
     }
