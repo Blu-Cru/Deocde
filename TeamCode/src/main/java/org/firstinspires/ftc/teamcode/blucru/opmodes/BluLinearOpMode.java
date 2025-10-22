@@ -170,7 +170,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     }
 
     public void addDrivetrain(){drivetrain = robot.addDrivetrain();}
-    public void addIntake(){intake = robot.addIntake();}
+    public void addIntake(){
+        intake = robot.addIntake();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;

@@ -10,28 +10,59 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Transfer implements BluSubsystem, Subsystem {
 
     TransferServo[] transferServos;
+    private static final double DOWN_POSITION = 0.0;//TODO: find positions
+    private static final double UP_POSITION = 1.0;
     public enum State {
         DOWN,
         UP
     }
-    private State state;
+    private State leftState;
+    private State middleState;
+    private State rightState;
     public Transfer(HardwareMap hardwareMap) {
         transferServos =  new TransferServo[]{new LeftTransferServo(), new MiddleTransferServo(), new RightTransferServo()};
     }
 
-    public void setDown() {
-        state = State.DOWN;
-        setAngle(-10); //TODO: find correct angle, -10 degrees is just a random number
+    public void leftSetDown() {
+        leftState = State.DOWN;
+        setAngle(DOWN_POSITION);
     }
 
-    public void setUp() {
-        state = State.UP;
-        setAngle(30); //TODO: find correct angle, 30 degrees is just a random number
+    public void leftSetUp() {
+        leftState = State.UP;
+        setAngle(UP_POSITION);
+    }
+    public void middleSetDown() {
+        middleState = State.DOWN;
+        setAngle(DOWN_POSITION);
     }
 
-    public State getState() {
-        return state;
+    public void middleSetUp() {
+        middleState = State.UP;
+        setAngle(UP_POSITION);
     }
+    public void rightSetDown() {
+        rightState = State.DOWN;
+        setAngle(DOWN_POSITION);
+    }
+
+    public void rightSetUp() {
+        rightState = State.UP;
+        setAngle(UP_POSITION);
+    }
+
+    public State getLeftState() {
+        return leftState;
+    }
+
+    public State getMiddleState() {
+        return middleState;
+    }
+
+    public State getRightState() {
+        return rightState;
+    }
+
 
     @Override
     public void init() {
@@ -57,7 +88,10 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Transfer state: ", state);
+        telemetry.addData("Left transfer state: ", leftState);
+        telemetry.addData("Middle transfer state: ", middleState);
+        telemetry.addData("Right transfer state: ", rightState);
+
         for(TransferServo servo : transferServos){
             servo.telemetry();
         }
@@ -65,7 +99,9 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     @Override
     public void reset() {
-        setDown();
+        leftSetDown();
+        middleSetDown();
+        rightSetDown();
     }
     public void setAngle(double degrees){
         for(TransferServo servo:transferServos){

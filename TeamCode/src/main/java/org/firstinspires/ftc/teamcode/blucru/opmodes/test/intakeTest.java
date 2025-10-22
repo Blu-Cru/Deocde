@@ -16,8 +16,11 @@ public class intakeTest extends BluLinearOpMode {
         if(gamepad1.left_trigger > 0.2){
             intake.setIn();
         }
-        if(gamepad1.right_trigger > 0.2){
+        else if(gamepad1.right_trigger > 0.2){
             intake.setOut();
+        }
+        else{
+            intake.stop();
         }
     }
 

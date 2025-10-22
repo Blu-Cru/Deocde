@@ -4,10 +4,10 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
-public class ElevatorDownCommand extends InstantCommand {
-    public ElevatorDownCommand(){
+public class ElevatorUpCommand extends InstantCommand {
+    public ElevatorUpCommand(){
         super(()->{
-            Robot.getInstance().elevator.setDown();
+            Robot.getInstance().elevator.setUp();
         });
         addRequirements(Robot.getInstance().elevator);
     }
