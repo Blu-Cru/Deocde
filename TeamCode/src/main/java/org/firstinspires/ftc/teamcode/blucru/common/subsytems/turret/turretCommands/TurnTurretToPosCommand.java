@@ -10,7 +10,7 @@ public class TurnTurretToPosCommand extends InstantCommand {
         super (() -> {
             Robot.getInstance().turret.setAngle(pos);
         });
-
+        
         addRequirements(Robot.getInstance().turret);
     }
 
