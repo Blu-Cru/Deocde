@@ -14,7 +14,7 @@ public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
-    public static double NOMINAL_VOLTAGE = 12.0
+    public static double NOMINAL_VOLTAGE = 12.0;
     public enum State{
         IN,
         OUT,
