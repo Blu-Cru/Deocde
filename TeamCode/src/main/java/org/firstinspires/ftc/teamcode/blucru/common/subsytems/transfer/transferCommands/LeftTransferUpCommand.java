@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
