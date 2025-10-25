@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+
 @Config
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
+    public static double NOMINAL_VOLTAGE = 12.0
     public enum State{
         IN,
         OUT,
@@ -53,6 +56,9 @@ public class Intake implements BluSubsystem, Subsystem {
     @Override
     public void read() {
         motor.read();
+        double currentVoltage = Robot.getInstance().getVoltage();
+        double adjustedThreshold = JAM_CURRENT_THRESHOLD * (currentVoltage / NOMINAL_VOLTAGE);
+
         jammed = (state == State.IN && motor.getCurrent() > JAM_CURRENT_THRESHOLD); // Jam detected, spit out the ball
     }
 
