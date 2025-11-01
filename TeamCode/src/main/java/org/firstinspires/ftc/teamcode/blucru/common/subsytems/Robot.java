@@ -21,6 +21,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDriveBase;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
+import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +44,8 @@ public class Robot {
     public Turret turret;
     public Drivetrain mecanumDrivetrain;
     public SixWheelDrive sixWheelDrivetrain;
+    public ObeliskTagDetector obeliskTagDetector;
+    public LimelightObeliskTagDetector llTagDetector;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -151,6 +156,18 @@ public class Robot {
         turret = new Turret(new BluCRServo("servoLeft"), new BluCRServo("servoRight"), new BluEncoder(Globals.flMotorName), new PDController(0,0));
         subsystems.add(turret);
         return turret;
+    }
+
+    public ObeliskTagDetector addObeliskTagDetector(){
+        obeliskTagDetector = ObeliskTagDetector.getInstance();
+        subsystems.add(obeliskTagDetector);
+        return obeliskTagDetector;
+    }
+
+    public LimelightObeliskTagDetector addLLTagDetector(){
+        llTagDetector = new LimelightObeliskTagDetector();
+        subsystems.add(llTagDetector);
+        return llTagDetector;
     }
 
 
