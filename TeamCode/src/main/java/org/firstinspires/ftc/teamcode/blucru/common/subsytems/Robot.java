@@ -10,6 +10,14 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluPIDServo;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +35,7 @@ public class Robot {
     public Intake intake;
     public Elevator elevator;
     public Transfer transfer;
+    public Turret turret;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -126,6 +135,11 @@ public class Robot {
         intake = new Intake("intake");
         subsystems.add(intake);
         return intake;
+    }
+    public Turret addTurret(){
+        turret = new Turret(new BluCRServo("servoLeft"), new BluCRServo("servoRight"), new BluEncoder(Globals.flMotorName), new PDController(0,0));
+        subsystems.add(turret);
+        return turret;
     }
 
 

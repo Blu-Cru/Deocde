@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public abstract class BluLinearOpMode extends LinearOpMode {
@@ -25,6 +26,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public Intake intake;
     public Elevator elevator;
     public Transfer transfer;
+    public Turret turret;
 
     //add all of the subsystems that need to be added to the robot here
 
@@ -176,6 +178,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addIntake(){
         intake = robot.addIntake();
     }
+    public void addTurret(){turret = robot.addTurret();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;
