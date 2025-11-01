@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain;
 
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control.DriveKinematics;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control.DrivePID;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.control.TurnToPointKinematics;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control.DriveKinematics;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control.DrivePID;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control.TurnToPointKinematics;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;

@@ -36,7 +36,6 @@ public class Globals {
 
     public static Pose2d mapPose(double x, double y, double heading){
         x = x*reflect;
-        y = y*reflect;
         if (reflect < 0){
             heading += Math.PI;
         }
@@ -54,7 +53,11 @@ public class Globals {
         return mapPose(pose.getX(), pose.getY(), pose.getH());
     }
     public static Vector2d mapPoint(Vector2d vec){
-        return new Vector2d(vec.getX() * reflect, vec.getY()*reflect);
+        return new Vector2d(vec.getX() * reflect, vec.getY());
+    }
+
+    public static Point2d mapPoint(Point2d point){
+        return new Point2d(point.getX() * reflect,point.getY());
     }
     public static double getCorrectPower(double power){
         return power * 12.0/voltage;

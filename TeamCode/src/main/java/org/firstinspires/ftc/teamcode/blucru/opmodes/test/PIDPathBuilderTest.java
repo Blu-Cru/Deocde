@@ -35,7 +35,7 @@ public class PIDPathBuilderTest extends BluLinearOpMode {
                 .state(States.RUNNING_PATH)
                 .transition(() -> currentPath.isDone(), States.IDLE, () -> {
                     drivetrain.switchToIdle();
-                    currentPath.end();
+                    currentPath.endMecanum();
                 })
                 .loop(() -> currentPath.run())
                 .build();

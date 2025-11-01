@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -25,10 +24,10 @@ public class TurnToPointSegment implements PathSegment{
     @Override
     public boolean isDone() {
         boolean velSatisfied = !stopReq ||
-                Robot.getInstance().drivetrain.vel.vec().getMag() < 4.0;
+                Robot.getInstance().mecanumDrivetrain.vel.vec().getMag() < 4.0;
 
 
-        return Robot.getInstance().drivetrain.inRangeTurnToPoint(drivePose, turnPose, tol, tol*0.1)
+        return Robot.getInstance().mecanumDrivetrain.inRangeTurnToPoint(drivePose, turnPose, tol, tol*0.1)
                 && velSatisfied;
     }
 
@@ -44,7 +43,7 @@ public class TurnToPointSegment implements PathSegment{
 
     @Override
     public Pose2d getPose() {
-        Pose2d currPose = Robot.getInstance().drivetrain.currPose;
+        Pose2d currPose = Robot.getInstance().mecanumDrivetrain.currPose;
         return new Pose2d(currPose.vec(), Math.atan2(
                 turnPose.getY() - currPose.getY(),
                 turnPose.getX() - currPose.getX()
@@ -53,6 +52,6 @@ public class TurnToPointSegment implements PathSegment{
 
     @Override
     public void runSegment() {
-        Robot.getInstance().drivetrain.pidTurnToPos(drivePose, turnPose);
+        Robot.getInstance().mecanumDrivetrain.pidTurnToPos(drivePose, turnPose);
     }
 }

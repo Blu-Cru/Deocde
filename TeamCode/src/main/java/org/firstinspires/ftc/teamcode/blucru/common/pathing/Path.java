@@ -4,5 +4,6 @@ public interface Path {
     Path start();
     public void run();
     public boolean isDone();
-    public void end();
+    public void endMecanum();
+    public void endSixWheel();
 }

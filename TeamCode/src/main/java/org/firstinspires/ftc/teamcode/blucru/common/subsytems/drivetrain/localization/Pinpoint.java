@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.localization;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -11,10 +11,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class Pinpoint implements RobotLocalizer{
     //TODO TUNE PER ROBOT
     public static double parallelYOffset = -144.675, perpXOffset = -70;
-    GoBildaPinpointDriver pinpoint;
-    double headingOffset;
+    private GoBildaPinpointDriver pinpoint;
+    private double headingOffset;
 
-    Pose2D pinpointPose;
+    private Pose2D pinpointPose;
 
     public Pinpoint(String name){
         this(Globals.hwMap.get(GoBildaPinpointDriver.class, name));

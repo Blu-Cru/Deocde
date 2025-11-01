@@ -103,9 +103,14 @@ public class PIDPath implements Path{
     }
 
     @Override
-    public void end() {
-        Robot.getInstance().drivetrain.switchToIdle();
+    public void endMecanum() {
+        Robot.getInstance().mecanumDrivetrain.switchToIdle();
         pathDone = true;
+    }
+
+    @Override
+    public void endSixWheel() {
+        Robot.getInstance().sixWheelDrivetrain.switchToIdle();
     }
 
     public void telemetry(){
