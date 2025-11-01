@@ -5,8 +5,11 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,9 @@ public class Robot {
     static ArrayList<BluSubsystem> subsystems;
     public Drivetrain drivetrain;
     public Shooter shooter;
+    public Intake intake;
+    public Elevator elevator;
+    public Transfer transfer;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -111,10 +117,15 @@ public class Robot {
         return drivetrain;
     }
 
-    public Shooter addShooter(){
+    public Shooter addShooter() {
         shooter = new Shooter();
         subsystems.add(shooter);
         return shooter;
+    }
+    public Intake addIntake(){
+        intake = new Intake("intake");
+        subsystems.add(intake);
+        return intake;
     }
 
 
