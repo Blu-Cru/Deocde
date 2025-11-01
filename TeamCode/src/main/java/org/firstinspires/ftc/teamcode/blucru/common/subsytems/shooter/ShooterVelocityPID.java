@@ -1,27 +1,25 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
+import com.arcrobotics.ftclib.controller.PIDController;
+
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 public class ShooterVelocityPID{
-    PDController controller;
-    double currAccel;
+    double p;
+    double i;
+    double d;
     double f;
-    public ShooterVelocityPID(PDController controller, double f){
-        this.controller = controller;
-        this.f = f;
-        currAccel = 0;
-    }
+    PIDController controller;
 
-    public ShooterVelocityPID(double p, double d, double f){
-        this(new PDController(p,d),f);
+    public ShooterVelocityPID(double p, double i, double d, double f){
+        controller = new PIDController(p,i,d);
+        this.f=f;
     }
 
     public double calculateDeltaPower(double currVel, double targetVel){
 
-        //this should keep currAccel always updated
-        currAccel = controller.calculate(currVel, targetVel, currAccel ,0) + f;
+        return controller.calculate(currVel, targetVel) + f*targetVel;
 
-        return currAccel;
     }
 
     public void setP(double p){
@@ -33,7 +31,18 @@ public class ShooterVelocityPID{
     }
 
     public void setPD(double p, double d){
-        controller.setPD(p,d);
+        controller.setP(p);
+        controller.setD(d);
+    }
+
+    public void setPDF(double p, double d, double f){
+        setPD(p,d);
+        this.f = f;
+    }
+
+    public void setPIDF(double p, double i, double d, double f){
+        setPDF(p,d,f);
+        controller.setI(i);
     }
 
 }

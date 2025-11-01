@@ -54,12 +54,19 @@ public class PDController extends PIDController{
 
     public void setPD(double p, double d){
         super.setPID(p, 0, d);
+        this.p=p;
+        this.d=d;
+        k = new Vector2d(this.p, this.d);
     }
     public void setP(double p){
         super.setP(p);
+        this.p=p;
+        k = new Vector2d(this.p, d);
     }
     public void setD(double d){
         super.setD(d);
+        this.d = d;
+        k = new Vector2d(p, this.d);
     }
 
     public void telemetry(){

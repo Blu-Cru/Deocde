@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double p = 0.2, d = 0.1, f = 0.01;
+    public static double p = 0.2,i = 0.001, d = 0.1, f = 0.006;
     public static double limit = 20;
 
     private BluMotorWithEncoder shooter;
@@ -30,7 +30,7 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter = new BluMotorWithEncoder("shooter");
         hood = new BluServo("hood");
         state = State.IDLE;
-        pid = new ShooterVelocityPID(p,d,f);
+        pid = new ShooterVelocityPID(p,i,d,f);
     }
 
     @Override
@@ -50,10 +50,8 @@ public class Shooter implements BluSubsystem, Subsystem {
                 targetVel = 0;
                 break;
             case VELOCITY:
-                if (Math.abs(shooter.getVel()- targetVel) >= limit){
-                    shooter.setPower(shooter.getPower() + pid.calculateDeltaPower(shooter.getVel(), targetVel));
-                    Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter.getVel(), targetVel));
-                }
+                shooter.setPower(pid.calculateDeltaPower(shooter.getVel(), targetVel));
+                Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter.getVel(), targetVel));
         }
 
         shooter.write();
@@ -94,7 +92,6 @@ public class Shooter implements BluSubsystem, Subsystem {
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Shooter power", shooter.getPower());
-        telemetry.addData("Shooter Pos", shooter.getCurrentPos());
     }
 
     @Override
@@ -104,6 +101,6 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public void updatePID(){
-        pid.setPD(p,d);
+        pid.setPIDF(p,i,d,f);
     }
 }
