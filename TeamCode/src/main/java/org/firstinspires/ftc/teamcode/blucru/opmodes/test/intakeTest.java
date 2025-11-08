@@ -35,13 +35,13 @@ public class intakeTest extends BluLinearOpMode {
         // direct trigger checks (no separate threshold variable)
         if (gamepad1.left_trigger > 0.2) {
             leftIntake.setIn();
-            rightIntake.setIn();
+//            rightIntake.setIn();
         } else if (gamepad1.right_trigger > 0.2) {
             leftIntake.setOut();
-            rightIntake.setOut();
+//            rightIntake.setOut();
         } else {
             leftIntake.stop();
-            rightIntake.stop();
+//            rightIntake.stop();
         }
 
         // run read/write so the subsystem updates sensors and applies motor power immediately
