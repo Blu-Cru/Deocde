@@ -59,7 +59,7 @@ public class Intake implements BluSubsystem, Subsystem {
         double currentVoltage = Robot.getInstance().getVoltage();
         double adjustedThreshold = JAM_CURRENT_THRESHOLD * (currentVoltage / NOMINAL_VOLTAGE);
 
-        jammed = (state == State.IN && motor.getCurrent() > JAM_CURRENT_THRESHOLD); // Jam detected, spit out the ball
+        jammed = (state == State.IN && motor.getCurrent() > adjustedThreshold); // Jam detected, spit out the ball
     }
 
     @Override
