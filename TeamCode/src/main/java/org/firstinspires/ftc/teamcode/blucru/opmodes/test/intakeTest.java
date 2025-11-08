@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @TeleOp(group = "test")
 public class intakeTest extends BluLinearOpMode {
 
-    // Change these to match your Robot Configuration names
     private static final String LEFT_NAME = "intake_left";
     private static final String RIGHT_NAME = "intake_right";
 
@@ -19,11 +18,10 @@ public class intakeTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
 
-    // create two Intake subsystem instances (each takes a motor name)
     leftIntake = new Intake(LEFT_NAME);
     rightIntake = new Intake(RIGHT_NAME);
 
-    // register and initialize them locally (we don't add them to Robot.subsystems here)
+    // register and initialize them locally
     leftIntake.init();
     rightIntake.init();
 
