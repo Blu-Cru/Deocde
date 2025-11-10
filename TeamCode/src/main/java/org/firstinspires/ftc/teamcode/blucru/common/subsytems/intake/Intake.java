@@ -126,4 +126,12 @@ public class Intake implements BluSubsystem, Subsystem {
         motor.setPower(0);
         motor.write();
     }
+
+    /**
+     * Convenience: set whether this intake's motor is inverted.
+     * If inverted==true the motor direction will be REVERSE.
+     */
+    public void setMotorInverted(boolean inverted) {
+        motor.setDirection(inverted ? DcMotorSimple.Direction.REVERSE : DcMotorSimple.Direction.FORWARD);
+    }
 }

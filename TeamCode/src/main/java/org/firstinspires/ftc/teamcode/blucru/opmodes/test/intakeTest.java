@@ -21,6 +21,9 @@ public class intakeTest extends BluLinearOpMode {
     leftIntake = new Intake(LEFT_NAME);
     rightIntake = new Intake(RIGHT_NAME);
 
+    // The right motor wiring was reversed — invert it in software so both sides spin the same way
+    rightIntake.setMotorInverted(true);
+
     // register and initialize them locally
     leftIntake.init();
     rightIntake.init();
@@ -35,13 +38,13 @@ public class intakeTest extends BluLinearOpMode {
         // direct trigger checks (no separate threshold variable)
         if (gamepad1.left_trigger > 0.2) {
             leftIntake.setIn();
-//            rightIntake.setIn();
+            rightIntake.setIn();
         } else if (gamepad1.right_trigger > 0.2) {
             leftIntake.setOut();
-//            rightIntake.setOut();
+            rightIntake.setOut();
         } else {
             leftIntake.stop();
-//            rightIntake.stop();
+            rightIntake.stop();
         }
 
         // run read/write so the subsystem updates sensors and applies motor power immediately
