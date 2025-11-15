@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LimelightObeliskTagDetector implements BluSubsystem {
+public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     Limelight3A limelight;
     String[] pattern;
     int greenIndex;

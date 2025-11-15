@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooterCommands;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 

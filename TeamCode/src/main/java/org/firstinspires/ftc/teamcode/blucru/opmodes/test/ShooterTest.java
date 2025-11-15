@@ -5,12 +5,10 @@ import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooterCommands.SetHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooterCommands.TurnOffShooterCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooterCommands.TurnOnShooterCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.TurnOffShooterCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.TurnOnShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-
-import java.net.IDN;
 
 @TeleOp(group = "test")
 public class ShooterTest extends BluLinearOpMode {

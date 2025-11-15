@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithE
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluPIDServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -22,8 +24,8 @@ public class Turret implements BluSubsystem, Subsystem {
     Pose2d goalPose;
     private enum State{
         IDLE,
-        PID
-
+        PID,
+        LOCK_ON_GOAL
     }
     private State state;
 
@@ -57,6 +59,8 @@ public class Turret implements BluSubsystem, Subsystem {
             case PID:
                 servos.setPower(controller.calculate(getRotateError(encoder.getCurrentPos(), position), -servos.getPower()));
                 break;
+            case LOCK_ON_GOAL:
+                setFieldCentricPosition((Globals.alliance == Alliance.BLUE) ? 144 : 36, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
         }
 
         servos.write();
@@ -77,10 +81,8 @@ public class Turret implements BluSubsystem, Subsystem {
         setAngle(position - robotHeading);
     }
 
-    public void turnToPointTowardsGoal(Pose2d robotPose){
-        double targetAngle = goalPose.vec().subtractNotInPlace(robotPose.vec()).getHeading();
-
-        setFieldCentricPosition(targetAngle, robotPose.getH());
+    public void lockOnGoal(){
+        state = State.LOCK_ON_GOAL;
     }
 
     public double getRotateError(double currAngle, double targetAngle){
