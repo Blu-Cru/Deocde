@@ -29,6 +29,8 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
         super.setZeroPowerBehavior(zpb);
     }
 
+
+
     public void reset(){
         super.setMode(RunMode.STOP_AND_RESET_ENCODER);
         super.setMode(RunMode.RUN_WITHOUT_ENCODER);

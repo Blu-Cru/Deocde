@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
+import java.util.Arrays;
+
 public class SixWheelDriveBase implements BluSubsystem{
 
     private BluMotor[] dtMotors;
@@ -29,7 +31,7 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     public SixWheelDriveBase(){
         this(new BluMotor(Globals.flMotorName),
-                new BluMotor(Globals.flMotorName),
+                new BluMotor(Globals.frMotorName),
                 new BluMotor(Globals.blMotorName),
                 new BluMotor(Globals.brMotorName));
     }
@@ -65,10 +67,11 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     public void drive(double x, double r){
         double[] powers = SixWheelKinematics.getPowers(x,r);
-        for(int i = 0; i<4; i+=2){
-            dtMotors[i].setPower(powers[0]);
-            dtMotors[i+1].setPower(powers[1]);
-        }
+        dtMotors[0].setPower(powers[0]);
+        dtMotors[2].setPower(powers[0]);
+        dtMotors[1].setPower(powers[1]);
+        dtMotors[3].setPower(powers[1]);
+        Globals.telemetry.addData("Powers", Arrays.toString(powers));
     }
 
     public Pose2d getPos(){

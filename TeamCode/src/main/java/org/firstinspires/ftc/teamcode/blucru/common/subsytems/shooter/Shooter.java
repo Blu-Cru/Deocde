@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
@@ -15,9 +16,14 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     public static double p = 0.2,i = 0.001, d = 0.1, f = 0.006;
     public static double limit = 20;
+    public static final double ZERO_ANGLE = 26;
+    public static final double TOP_ANGLE = 50;
+    public static final double SERVO_ROT_TO_HOOD_ROT = 260/28;
+    public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
+    public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
 
     private BluMotorWithEncoder shooter;
-    private BluServo hood;
+    public BluServo hood;
 
     enum State{
         IDLE,
@@ -28,9 +34,12 @@ public class Shooter implements BluSubsystem, Subsystem {
     ShooterVelocityPID pid;
     public Shooter(){
         shooter = new BluMotorWithEncoder("shooter");
-        hood = new BluServo("hood");
+        hood = new BluServo("hood", Servo.Direction.FORWARD);
         state = State.IDLE;
         pid = new ShooterVelocityPID(p,i,d,f);
+    }
+    public double shooterAngleToPos(double angle){
+        return (SERVO_POS)/SERVO_ANGLE_DELTA * angle - (ZERO_ANGLE * SERVO_POS)/SERVO_ANGLE_DELTA ;
     }
 
     @Override
@@ -61,7 +70,6 @@ public class Shooter implements BluSubsystem, Subsystem {
     public void shoot(double power){
         shooter.setPower(power);
     }
-
     public void shootWithVelocity(double vel){
         targetVel = vel;
         state = State.VELOCITY;
@@ -78,7 +86,7 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter.setPower(0);
     }
     public void setHoodAngle(double angle){
-        hood.setPos(Globals.convertAngleToServoPos(255, angle));
+        setHoodServoPos(shooterAngleToPos(angle));
     }
     public void setHoodServoPos(double pos){
         hood.setPos(pos);

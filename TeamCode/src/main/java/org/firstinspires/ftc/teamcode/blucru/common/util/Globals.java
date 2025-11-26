@@ -18,10 +18,10 @@ public class Globals {
     public static double voltage = 13.0;
     public static Alliance alliance = RED;
     public static String pinpointName = "pinpoint";
-    public static String flMotorName = "fl";
-    public static String frMotorName = "fr";
-    public static String blMotorName = "bl";
-    public static String brMotorName = "br";
+    public static String flMotorName = "FL";
+    public static String frMotorName = "FR";
+    public static String blMotorName = "BL";
+    public static String brMotorName = "BR";
     public static Pose2d startPose = new Pose2d(0,0,Math.PI/2);
 
     public static ElapsedTime matchTime;

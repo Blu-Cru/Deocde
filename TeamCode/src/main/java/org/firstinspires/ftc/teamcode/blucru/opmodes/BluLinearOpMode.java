@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.SinglePressGamepad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
@@ -25,6 +26,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     protected boolean reportTelemetry = true;
 
     public Drivetrain drivetrain;
+    public SixWheelDrive sixWheel;
     public Shooter shooter;
     public Intake intake;
     public Elevator elevator;
@@ -187,6 +189,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addTurret(){turret = robot.addTurret();}
     public void addObeliskTagDetector(){obeliskTagDetector = robot.addObeliskTagDetector();}
     public void addLLTagDetector(){llTagDetector = robot.addLLTagDetector();}
+    public void addSixWheel(){sixWheel = robot.addSixWheelDrivetrain();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;

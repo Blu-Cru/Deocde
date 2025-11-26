@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -8,13 +9,16 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWhee
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-
+@Config
 public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
     private PurePursuitComputer computer;
     private final double LOOK_AHEAD_DIST = 10;
     private SixWheelPID pid;
+    public static double a = 0.6;
+    public static double b = 0.01;
+    public static double c = 0.39;
     public SixWheelDrive(){
         super();
         drivePower = 1;
@@ -47,8 +51,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public void teleDrive(Gamepad g1, double tol){
-        double x = -g1.left_stick_y;
-        double r = g1.left_stick_x;
+        double x = cubicScaling(-g1.left_stick_y);
+        double r = cubicScaling(g1.right_stick_x);
 
         if (Math.abs(x) <= tol){
             x = 0;
@@ -63,6 +67,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
             } else {
                 //either stopped driving or idle alr
                 dtState = State.IDLE;
+                drive(0,0);
             }
         } else {
             dtState = State.TELE_DRIVE;
@@ -73,6 +78,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public void setDrivePower(double power){
         this.drivePower = power;
+    }
+    public double getDrivePower(){
+        return drivePower;
     }
     public void followPath(Point2d[] path){
         this.path = path;
@@ -96,5 +104,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     @Override
     public void telemetry(Telemetry telemetry) {
         super.telemetry(telemetry);
+    }
+
+    public double cubicScaling(double value){
+        return a * value * value * value + b * value * value + c * value;
     }
 }

@@ -12,6 +12,7 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
     String name;
     ServoController controller;
     double pos=0, lastPos=0;
+    int direction;
     boolean enabled;
     public BluServo(String name){
         this(name, Direction.FORWARD);
@@ -20,17 +21,28 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
         this(Globals.hwMap.get(ServoImpl.class, name), name, direction);
     }
     private BluServo(ServoImpl servo, String name, Direction direction){
-        super(servo.getController(), servo.getPortNumber(), servo.getDirection());
+        super(servo.getController(), servo.getPortNumber(), direction);
         super.setDirection(direction);
         this.name = name;
         this.controller = servo.getController();
         this.enabled = true;
+        if (direction == Direction.FORWARD){
+            this.direction = 1;
+        } else{
+            this.direction = 0;
+        }
     }
     public void setPos(double pos){
         this.pos = Range.clip(pos,0,1);
     }
+    public double getServoPos(){
+        return super.getPosition();
+    }
     public double getPos(){
         return pos;
+    }
+    public int getDir(){
+        return direction;
     }
 
 
@@ -61,6 +73,7 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
         if (Math.abs(pos - lastPos) > 0.002){
             lastPos = pos;
             super.setPosition(pos);
+
         }
     }
     public String getName(){

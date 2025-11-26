@@ -122,6 +122,11 @@ public class Robot {
             subsystem.telemetry(telemetry);
         }
     }
+    public void idleRobot(){
+        for (BluSubsystem subsystem: subsystems){
+            subsystem.reset();
+        }
+    }
 
     public double getAmountOfSubsystems(){
         return subsystems.size();
@@ -136,7 +141,7 @@ public class Robot {
         return mecanumDrivetrain;
     }
 
-    public SixWheelDriveBase addSixWheelDrivetrain(){
+    public SixWheelDrive addSixWheelDrivetrain(){
         sixWheelDrivetrain = new SixWheelDrive();
         subsystems.add(sixWheelDrivetrain);
         return sixWheelDrivetrain;
