@@ -6,12 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 @Config
 public class Intake implements BluSubsystem, Subsystem {
-    private BluMotor motor;
+    private BluMotorWithEncoder leftMotor;
+    private BluMotorWithEncoder rightMotor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
@@ -42,56 +44,67 @@ public class Intake implements BluSubsystem, Subsystem {
         return state;
     }
 
-    public Intake(String motorName) {
-        motor = new BluMotor(motorName);
+    public Intake(String leftMotorName, String rightMotorName) {
+        leftMotor = new BluMotorWithEncoder(leftMotorName);
+        rightMotor = new BluMotorWithEncoder(rightMotorName);
+        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         state = State.IDlE;
         jammed = false;
     }
 
     @Override
     public void init() {
-        motor.init();
+        leftMotor.init();
+        rightMotor.init();
     }
 
     @Override
     public void read() {
-        motor.read();
+        leftMotor.read();
+        rightMotor.read();
         double currentVoltage = Robot.getInstance().getVoltage();
-        double adjustedThreshold = JAM_CURRENT_THRESHOLD * (currentVoltage / NOMINAL_VOLTAGE);
 
-        jammed = (state == State.IN && motor.getCurrent() > JAM_CURRENT_THRESHOLD); // Jam detected, spit out the ball
+        jammed = (state == State.IN && leftMotor.getVelocity() > 100); // Jam detected, spit out the ball
     }
 
     @Override
     public void write() {
         if (jammed){
-            motor.setPower(1);
+            leftMotor.setPower(-1);
+            rightMotor.setPower(-1);
         } else {
             switch(state){
                 case IN:
-                    motor.setPower(-1);
+                    leftMotor.setPower(1);
+                    rightMotor.setPower(1);
                     break;
                 case OUT:
-                    motor.setPower(1);
+                    leftMotor.setPower(-1);
+                    rightMotor.setPower(-1);
                     break;
                 case IDlE:
-                    motor.setPower(0);
+                    leftMotor.setPower(0);
+                    rightMotor.setPower(0);
                     break;
             }
         }
 
-        motor.write();
+        leftMotor.write();
+        rightMotor.write();
     }
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        motor.telemetry();
-        telemetry.addData("Current", motor.getCurrent());
+        leftMotor.telemetry();
+        rightMotor.telemetry();
+        telemetry.addData("Current", leftMotor.getCurrent());
     }
 
     @Override
     public void reset() {
-        motor.setPower(0);
-        motor.write();
+        leftMotor.setPower(0);
+        rightMotor.setPower(0);
+        leftMotor.write();
+        rightMotor.write();
     }
 }

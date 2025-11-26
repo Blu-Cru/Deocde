@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServo;
-    private static final double DOWN_POSITION = 0.0;//TODO: find positions
-    private static final double UP_POSITION = 1.0;
+    private static final double DOWN_POSITION = 0.57;//TODO: find positions
+    private static final double UP_POSITION = 0.75;
 
     public Elevator(HardwareMap hardwareMap){
         elevatorServo = new BluServo("elevator");

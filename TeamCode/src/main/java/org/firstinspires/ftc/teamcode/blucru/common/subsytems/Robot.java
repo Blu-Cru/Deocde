@@ -153,7 +153,7 @@ public class Robot {
         return shooter;
     }
     public Intake addIntake(){
-        intake = new Intake("intake");
+        intake = new Intake("intakeLeft", "intakeRight");
         subsystems.add(intake);
         return intake;
     }
