@@ -11,6 +11,7 @@ public class AllTransferUpCommand extends InstantCommand {
         super(()->{
             Robot.getInstance().transfer.setAllUp();
         });
+
         addRequirements(Robot.getInstance().transfer);
     }
 }
