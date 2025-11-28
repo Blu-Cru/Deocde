@@ -193,6 +193,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addObeliskTagDetector(){obeliskTagDetector = robot.addObeliskTagDetector();}
     public void addLLTagDetector(){llTagDetector = robot.addLLTagDetector();}
     public void addSixWheel(){sixWheel = robot.addSixWheelDrivetrain();}
+    public void addElevator(){elevator = robot.addElevator();}
     public void enableDash(){
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;

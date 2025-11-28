@@ -16,9 +16,6 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private PurePursuitComputer computer;
     private final double LOOK_AHEAD_DIST = 10;
     private SixWheelPID pid;
-    public static double a = 0.6;
-    public static double b = 0.01;
-    public static double c = 0.39;
     public SixWheelDrive(){
         super();
         drivePower = 1;
@@ -107,6 +104,6 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public double cubicScaling(double value){
-        return a * value * value * value + b * value * value + c * value;
+        return value * value * value;
     }
 }

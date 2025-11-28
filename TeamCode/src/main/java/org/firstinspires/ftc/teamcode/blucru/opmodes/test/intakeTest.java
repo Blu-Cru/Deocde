@@ -1,7 +1,12 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorTransferWithJiggleCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @TeleOp(group = "test")
@@ -10,17 +15,22 @@ public class intakeTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
         addIntake();
+        addElevator();
     }
 
     public void periodic(){
-        if(gamepad1.left_trigger > 0.2){
-            intake.setIn();
+        if (driver1.pressedA()){
+            new SequentialCommandGroup(
+                    new IntakeStartCommand(),
+                    new ElevatorDownCommand()
+            ).schedule();
         }
-        else if(gamepad1.right_trigger > 0.2){
-            intake.setOut();
-        }
-        else{
-            intake.stop();
+
+        if (driver1.pressedY()){
+            new SequentialCommandGroup(
+                new IntakeStopCommand(),
+                new ElevatorTransferWithJiggleCommand()
+            ).schedule();
         }
     }
 

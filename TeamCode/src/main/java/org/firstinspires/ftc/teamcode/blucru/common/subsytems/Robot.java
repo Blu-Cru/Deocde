@@ -181,6 +181,9 @@ public class Robot {
     }
 
 
-
-
+    public Elevator addElevator() {
+        elevator = new Elevator();
+        subsystems.add(elevator);
+        return elevator;
+    }
 }

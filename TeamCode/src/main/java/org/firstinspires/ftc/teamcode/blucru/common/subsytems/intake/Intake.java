@@ -47,7 +47,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public Intake(String leftMotorName, String rightMotorName) {
         leftMotor = new BluMotorWithEncoder(leftMotorName);
         rightMotor = new BluMotorWithEncoder(rightMotorName);
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         state = State.IDlE;
         jammed = false;
     }
