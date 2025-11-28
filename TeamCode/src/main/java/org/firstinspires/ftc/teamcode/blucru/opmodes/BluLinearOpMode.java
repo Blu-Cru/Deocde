@@ -186,6 +186,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addIntake(){
         intake = robot.addIntake();
     }
+    public void addTransfer(){
+        transfer = robot.addTransfer();
+    }
     public void addTurret(){turret = robot.addTurret();}
     public void addObeliskTagDetector(){obeliskTagDetector = robot.addObeliskTagDetector();}
     public void addLLTagDetector(){llTagDetector = robot.addLLTagDetector();}

@@ -6,10 +6,12 @@ public abstract class TransferServo extends BluServo {
     public TransferServo(String name) {
         super(name);
     }
-    void setAngle(double degrees){
-        double pos = (degrees - 90.0)*getTicksPerDeg() + getVerticalPos();
-        setPosition(pos);
+    void setBottom(){
+        setPos(getBottomPos());
     }
-    abstract double getTicksPerDeg();
+    void setVertical(){
+        setPos(getVerticalPos());
+    }
     abstract double getVerticalPos();
+    abstract double getBottomPos();
 }

@@ -25,30 +25,30 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     public void leftSetDown() {
         leftState = State.DOWN;
-        setAngle(DOWN_POSITION);
+        transferServos[0].setBottom();
     }
 
     public void leftSetUp() {
         leftState = State.UP;
-        setAngle(UP_POSITION);
+        transferServos[0].setVertical();
     }
     public void middleSetDown() {
         middleState = State.DOWN;
-        setAngle(DOWN_POSITION);
+        transferServos[1].setBottom();
     }
 
     public void middleSetUp() {
         middleState = State.UP;
-        setAngle(UP_POSITION);
+        transferServos[1].setVertical();
     }
     public void rightSetDown() {
         rightState = State.DOWN;
-        setAngle(DOWN_POSITION);
+        transferServos[2].setBottom();
     }
 
     public void rightSetUp() {
         rightState = State.UP;
-        setAngle(UP_POSITION);
+        transferServos[2].setVertical();
     }
 
     public State getLeftState() {
@@ -103,9 +103,15 @@ public class Transfer implements BluSubsystem, Subsystem {
         middleSetDown();
         rightSetDown();
     }
-    public void setAngle(double degrees){
-        for(TransferServo servo:transferServos){
-            servo.setAngle(degrees);
-        }
+    public void setAllDown(){
+        leftSetDown();
+        middleSetDown();
+        rightSetDown();
     }
+    public void setAllUp(){
+        leftSetUp();
+        middleSetUp();
+        rightSetUp();
+    }
+
 }

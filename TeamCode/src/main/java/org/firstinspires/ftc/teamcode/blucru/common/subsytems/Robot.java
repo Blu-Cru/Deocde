@@ -152,6 +152,11 @@ public class Robot {
         subsystems.add(shooter);
         return shooter;
     }
+    public Transfer addTransfer(){
+        transfer = new Transfer(hwMap);
+        subsystems.add(transfer);
+        return transfer;
+    }
     public Intake addIntake(){
         intake = new Intake("intakeLeft", "intakeRight");
         subsystems.add(intake);
