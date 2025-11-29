@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double p = 0.2,i = 0.001, d = 0.1, f = 0.006;
+    public static double p = 0.01,i = 0, d = 0, f = 0.00058;
     public static double limit = 20;
     public static final double ZERO_ANGLE = 26;
     public static final double TOP_ANGLE = 50;

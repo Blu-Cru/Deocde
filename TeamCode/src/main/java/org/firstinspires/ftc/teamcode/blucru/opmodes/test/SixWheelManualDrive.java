@@ -15,6 +15,6 @@ public class SixWheelManualDrive extends BluLinearOpMode {
     @Override
     public void periodic() {
         sixWheel.setDrivePower(0.5);
-        sixWheel.teleDrive(gamepad1,0.2);
+        sixWheel.teleDrive(gamepad1,0.001);
     }
 }

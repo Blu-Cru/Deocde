@@ -8,7 +8,7 @@ public class SixWheelKinematics {
 
         double max = Math.max(Math.abs(left), Math.abs(right));
 
-        if (max>0){
+        if (max>1){
             left /= max;
             right /= max;
         }

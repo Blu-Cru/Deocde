@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -30,15 +31,13 @@ public class SixWheelDriveBase implements BluSubsystem{
     State dtState;
 
     public SixWheelDriveBase(){
-        this(new BluMotor(Globals.flMotorName),
-                new BluMotor(Globals.frMotorName),
-                new BluMotor(Globals.blMotorName),
-                new BluMotor(Globals.brMotorName));
+        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE));
     }
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br){
         dtMotors = new BluMotor[]{fl, fr, bl, br};
-        fr.setDirection(DcMotorSimple.Direction.REVERSE);
-        br.setDirection(DcMotorSimple.Direction.REVERSE);
         localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
     }

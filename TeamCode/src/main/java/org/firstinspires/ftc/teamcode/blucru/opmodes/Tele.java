@@ -34,21 +34,22 @@ public class Tele extends BluLinearOpMode{
         //addTurret();
         sm = new StateMachineBuilder()
                 .state(State.IDLE)
-                .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () ->{
+                .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
+                    telemetry.addLine("here");
                     new IntakeCommand().schedule();
                 })
                 .state(State.INTAKING)
                 .transition(() -> driver1.pressedOptions(), State.IDLE, () -> {
                     robot.idleRobot();
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     new TransferCommand().schedule();
                 })
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedOptions(), State.IDLE, () -> {
                     robot.idleRobot();
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
+                .transition(() -> driver1.pressedRightTrigger(), State.INTAKING, () -> {
                     new SequentialCommandGroup(
                             new ShootBallsCommand(),
                             new WaitCommand(400),
@@ -63,7 +64,7 @@ public class Tele extends BluLinearOpMode{
 
     public void periodic(){
         sm.update();
-        sixWheel.drive(-gamepad1.left_stick_y, gamepad1.left_stick_x);
+        sixWheel.teleDrive(gamepad1, 0.0001);
         if (driver2.pressedB()){
             sixWheel.setPosition(llTagDetector.getLLBotPose());
         }
@@ -74,6 +75,7 @@ public class Tele extends BluLinearOpMode{
                 sixWheel.setDrivePower(0.5);
             }
         }
+        telemetry.addData("State", sm.getState());
     }
 
 }

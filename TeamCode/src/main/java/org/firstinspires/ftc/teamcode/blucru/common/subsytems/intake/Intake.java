@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
@@ -45,9 +46,8 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public Intake(String leftMotorName, String rightMotorName) {
-        leftMotor = new BluMotorWithEncoder(leftMotorName);
-        rightMotor = new BluMotorWithEncoder(rightMotorName);
-        rightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotor = new BluMotorWithEncoder(leftMotorName, DcMotorSimple.Direction.FORWARD);
+        rightMotor = new BluMotorWithEncoder(rightMotorName, DcMotorSimple.Direction.REVERSE);
         state = State.IDlE;
         jammed = false;
     }
