@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServo;
     private BluBrushlandLabsColorSensor leftSensor, middleSensor, rightSensor;
-    private static final double DOWN_POSITION = 0.57;//TODO: find positions
-    private static final double UP_POSITION = 0.8;
+    private static final double DOWN_POSITION = 0;//TODO: find positions
+    private static final double UP_POSITION = 0.3;
 
     public Elevator(){
         elevatorServo = new BluServo("elevator");

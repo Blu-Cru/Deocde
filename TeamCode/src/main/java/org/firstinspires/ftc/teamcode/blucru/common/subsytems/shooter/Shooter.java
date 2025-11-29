@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -22,8 +21,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
     public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
 
-    private BluMotorWithEncoder shooter;
-    public BluServo hood;
+    private BluMotorWithEncoder shooter1;
+    private BluMotorWithEncoder shooter2;
+    public BluServo hoodLeft;
 
     enum State{
         IDLE,
@@ -33,8 +33,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     double targetVel = 0;
     ShooterVelocityPID pid;
     public Shooter(){
-        shooter = new BluMotorWithEncoder("shooter");
-        hood = new BluServo("hood", Servo.Direction.FORWARD);
+        shooter1 = new BluMotorWithEncoder("shooter1", DcMotorSimple.Direction.REVERSE);
+        shooter2 = new BluMotorWithEncoder("shooter2", DcMotorSimple.Direction.REVERSE);
+        hoodLeft = new BluServo("hoodLeft", Servo.Direction.FORWARD);
         state = State.IDLE;
         pid = new ShooterVelocityPID(p,i,d,f);
     }
@@ -44,12 +45,14 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     @Override
     public void init() {
-        shooter.init();
+        shooter1.init();
+        shooter2.init();
     }
 
     @Override
     public void read() {
-        shooter.read();
+        shooter1.read();
+        shooter2.read();
     }
 
     @Override
@@ -59,16 +62,18 @@ public class Shooter implements BluSubsystem, Subsystem {
                 targetVel = 0;
                 break;
             case VELOCITY:
-                shooter.setPower(pid.calculateDeltaPower(shooter.getVel(), targetVel));
-                Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter.getVel(), targetVel));
+                shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), targetVel));
+                shooter2.setPower(shooter1.getPower());
+                Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
         }
 
-        shooter.write();
-        hood.write();
+        shooter1.write();
+        shooter2.write();
+        hoodLeft.write();
     }
 
     public void shoot(double power){
-        shooter.setPower(power);
+        shooter1.setPower(power);
     }
     public void shootWithVelocity(double vel){
         targetVel = vel;
@@ -76,36 +81,39 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public double getVel(){
-        return shooter.getVel();
+        return shooter1.getVel();
     }
     public double getPower(){
-        return shooter.getPower();
+        return shooter1.getPower();
     }
 
     public void rampDownShooter(){
-        shooter.setPower(0);
+        shooter1.setPower(0);
+        shooter2.setPower(0);
     }
     public void setHoodAngle(double angle){
         setHoodServoPos(shooterAngleToPos(angle));
     }
     public void setHoodServoPos(double pos){
-        hood.setPos(pos);
+        hoodLeft.setPos(pos);
     }
 
     public double getHoodAngle(){
-        return Globals.convertServoPosToAngle(255,hood.getPos());
+        return Globals.convertServoPosToAngle(255, hoodLeft.getPos());
     }
 
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Shooter power", shooter.getPower());
+        telemetry.addData("Shooter power", shooter1.getPower());
     }
 
     @Override
     public void reset() {
-        shooter.reset();
-        shooter.read();
+        shooter1.reset();
+        shooter2.reset();
+        shooter2.read();
+        shooter1.read();
     }
 
     public void updatePID(){
