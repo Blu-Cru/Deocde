@@ -31,9 +31,6 @@ public class HoodTest extends BluLinearOpMode {
 
     @Override
     public void telemetry(){
-        telemetry.addData("Servo dir", shooter.hoodLeft.getDir());
-        telemetry.addData("Servo pos", shooter.hoodLeft.getServoPos());
-        telemetry.addData("Thought pos", shooter.hoodLeft.getPos());
         telemetry.addData("Angle", pos);
     }
 }

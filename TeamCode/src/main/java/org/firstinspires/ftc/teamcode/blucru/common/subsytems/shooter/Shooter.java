@@ -23,7 +23,9 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     private BluMotorWithEncoder shooter1;
     private BluMotorWithEncoder shooter2;
-    public BluServo hoodLeft;
+    public HoodLeft hoodLeft;
+    public HoodMiddle hoodMiddle;
+    public HoodRight hoodRight;
 
     enum State{
         IDLE,
@@ -35,7 +37,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     public Shooter(){
         shooter1 = new BluMotorWithEncoder("shooter1", DcMotorSimple.Direction.REVERSE);
         shooter2 = new BluMotorWithEncoder("shooter2", DcMotorSimple.Direction.REVERSE);
-        hoodLeft = new BluServo("hoodLeft", Servo.Direction.FORWARD);
+        hoodLeft = new HoodLeft();
+        hoodMiddle = new HoodMiddle();
+        hoodRight = new HoodRight();
         state = State.IDLE;
         pid = new ShooterVelocityPID(p,i,d,f);
     }
@@ -70,6 +74,8 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter1.write();
         shooter2.write();
         hoodLeft.write();
+        hoodMiddle.write();
+        hoodRight.write();
     }
 
     public void shoot(double power){
@@ -92,14 +98,13 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter2.setPower(0);
     }
     public void setHoodAngle(double angle){
-        setHoodServoPos(shooterAngleToPos(angle));
-    }
-    public void setHoodServoPos(double pos){
-        hoodLeft.setPos(pos);
+        hoodLeft.setShooterAngle(angle);
+        hoodMiddle.setShooterAngle(angle);
+        hoodRight.setShooterAngle(angle);
     }
 
     public double getHoodAngle(){
-        return Globals.convertServoPosToAngle(255, hoodLeft.getPos());
+        return hoodLeft.getHoodAngle();
     }
 
 
@@ -112,8 +117,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     public void reset() {
         shooter1.reset();
         shooter2.reset();
-        shooter2.read();
-        shooter1.read();
+        hoodLeft.reset();
+        hoodMiddle.reset();
+        hoodRight.reset();
     }
 
     public void updatePID(){
