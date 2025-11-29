@@ -4,6 +4,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
@@ -15,12 +16,15 @@ public class TransferCommand extends InstantCommand {
     public TransferCommand(){
         super(() -> {
             new SequentialCommandGroup(
+                    new AllTransferDownCommand(),
+                    new WaitCommand(200),
                     new ElevatorUpCommand(),
                     new IntakeStopCommand(),
-                    new AllTransferDownCommand(),
-                    new WaitCommand(900),
+                    new WaitCommand(500),
+                    new ElevatorDownCommand()
+                    /**new WaitCommand(900),
                     new LockOnGoalCommand(),
-                    new ShootWithVelocityCommand(2500)
+                    new ShootWithVelocityCommand(2500)*/
             ).schedule();
         });
     }

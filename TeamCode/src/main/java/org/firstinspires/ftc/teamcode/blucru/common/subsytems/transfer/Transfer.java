@@ -21,6 +21,8 @@ public class Transfer implements BluSubsystem, Subsystem {
     private State rightState;
     public Transfer(HardwareMap hardwareMap) {
         transferServos =  new TransferServo[]{new LeftTransferServo(), new MiddleTransferServo(), new RightTransferServo()};
+        setAllDown();
+        write();
     }
 
     public void leftSetDown() {

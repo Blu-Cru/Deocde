@@ -2,15 +2,17 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 
-public class TeleOp extends BluLinearOpMode{
+@TeleOp (group = "a")
+
+public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
 
@@ -25,9 +27,11 @@ public class TeleOp extends BluLinearOpMode{
         robot.clear();
         addSixWheel();
         addIntake();
+        addElevator();
+        addTransfer();
         addShooter();
-        addLLTagDetector();
-        addTurret();
+        //addLLTagDetector();
+        //addTurret();
         sm = new StateMachineBuilder()
                 .state(State.IDLE)
                 .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () ->{
@@ -37,7 +41,7 @@ public class TeleOp extends BluLinearOpMode{
                 .transition(() -> driver1.pressedOptions(), State.IDLE, () -> {
                     robot.idleRobot();
                 })
-                .transition(() -> driver2.pressedA(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     new TransferCommand().schedule();
                 })
                 .state(State.DRIVING_TO_SHOOT)
@@ -47,7 +51,7 @@ public class TeleOp extends BluLinearOpMode{
                 .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
                     new SequentialCommandGroup(
                             new ShootBallsCommand(),
-                            new WaitCommand(100),
+                            new WaitCommand(400),
                             new IntakeCommand()
                     ).schedule();
                 })

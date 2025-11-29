@@ -16,6 +16,8 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public Elevator(){
         elevatorServo = new BluServo("elevator");
+        setDown();
+        write();
     }
 
     public void setUp(){
