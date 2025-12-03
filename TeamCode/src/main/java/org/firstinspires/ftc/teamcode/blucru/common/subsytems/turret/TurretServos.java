@@ -39,7 +39,7 @@ public class TurretServos implements BluHardwareDevice {
 
     public void setPower(double power){
         servoLeft.setPower(power);
-        servoRight.setPower(-power);
+        servoRight.setPower(power);
     }
 
     public double getPower(){

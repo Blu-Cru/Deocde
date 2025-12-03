@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.arcrobotics.ftclib.controller.PIDController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
@@ -14,14 +16,15 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-
+@Config
 public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
     private BluEncoder encoder;
     private PDController controller;
     private double position;
-    private final double TICKS_PER_REV = 8192;
+    private final double TICKS_PER_REV = 8192 * 212.0/35;
     Pose2d goalPose;
+    public static double p = 0, d = 0;
     private enum State{
         IDLE,
         PID,
@@ -29,10 +32,10 @@ public class Turret implements BluSubsystem, Subsystem {
     }
     private State state;
 
-    public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluEncoder encoder, PDController controller){
+    public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluEncoder encoder){
         servos = new TurretServos(servoLeft, servoRight);
         this.encoder = encoder;
-        this.controller = controller;
+        controller = new PDController(p,d);
         state = State.IDLE;
     }
 
@@ -98,6 +101,18 @@ public class Turret implements BluSubsystem, Subsystem {
         return delta;
     }
 
+    public double getEncoderPos(){
+        return encoder.getCurrentPos();
+    }
+
+    public double getAngle(){
+        return encoder.getCurrentPos() * (360 / TICKS_PER_REV);
+    }
+
+    public void updatePD(){
+        controller.setPD(p,d);
+    }
+
 
     @Override
     public void telemetry(Telemetry telemetry) {
@@ -107,5 +122,6 @@ public class Turret implements BluSubsystem, Subsystem {
 
     @Override
     public void reset() {
+        encoder.reset();
     }
 }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -7,10 +9,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-
+@Config
 public class Pinpoint implements RobotLocalizer{
     //TODO TUNE PER ROBOT
-    public static double parallelYOffset = 138.5, perpXOffset = -94.05879;
+    public static double parallelYOffset = 0, perpXOffset = 0;
     private GoBildaPinpointDriver pinpoint;
     private double headingOffset;
 

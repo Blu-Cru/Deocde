@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit;
 
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -144,7 +145,7 @@ public class PurePursuitComputer {
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist, SixWheelPID pid){
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-
+        Globals.telemetry.addData("Target Point", goalPoint);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
 
         double linear = pid.getLinearVel(robotPose, goalPoint, robotVel);

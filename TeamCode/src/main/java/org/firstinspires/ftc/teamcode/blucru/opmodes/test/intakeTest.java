@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.blucru.common.commands.SetIntakeToBeParallelCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
@@ -14,6 +16,13 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @TeleOp(group = "test")
 public class intakeTest extends BluLinearOpMode {
 
+    public enum State{
+        PARALLEING,
+        IDLE
+    }
+
+    State state;
+
     public void initialize(){
         robot.clear();
         addIntake();
@@ -22,6 +31,7 @@ public class intakeTest extends BluLinearOpMode {
         elevator.write();
         elevator.setDown();
         elevator.write();
+        state = State.IDLE;
     }
 
     public void periodic(){
@@ -30,6 +40,11 @@ public class intakeTest extends BluLinearOpMode {
                     new IntakeStartCommand(),
                     new ElevatorDownCommand()
             ).schedule();
+            state = State.IDLE;
+        }
+
+        if (driver1.pressedB()){
+            state = State.PARALLEING;
         }
 
         if (driver1.pressedY()){
@@ -37,7 +52,20 @@ public class intakeTest extends BluLinearOpMode {
                     new IntakeStopCommand(),
                     new ElevatorUpCommand()
             ).schedule();
+            state = State.IDLE;
         }
+
+        switch (state){
+            case IDLE:
+                break;
+            case PARALLEING:
+                if (!intake.armsParallel() && !intake.getParallelingArms()){
+                    new SetIntakeToBeParallelCommand().schedule();
+                }
+                break;
+        }
+
+        telemetry.addData("Parallel", intake.armsParallel());
     }
 
 }

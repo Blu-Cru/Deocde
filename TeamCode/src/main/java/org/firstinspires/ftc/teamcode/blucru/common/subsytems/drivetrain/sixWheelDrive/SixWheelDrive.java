@@ -40,7 +40,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 break;
             case PID:
                 double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
-                drive(powers[0], powers[1]);
+                drive(-powers[0], powers[1]);
             case TELE_DRIVE:
                 break;
         }
@@ -49,7 +49,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public void teleDrive(Gamepad g1, double tol){
-        double x = cubicScaling(-g1.left_stick_y);
+        double x = cubicScaling(g1.left_stick_y);
         double r = cubicScaling(g1.right_stick_x);
 
         if (Math.abs(x) <= tol){
