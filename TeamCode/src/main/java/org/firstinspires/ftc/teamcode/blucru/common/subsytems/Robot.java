@@ -158,12 +158,12 @@ public class Robot {
         return transfer;
     }
     public Intake addIntake(){
-        intake = new Intake("intakeLeft", "intakeRight");
+        intake = new Intake("intakeLeft", "intakeRight", "aligner");
         subsystems.add(intake);
         return intake;
     }
     public Turret addTurret(){
-        turret = new Turret(new BluCRServo("servoLeft"), new BluCRServo("servoRight"), new BluEncoder(Globals.flMotorName), new PDController(0,0));
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.blMotorName));
         subsystems.add(turret);
         return turret;
     }

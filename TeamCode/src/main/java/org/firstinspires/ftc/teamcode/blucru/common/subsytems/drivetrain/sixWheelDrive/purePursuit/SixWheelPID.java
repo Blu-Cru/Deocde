@@ -1,17 +1,19 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit;
 
+import com.acmerobotics.dashboard.config.Config;
+
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
-
+@Config
 public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    private double kXY = 0, dXY = 0;
-    private double kR = 0, dR = 0;
+    private double kXY = 0.1, dXY = 0;
+    private double kR = 0.1, dR = 0;
 
     public SixWheelPID(){
         xy = new PDController(kXY, dXY);

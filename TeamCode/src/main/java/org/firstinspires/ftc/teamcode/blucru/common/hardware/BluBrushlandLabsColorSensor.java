@@ -12,8 +12,8 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     private boolean state2;
 
     public BluBrushlandLabsColorSensor(String pin0, String pin1){
-        this.pin0 = Globals.hwMap.get(DigitalChannel.class, pin0);
-        this.pin1 = Globals.hwMap.get(DigitalChannel.class, pin1);
+        this.pin0 = Globals.hwMap.digitalChannel.get(pin0);
+        this.pin1 = Globals.hwMap.digitalChannel.get(pin1);
     }
 
     @Override
@@ -34,16 +34,14 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     public boolean ballDetected(){
         return state1 || state2;
     }
-
-    @Override
-    public void telemetry() {
+    public boolean greenBall(){
+        return state2;
     }
-
-    public boolean getPin0State(){
+    public boolean purpleBall(){
         return state1;
     }
 
-    public boolean getPin1State(){
-        return state2;
+    @Override
+    public void telemetry() {
     }
 }

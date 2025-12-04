@@ -9,6 +9,10 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 
 @TeleOp (group = "a")
 
@@ -52,7 +56,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedRightTrigger(), State.INTAKING, () -> {
                     new SequentialCommandGroup(
                             new ShootBallsCommand(),
-                            new WaitCommand(400),
+                            new WaitCommand(200),
                             new IntakeCommand()
                     ).schedule();
                 })
@@ -76,6 +80,7 @@ public class Tele extends BluLinearOpMode{
             }
         }
         telemetry.addData("State", sm.getState());
+
     }
 
 }
