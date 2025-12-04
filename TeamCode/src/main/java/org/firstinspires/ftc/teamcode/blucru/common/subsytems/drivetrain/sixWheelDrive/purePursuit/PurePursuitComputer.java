@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit;
 
+
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -28,16 +29,16 @@ public class PurePursuitComputer {
 
     public Point2d[] getLineIntersections(Point2d p1, Point2d p2, Pose2d robotPose, double lookAheadDist){
 
-        double[] p1Shifted = {p1.getX() -robotPose.getX(), p1.getY()-robotPose.getY()};
-        double[] p2Shifted = {p2.getX() - robotPose.getX(), p2.getY() - robotPose.getY()};
+        Point2d p1Shifted = new Point2d(p1.getX() -robotPose.getX(), p1.getY()-robotPose.getY());
+        Point2d p2Shifted = new Point2d(p2.getX() - robotPose.getX(), p2.getY() - robotPose.getY());
         //robot pose is now 0,0,h, and because heading doesnt matter for line intersections, the robot is equivalently at 0,0
 
-        double dx = p2.getX() - p1.getX();
-        double dy = p2.getY() - p1.getY();
+        double dx = p2Shifted.getX() - p1Shifted.getX();
+        double dy = p2Shifted.getY() - p1Shifted.getY();
 
         double dr = Math.sqrt(dx*dx + dy*dy);
 
-        double D = p1.getX()*p1.getX() - p2.getY()*p2.getX();
+        double D = p1Shifted.getX()*p1Shifted.getX() - p2Shifted.getY()*p2Shifted.getX();
 
         double discriminant = lookAheadDist * lookAheadDist * dr * dr - D * D;
 
@@ -45,11 +46,14 @@ public class PurePursuitComputer {
             return new Point2d[0];
         }
 
-        Point2d sol1 = new Point2d((D * dy + sgn(dy) * dx * Math.sqrt(discriminant))/(dr * dr),
+        Point2d sol1Unshifted = new Point2d((D * dy + sgn(dy) * dx * Math.sqrt(discriminant))/(dr * dr),
                 (-D * dx + Math.abs(dy) * Math.sqrt(discriminant))/(dr * dr));
 
-        Point2d sol2 = new Point2d((D * dy - sgn(dy) * dx * Math.sqrt(discriminant))/(dr * dr),
+        Point2d sol2Unshifted = new Point2d((D * dy - sgn(dy) * dx * Math.sqrt(discriminant))/(dr * dr),
                 (-D * dx - Math.abs(dy) * Math.sqrt(discriminant))/(dr * dr));
+
+        Point2d sol1 = new Point2d(sol1Unshifted.getX() + robotPose.getX(), sol1Unshifted.getY() + robotPose.getY());
+        Point2d sol2 = new Point2d(sol2Unshifted.getX() + robotPose.getX(), sol2Unshifted.getY() + robotPose.getY());
 
         boolean sol1XInRange = Math.min(p1.getX(), p2.getX()) <= sol1.getX() && sol1.getX() <= Math.max(p1.getX(), p2.getX());
         boolean sol1YInRange = Math.min(p1.getY(), p2.getY()) <= sol1.getY() && sol1.getY() <= Math.max(p1.getY(), p2.getY());
