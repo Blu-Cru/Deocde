@@ -15,7 +15,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
     private PurePursuitComputer computer;
-    private final double LOOK_AHEAD_DIST = 10;
+    private final double LOOK_AHEAD_DIST = 5;
     private SixWheelPID pid;
     public SixWheelDrive(){
         super();

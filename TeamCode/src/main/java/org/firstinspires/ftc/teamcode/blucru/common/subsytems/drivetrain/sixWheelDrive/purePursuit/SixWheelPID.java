@@ -12,8 +12,8 @@ public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    private double kXY = 0.1, dXY = 0;
-    private double kR = 0.1, dR = 0;
+    private double kXY = 0.05, dXY = 0;
+    private double kR = 0.01, dR = 0;
 
     public SixWheelPID(){
         xy = new PDController(kXY, dXY);
@@ -34,19 +34,23 @@ public class SixWheelPID {
 
 
     public double getHeadingVel(Pose2d robotPose, Point2d goalPoint, double angleVel){
-        double robotHeading = Math.toDegrees(Globals.normalize(robotPose.getH()));
+        double robotHeading = Math.toDegrees(robotPose.getH());
 
         //get turn req
-        double turnReq = Math.toDegrees(Globals.normalize(Math.atan2(goalPoint.getX() - robotPose.getX(), goalPoint.getX() - robotPose.getY())));
+        double turnReq = Math.toDegrees(Math.atan2(goalPoint.getY() - robotPose.getY(), goalPoint.getX() - robotPose.getX()));
 
-        double deltaAngle = Globals.normalize(turnReq - robotHeading);
+        double deltaAngle = turnReq - robotHeading;
 
         //make delta angle be between -180 and 180
-        if (deltaAngle > 180){
-            deltaAngle -= 180;
-        } else  if (deltaAngle < -180){
-            deltaAngle += 180;
+        while (deltaAngle >= 180){
+            deltaAngle -= 360;
         }
+        while (deltaAngle <= -180){
+            deltaAngle += 360;
+        }
+        Globals.telemetry.addData("Robot Heading", robotHeading);
+        Globals.telemetry.addData("Turn Req", turnReq);
+        Globals.telemetry.addData("Delta Angle", deltaAngle);
 
         return r.calculate(deltaAngle, -angleVel);
     }

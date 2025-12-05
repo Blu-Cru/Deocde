@@ -79,9 +79,9 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        for (BluMotor motor:dtMotors){
+        /**for (BluMotor motor:dtMotors){
             motor.telemetry();
-        }
+        }*/
         localizer.telemetry(telemetry);
         telemetry.addData("pos", localizer.getPose());
     }
