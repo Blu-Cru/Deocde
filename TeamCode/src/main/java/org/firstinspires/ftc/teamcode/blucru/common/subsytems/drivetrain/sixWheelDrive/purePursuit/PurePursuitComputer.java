@@ -85,14 +85,19 @@ public class PurePursuitComputer {
         return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
     }
     public Point2d findOptimalGoToPoint(Pose2d robotPose, Point2d[] path, double lookAheadDist){
+
+        if (findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[path.length-1]) < lookAheadDist){
+            return path[path.length-1];
+        }
+
         boolean foundIntersection = false;
         Point2d goalPoint = null;
         Point2d[][] pointsSols = new Point2d[path.length-1][2];
-        for (int i = 0; i < path.length - 1; i++) {
+        for (int i = lastFoundIndex; i < path.length - 1; i++) {
             pointsSols[i] = getLineIntersections(path[i], path[i+1],robotPose, lookAheadDist);
         }
 
-        for (int i=0; i<pointsSols.length; i++){
+        for (int i=lastFoundIndex; i<pointsSols.length; i++){
             Point2d[] sols = pointsSols[i];
             if (sols.length == 1){
                 //only 1 val

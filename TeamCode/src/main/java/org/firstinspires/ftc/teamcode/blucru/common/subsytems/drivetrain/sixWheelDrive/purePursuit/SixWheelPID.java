@@ -42,7 +42,7 @@ public class SixWheelPID {
         double deltaAngle = turnReq - robotHeading;
 
         //make delta angle be between -180 and 180
-        while (deltaAngle >= 180){
+        while (deltaAngle > 180){
             deltaAngle -= 360;
         }
         while (deltaAngle <= -180){
