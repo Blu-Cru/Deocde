@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotorWithEncoder leftMotor;
     private BluMotorWithEncoder rightMotor;
-    private BluDigitalChannel parallelSensor;
+    public BluDigitalChannel parallelSensor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.SetIntakeToBeParallelCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelArmsBooleanSupplier;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorTransferWithJiggleCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @TeleOp(group = "test")
@@ -22,6 +22,7 @@ public class intakeTest extends BluLinearOpMode {
     }
 
     State state;
+    DigitalChannel channel;
 
     public void initialize(){
         robot.clear();
@@ -32,6 +33,7 @@ public class intakeTest extends BluLinearOpMode {
         elevator.setDown();
         elevator.write();
         state = State.IDLE;
+        channel = hardwareMap.digitalChannel.get("aligner");
     }
 
     public void periodic(){
@@ -44,6 +46,7 @@ public class intakeTest extends BluLinearOpMode {
         }
 
         if (driver1.pressedB()){
+            new ParallelizeIntakeCommand().schedule();
             state = State.PARALLEING;
         }
 
@@ -55,17 +58,39 @@ public class intakeTest extends BluLinearOpMode {
             state = State.IDLE;
         }
 
-        switch (state){
+        switch(state){
             case IDLE:
                 break;
             case PARALLEING:
-                if (!intake.armsParallel() && !intake.getParallelingArms()){
-                    new SetIntakeToBeParallelCommand().schedule();
+                if (intake.armsParallel()){
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    telemetry.addLine("PARALLEL!");
+                    new IntakeStopCommand().schedule();
                 }
-                break;
         }
 
+
+        telemetry.addData("Parallel", new ParallelArmsBooleanSupplier().getAsBoolean());
         telemetry.addData("Parallel", intake.armsParallel());
+        telemetry.addData("Parallel", intake.parallelSensor.getState());
+        telemetry.addData("Parallel", channel.getState());
+        telemetry.addData("Intake State", intake.getState());
+        telemetry.addData("Scheduled Comands", CommandScheduler.getInstance().isScheduled(new IntakeStopCommand()));
+
     }
 
 }

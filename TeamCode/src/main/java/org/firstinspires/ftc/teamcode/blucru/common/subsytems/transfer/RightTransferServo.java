@@ -8,11 +8,11 @@ public class RightTransferServo extends TransferServo{
 
     @Override
     double getVerticalPos() {
-        return 0.8;
+        return 0.75;
     }
 
     @Override
     double getBottomPos() {
-        return 0.3;
+        return 0.27;
     }
 }
