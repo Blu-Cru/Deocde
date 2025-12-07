@@ -23,7 +23,7 @@ public class Drivetrain extends DriveBase implements Subsystem {
     double drivePower = 1;
 
     //TODO TUNE THIS IF NECESSARY
-    final double MOVEMENT_TOLERANCE = 0.05;
+    final double MOVEMENT_TOLERANCE = 0.5;
     State currState;
     public DrivePID pid;
     TurnToPointKinematics turnPointKinematics;

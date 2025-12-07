@@ -1,54 +1,54 @@
 package com.example.meepmeeptesting;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
 
+import java.util.Vector;
+
 public class MeepMeepTesting {
     public static void main(String[] args) {
         MeepMeep meepMeep = new MeepMeep(800);
-        Pose2d startPose = new Pose2d(60, 22, Math.toRadians(180));
+        Pose2d startPose = new Pose2d(-45, 52, Math.toRadians(307));
 
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setStartPose(startPose)
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
+                .setConstraints(70, 70, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
         myBot.runAction(
                 myBot.getDrive().actionBuilder(startPose)
-                        .waitSeconds(1)
-                        .lineToX(56)
-                        .turnTo(Math.toRadians(160))//turn to shoot
-                        //SHOOT PRELOAD
-                        .waitSeconds(1)
-                        //PICKUP FIRST SET OF BALLS
-                        .turnTo(Math.toRadians(90))
-                        .lineToY(46)
-                        .turnTo(Math.toRadians(180))
-                        .lineToX(35)
-                        .turnTo(Math.toRadians(135))
-                        .lineToX(60)
-                        .turnTo(Math.toRadians(160))
-                        //SHOOT FIRST SET
-                        .waitSeconds(1)
-                        //PICKUP SECOND SET OF BALLS
-                        .turnTo(Math.toRadians(142)) //turning to setup for pickup second set
+                        .lineToX(-35)
+                        .waitSeconds(1)//SHOOT PRELOAD
+                        .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
+                        .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  //PICKUP FIRST SET
+                        .setReversed(true)
+                        .splineTo(new Vector2d(-30, 40), Math.toRadians(225))
+                        .waitSeconds(1)//SHOOT FIRST SET
+                        .setReversed(false)
+                        .splineTo(new Vector2d(15, 47), Math.toRadians(0))  //PICKUP SECOND SET
+                        .waitSeconds(0)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(-16, 25), Math.toRadians(225))
+                        .waitSeconds(1)//SHOOT SECOND SET
+                        .setReversed(false)
+                        .splineTo(new Vector2d(-2, 57), Math.toRadians(90))
+                        .waitSeconds(2)//OPEN GATE
+                        .setReversed(true)
+                        .splineTo(new Vector2d(-7,45), Math.toRadians(180))
+                        .setReversed(false)
+                        .splineTo(new Vector2d(35, 47), Math.toRadians(0))  //PICKUP THIRD SET
+                        .splineTo(new Vector2d(43, 10), Math.toRadians(0))
+                        .waitSeconds(1)//SHOOT THIRD SET
+                        .splineTo(new Vector2d(60, 62), Math.toRadians(90))//PICKUP FOURTH SET
+                        .waitSeconds(0.5)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(60, 20), Math.toRadians(270))
 
-                        .lineToY(46)
-                        .turnTo(Math.toRadians(180))
-                        .lineToX(10)
-                        .turnTo(Math.toRadians(150))
-                        .lineToX(56)
-                        .turnTo(Math.toRadians(160))//turn to shoot
-                        //SHOOT SECOND SET
-                        .waitSeconds(1)
-                        //PICKUP BALLS ON WALL
-                        .turnTo(Math.toRadians(85))
-                        .lineToY(65)
-                        .waitSeconds(1)
-                        .lineToY(22)
+
 
                         .build());
 
