@@ -59,5 +59,6 @@ public class NineBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         // If this auto is *just* the RR path, you can leave this empty.
         // If you want extra telemetry or non-RR logic during the match,
         // put it here.
+        telemetry.update();
     }
 }
