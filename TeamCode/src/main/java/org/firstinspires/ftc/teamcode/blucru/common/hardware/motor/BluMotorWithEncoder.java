@@ -39,6 +39,7 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
     public double getCurrentPos(){
         return encoderTicks;
     }
+
     public double getVel(){
         return vel;
     }

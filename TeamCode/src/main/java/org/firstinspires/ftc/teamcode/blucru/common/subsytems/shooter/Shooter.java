@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -111,6 +112,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     @Override
     public void telemetry(Telemetry telemetry) {
         telemetry.addData("Shooter power", shooter1.getPower());
+        hoodLeft.telemetry();
+        hoodMiddle.telemetry();
+        hoodRight.telemetry();
     }
 
     @Override

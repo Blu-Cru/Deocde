@@ -9,10 +9,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 
 @TeleOp (group = "a")
 
@@ -55,15 +52,25 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedRightTrigger(), State.INTAKING, () -> {
                     new SequentialCommandGroup(
-                            new ShootBallsCommand(),
-                            new WaitCommand(200),
-                            new IntakeCommand()
+                            new ShootBallsCommand()
                     ).schedule();
                 })
                 .build();
 
         sm.setState(State.IDLE);
+
+        elevator.setUp();
+        elevator.write();
+        elevator.setDown();
+        elevator.write();
+        transfer.setAllDown();
+        transfer.write();
+
         sm.start();
+    }
+
+    public void onStart(){
+         new ElevatorDownCommand().schedule();
     }
 
     public void periodic(){

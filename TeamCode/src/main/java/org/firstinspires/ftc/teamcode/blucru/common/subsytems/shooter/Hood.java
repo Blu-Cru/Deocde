@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 
 public abstract class Hood {
@@ -38,6 +39,10 @@ public abstract class Hood {
 
     public void reset(){
 
+    }
+
+    public void telemetry(){
+        servo.telemetry();
     }
 
 

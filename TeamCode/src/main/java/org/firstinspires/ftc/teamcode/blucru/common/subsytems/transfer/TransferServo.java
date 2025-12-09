@@ -12,6 +12,11 @@ public abstract class TransferServo extends BluServo {
     void setVertical(){
         setPos(getVerticalPos());
     }
+
+    void setMiddle(){
+        setPos(getMiddlePos());
+    }
     abstract double getVerticalPos();
     abstract double getBottomPos();
+    abstract double getMiddlePos();
 }

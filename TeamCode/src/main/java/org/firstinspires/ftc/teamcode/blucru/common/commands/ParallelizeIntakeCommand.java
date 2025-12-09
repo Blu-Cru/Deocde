@@ -11,13 +11,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.SetCustomIntakePowerCommand;
 @Config
 public class ParallelizeIntakeCommand extends InstantCommand {
-    public static double topPower = 0.4;
-    public static double bottomPower = 0.38;
     public ParallelizeIntakeCommand(){
-        new SequentialCommandGroup(
-                new SetCustomIntakePowerCommand(topPower),
-                new WaitCommand(20),
-                new SetCustomIntakePowerCommand(bottomPower)
-        ).schedule();
+        super( () -> {
+            Robot.getInstance().intake.setPID();
+        });
     }
 }

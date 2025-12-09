@@ -23,6 +23,7 @@ public class Globals {
     public static String blMotorName = "BL";
     public static String brMotorName = "BR";
     public static Pose2d startPose = new Pose2d(0,0,Math.PI/2);
+    public static Vector2d shootingGoalLPose = new Vector2d(64,64);
 
     public static ElapsedTime matchTime;
 
@@ -36,11 +37,13 @@ public class Globals {
 
     public static Pose2d mapPose(double x, double y, double heading){
         x = x*reflect;
-        if (reflect < 0){
-            heading += Math.PI;
-        }
+        heading = heading*reflect;
 
         return new Pose2d(x, y, heading % (2 * Math.PI));
+    }
+    public static Vector2d mapVector(double x, double y){
+        x = x*reflect;
+        return new Vector2d(x,y);
     }
 
     public static void drawPose(Pose2d pose){

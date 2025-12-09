@@ -6,7 +6,7 @@ public class HoodLeft extends Hood{
         return 0.78;
     }
     public double TOP_ANGLE_POS(){
-        return 0.15;
+        return 0.12;
     }
 
     public HoodLeft(){

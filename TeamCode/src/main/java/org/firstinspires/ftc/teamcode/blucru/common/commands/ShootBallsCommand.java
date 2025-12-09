@@ -4,6 +4,8 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.TurnOffShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -21,7 +23,9 @@ public class ShootBallsCommand extends InstantCommand {
                         new WaitCommand(250),
                         new RightTransferUpCommand(),
                         new WaitCommand(400),
-                        new AllTransferDownCommand()
+                        new AllTransferDownCommand(),
+                        //new TurnOffShooterCommand(),
+                        new IntakeCommand()
                 ).schedule();}
         );
     }

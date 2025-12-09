@@ -47,7 +47,6 @@ public class intakeTest extends BluLinearOpMode {
 
         if (driver1.pressedB()){
             new ParallelizeIntakeCommand().schedule();
-            state = State.PARALLEING;
         }
 
         if (driver1.pressedY()){
@@ -57,39 +56,6 @@ public class intakeTest extends BluLinearOpMode {
             ).schedule();
             state = State.IDLE;
         }
-
-        switch(state){
-            case IDLE:
-                break;
-            case PARALLEING:
-                if (intake.armsParallel()){
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    telemetry.addLine("PARALLEL!");
-                    new IntakeStopCommand().schedule();
-                }
-        }
-
-
-        telemetry.addData("Parallel", new ParallelArmsBooleanSupplier().getAsBoolean());
-        telemetry.addData("Parallel", intake.armsParallel());
-        telemetry.addData("Parallel", intake.parallelSensor.getState());
-        telemetry.addData("Parallel", channel.getState());
-        telemetry.addData("Intake State", intake.getState());
-        telemetry.addData("Scheduled Comands", CommandScheduler.getInstance().isScheduled(new IntakeStopCommand()));
 
     }
 

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
  * */
 public class PurePursuitComputer {
     private int lastFoundIndex;
+    private double dist;
     public PurePursuitComputer(){
         lastFoundIndex = 0;
     }
@@ -69,9 +70,9 @@ public class PurePursuitComputer {
         } else if (sol1InRange && !sol2InRange){
             return new Point2d[]{sol1};
         } else if (!sol1InRange && !sol2InRange){
-            throw new RuntimeException("Both Sols for Pure Pursuit are Out of Range! Sol 1 is " + sol1 + " and sol 2 is " + sol2 + ". The Robot Pose is " + robotPose + "/n"
-                    + "The value for sol1XInRange is " + sol1XInRange + " and the value for sol1YInRange is " + sol1YInRange);
-            //return new Point2d[0];
+           // throw new RuntimeException("Both Sols for Pure Pursuit are Out of Range! Sol 1 is " + sol1 + " and sol 2 is " + sol2 + ". The Robot Pose is " + robotPose + "/n"
+            //        + "The value for sol1XInRange is " + sol1XInRange + " and the value for sol1YInRange is " + sol1YInRange);
+            return new Point2d[0];
         } else {
 
             return new Point2d[]{sol2};
@@ -99,6 +100,9 @@ public class PurePursuitComputer {
 
         for (int i=lastFoundIndex; i<pointsSols.length; i++){
             Point2d[] sols = pointsSols[i];
+            if (sols.length == 0){
+                continue;
+            }
             if (sols.length == 1){
                 //only 1 val
                 if (findDistBetween2Points(sols[0], path[i+1]) >
@@ -144,8 +148,10 @@ public class PurePursuitComputer {
             //no goal point chosen, then go to last found index of intersection on path
             Globals.telemetry.addLine("No goal point set");
             goalPoint = path[lastFoundIndex];
+
         }
 
+        dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[lastFoundIndex]);
         return goalPoint;
     }
 
@@ -164,7 +170,7 @@ public class PurePursuitComputer {
         Globals.telemetry.addData("Target Point", goalPoint);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
 
-        double linear = pid.getLinearVel(robotPose, goalPoint, robotVel);
+        double linear = pid.getLinearVel(robotPose, dist, robotVel);
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
 

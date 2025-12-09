@@ -14,8 +14,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotionProfile;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
+
 @Config
 public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
@@ -24,7 +27,9 @@ public class Turret implements BluSubsystem, Subsystem {
     private double position;
     private final double TICKS_PER_REV = 8192 * 212.0/35;
     Pose2d goalPose;
-    public static double p = 0, d = 0;
+    public static double farP = 0, farD = 0;
+    public static double closeP = 0, closeD = 0;
+
     private enum State{
         IDLE,
         PID,
@@ -35,7 +40,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluEncoder encoder){
         servos = new TurretServos(servoLeft, servoRight);
         this.encoder = encoder;
-        controller = new PDController(p,d);
+        controller = new PDController(farP,farD);
         state = State.IDLE;
     }
 
@@ -59,11 +64,32 @@ public class Turret implements BluSubsystem, Subsystem {
         switch(state){
             case IDLE:
                 break;
-            case PID:
-                servos.setPower(controller.calculate(getRotateError(encoder.getCurrentPos(), position), -servos.getPower()));
-                break;
             case LOCK_ON_GOAL:
-                setFieldCentricPosition((Globals.alliance == Alliance.BLUE) ? 144 : 36, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+                Vector2d target = Globals.mapVector(Globals.shootingGoalLPose.getX(), Globals.shootingGoalLPose.getY());
+                Vector2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
+                Vector2d delta = robotPose.subtractNotInPlace(target);
+                setFieldCentricPosition(delta.getHeading(), Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+                break;
+            case PID:
+                double rotateError = getRotateError(getAngle(), position);
+                if (rotateError < 15){
+                    controller.setPD(closeP, closeD);
+                } else {
+                    controller.setPD(farP, farD);
+                }
+                double power = controller.calculate(rotateError, -servos.getPower());
+                Globals.telemetry.addData("Power", power);
+                Globals.telemetry.addData("Turret Power", servos.getPower());
+                Globals.telemetry.addData("Position", position);
+                if (Math.abs(rotateError) > 2) {
+                    Globals.telemetry.addData("Rotate Error", rotateError);
+                    servos.setPower(power);
+                } else {
+                    Globals.telemetry.addLine("Here");
+                    servos.setPower(0);
+                }
+                break;
+
         }
 
         servos.write();
@@ -71,7 +97,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void setAngle(double angle){
-        this.position = angle / 360 * TICKS_PER_REV;
+        this.position = angle;
         state = State.PID;
     }
 
@@ -90,12 +116,13 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public double getRotateError(double currAngle, double targetAngle){
 
-        double delta = Globals.normalize(targetAngle - currAngle);
+        double delta = targetAngle-currAngle;
 
-        if (delta > 180) {
-            delta -= 180;
-        } else if (delta < -180){
-            delta += 180;
+        while (delta >= 180) {
+            delta -= 360;
+        }
+        while (delta < -180){
+            delta += 360;
         }
 
         return delta;
@@ -110,7 +137,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void updatePD(){
-        controller.setPD(p,d);
+        controller.setPD(farP,farD);
     }
 
 

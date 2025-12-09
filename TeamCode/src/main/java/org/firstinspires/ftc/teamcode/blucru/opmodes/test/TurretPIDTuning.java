@@ -24,16 +24,15 @@ public class TurretPIDTuning extends BluLinearOpMode {
     }
 
     public void periodic(){
-        if (gamepad1.a){
-            turret.setAngle(angle);
-        }
+        turret.setAngle(angle);
 
-        if (gamepad1.x){
-            turret.updatePD();
-        }
+        turret.updatePD();
+
 
         Globals.multiTelemetry.addData("Turret Pos", turret.getAngle());
         Globals.multiTelemetry.addData("Target Pos", angle);
+        telemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
+        turret.telemetry(telemetry);
         Globals.multiTelemetry.update();
     }
 }

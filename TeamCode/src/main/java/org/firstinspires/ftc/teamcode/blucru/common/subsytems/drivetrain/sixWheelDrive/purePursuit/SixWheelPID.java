@@ -20,14 +20,12 @@ public class SixWheelPID {
         r = new PDController(kR, dR);
     }
 
-    public double getLinearVel(Pose2d robotPose, Point2d targetPose, Pose2d robotVel){
+    public double getLinearVel(Pose2d robotPose, double dist, Pose2d robotVel){
 
         double robotVelXY = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
 
 
-        double dx = robotPose.getX() - targetPose.getX();
-        double dy = robotPose.getY() - targetPose.getY();
-        double error = Math.sqrt(dx * dx + dy * dy);
+        double error = dist;
 
         return xy.calculate(error, -robotVelXY);
     }

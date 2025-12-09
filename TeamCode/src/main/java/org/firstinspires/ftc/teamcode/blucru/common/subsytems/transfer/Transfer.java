@@ -14,7 +14,8 @@ public class Transfer implements BluSubsystem, Subsystem {
     private static final double UP_POSITION = 1.0;
     public enum State {
         DOWN,
-        UP
+        UP,
+        MIDDLE
     }
     private State leftState;
     private State middleState;
@@ -30,6 +31,11 @@ public class Transfer implements BluSubsystem, Subsystem {
         transferServos[0].setBottom();
     }
 
+    public void leftSetMiddle() {
+        leftState = State.MIDDLE;
+        transferServos[0].setMiddle();
+    }
+
     public void leftSetUp() {
         leftState = State.UP;
         transferServos[0].setVertical();
@@ -39,6 +45,11 @@ public class Transfer implements BluSubsystem, Subsystem {
         transferServos[1].setBottom();
     }
 
+    public void middleSetMiddle() {
+        middleState = State.MIDDLE;
+        transferServos[1].setMiddle();
+    }
+
     public void middleSetUp() {
         middleState = State.UP;
         transferServos[1].setVertical();
@@ -46,6 +57,11 @@ public class Transfer implements BluSubsystem, Subsystem {
     public void rightSetDown() {
         rightState = State.DOWN;
         transferServos[2].setBottom();
+    }
+
+    public void rightSetMiddle() {
+        rightState = State.MIDDLE;
+        transferServos[2].setMiddle();
     }
 
     public void rightSetUp() {
@@ -110,10 +126,14 @@ public class Transfer implements BluSubsystem, Subsystem {
         middleSetDown();
         rightSetDown();
     }
+    public void setAllMiddle(){
+        leftSetMiddle();
+        middleSetMiddle();
+        rightSetMiddle();
+    }
     public void setAllUp(){
         leftSetUp();
         middleSetUp();
         rightSetUp();
     }
-
 }

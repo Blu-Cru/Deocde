@@ -8,25 +8,30 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluDigitalChannel;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 @Config
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotorWithEncoder leftMotor;
     private BluMotorWithEncoder rightMotor;
+    private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
+    private PDController pid;
     public enum State{
         IN,
         OUT,
         IDlE,
-        CUSTOM_POWER
+        CUSTOM_POWER,
+        PID
     }
     private State state;
     private double power;
@@ -67,21 +72,27 @@ public class Intake implements BluSubsystem, Subsystem {
         leftMotor = new BluMotorWithEncoder(leftMotorName, DcMotorSimple.Direction.FORWARD);
         rightMotor = new BluMotorWithEncoder(rightMotorName, DcMotorSimple.Direction.REVERSE);
         parallelSensor = new BluDigitalChannel(sensorName);
+        encoder = new BluEncoder(Globals.frMotorName);
+        pid = new PDController(0.006, 0.00001);
         state = State.IDlE;
         jammed = false;
+    }
+
+    public void setPID(){
+        state = State.PID;
     }
 
     @Override
     public void init() {
         leftMotor.init();
         rightMotor.init();
+        encoder.init();
     }
 
     @Override
     public void read() {
         leftMotor.read();
         rightMotor.read();
-        parallelSensor.read();
         double currentVoltage = Robot.getInstance().getVoltage();
 
         jammed = (state == State.IN && leftMotor.getVelocity() > 100); // Jam detected, spit out the ball
@@ -113,6 +124,19 @@ public class Intake implements BluSubsystem, Subsystem {
                 case CUSTOM_POWER:
                     leftMotor.setPower(power);
                     rightMotor.setPower(power);
+                case PID:
+                    parallelSensor.read();
+                    encoder.read();
+                    if (!parallelSensor.getState()) {
+                        double curr = encoder.getCurrentPos() % (145.1 / 2);
+                        if (curr > 145.1 / 4) {
+                            curr -= 141.5 / 2;
+                        }
+                        double power = pid.calculate(-curr, -leftMotor.getPower());
+                        Globals.telemetry.addData("Curr", curr);
+                        leftMotor.setPower(power);
+                        rightMotor.setPower(power);
+                    }
             }
         }
 
@@ -126,6 +150,7 @@ public class Intake implements BluSubsystem, Subsystem {
         leftMotor.telemetry();
         rightMotor.telemetry();
         telemetry.addData("Current", leftMotor.getCurrent());
+        telemetry.addData("Pos", encoder.getCurrentPos());
     }
 
     @Override

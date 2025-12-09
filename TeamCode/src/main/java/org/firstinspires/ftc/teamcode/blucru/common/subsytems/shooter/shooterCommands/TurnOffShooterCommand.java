@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 public class TurnOffShooterCommand extends InstantCommand {
     public TurnOffShooterCommand(){
-        super (() -> Robot.getInstance().shooter.shoot(0));
+        super (() -> Robot.getInstance().shooter.rampDownShooter());
 
         addRequirements(Robot.getInstance().shooter);
     }
