@@ -18,14 +18,12 @@ public class NineBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
     @Override
     public void initialize() {
-        addDrivetrain();   // optional, if you still use your drivetrain subsystem
 
         startPose = new Pose2d(-45, 52, Math.toRadians(307));
 
         drive = new TankDrive(hardwareMap, startPose);
 
         path = drive.actionBuilder(startPose)
-                .waitSeconds(3) // for viewing on meepmeep purposes, avoid lag
                 .splineTo(new Vector2d(-30, 40), Math.toRadians(45))
 
                 .waitSeconds(1)//SHOOT PRELOAD
@@ -51,6 +49,8 @@ public class NineBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
     public void onStart() {
         // BluLinearOpMode already did waitForStart() for you,
         // so this is the tutorial's "waitForStart(); Actions.runBlocking(path);"
+        telemetry.addLine("Starting RR Path");
+        telemetry.update();
         Actions.runBlocking(path);
     }
 

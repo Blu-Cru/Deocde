@@ -17,7 +17,6 @@ public class NoPartnerFarGateAutoWithPreload extends BluLinearOpMode {
 
     @Override
     public void initialize() {
-        addDrivetrain();   // optional, if you still use your drivetrain subsystem
 
         startPose = new Pose2d(66, 22, Math.toRadians(180));
 
