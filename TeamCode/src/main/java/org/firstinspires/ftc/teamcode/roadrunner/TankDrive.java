@@ -66,23 +66,23 @@ public final class TankDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
         public double inPerTick = 0.0019773788;
-        public double trackWidthTicks = 0;
+        public double trackWidthTicks = 5000; // not accurate, made up number
 
         // feedforward parameters (in tick units)
-        public double kS = 1; //2.311500766900818 calculated with fr, not sure if accurate
-        public double kV = 0.015;
-        public double kA = 0;
+        public double kS =  2.120015192364042;
+        public double kV = 0.00005367612186786349;
+        public double kA = 0.00018;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;
-        public double minProfileAccel = -30;
-        public double maxProfileAccel = 50;
+        public double maxWheelVel = 20;//orig 50
+        public double minProfileAccel = -20; //orig -30
+        public double maxProfileAccel = 20; //orig 50
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
