@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
+import com.acmerobotics.roadrunner.AngularVelConstraint;
+import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.ProfileAccelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -19,12 +24,16 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
+import java.util.Arrays;
+
 
 @Autonomous(name = "15 Ball Auto Path", group = "auto")
 public class FifteenBallAutoPath extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
     private Action path;
+    public AccelConstraint SLOW_ACCEL = new ProfileAccelConstraint(-20,20);
+    
 
     // dashboard handle
     private FtcDashboard dashboard;
