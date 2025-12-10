@@ -32,7 +32,7 @@ public class MeepMeepTesting {
                         .waitSeconds(2)//SHOOT FIRST SET
                         .setReversed(false)
                         .splineTo(new Vector2d(0, 47), Math.toRadians(0))
-                        .splineTo(new Vector2d(15, 47), Math.toRadians(0))  //PICKUP SECOND SET
+                        .splineTo(new Vector2d(10, 47), Math.toRadians(0))  //PICKUP SECOND SET
                         .waitSeconds(2)
                         .setReversed(true)
                         .splineTo(new Vector2d(-16, 25), Math.toRadians(225))
