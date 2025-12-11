@@ -6,7 +6,7 @@ public class MiddleTransferServo extends TransferServo{
     }
     @Override
     double getVerticalPos() {
-        return 0.65;
+        return 0.76;
     }
 
     @Override

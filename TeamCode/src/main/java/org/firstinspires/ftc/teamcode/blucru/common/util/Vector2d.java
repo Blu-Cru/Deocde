@@ -118,5 +118,6 @@ public class Vector2d {
     public double dotProduct(Vector2d vec){
         return x * vec.getX() + y * vec.getY();
     }
+    public double getDist(){return x * x + y * y;}
 
 }

@@ -46,7 +46,8 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
                 } else {
                     //location tag
                     Pose3D bot = result.getBotpose();
-                    botpose = new Pose2d(bot.getPosition().x, bot.getPosition().y, bot.getOrientation().getYaw(AngleUnit.RADIANS));
+                    //translating to my field coordinates
+                    botpose = new Pose2d(bot.getPosition().y * 1000 / 25.4, -bot.getPosition().x * 1000 / 25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI/2);
                 }
             }
             }

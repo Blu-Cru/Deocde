@@ -7,9 +7,11 @@ import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.OuttakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 @TeleOp (group = "a")
 
@@ -36,10 +38,13 @@ public class Tele extends BluLinearOpMode{
         sm = new StateMachineBuilder()
                 .state(State.IDLE)
                 .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
-                    telemetry.addLine("here");
                     new IntakeCommand().schedule();
                 })
                 .state(State.INTAKING)
+                .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
+                    gamepad1.rumble(10);
+                    new OuttakeCommand().schedule();
+                })
                 .transition(() -> driver1.pressedOptions(), State.IDLE, () -> {
                     robot.idleRobot();
                 })

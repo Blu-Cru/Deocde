@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
@@ -30,7 +31,8 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     enum State{
         IDLE,
-        VELOCITY
+        VELOCITY,
+        AUTO_AIM
     }
     private State state;
     double targetVel = 0;
@@ -70,6 +72,20 @@ public class Shooter implements BluSubsystem, Subsystem {
                 shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), targetVel));
                 shooter2.setPower(shooter1.getPower());
                 Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
+                break;
+            case AUTO_AIM:
+                double dist = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist();
+                double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
+                double leftHoodAngle = interpolations[0];
+                double middleHoodAngle = interpolations[1];
+                double rightHoodAngle = interpolations[2];
+                double vel = interpolations[3];
+                hoodLeft.setShooterAngle(leftHoodAngle);
+                hoodMiddle.setShooterAngle(middleHoodAngle);
+                hoodRight.setShooterAngle(rightHoodAngle);
+                shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), vel));
+                shooter2.setPower(shooter1.getPower());
+                break;
         }
 
         shooter1.write();
@@ -81,6 +97,8 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     public void shoot(double power){
         shooter1.setPower(power);
+        shooter2.setPower(power);
+        state = State.IDLE;
     }
     public void shootWithVelocity(double vel){
         targetVel = vel;
@@ -101,6 +119,17 @@ public class Shooter implements BluSubsystem, Subsystem {
     public void setHoodAngle(double angle){
         hoodLeft.setShooterAngle(angle);
         hoodMiddle.setShooterAngle(angle);
+        hoodRight.setShooterAngle(angle);
+    }
+    public void setLeftHoodAngle(double angle){
+        hoodLeft.setShooterAngle(angle);
+    }
+
+    public void setMiddleHoodAngle(double angle){
+        hoodMiddle.setShooterAngle(angle);
+    }
+
+    public void setRightHoodAngle(double angle){
         hoodRight.setShooterAngle(angle);
     }
 
