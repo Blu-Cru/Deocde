@@ -75,9 +75,9 @@ public final class TankDrive {
         public double trackWidthTicks = 5000; // not accurate, made up number
 
         // feedforward parameters (in tick units)
-        public double kS =  2.120015192364042;
-        public double kV = 0.00005367612186786349;
-        public double kA = 0.00018;
+        public double kS =  2.620015192364042;
+        public double kV = 0.0002567612186786349;
+        public double kA = 0.00005;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 20;//orig 50
@@ -247,8 +247,8 @@ public final class TankDrive {
         }
 
         // TODO: reverse motor directions if needed
-            rightMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
-            rightMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
+            leftMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
+            leftMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
 
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
@@ -420,10 +420,13 @@ public final class TankDrive {
             PoseVelocity2dDual<Time> command = new PoseVelocity2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
                     txWorldTarget.heading.velocity().plus(
-                            PARAMS.turnGain * localizer.getPose().heading.minus(txWorldTarget.heading.value()) +
-                            PARAMS.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
+                            -(
+                                    PARAMS.turnGain * localizer.getPose().heading.minus(txWorldTarget.heading.value()) +
+                                            PARAMS.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
+                            )
                     )
             );
+
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
