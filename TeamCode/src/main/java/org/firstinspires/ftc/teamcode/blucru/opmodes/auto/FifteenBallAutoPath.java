@@ -76,10 +76,10 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(2, 50), Math.toRadians(90))
+                .splineTo(new Vector2d(2, 53), Math.toRadians(90))
 
                 .splineTo(new Vector2d(2, 56), Math.toRadians(90),
-                        new TranslationalVelConstraint(5.0)) // OPEN GATE
+                        new TranslationalVelConstraint(10.0)) // OPEN GATE
                 .waitSeconds(1)
                 .setReversed(false)
                 .splineTo(new Vector2d(-7, 45), Math.toRadians(180))

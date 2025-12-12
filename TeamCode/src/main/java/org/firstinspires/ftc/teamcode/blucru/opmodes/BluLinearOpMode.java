@@ -15,15 +15,16 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanum
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
 public abstract class BluLinearOpMode extends LinearOpMode {
 
+    // ===============================
+    // CORE ROBOT + SUBSYSTEMS
+    // ===============================
     public Robot robot;
-    protected boolean reportTelemetry = true;
 
     public Drivetrain drivetrain;
     public SixWheelDrive sixWheel;
@@ -35,192 +36,178 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
 
-    //add all of the subsystems that need to be added to the robot here
+    // ===============================
+    // CONTROL FLAGS
+    // ===============================
+    protected boolean reportTelemetry = true;
 
+    /**
+     * 🔑 IMPORTANT FLAG
+     * If false, BluLinearOpMode will NOT call:
+     *   robot.read()
+     *   CommandScheduler.run()
+     *   robot.write()
+     *
+     * RoadRunner autos should set this to FALSE and manage IO themselves.
+     */
+    protected boolean manageRobotLoop = true;
 
-    //2 gamepads are if there are 2 drivers, doesnt matter if there is just 1 driver
+    // ===============================
+    // GAMEPADS
+    // ===============================
     public SinglePressGamepad driver1, driver2;
 
+    // ===============================
+    // LOOP TIMING
+    // ===============================
+    private double lastTimeLoopWasRun = 0;
+    private double loopTimeSegmentSum = 0;
+    private double amountOfLoopsInSegment = 0;
+    private double amountOfLoopsOverall = 0;
 
-    //loop time information
-     double lastTimeLoopWasRun = 0, loopTimeSegmentSum = 0,
-            loopTimeSegmentTimeOffset = 0, amountOfLoopsInSegment = 0,
-            amountOfLoopsOverall = 0;
-
-
-    //the function is final because it should not change for any opMode with this,
-    //all opmodes should be able to run the sm and loop
-    //bc of this it runs at a low level without complicated logic
+    // ===============================
+    // MAIN OPMODE ENTRY
+    // ===============================
+    @Override
     public final void runOpMode() throws InterruptedException {
+
         Globals.matchTime = new ElapsedTime();
         Globals.hwMap = hardwareMap;
         Globals.telemetry = telemetry;
+
         telemetry.update();
         Globals.telemetry.update();
 
-        //clears all possible running commands
+        // Clear FTCLib state
         CommandScheduler.getInstance().cancelAll();
 
         driver1 = new SinglePressGamepad(gamepad1);
         driver2 = new SinglePressGamepad(gamepad2);
 
-
         robot = Robot.getInstance();
-        robot.setHwMap(Globals.hwMap);
+        robot.setHwMap(hardwareMap);
         Globals.updateVoltage(robot.getVoltage());
         robot.clear();
 
-
+        // ---- USER INIT ----
         initialize();
         robot.init();
 
-        telemetry.addLine("here");
-        while(opModeInInit()){
-            //update gamepads
+        // ===============================
+        // INIT LOOP
+        // ===============================
+        while (opModeInInit()) {
             driver1.update();
             driver2.update();
 
-            //make sure that when switching controllers nothing happens in periodic
-            //not using the single press gps because it is not single-press based to switch gp controllers
-            if (!((gamepad1.start && gamepad1.b) || (gamepad2.start && gamepad2.a))){
-                initializePeriodic();
+            initializePeriodic();
+
+            if (manageRobotLoop) {
+                CommandScheduler.getInstance().run();
             }
 
-            //run any sent commands, in case they are sent
-            CommandScheduler.getInstance().run();
-
-
-            //always say init and update even if telemetry shouldnt be reported so that
-            //the driver knows if the program is ready to run
             telemetry.addLine("Initialized");
-            if (reportTelemetry){
+            if (reportTelemetry) {
                 telemetry();
-                telemetry.addData("match time", Globals.matchTime.milliseconds());
-                telemetry.addData("Amount of Subsystems", robot.getAmountOfSubsystems());
+                telemetry.addData("Subsystems", robot.getAmountOfSubsystems());
             }
             telemetry.update();
         }
-        waitForStart();
-        //reset timer and get latest data
-        Globals.matchTime.reset();
-        robot.read();
 
+        waitForStart();
+        if (isStopRequested()) return;
+
+        Globals.matchTime.reset();
+
+        if (manageRobotLoop) {
+            robot.read();
+        }
+
+        // ---- USER START ----
         onStart();
 
-        while(opModeIsActive()){
+        // ===============================
+        // MAIN LOOP
+        // ===============================
+        while (opModeIsActive() && !isStopRequested()) {
+
             driver1.update();
             driver2.update();
 
-            //safety for switching controllers again
-            if (!((gamepad1.start && gamepad1.b) || (gamepad2.start && gamepad2.a))){
-                periodic();
+            periodic();
+
+            if (manageRobotLoop) {
+                robot.read();
+                CommandScheduler.getInstance().run();
+                robot.write();
             }
 
-            robot.read();
-
-            CommandScheduler.getInstance().run();
-
-            robot.write();
-
-            if (reportTelemetry){
-                double[] loopTimes = getLoopTimes();
+            if (reportTelemetry) {
                 telemetry();
                 robot.telemetry(telemetry);
-                telemetry.addData("Alliance: ", Globals.alliance);
-                telemetry.addData("Segment Loop Time: ", loopTimes[0]);
-                telemetry.addData("Overall Loop Time: ", loopTimes[1]);
+                double[] loopTimes = getLoopTimes();
+                telemetry.addData("Loop (ms)", loopTimes[0]);
+                telemetry.addData("Hz", loopTimes[1]);
                 telemetry.update();
             }
         }
 
-
-        telemetry.clearAll();
+        // ===============================
+        // CLEAN SHUTDOWN
+        // ===============================
+        CommandScheduler.getInstance().cancelAll();
+        robot.clear();
         end();
     }
 
+    // ===============================
+    // USER OVERRIDES
+    // ===============================
+    public void initialize() {}
+    public void initializePeriodic() {}
+    public void onStart() {}
+    public void periodic() {}
+    public void telemetry() {}
+    public void end() {}
 
-    //runs the initialilzation of the opMode, before the loop starts
-    public void initialize() {
+    // ===============================
+    // SUBSYSTEM ADDERS
+    // ===============================
+    public void addDrivetrain() { drivetrain = robot.addDrivetrain(); }
+    public void addShooter()    { shooter = robot.addShooter(); }
+    public void addIntake()     { intake = robot.addIntake(); }
+    public void addTransfer()   { transfer = robot.addTransfer(); }
+    public void addTurret()     { turret = robot.addTurret(); }
+    public void addElevator()   { elevator = robot.addElevator(); }
+    public void addSixWheel()   { sixWheel = robot.addSixWheelDrivetrain(); }
+    public void addObeliskTagDetector() { obeliskTagDetector = robot.addObeliskTagDetector(); }
+    public void addLLTagDetector()      { llTagDetector = robot.addLLTagDetector(); }
 
-    }
-    /**
-     * this is for things that should be looping while in initialization
-     * ex. selecting alliance, selecting auto
-     * */
-    public void initializePeriodic(){
-
-    }
-
-
-    /**
-     * this occurs right before the main loop starts
-     */
-    public void onStart(){
-
-    }
-
-    /**
-     * this is called every loop that is unique to the opmode
-     * ex. driving in tele
-     */
-    public void periodic(){
-
-    }
-
-    /**
-     * this is for printing telemetry not already handled by the robot
-     * */
-    public void telemetry(){
-
-    }
-
-    /**
-     * this is called at the end of an opmode
-     * */
-    public void end(){
-
-    }
-
-    public void addDrivetrain(){drivetrain = robot.addDrivetrain();}
-    public void addShooter(){shooter = robot.addShooter();}
-    public void addIntake(){
-        intake = robot.addIntake();
-    }
-    public void addTransfer(){
-        transfer = robot.addTransfer();
-    }
-    public void addTurret(){turret = robot.addTurret();}
-    public void addObeliskTagDetector(){obeliskTagDetector = robot.addObeliskTagDetector();}
-    public void addLLTagDetector(){llTagDetector = robot.addLLTagDetector();}
-    public void addSixWheel(){sixWheel = robot.addSixWheelDrivetrain();}
-    public void addElevator(){elevator = robot.addElevator();}
-    public void enableDash(){
+    public void enableDash() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
         Globals.telemetry = telemetry;
     }
 
-    public double[] getLoopTimes(){
-
-        loopTimeSegmentSum += Globals.matchTime.milliseconds() - lastTimeLoopWasRun;
-
-        lastTimeLoopWasRun = Globals.matchTime.milliseconds();
+    // ===============================
+    // LOOP TIMING UTILS
+    // ===============================
+    public double[] getLoopTimes() {
+        double now = Globals.matchTime.milliseconds();
+        loopTimeSegmentSum += now - lastTimeLoopWasRun;
+        lastTimeLoopWasRun = now;
 
         amountOfLoopsInSegment++;
         amountOfLoopsOverall++;
 
         double[] res = new double[2];
-        res[1] =  amountOfLoopsOverall / (Globals.matchTime.seconds());
+        res[1] = amountOfLoopsOverall / Math.max(Globals.matchTime.seconds(), 0.001);
 
-        //update loop frequency every 20 loops
-        if (amountOfLoopsInSegment > 20){
-            res[0] = (loopTimeSegmentSum) / amountOfLoopsInSegment;
+        if (amountOfLoopsInSegment > 20) {
+            res[0] = loopTimeSegmentSum / amountOfLoopsInSegment;
             loopTimeSegmentSum = 0;
             amountOfLoopsInSegment = 0;
         }
 
         return res;
-
-
     }
-
 }

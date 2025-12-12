@@ -23,20 +23,25 @@ public class MeepMeepTesting {
         myBot.runAction(
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
-                        .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
 
-                        .waitSeconds(2) // SHOOT PRELOAD
+                        .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
+//                .afterTime(0.1, new FtclibCommandAction(new ShootWithVelocityCommand(1000)))
+
+//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand())) //SHOOT PRELOAD
+
 
                         .setReversed(true)
-//                        .lineToX(-32)
+                        .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
+//                .stopAndAdd(new FtclibCommandAction(new IntakeStartCommand()))
                         .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                        .waitSeconds(2)
-//                        .turnTo(Math.toRadians(200))
-                        .setReversed(false)
+//                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
+//                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(1500))) // instant
                         .turnTo(Math.toRadians(200))
+                        .setReversed(false)
+
                         .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
                         .waitSeconds(2) // SHOOT FIRST SET
-
+//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
                         .setReversed(true)
                         .splineTo(new Vector2d(0, 47), Math.toRadians(0))
                         .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
@@ -71,7 +76,6 @@ public class MeepMeepTesting {
                         .setReversed(false)
                         .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                         .turnTo(Math.toRadians(160))
-
 
                         .waitSeconds(2)
                         .build());

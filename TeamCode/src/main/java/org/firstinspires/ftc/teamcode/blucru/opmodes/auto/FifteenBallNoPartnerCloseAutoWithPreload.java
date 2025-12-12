@@ -61,16 +61,16 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
                 .setReversed(true)
                 .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
-                .stopAndAdd(new FtclibCommandAction(new IntakeStartCommand()))
+//                .stopAndAdd(new FtclibCommandAction(new IntakeStartCommand()))
                 .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
-                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(1500))) // instant
-                .setReversed(false)
+//                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
+//                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(1500))) // instant
                 .turnTo(Math.toRadians(200))
+                .setReversed(false)
 
                 .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
                 .waitSeconds(2) // SHOOT FIRST SET
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
+//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
                 .setReversed(true)
                 .splineTo(new Vector2d(0, 47), Math.toRadians(0))
                 .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
@@ -113,12 +113,30 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
     @Override
     public void onStart() {
+        // 1. Get the dashboard instance so we can see what's happening
+        com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
+
         TelemetryPacket packet = new TelemetryPacket();
+
+        // 2. Run the loop
+        // We add !isStopRequested() to ensure we exit cleanly if you press stop
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
+
+            // Update FTCLib Subsystems
             robot.read();
             CommandScheduler.getInstance().run();
             robot.write();
-            idle();
+
+            // 3. IMPORTANT: Send the packet to dashboard!
+            // Without this, RoadRunner runs blind and you see no telemetry
+            dash.sendTelemetryPacket(packet);
+
+            // Reset packet for the next loop
+            packet = new TelemetryPacket();
+
+            // 4. Update standard telemetry to the driver station
+            telemetry.addData("Path Running", "True");
+            telemetry.update();
         }
     }
 
