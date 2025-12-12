@@ -41,64 +41,77 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         drive = new TankDrive(hardwareMap, startPose);
 
         path = drive.actionBuilder(startPose)
-                .lineToX(-35)
+                .setReversed(true)
+                .splineTo(new Vector2d(-30, 48), Math.toRadians(160+180))
                 .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
-                .waitSeconds(1)//SHOOT PRELOAD
-                .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
+                .waitSeconds(2) // SHOOT PRELOAD
+
+                .setReversed(true)
+//                        .lineToX(-32)
                 .stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(
                         new IntakeCommand(),
-                        new WaitCommand(1500),
+                        new WaitCommand(2000),
                         new TransferCommand()
                 )))
-                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  //PICKUP FIRST SET
-                .setReversed(true)
-                .splineTo(new Vector2d(-30, 40), Math.toRadians(225))
-                .waitSeconds(1)//SHOOT FIRST SET
-                .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
+                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
+                .waitSeconds(2)
                 .setReversed(false)
+                .splineTo(new Vector2d(-30, 48), Math.toRadians(160))
+                .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
+                .waitSeconds(2) // SHOOT FIRST SET
+
+                .setReversed(true)
                 .splineTo(new Vector2d(0, 47), Math.toRadians(0))
                 .stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(
                         new IntakeCommand(),
-                        new WaitCommand(1500),
+                        new WaitCommand(2000),
                         new TransferCommand()
                 )))
-                .splineTo(new Vector2d(15, 47), Math.toRadians(0))  //PICKUP SECOND SET
-                .waitSeconds(0)
-                .setReversed(true)
-                .splineTo(new Vector2d(-16, 25), Math.toRadians(225))
-                .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
-                .waitSeconds(1)//SHOOT SECOND SET
+                .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
+                .waitSeconds(2)
                 .setReversed(false)
+                .splineTo(new Vector2d(-30, 48), Math.toRadians(160))
+                    .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
+                .waitSeconds(2) // SHOOT SECOND SET
+
+                .setReversed(true)
                 .splineTo(new Vector2d(-2, 57), Math.toRadians(90))
-                .waitSeconds(2)//OPEN GATE
-                .setReversed(true)
-                .splineTo(new Vector2d(-7,45), Math.toRadians(180))
+                .waitSeconds(2) // OPEN GATE
+
                 .setReversed(false)
+                .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
+
+                .setReversed(true)
                 .splineTo(new Vector2d(30, 47), Math.toRadians(0))
                 .stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(
                         new IntakeCommand(),
-                        new WaitCommand(2500),
+                        new WaitCommand(2000),
                         new TransferCommand()
                 )))
-                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  //PICKUP THIRD SET
-                .splineTo(new Vector2d(43, 10), Math.toRadians(0))
-                .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
-                .waitSeconds(1)//SHOOT THIRD SET
-                .splineTo(new Vector2d(60, 50), Math.toRadians(90))
+                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
+                .waitSeconds(2)
+                .turnTo(Math.toRadians(90))
+                .setReversed(true)
+                .splineTo(new Vector2d(46, 13), Math.toRadians(0))
+                    .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
+
+                .waitSeconds(2) // SHOOT THIRD SET
+
+                .turnTo(Math.toRadians(-120))
+                .setReversed(true)
                 .stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(
                         new IntakeCommand(),
-                        new WaitCommand(2500),
+                        new WaitCommand(3000),
                         new TransferCommand()
                 )))
-                .splineTo(new Vector2d(60, 62), Math.toRadians(90))//PICKUP FOURTH SET
-                .waitSeconds(0.5)
-                .setReversed(true)
-                .splineTo(new Vector2d(60, 20), Math.toRadians(270))
+                .splineTo(new Vector2d(57, 62), Math.toRadians(90))   // PICKUP FOURTH SET
+                .waitSeconds(2)
+
+                .setReversed(false)
+                .splineTo(new Vector2d(43, 13), Math.toRadians(180))//SHOOT FOURTH SET
                 .stopAndAdd(new FtclibCommandAction(new ShootBallsCommand()))
-
-
-
-
+                .waitSeconds(2)
+                
                 .build();
     }
 
