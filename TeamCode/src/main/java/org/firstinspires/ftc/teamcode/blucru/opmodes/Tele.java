@@ -110,7 +110,7 @@ public class Tele extends BluLinearOpMode{
 
         //Drivetrain
         sixWheel.teleDrive(gamepad1, 0.0001);
-        if (driver2.pressedB() && !driver2.pressedShare()){
+        if (driver2.pressedB() && !driver2.pressedOptions()){
             sixWheel.setPosition(llTagDetector.getLLBotPose());
         }
 

@@ -76,8 +76,10 @@ public class Turret implements BluSubsystem, Subsystem {
                 Vector2d delta = target.subtractNotInPlace(robotPose);
 
                 double targetAngle = Math.toDegrees(delta.getHeading());
+                Globals.telemetry.addData("target overall angle", targetAngle);
                 double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 this.position = targetAngle - robotHeading;
+                Globals.telemetry.addData("target turret angle", this.position);
             case PID:
                 this.position = Range.clip(this.position, MIN_ANGLE, MAX_ANGLE);
                 double currentAngle = getAngle();
