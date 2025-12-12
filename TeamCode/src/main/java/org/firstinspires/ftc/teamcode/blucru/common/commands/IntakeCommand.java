@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.TurnOffShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -15,7 +16,7 @@ public class IntakeCommand extends InstantCommand {
     public IntakeCommand(){
         super (() -> {
             new SequentialCommandGroup(
-                    new ShootWithVelocityCommand(500),
+                    new IdleShooterCommand(),
                     new IntakeStartCommand(),
                     new ElevatorDownCommand(),
                     new AllTransferDownCommand()

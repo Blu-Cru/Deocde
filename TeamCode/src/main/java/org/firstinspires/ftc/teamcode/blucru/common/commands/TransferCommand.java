@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 @Config
 public class TransferCommand extends InstantCommand {
-    public static double vel = 1500;
+    public static double vel = 900;
     public static double angle = 40;
     public TransferCommand(){
         super(() -> {
@@ -27,9 +27,10 @@ public class TransferCommand extends InstantCommand {
                     new ShootWithVelocityCommand(vel),
                     new WaitCommand(500),
                     new ElevatorDownCommand(),
-                    new WaitCommand(500),
+                    new WaitCommand(300),
                     new AllTransferMiddleCommand(),
-                    new SetHoodAngleCommand(angle)
+                    new WaitCommand(300),
+                    new LockOnGoalCommand()
             ).schedule();
         });
     }

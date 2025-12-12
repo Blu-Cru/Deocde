@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 @TeleOp (group = "a")
 
@@ -33,8 +34,8 @@ public class Tele extends BluLinearOpMode{
         addElevator();
         addTransfer();
         addShooter();
-        //addLLTagDetector();
-        //addTurret();
+        addLLTagDetector();
+        addTurret();
         sm = new StateMachineBuilder()
                 .state(State.IDLE)
                 .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
@@ -84,6 +85,11 @@ public class Tele extends BluLinearOpMode{
         if (driver2.pressedB()){
             sixWheel.setPosition(llTagDetector.getLLBotPose());
         }
+
+        if (driver2.pressedA() && driver2.pressedX()){
+            sixWheel.setPosition(new Pose2d(0, 0, 0));
+        }
+
         if (driver1.pressedLeftBumper()){
             if (sixWheel.getDrivePower() == 0.5){
                 sixWheel.setDrivePower(1);
@@ -91,6 +97,7 @@ public class Tele extends BluLinearOpMode{
                 sixWheel.setDrivePower(0.5);
             }
         }
+
         telemetry.addData("State", sm.getState());
 
     }

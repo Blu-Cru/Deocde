@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class TurretPIDTuning extends BluLinearOpMode {
 
     public static double angle = 0;
+    public static double power = 0;
+    public static double state = 0;
 
 
     @Override
@@ -24,13 +26,17 @@ public class TurretPIDTuning extends BluLinearOpMode {
     }
 
     public void periodic(){
-        turret.setAngle(angle);
+        if (state == 0) {
+            turret.setAngle(angle);
 
-        turret.updatePD();
-
+            turret.updatePID();
+        }else{
+            turret.setPower(power);
+        }
 
         Globals.multiTelemetry.addData("Turret Pos", turret.getAngle());
         Globals.multiTelemetry.addData("Target Pos", angle);
+        Globals.multiTelemetry.addData("Target Power", turret.getPower());
         telemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
         turret.telemetry(telemetry);
         Globals.multiTelemetry.update();
