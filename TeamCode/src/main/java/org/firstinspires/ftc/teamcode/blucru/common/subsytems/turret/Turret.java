@@ -67,7 +67,7 @@ public class Turret implements BluSubsystem, Subsystem {
             case LOCK_ON_GOAL:
                 Vector2d target = Globals.mapVector(Globals.shootingGoalLPose.getX(), Globals.shootingGoalLPose.getY());
                 Vector2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
-                Vector2d delta = robotPose.subtractNotInPlace(target);
+                Vector2d delta = target.subtractNotInPlace(robotPose);
                 setFieldCentricPosition(delta.getHeading(), Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
                 break;
             case PID:

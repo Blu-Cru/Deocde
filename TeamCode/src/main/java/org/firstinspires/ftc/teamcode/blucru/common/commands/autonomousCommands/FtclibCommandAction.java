@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.commands;
+package org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands;
 
 import androidx.annotation.NonNull;
 

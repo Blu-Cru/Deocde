@@ -2,12 +2,10 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
-import com.acmerobotics.roadrunner.AngularVelConstraint;
-import com.acmerobotics.roadrunner.MinVelConstraint;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.ProfileAccelConstraint;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -17,14 +15,10 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.dashboard.canvas.Canvas;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.FtclibCommandAction;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
-
-import java.util.Arrays;
 
 
 @Autonomous(name = "15 Ball Auto Path", group = "auto")
@@ -58,7 +52,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
 
         path = drive.actionBuilder(startPose)
                 .setReversed(true)
-                .splineTo(new Vector2d(-30, 48), Math.toRadians(160+180))
+                .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
 
                 .waitSeconds(2) // SHOOT PRELOAD
 
@@ -68,7 +62,9 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .waitSeconds(2)
 //                        .turnTo(Math.toRadians(200))
                 .setReversed(false)
-                .splineTo(new Vector2d(-30, 48), Math.toRadians(160))
+                .turnTo(Math.toRadians(200))
+
+                .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
                 .waitSeconds(2) // SHOOT FIRST SET
 
                 .setReversed(true)
@@ -76,13 +72,15 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
                 .waitSeconds(2)
                 .setReversed(false)
-                .splineTo(new Vector2d(-30, 48), Math.toRadians(160))
+                .splineTo(new Vector2d(-35, 43), Math.toRadians(140))
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(-2, 57), Math.toRadians(90))
-                .waitSeconds(2) // OPEN GATE
+                .splineTo(new Vector2d(2, 50), Math.toRadians(90))
 
+                .splineTo(new Vector2d(2, 56), Math.toRadians(90),
+                        new TranslationalVelConstraint(5.0)) // OPEN GATE
+                .waitSeconds(1)
                 .setReversed(false)
                 .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
 
@@ -90,19 +88,21 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .splineTo(new Vector2d(30, 47), Math.toRadians(0))
                 .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
                 .waitSeconds(2)
-                .turnTo(Math.toRadians(90))
+//                .turnTo(Math.toRadians(90))
                 .setReversed(true)
-                .splineTo(new Vector2d(46, 13), Math.toRadians(0))
+                .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
                 .waitSeconds(2) // SHOOT THIRD SET
-
-                .turnTo(Math.toRadians(-120))
+                .turnTo(Math.toRadians(-90))
                 .setReversed(true)
-
-                .splineTo(new Vector2d(57, 62), Math.toRadians(90))   // PICKUP FOURTH SET
+                .splineTo(new Vector2d(53,40), Math.toRadians(90))
+                .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
                 .waitSeconds(2)
 
                 .setReversed(false)
-                .splineTo(new Vector2d(43, 13), Math.toRadians(180))//SHOOT FOURTH SET
+                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
+                .turnTo(Math.toRadians(160))
+
+
                 .waitSeconds(2)
                 .build();
     }
