@@ -130,7 +130,7 @@ public class Intake implements BluSubsystem, Subsystem {
                     if (!parallelSensor.getState()) {
                         double curr = encoder.getCurrentPos() % (145.1 / 2);
                         if (curr > 145.1 / 4) {
-                            curr -= 141.5 / 2;
+                            curr -= 145.1 / 2;
                         }
                         double power = pid.calculate(-curr, -leftMotor.getPower());
                         Globals.telemetry.addData("Curr", curr);

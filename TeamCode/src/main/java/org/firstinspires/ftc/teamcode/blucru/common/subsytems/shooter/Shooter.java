@@ -22,6 +22,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static final double SERVO_ROT_TO_HOOD_ROT = 260/28;
     public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
     public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
+    public static double idleSpeed = 300;
 
     private BluMotorWithEncoder shooter1;
     private BluMotorWithEncoder shooter2;
@@ -74,8 +75,10 @@ public class Shooter implements BluSubsystem, Subsystem {
                 Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
                 break;
             case AUTO_AIM:
-                double dist = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist();
+                double dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
+                Globals.telemetry.addData("distance", dist);
                 double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
+                Globals.telemetry.addData("interpolations", interpolations);
                 double leftHoodAngle = interpolations[0];
                 double middleHoodAngle = interpolations[1];
                 double rightHoodAngle = interpolations[2];
@@ -100,6 +103,11 @@ public class Shooter implements BluSubsystem, Subsystem {
         shooter2.setPower(power);
         state = State.IDLE;
     }
+    public void idle(){
+        shooter1.setPower(idleSpeed);
+        shooter2.setPower(idleSpeed);
+        state = State.IDLE;
+    }
     public void shootWithVelocity(double vel){
         targetVel = vel;
         state = State.VELOCITY;
@@ -112,7 +120,11 @@ public class Shooter implements BluSubsystem, Subsystem {
         return shooter1.getPower();
     }
 
+    public void autoAim(){
+        this.state = State.AUTO_AIM;
+    }
     public void rampDownShooter(){
+        this.state = State.IDLE;
         shooter1.setPower(0);
         shooter2.setPower(0);
     }
@@ -120,6 +132,11 @@ public class Shooter implements BluSubsystem, Subsystem {
         hoodLeft.setShooterAngle(angle);
         hoodMiddle.setShooterAngle(angle);
         hoodRight.setShooterAngle(angle);
+    }
+    public void setHoodAngleIndependent(double langle, double mangle, double rangle){
+        hoodLeft.setShooterAngle(langle);
+        hoodMiddle.setShooterAngle(mangle);
+        hoodRight.setShooterAngle(rangle);
     }
     public void setLeftHoodAngle(double angle){
         hoodLeft.setShooterAngle(angle);
