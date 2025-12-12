@@ -28,12 +28,15 @@ public class Turret implements BluSubsystem, Subsystem {
     private double position;
     private final double TICKS_PER_REV = 8192 * 212.0/35;
     Pose2d goalPose;
-    public static double farP = 0.8, farI = 0, farD = 0;
-    public static double closeP = 0.2, closeI = 0, closeD = 0.5;
+    public static double farP = 0.06, farI = 0, farD = 0;
+    public static double closeP = 0.07, closeI = 0, closeD = 0.005;
     public static double acceptableError = 0;
-    public static double powerClip = 1;
+    public static double powerClip = 0.8;
+    public static double MAX_ANGLE = 100;
+    public static double MIN_ANGLE = -100;
 
     private enum State{
+        MANUAL,
         IDLE,
         PID,
         LOCK_ON_GOAL
@@ -63,16 +66,21 @@ public class Turret implements BluSubsystem, Subsystem {
     public void write() {
 
         switch(state){
+            case MANUAL:
+                break;
             case IDLE:
                 break;
             case LOCK_ON_GOAL:
                 Vector2d target = Globals.mapVector(Globals.shootingGoalLPose.getX(), Globals.shootingGoalLPose.getY());
                 Vector2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
-                Vector2d delta = robotPose.subtractNotInPlace(target);
+                Vector2d delta = target.subtractNotInPlace(robotPose);
 
+                double targetAngle = Math.toDegrees(delta.getHeading());
                 double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                this.position = delta.getHeading() - robotHeading;
+                this.position = targetAngle - robotHeading;
             case PID:
+                this.position = Range.clip(this.position, MIN_ANGLE, MAX_ANGLE);
+                double currentAngle = getAngle();
                 double rotateError = getRotateError(getAngle(), position);
                 if (Math.abs(rotateError) < 15){
                     controller.setPID(closeP, closeI, closeD);
@@ -81,6 +89,14 @@ public class Turret implements BluSubsystem, Subsystem {
                 }
                 double power = -controller.calculate(rotateError, 0);
                 power = Range.clip(power, -powerClip, powerClip);
+
+                if (currentAngle > MAX_ANGLE && power > 0) {
+                    power = 0;
+                }
+                else if (currentAngle < MIN_ANGLE && power < 0) {
+                    power = 0;
+                }
+
                 Globals.telemetry.addData("Power", power);
                 Globals.telemetry.addData("Turret Power", servos.getPower());
                 Globals.telemetry.addData("Position", position);
@@ -106,7 +122,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void setPower(double power){
         servos.setPower(power);
-        state = State.IDLE;
+        if (state != State.MANUAL) {
+            state = State.IDLE;
+        }
     }
 
     public void setFieldCentricPosition(double position, double robotHeading){
@@ -114,21 +132,26 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void lockOnGoal(){
-        state = State.LOCK_ON_GOAL;
+        if (state != State.MANUAL) {
+            state = State.LOCK_ON_GOAL;
+        }
+    }
+
+    public void toggleManual(){
+        if(state == State.MANUAL){
+            state = State.IDLE;
+        }else{
+            state = state.MANUAL;
+        }
+    }
+
+    public boolean isManual(){
+        return state == State.MANUAL;
     }
 
     public double getRotateError(double currAngle, double targetAngle){
 
-        double delta = targetAngle-currAngle;
-
-        while (delta >= 180) {
-            delta -= 360;
-        }
-        while (delta < -180){
-            delta += 360;
-        }
-
-        return delta;
+        return targetAngle-currAngle;
     }
 
     public double getEncoderPos(){
@@ -145,6 +168,9 @@ public class Turret implements BluSubsystem, Subsystem {
         controller.setPID(farP,farI,farD);
     }
 
+    public void resetEncoder() {
+        encoder.reset();
+    }
 
     @Override
     public void telemetry(Telemetry telemetry) {

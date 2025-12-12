@@ -22,7 +22,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static final double SERVO_ROT_TO_HOOD_ROT = 260/28;
     public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
     public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
-    public static double idleSpeed = 600;
+    public static double idleSpeed = 300;
 
     private BluMotorWithEncoder shooter1;
     private BluMotorWithEncoder shooter2;
@@ -75,8 +75,10 @@ public class Shooter implements BluSubsystem, Subsystem {
                 Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
                 break;
             case AUTO_AIM:
-                double dist = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist();
+                double dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
+                Globals.telemetry.addData("distance", dist);
                 double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
+                Globals.telemetry.addData("interpolations", interpolations);
                 double leftHoodAngle = interpolations[0];
                 double middleHoodAngle = interpolations[1];
                 double rightHoodAngle = interpolations[2];

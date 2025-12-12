@@ -137,7 +137,7 @@ public class SinglePressGamepad {
 
         if (gamepad.dpad_right){
             //pressed last loop
-            thisFaceButtons[3] = !lastDpad[3];
+            thisDpad[3] = !lastDpad[3];
             lastDpad[3] = true;
         } else {
             thisDpad[3] = false;
