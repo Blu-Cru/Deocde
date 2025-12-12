@@ -92,10 +92,10 @@ public class Turret implements BluSubsystem, Subsystem {
                 double power = -controller.calculate(rotateError, 0);
                 power = Range.clip(power, -powerClip, powerClip);
 
-                if (currentAngle > MAX_ANGLE && power > 0) {
+                if (currentAngle > MAX_ANGLE+3 && power > 0) {
                     power = 0;
                 }
-                else if (currentAngle < MIN_ANGLE && power < 0) {
+                else if (currentAngle < MIN_ANGLE-3 && power < 0) {
                     power = 0;
                 }
 
