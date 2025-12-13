@@ -27,8 +27,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new WaitCommand(500),
                     new ElevatorDownCommand(),
                     new WaitCommand(500),
-                    new AllTransferMiddleCommand(),
-                    new SetHoodAngleCommand(angle)
+                    new AllTransferMiddleCommand()
             ).schedule();
         });
     }

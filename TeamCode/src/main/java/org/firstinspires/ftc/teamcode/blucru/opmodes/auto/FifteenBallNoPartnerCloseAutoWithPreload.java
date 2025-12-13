@@ -11,7 +11,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 import com.arcrobotics.ftclib.command.Command;
@@ -35,6 +37,7 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
     @Override
     public void initialize() {
         manageRobotLoop=false;
+
         addShooter();
         addIntake();
         addTransfer();
@@ -49,28 +52,83 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         startPose = new Pose2d(-45, 52, Math.toRadians(127));
 
         drive = new TankDrive(hardwareMap, startPose);
+        shooter.setRRPoseSupplier(() -> drive.localizer.getPose());
+        shooter.shootWithVelocity();
 
         path = drive.actionBuilder(startPose)
                 .setReversed(true)
 
-                .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
-                .afterTime(0.1, new FtclibCommandAction(new ShootWithVelocityCommand(1000)))
+                .splineTo(new Vector2d(-28, 38), Math.toRadians(160+180))
+                .afterTime(0.1, new FtclibCommandAction(new TurnTurretToPosCommand(0)))
+                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))//SHOOT PRELOAD
+                .waitSeconds(5) // SHOOT PRELOAD
 
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand())) //SHOOT PRELOAD
+                .setReversed(true)
+//                        .lineToX(-32)
+                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
+                .waitSeconds(2)
+//                        .turnTo(Math.toRadians(200))
+                .setReversed(false)
+                .turnTo(Math.toRadians(200))
+
+                .splineTo(new Vector2d(-28, 38), Math.toRadians(135))
+                .waitSeconds(2) // SHOOT FIRST SET
+
+                .setReversed(true)
+                .splineTo(new Vector2d(0, 47), Math.toRadians(0))
+                .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
+                .waitSeconds(2)
+                .setReversed(false)
+                .splineTo(new Vector2d(-28, 38), Math.toRadians(140))
+                .waitSeconds(2) // SHOOT SECOND SET
+
+                .setReversed(true)
+                .splineTo(new Vector2d(2, 53), Math.toRadians(90))
+
+                .splineTo(new Vector2d(2, 56), Math.toRadians(90),
+                        new TranslationalVelConstraint(10.0)) // OPEN GATE
+                .waitSeconds(1)
+                .setReversed(false)
+                .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
+
+                .setReversed(true)
+                .splineTo(new Vector2d(30, 47), Math.toRadians(0))
+                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
+                .waitSeconds(2)
+//                .turnTo(Math.toRadians(90))
+                .setReversed(true)
+                .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
+                .waitSeconds(2) // SHOOT THIRD SET
+                .turnTo(Math.toRadians(-90))
+                .setReversed(true)
+                .splineTo(new Vector2d(53,40), Math.toRadians(90))
+                .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
+                .waitSeconds(2)
+
+                .setReversed(false)
+                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
+                .turnTo(Math.toRadians(160))
+
+
+                .setReversed(true)
+
+                .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
+                .afterTime(0.1, new FtclibCommandAction(new TurnTurretToPosCommand(0)))
+                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))//SHOOT PRELOAD
+                .waitSeconds(5)
 
 
                 .setReversed(true)
                 .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
-//                .stopAndAdd(new FtclibCommandAction(new IntakeStartCommand()))
+                .afterTime(0.1, new FtclibCommandAction(new IntakeStartCommand()))
                 .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-//                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
-//                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(1500))) // instant
+                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
                 .turnTo(Math.toRadians(200))
                 .setReversed(false)
 
                 .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
-                .waitSeconds(2) // SHOOT FIRST SET
-//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
+                .stopAndAdd(new FtclibCommandAction(new AutoAimCommand()))
+                .waitSeconds(5) // SHOOT FIRST SET
                 .setReversed(true)
                 .splineTo(new Vector2d(0, 47), Math.toRadians(0))
                 .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET

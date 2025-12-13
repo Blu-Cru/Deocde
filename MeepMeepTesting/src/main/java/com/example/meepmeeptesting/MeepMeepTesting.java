@@ -23,38 +23,34 @@ public class MeepMeepTesting {
         myBot.runAction(
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
+                        .splineTo(new Vector2d(-28, 38), Math.toRadians(160+180))
 
-                        .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
-//                .afterTime(0.1, new FtclibCommandAction(new ShootWithVelocityCommand(1000)))
-
-//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand())) //SHOOT PRELOAD
-
+                        .waitSeconds(2) // SHOOT PRELOAD
 
                         .setReversed(true)
-                        .splineTo(new Vector2d(-20, 47), Math.toRadians(0))
-//                .stopAndAdd(new FtclibCommandAction(new IntakeStartCommand()))
+//                        .lineToX(-32)
                         .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-//                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
-//                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(1500))) // instant
-                        .turnTo(Math.toRadians(200))
+                        .waitSeconds(2)
+//                        .turnTo(Math.toRadians(200))
                         .setReversed(false)
+                        .turnTo(Math.toRadians(200))
 
-                        .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
+                        .splineTo(new Vector2d(-28, 38), Math.toRadians(135))
                         .waitSeconds(2) // SHOOT FIRST SET
-//                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
+
                         .setReversed(true)
                         .splineTo(new Vector2d(0, 47), Math.toRadians(0))
                         .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
                         .waitSeconds(2)
                         .setReversed(false)
-                        .splineTo(new Vector2d(-35, 43), Math.toRadians(140))
+                        .splineTo(new Vector2d(-28, 38), Math.toRadians(140))
                         .waitSeconds(2) // SHOOT SECOND SET
 
                         .setReversed(true)
-                        .splineTo(new Vector2d(2, 50), Math.toRadians(90))
+                        .splineTo(new Vector2d(2, 53), Math.toRadians(90))
 
                         .splineTo(new Vector2d(2, 56), Math.toRadians(90),
-                                new TranslationalVelConstraint(5.0)) // OPEN GATE
+                                new TranslationalVelConstraint(10.0)) // OPEN GATE
                         .waitSeconds(1)
                         .setReversed(false)
                         .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
@@ -76,6 +72,7 @@ public class MeepMeepTesting {
                         .setReversed(false)
                         .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                         .turnTo(Math.toRadians(160))
+
 
                         .waitSeconds(2)
                         .build());

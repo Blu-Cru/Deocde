@@ -17,17 +17,16 @@ public class FtclibCommandAction implements Action {
 
     @Override
     public boolean run(@NonNull TelemetryPacket packet) {
-        // First time we’re called, schedule the command
+        // Schedule exactly once.
         if (!started) {
-            command.schedule();
+            CommandScheduler.getInstance().schedule(command); // prefer scheduler.schedule()
             started = true;
         }
 
-        // Run the FTCLib scheduler once per RR loop
-        CommandScheduler.getInstance().run();
+        // DO NOT call CommandScheduler.run() here.
+        // Your OpMode loop should call it once per iteration.
 
-        // Keep running this action while the command is not finished
+        // Block the RR action until the command finishes (IF the command actually takes time).
         return !command.isFinished();
     }
-
 }
