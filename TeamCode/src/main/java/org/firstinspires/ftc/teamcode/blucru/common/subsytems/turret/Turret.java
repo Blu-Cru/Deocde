@@ -71,15 +71,34 @@ public class Turret implements BluSubsystem, Subsystem {
             case IDLE:
                 break;
             case LOCK_ON_GOAL:
-                Vector2d target = Globals.mapVector(Globals.shootingGoalLPose.getX(), Globals.shootingGoalLPose.getY());
-                Vector2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
-                Vector2d delta = target.subtractNotInPlace(robotPose);
+                Vector2d target = Globals.mapVector(
+                        Globals.shootingGoalLPose.getX(),
+                        Globals.shootingGoalLPose.getY()
+                );
+                Vector2d robot = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
 
-                double targetAngle = Math.toDegrees(delta.getHeading());
-                Globals.telemetry.addData("target overall angle", targetAngle);
-                double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                this.position = targetAngle - robotHeading;
-                Globals.telemetry.addData("target turret angle", this.position);
+                // vector from robot to target
+                double dx = target.getX() - robot.getX();
+                double dy = target.getY() - robot.getY();
+
+                // absolute field angle to target
+                double fieldAngleDeg = Math.toDegrees(Math.atan2(dy, dx));
+
+                // robot heading in field frame
+                double robotHeadingDeg =
+                        Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+
+                // desired turret angle relative to robot
+                double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
+
+                // clamp to turret range
+                turretTargetDeg = Range.clip(turretTargetDeg, MIN_ANGLE, MAX_ANGLE);
+
+                this.position = turretTargetDeg;
+
+                Globals.telemetry.addData("Field angle", fieldAngleDeg);
+                Globals.telemetry.addData("Robot heading", robotHeadingDeg);
+                Globals.telemetry.addData("Turret target", turretTargetDeg);
             case PID:
                 while (position > 180){
                     position -= 360;
