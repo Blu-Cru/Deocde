@@ -84,6 +84,7 @@ public class Shooter implements BluSubsystem, Subsystem {
                                 .getDist()
                 );
                 dist -= 9.0;
+                dist = Math.max(dist, 0);
 
                 Globals.telemetry.addData("distance", dist);
                 double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);

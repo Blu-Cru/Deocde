@@ -25,7 +25,7 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = false;
-    public int rumbleDur = 10;
+    public int rumbleDur = 1000;
 
     public enum State{
         IDLE,
@@ -123,11 +123,12 @@ public class Tele extends BluLinearOpMode{
 
         //Drivetrain
         sixWheel.teleDrive(gamepad1, 0.0001);
-        if (driver2.pressedB() && !driver2.pressedOptions()){
-            sixWheel.setPosition(llTagDetector.getLLBotPose());
-        }
+//        if (driver2.pressedB() && !driver2.pressedOptions()){
+//            sixWheel.setPosition(llTagDetector.getLLBotPose());
+//        }
 
-        if (driver2.pressedA() && driver2.pressedX()){
+        if ((driver2.pressedA() && gamepad2.x) || (gamepad2.a && driver2.pressedX())) {
+            gamepad2.rumble(1000);
             sixWheel.setPosition(new Pose2d(0, 0, 0));
         }
 
@@ -143,13 +144,16 @@ public class Tele extends BluLinearOpMode{
 
         //auto-aim
         if (driver2.pressedLeftBumper() && turreting) {
+            gamepad2.rumble(1000);
             turreting = false;
         } else if (driver2.pressedLeftBumper() && !turreting) {
+            gamepad2.rumble(1000);
             turreting = true;
         }
 
         //manual
         if (driver2.pressedShare()){
+            gamepad2.rumble(1000);
             turret.resetEncoder();
             turret.toggleManual();
         }
