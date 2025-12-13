@@ -25,6 +25,7 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = false;
+    public int rumbleDur = 10;
 
     public enum State{
         IDLE,
@@ -48,41 +49,51 @@ public class Tele extends BluLinearOpMode{
 
                 .state(State.IDLE)
                 .transition(() -> driver1.pressedLeftBumper(), State.INTAKING, () ->{
+                    gamepad1.rumble(rumbleDur);
                     new IntakeCommand().schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () ->{
+                    gamepad1.rumble(rumbleDur);
                     new UnshootCommand().schedule();
                 })
 
                 .state(State.INTAKING)
                 .transition(() -> driver1.pressedLeftTrigger(), State.OUTTAKING, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new IntakeSpitCommand().schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
+                    gamepad1.rumble(rumbleDur);
                     robot.idleRobot();
                     new IdleCommand().schedule();
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new TransferCommand(turreting).schedule();
                 })
 
                 .state(State.OUTTAKING)
                 .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new IntakeCommand().schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
+                    gamepad1.rumble(rumbleDur);
                     robot.idleRobot();
                     new IdleCommand().schedule();
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new TransferCommand(turreting).schedule();
                 })
 
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedRightBumper(), State.OUTTAKING, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new UntransferCommand().schedule();
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.INTAKING, () -> {
+                    gamepad1.rumble(rumbleDur);
                     new SequentialCommandGroup(
                             new ShootBallsCommand()
                     ).schedule();

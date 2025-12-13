@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret;
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.arcrobotics.ftclib.controller.PIDController;
-import java.util.function.Supplier;
-
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
@@ -36,18 +34,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double powerClip = 0.8;
     public static double MAX_ANGLE = 100;
     public static double MIN_ANGLE = -100;
-
-    // Optional pose source for RoadRunner autos (Pinpoint/localizer pose).
-// If null, turret will fall back to sixWheelDrivetrain pose.
-    private Supplier<com.acmerobotics.roadrunner.Pose2d> rrPoseSupplier = null;
-
-    /**
-     * Provide RoadRunner pose for LOCK_ON_GOAL (used in RR autos).
-     */
-    public void setRRPoseSupplier(Supplier<com.acmerobotics.roadrunner.Pose2d> supplier) {
-        this.rrPoseSupplier = supplier;
-    }
-
 
     private enum State{
         MANUAL,
@@ -84,59 +70,35 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
             case IDLE:
                 break;
-            case LOCK_ON_GOAL: {
-                /*
-                 * LOCK_ON_GOAL aims the turret at the goal.
-                 *
-                 * Pose source priority:
-                 *  1) RoadRunner pose (rrPoseSupplier) if provided (RR auto)
-                 *  2) SixWheelDrivetrain pose otherwise (teleop / non-RR)
-                 *
-                 * If neither exists, we can't aim -> stop turret safely.
-                 */
-
-                double robotX, robotY, robotHeadingDeg;
-
-                if (rrPoseSupplier != null) {
-                    // RoadRunner pose (Pinpoint/localizer)
-                    com.acmerobotics.roadrunner.Pose2d p = rrPoseSupplier.get();
-                    robotX = p.position.x;
-                    robotY = p.position.y;
-                    robotHeadingDeg = Math.toDegrees(p.heading.toDouble());
-                } else if (Robot.getInstance().sixWheelDrivetrain != null) {
-                    // Your drivetrain pose (your own Pose2d class)
-                    Pose2d p = Robot.getInstance().sixWheelDrivetrain.getPos();
-                    robotX = p.getX();
-                    robotY = p.getY();
-                    robotHeadingDeg = Math.toDegrees(p.getH());
-                } else {
-                    // No pose source available => cannot compute turret target angle
-                    servos.setPower(0);
-                    state = State.IDLE;
-                    break;
-                }
-
-                // Target goal position in field coordinates (mapped for alliance)
+            case LOCK_ON_GOAL:
                 Vector2d target = Globals.mapVector(
                         Globals.shootingGoalLPose.getX(),
                         Globals.shootingGoalLPose.getY()
                 );
+                Vector2d robot = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
 
-                // Robot position in the same field coordinate system
-                Vector2d robotPose = new Vector2d(robotX, robotY);
+                // vector from robot to target
+                double dx = target.getX() - robot.getX();
+                double dy = target.getY() - robot.getY();
 
-                // Vector from robot -> goal
-                Vector2d delta = target.subtractNotInPlace(robotPose);
+                // absolute field angle to target
+                double fieldAngleDeg = Math.toDegrees(Math.atan2(dy, dx));
 
-                // Absolute field-bearing to goal
-                double targetAngleDeg = Math.toDegrees(delta.getHeading());
-                this.position = targetAngleDeg - robotHeadingDeg;
+                // robot heading in field frame
+                double robotHeadingDeg =
+                        Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
-                // Next loop PID will drive turret to 'position'
-                state = State.PID;
-                break;
-            }
+                // desired turret angle relative to robot
+                double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
 
+                // clamp to turret range
+                turretTargetDeg = Range.clip(turretTargetDeg, MIN_ANGLE, MAX_ANGLE);
+
+                this.position = turretTargetDeg;
+
+                Globals.telemetry.addData("Field angle", fieldAngleDeg);
+                Globals.telemetry.addData("Robot heading", robotHeadingDeg);
+                Globals.telemetry.addData("Turret target", turretTargetDeg);
             case PID:
                 while (position > 180){
                     position -= 360;
