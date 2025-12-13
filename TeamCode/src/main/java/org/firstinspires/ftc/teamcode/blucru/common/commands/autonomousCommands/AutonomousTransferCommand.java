@@ -10,6 +10,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorD
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
@@ -17,18 +20,20 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 
 @Config
 public class AutonomousTransferCommand extends InstantCommand {
-    public static double vel = 1500;
-    public static double angle = 40;
-    public AutonomousTransferCommand(){
+    public AutonomousTransferCommand(double vel, double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeStopCommand(),
                     new ElevatorUpCommand(),
                     new ParallelizeIntakeCommand(),
+                    new ShootWithVelocityCommand(vel),
                     new WaitCommand(500),
                     new ElevatorDownCommand(),
                     new WaitCommand(500),
-                    new AllTransferMiddleCommand()
+                    new AllTransferMiddleCommand(),
+                    new SetLeftHoodAngleCommand(leftAngle),
+                    new SetRightHoodAngleCommand(middleAngle),
+                    new SetMiddleHoodAngleCommand(rightAngle)
             ).schedule();
         });
     }

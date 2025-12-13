@@ -8,15 +8,12 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 import com.arcrobotics.ftclib.command.Command;
@@ -56,6 +53,8 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
         drive = new TankDrive(hardwareMap, startPose);
         transfer.setAllMiddle();
+        elevator.setDown();
+        elevator.write();
 
         path = drive.actionBuilder(startPose)
                 .setReversed(true)
@@ -63,21 +62,21 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
                 //.lineToX(-44)
                 .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(850)))
                 .afterTime(0.1, new FtclibCommandAction(new CenterTurretCommand()))
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))//SHOOT PRELOAD
-                .waitSeconds(5) // SHOOT PRELOAD
+                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))//SHOOT PRELOAD
+                .waitSeconds(3) // SHOOT PRELOAD
                 .turnTo(Math.toRadians(-90))
                 .setReversed(true)
                 .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand(), new CenterTurretCommand())))
                 .splineTo(new Vector2d(-20, 47), Math.toRadians(0))  // PICKUP FIRST SET
                 .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
                 .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand()))
+                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(850, 26, 28, 26)))
                 .setReversed(false)
                 .turnTo(Math.toRadians(200))
 
                 .splineTo(new Vector2d(-28, 38), Math.toRadians(135))
-                .waitSeconds(2) // SHOOT FIRST SET
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))//SHOOT PRELOAD
+                .waitSeconds(2)
+                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand())) //SHOOT FIRST SET
 
                 .setReversed(true)
                 .splineTo(new Vector2d(0, 47), Math.toRadians(0))
@@ -88,8 +87,10 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
                 )))
                 .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
                 .waitSeconds(2)
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(850, 26, 28, 26)))
                 .setReversed(false)
                 .splineTo(new Vector2d(-28, 38), Math.toRadians(140))
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
@@ -103,30 +104,37 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
                 .setReversed(true)
                 .splineTo(new Vector2d(30, 47), Math.toRadians(0))
+                /**.stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(
+                        new IntakeStartCommand(),
+                        new ElevatorDownCommand(),
+                        new CenterTurretCommand()
+                )))*/
                 .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
-                .waitSeconds(2)
+                /**.stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(1200, 50, 50, 50)))
+                .waitSeconds(0.5)*/
 //                .turnTo(Math.toRadians(90))
                 .setReversed(true)
                 .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
                 .waitSeconds(2) // SHOOT THIRD SET
                 .turnTo(Math.toRadians(-90))
                 .setReversed(true)
                 .splineTo(new Vector2d(53,40), Math.toRadians(90))
+                .stopAndAdd(new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand())))
                 .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
-                .waitSeconds(2)
+                .waitSeconds(0.5)
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(1200, 50, 50, 50)))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                 .turnTo(Math.toRadians(160))
-
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
 
 
                 .waitSeconds(2)
                 .build();
-
-
-        elevator.setDown();
-        elevator.write();
+        //telemetry.addLine("Here");
+        //telemetry.update();
     }
 
     @Override
