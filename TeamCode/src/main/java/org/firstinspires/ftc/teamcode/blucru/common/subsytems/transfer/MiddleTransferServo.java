@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class MiddleTransferServo extends TransferServo{
+    public static double middlePos = 0.5;
     public MiddleTransferServo(){
         super("kickerMiddle");
     }
@@ -16,6 +20,6 @@ public class MiddleTransferServo extends TransferServo{
 
     @Override
     double getMiddlePos() {
-        return 0.5;
+        return middlePos;
     }
 }

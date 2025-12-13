@@ -12,6 +12,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
+import java.util.Arrays;
+
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
@@ -22,7 +25,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static final double SERVO_ROT_TO_HOOD_ROT = 260/28;
     public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
     public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
-    public static double idleSpeed = 300;
+    public static double idleSpeed = 0.4;
 
     private BluMotorWithEncoder shooter1;
     private BluMotorWithEncoder shooter2;
@@ -78,6 +81,7 @@ public class Shooter implements BluSubsystem, Subsystem {
                 double dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
                 Globals.telemetry.addData("distance", dist);
                 double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
+                Globals.telemetry.addData("Interpolations", Arrays.toString(interpolations));
                 Globals.telemetry.addData("interpolations", interpolations);
                 double leftHoodAngle = interpolations[0];
                 double middleHoodAngle = interpolations[1];

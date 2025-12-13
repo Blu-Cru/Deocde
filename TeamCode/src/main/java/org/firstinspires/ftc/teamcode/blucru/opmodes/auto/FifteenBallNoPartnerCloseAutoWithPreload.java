@@ -43,7 +43,7 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         Command pickupBalls = new SequentialCommandGroup(
                 new IntakeCommand(),
                 new WaitCommand(500),
-                new TransferCommand()
+                new TransferCommand(true)
         );
 
         startPose = new Pose2d(-45, 52, Math.toRadians(127));

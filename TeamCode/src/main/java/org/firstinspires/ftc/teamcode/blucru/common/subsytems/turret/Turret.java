@@ -81,6 +81,13 @@ public class Turret implements BluSubsystem, Subsystem {
                 this.position = targetAngle - robotHeading;
                 Globals.telemetry.addData("target turret angle", this.position);
             case PID:
+                while (position > 180){
+                    position -= 360;
+                }
+                while (position <= -180){
+                    position += 360;
+                }
+
                 this.position = Range.clip(this.position, MIN_ANGLE, MAX_ANGLE);
                 double currentAngle = getAngle();
                 double rotateError = getRotateError(getAngle(), position);

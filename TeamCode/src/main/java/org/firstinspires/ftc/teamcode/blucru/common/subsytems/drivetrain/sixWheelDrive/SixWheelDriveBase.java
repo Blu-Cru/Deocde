@@ -31,10 +31,10 @@ public class SixWheelDriveBase implements BluSubsystem{
     State dtState;
 
     public SixWheelDriveBase(){
-        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
-                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT),
-                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
-                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT));
+        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
+                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE));
     }
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br){
         dtMotors = new BluMotor[]{fl, fr, bl, br};
@@ -73,6 +73,18 @@ public class SixWheelDriveBase implements BluSubsystem{
         Globals.telemetry.addData("Powers", Arrays.toString(powers));
     }
 
+    public void makeMotorsBeInBrake(){
+        for (BluMotor motors: dtMotors){
+            motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
+    }
+
+    public void makeMotorsBeInFloat(){
+        /**for (BluMotor motors: dtMotors){
+            motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        }*/
+    }
+
     public Pose2d getPos(){
         return localizer.getPose();
     }
@@ -84,6 +96,7 @@ public class SixWheelDriveBase implements BluSubsystem{
         }*/
         localizer.telemetry(telemetry);
         telemetry.addData("pos", localizer.getPose());
+        telemetry.addData("Brake Mode", dtMotors[0].getZeroPowerBehavior());
     }
 
     @Override

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.test.brushlandStuff;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 

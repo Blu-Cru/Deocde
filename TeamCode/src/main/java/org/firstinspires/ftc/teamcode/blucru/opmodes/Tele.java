@@ -82,7 +82,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedRightBumper(), State.OUTTAKING, () -> {
                     new UntransferCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper(), State.IDLE, () -> {
+                .transition(() -> driver1.pressedLeftBumper(), State.INTAKING, () -> {
                     new SequentialCommandGroup(
                             new ShootBallsCommand()
                     ).schedule();
@@ -97,6 +97,8 @@ public class Tele extends BluLinearOpMode{
         elevator.write();
         transfer.setAllDown();
         transfer.write();
+        turret.setAngle(0);
+        turret.write();
 
         sm.start();
     }
@@ -136,7 +138,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         //manual
-        if (driver2.pressedOptions()){
+        if (driver2.pressedShare()){
             turret.resetEncoder();
             turret.toggleManual();
         }

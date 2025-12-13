@@ -1,9 +1,15 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.test.brushlandStuff;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.R;
 
 /**
  *
@@ -11,18 +17,39 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
  *
  * */
 @TeleOp
+@Config
 public class ConfigureColorRangefinder extends LinearOpMode {
+
+    public double purpleLowerBound = 160/360.0 * 255;
+    public double purpleHighBound = 190 / 360.0 * 255;
+    public double greenLowerBound = 110/360.0 * 255;
+    public double greenHigherBound = 140 / 360.0 * 255;
+    public double maxDist = 1;
+
     @Override
     public void runOpMode() throws InterruptedException {
         ColorRangefinder crf = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "Color"));
+        NormalizedColorSensor colorSensorV3 = hardwareMap.get(RevColorSensorV3.class, "Color");
+        RevColorSensorV3 colorSensorV4 = hardwareMap.get(RevColorSensorV3.class, "Color");
         waitForStart();
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
             pin1 --> green */
-        crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, 160 / 360.0 * 255, 190 / 360.0 * 255); // purple
-        crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, 100); // 50mm or closer requirement
-        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 110 / 360.0 * 255, 140 / 360.0 * 255); // green
-        crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, 100); // 50mm or closer requirement
+
+        while (opModeIsActive()){
+
+            if (gamepad1.a) {
+                crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, purpleLowerBound, purpleHighBound); // purple
+                crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
+                crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound, greenHigherBound); // green
+                crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
+                stop();
+            }
+            telemetry.addData("HSV", JavaUtil.colorToHue(colorSensorV3.getNormalizedColors().toColor()));
+            telemetry.addData("Dist", colorSensorV4.getDistance(DistanceUnit.MM));
+            telemetry.update();
+        }
+
     }
 }
 
