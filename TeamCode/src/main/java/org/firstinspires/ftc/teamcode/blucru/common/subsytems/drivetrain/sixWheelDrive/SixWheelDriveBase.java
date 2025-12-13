@@ -31,10 +31,10 @@ public class SixWheelDriveBase implements BluSubsystem{
     State dtState;
 
     public SixWheelDriveBase(){
-        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE));
+        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
+                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT),
+                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
+                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT));
     }
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br){
         dtMotors = new BluMotor[]{fl, fr, bl, br};
