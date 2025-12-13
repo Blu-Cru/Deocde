@@ -61,7 +61,7 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
                 .splineTo(new Vector2d(-28, 38), Math.toRadians(150+180))
                 //.lineToX(-44)
                 .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(850)))
-                .afterTime(0.1, new FtclibCommandAction(new CenterTurretCommand()))
+                /**.afterTime(0.1, new FtclibCommandAction(new CenterTurretCommand()))
                 .stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))//SHOOT PRELOAD
                 .waitSeconds(3) // SHOOT PRELOAD
                 .turnTo(Math.toRadians(-90))
@@ -108,10 +108,10 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
                         new IntakeStartCommand(),
                         new ElevatorDownCommand(),
                         new CenterTurretCommand()
-                )))*/
+                )))
                 .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
                 /**.stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(1200, 50, 50, 50)))
-                .waitSeconds(0.5)*/
+                .waitSeconds(0.5)
 //                .turnTo(Math.toRadians(90))
                 .setReversed(true)
                 .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
@@ -128,13 +128,13 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
                 .setReversed(false)
                 .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                 .turnTo(Math.toRadians(160))
-                //.stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))
+                //.stopAndAdd(new FtclibCommandAction(new AutonomousShootCommand()))*/
 
 
                 .waitSeconds(2)
                 .build();
-        //telemetry.addLine("Here");
-        //telemetry.update();
+        telemetry.addLine("Here");
+        telemetry.update();
     }
 
     @Override
@@ -146,7 +146,7 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
         // 2. Run the loop
         // We add !isStopRequested() to ensure we exit cleanly if you press stop
-        while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
+        while (!isStopRequested() && path.run(packet)) {
 
             // Update FTCLib Subsystems
             robot.read();
