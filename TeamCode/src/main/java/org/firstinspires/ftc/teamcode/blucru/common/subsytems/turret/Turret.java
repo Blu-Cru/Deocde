@@ -79,20 +79,22 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 // vector from robot to target
                 double dx = target.getX() - robot.getX();
+                Globals.telemetry.addData("dx", dx);
                 double dy = target.getY() - robot.getY();
+                Globals.telemetry.addData("dy", dy);
 
                 // absolute field angle to target
-                double fieldAngleDeg = Math.toDegrees(Math.atan2(dy, dx));
+                double fieldAngleDeg = -Math.toDegrees(Math.atan(Math.abs(dy/dx)));
 
                 // robot heading in field frame
                 double robotHeadingDeg =
                         Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
                 // desired turret angle relative to robot
-                double turretTargetDeg = fieldAngleDeg - robotHeadingDeg;
+                double turretTargetDeg = fieldAngleDeg + robotHeadingDeg;
 
                 // clamp to turret range
-                turretTargetDeg = Range.clip(turretTargetDeg, MIN_ANGLE, MAX_ANGLE);
+                turretTargetDeg = -Range.clip(turretTargetDeg, MIN_ANGLE, MAX_ANGLE);
 
                 this.position = turretTargetDeg;
 
@@ -106,7 +108,6 @@ public class Turret implements BluSubsystem, Subsystem {
                 while (position <= -180){
                     position += 360;
                 }
-
                 this.position = Range.clip(this.position, MIN_ANGLE, MAX_ANGLE);
                 double currentAngle = getAngle();
                 double rotateError = getRotateError(getAngle(), position);
