@@ -24,6 +24,7 @@ public class Globals {
     public static String brMotorName = "BR";
     public static Pose2d startPose = new Pose2d(0,0,Math.PI/2);
     public static Vector2d shootingGoalLPose = new Vector2d(-64,64);
+    public static Vector2d shootingGoalRPose = new Vector2d(-64,-64);
 
     public static ElapsedTime matchTime;
 

@@ -34,6 +34,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double powerClip = 0.8;
     public static double MAX_ANGLE = 100;
     public static double MIN_ANGLE = -100;
+    public static double distFromCenter = 72.35/25.4;
 
     private enum State{
         MANUAL,
@@ -77,18 +78,21 @@ public class Turret implements BluSubsystem, Subsystem {
                 );
                 Vector2d robot = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
 
+                // robot heading in field frame
+                double robotHeadingDeg =
+                        Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+
+                // turret center in field frame
+                double turretCenterX = robot.getX() - distFromCenter * Math.cos(Math.toRadians(robotHeadingDeg));
+                double turretCenterY = robot.getY() - distFromCenter * Math.sin(Math.toRadians(robotHeadingDeg));
                 // vector from robot to target
-                double dx = target.getX() - robot.getX();
+                double dx = target.getX() - turretCenterX;
                 Globals.telemetry.addData("dx", dx);
-                double dy = target.getY() - robot.getY();
+                double dy = target.getY() - turretCenterY;
                 Globals.telemetry.addData("dy", dy);
 
                 // absolute field angle to target
                 double fieldAngleDeg = -Math.toDegrees(Math.atan(Math.abs(dy/dx)));
-
-                // robot heading in field frame
-                double robotHeadingDeg =
-                        Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
                 // desired turret angle relative to robot
                 double turretTargetDeg = fieldAngleDeg + robotHeadingDeg;

@@ -121,6 +121,13 @@ public class Tele extends BluLinearOpMode{
     public void periodic(){
         sm.update();
 
+        //Shooter
+        if(driver2.pressedRightBumper()){
+            shooter.redAlliance = true;
+        }else if(driver2.pressedRightTrigger()){
+            shooter.redAlliance = false;
+        }
+
         //Drivetrain
         sixWheel.teleDrive(gamepad1, 0.0001);
 //        if (driver2.pressedB() && !driver2.pressedOptions()){
