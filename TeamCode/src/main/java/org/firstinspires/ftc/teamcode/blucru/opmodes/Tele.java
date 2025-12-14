@@ -1,21 +1,28 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
+import com.arcrobotics.ftclib.command.ConditionalCommand;
 import java.util.function.BooleanSupplier;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IdleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.OuttakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ReturnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UntransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -26,6 +33,7 @@ public class Tele extends BluLinearOpMode{
     StateMachine sm;
     public boolean turreting = false;
     public int rumbleDur = 200;
+    public int shot = 0;
 
     public enum State{
         IDLE,
@@ -69,6 +77,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
+                    shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
 
@@ -84,6 +93,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
+                    shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
 
@@ -94,10 +104,43 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);
+                    new ConditionalCommand(
+                            new ReturnCommand(),
+                            new ShootBallsCommand(),
+                            () -> (shot == 3)
+                    );
+                })
+                .transition(() -> driver1.pressedDpadLeft(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot+=1;
                     new SequentialCommandGroup(
-                            new ShootBallsCommand()
+                            new InstantCommand(() -> {
+                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
+                            }),
+                            new LeftTransferUpCommand()
                     ).schedule();
                 })
+                .transition(() -> driver1.pressedDpadUp(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot+=1;
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> {
+                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
+                            }),
+                            new MiddleTransferUpCommand()
+                    ).schedule();
+                })
+                .transition(() -> driver1.pressedDpadRight(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot+=1;
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> {
+                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
+                            }),
+                            new RightTransferUpCommand()
+                    ).schedule();
+                })
+                
                 .build();
 
         sm.setState(State.IDLE);
