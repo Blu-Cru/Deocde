@@ -29,7 +29,6 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new ShootWithVelocityCommand(vel),
                     new WaitCommand(500),
                     new ElevatorDownCommand(),
-                    new WaitCommand(500),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
