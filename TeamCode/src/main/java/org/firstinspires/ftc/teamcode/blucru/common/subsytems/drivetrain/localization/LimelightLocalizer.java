@@ -40,6 +40,13 @@ public class LimelightLocalizer implements RobotLocalizer {
     public static double Q_Y = 0.1, R_Y = 0.3;
     public static double Q_H = 0.1, R_H = 0.1;
 
+    // Diagnostics
+    private double errorSumX = 0;
+    private double errorSumY = 0;
+    private int loopCount = 0;
+    private static final int DIAGNOSTIC_WINDOW = 100; // Reset every 100 loops
+
+
     /**
      * Constructor for LimelightLocalizer with MegaTag 2 support
      * @param name Hardware map name for the Limelight
@@ -103,7 +110,19 @@ public class LimelightLocalizer implements RobotLocalizer {
                 double filteredY = yFilter.update(yInches);
                 double filteredH = hFilter.update(heading);
 
-                // Create new corrected pose
+                // Accumulate error for diagnostics
+                errorSumX += Math.abs(xFilter.getInnovation());
+                errorSumY += Math.abs(yFilter.getInnovation());
+                loopCount++;
+
+                // Reset diagnostics periodically
+                if (loopCount > DIAGNOSTIC_WINDOW) {
+                    errorSumX = 0;
+                    errorSumY = 0;
+                    loopCount = 0;
+                }
+
+                // Update pose with FILTERED values
                 Pose2d correctedPose = new Pose2d(filteredX, filteredY, filteredH);
 
                 // Update our output pose
@@ -202,13 +221,44 @@ public class LimelightLocalizer implements RobotLocalizer {
         // Note: Vision will overwrite this.
     }
 
+    public String diagnose() {
+        if (loopCount == 0 || imuLocalizer == null) return "Waiting for data...";
+        
+        double avgErrorX = errorSumX / loopCount;
+        double avgErrorY = errorSumY / loopCount;
+        double avgError = (avgErrorX + avgErrorY) / 2.0;
+
+        if (avgError > 2.0) { // Error > 2 inches
+            return "WARNING: High Jitter! Innovation > 2.0\". Suggestion: Increase R (try " + (R_X * 1.5) + ")";
+        } else if (avgError < 0.1) {
+            return "OK: Very smooth. If laggy, increase Q.";
+        } else {
+            return "OK: Normal operation. Error approx " + String.format("%.2f", avgError) + "\"";
+        }
+    }
+
+    private long lastTelemetryTime = 0;
+
     @Override
     public void telemetry(Telemetry telemetry) {
+        long currentTime = System.currentTimeMillis();
+        // Throttle telemetry to ~4Hz (every 250ms) for readability
+        if (currentTime - lastTelemetryTime < 250) {
+            return;
+        }
+        lastTelemetryTime = currentTime;
+
         String mode = (imuLocalizer != null) ? "MegaTag 2 (MT2)" : "MegaTag 1";
         telemetry.addData("Limelight Mode", mode);
-        telemetry.addData("Limelight Pose", "X: %.2f, Y: %.2f, H: %.2f", pose.getX(), pose.getY(),
-                Math.toDegrees(pose.getH()));
-        telemetry.addData("Limelight Vel", "X: %.2f, Y: %.2f, H: %.2f", vel.getX(), vel.getY(),
-                Math.toDegrees(vel.getH()));
+        
+        // Split Pose and Vel for cleaner layout
+        telemetry.addData("LL Pose", "X:%.1f Y:%.1f H:%.1f", 
+                pose.getX(), pose.getY(), Math.toDegrees(pose.getH()));
+        
+        // Velocity (less precision needed)
+        telemetry.addData("LL Vel", "X:%.0f Y:%.0f H:%.0f", 
+                vel.getX(), vel.getY(), Math.toDegrees(vel.getH()));
+        
+        telemetry.addData("Kalman Diag", diagnose());
     }
 }

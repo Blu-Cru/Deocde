@@ -11,6 +11,8 @@ public class KalmanFilter {
     private double K; // Kalman gain
     private double x; // Value estimate
 
+    private double innovation; // Difference between measurement and estimate
+
     /**
      * @param Q Process noise covariance (trust in the model/prediction). Higher = faster response, less smoothing.
      * @param R Measurement noise covariance (trust in the measurement). Higher = more smoothing, slower response.
@@ -36,7 +38,8 @@ public class KalmanFilter {
 
         // Measurement update
         K = P / (P + R);
-        x = x + K * (measurement - x);
+        innovation = measurement - x;
+        x = x + K * innovation;
         P = (1 - K) * P;
 
         return x;
@@ -48,5 +51,13 @@ public class KalmanFilter {
 
     public double getEstimate() {
         return x;
+    }
+    
+    /**
+     * Returns the last innovation (measurement - predicted state).
+     * High innovation indicates the measurement was far from the prediction.
+     */
+    public double getInnovation() {
+        return innovation;
     }
 }
