@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.control.DriveKinematics;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.LimelightLocalizer;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -27,7 +28,9 @@ public class DriveBase implements BluSubsystem {
     public Vector2d xState, yState, headingState;
 
     public DriveBase() {
-        localizer = new LimelightLocalizer("limelight");
+        // With IMU fusion for better accuracy
+        Pinpoint pinpoint = new Pinpoint("pinpoint");
+        localizer = new LimelightLocalizer("limelight", pinpoint);
 
         // TODO MAKE SURE THAT THE DIRECTION IS RIGTH
         fl = new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE);
