@@ -20,18 +20,12 @@ public class ShootBallsCommand extends InstantCommand {
     public ShootBallsCommand(){
         super(() ->{
                 new SequentialCommandGroup(
-                        new InstantCommand(() -> {
-                            Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
-                        }),
                         new LeftTransferUpCommand(),
                         new WaitCommand(200),
                         new MiddleTransferUpCommand(),
                         new WaitCommand(200),
                         new RightTransferUpCommand(),
                         new WaitCommand(200),
-                        new InstantCommand(() -> {
-                            Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInFloat();
-                        }),
                         new AllTransferDownCommand(),
                         new CenterTurretCommand(),
                         new IdleShooterCommand(),

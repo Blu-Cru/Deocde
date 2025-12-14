@@ -37,7 +37,7 @@ public class Globals {
     public static double[] encoderResPerRPM = {28,103.8,145.1,384.5,537.7,751.8,1425.1,1993.6,2786.2,3895.9,5281.1};
 
     public static Pose2d mapPose(double x, double y, double heading){
-        x = x*reflect;
+        y = y*reflect;
         heading = heading*reflect;
 
         return new Pose2d(x, y, heading % (2 * Math.PI));
@@ -45,6 +45,17 @@ public class Globals {
     public static Vector2d mapVector(double x, double y){
         x = x*reflect;
         return new Vector2d(x,y);
+    }
+
+    public static com.acmerobotics.roadrunner.Pose2d mapRRPose2d(com.acmerobotics.roadrunner.Pose2d pose2d){
+        return new com.acmerobotics.roadrunner.Pose2d(pose2d.position.x, pose2d.position.y * reflect, pose2d.heading.toDouble() * reflect);
+    }
+    public static com.acmerobotics.roadrunner.Vector2d mapRRVector(com.acmerobotics.roadrunner.Vector2d rrVector){
+        return new com.acmerobotics.roadrunner.Vector2d(rrVector.x, rrVector.y * reflect);
+    }
+
+    public static double mapAngle(double angle){
+        return angle * reflect;
     }
 
     public static void drawPose(Pose2d pose){
@@ -68,6 +79,7 @@ public class Globals {
     }
     public static void setAlliance(Alliance alliance){
         Globals.alliance = alliance;
+        reflect = alliance == RED ? 1:-1;
     }
     public static void flipAlliance(){
         Globals.setAlliance(Globals.alliance.flip());
