@@ -24,7 +24,8 @@ public class AutonomousTransferCommand extends InstantCommand {
     public AutonomousTransferCommand(double vel, double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
-                    new IntakeStopCommand(),
+                    new IntakeSpitCommand(),
+                    new WaitCommand(300),
                     new ElevatorUpCommand(),
                     new ParallelizeIntakeCommand(),
                     new ShootWithVelocityCommand(vel),

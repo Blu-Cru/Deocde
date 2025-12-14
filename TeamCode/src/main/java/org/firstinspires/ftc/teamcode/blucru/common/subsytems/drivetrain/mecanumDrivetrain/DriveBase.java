@@ -163,8 +163,6 @@ public class DriveBase implements BluSubsystem {
         Globals.drawPose(getCurrPose());
     }
 
-
-
     @Override
     public void telemetry(Telemetry telemetry) {
         localizer.telemetry(telemetry);

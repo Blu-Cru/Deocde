@@ -49,7 +49,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
 
         startPose = new Pose2d(-45, 52, Math.toRadians(127));
 
-        drive = new TankDrive(hardwareMap, startPose);
+        drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
         shooter.setHoodAngle(26);
         shooter.setMiddleHoodAngle(30);
         shooter.write();
@@ -70,14 +70,14 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
                 .waitSeconds(1.2) // SHOOT PRELOAD
                 .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand())))
 
-                .turnTo(Math.toRadians(-90))
+                .turnTo(Globals.mapAngle(Math.toRadians(-90)))
                 .setReversed(true)
                 .splineTo(Globals.mapRRVector(new Vector2d(-20, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
                 .splineTo(Globals.mapRRVector(new Vector2d(-15, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
                 .waitSeconds(0.3)
                 .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(820, 26, 30, 26)))
                 .setReversed(false)
-                .turnTo(Math.toRadians(200))
+                .turnTo(Globals.mapAngle(Math.toRadians(200)))
                 .stopAndAdd(new FtclibCommandAction(new ElevatorDownCommand()))
                 .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(120)))
                 .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand())) //SHOOT FIRST SET
@@ -96,7 +96,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
                         new AutonomousTransferCommand(830, 26, 30, 29)
                 ))
 
-                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(120)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(130)))
                 .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
                 .waitSeconds(1.2) // SHOOT SECOND SET
 
@@ -118,9 +118,9 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
                 .waitSeconds(0.1)
                 .setReversed(false)
                 .afterTime(0.3, new FtclibCommandAction(
-                        new AutonomousTransferCommand(830, 26, 31, 28
+                        new AutonomousTransferCommand(830, 26, 33, 28
                 )))
-                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(140)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(150)))
                 .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
 
                 .build();

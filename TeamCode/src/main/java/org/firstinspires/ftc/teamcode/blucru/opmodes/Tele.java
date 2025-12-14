@@ -105,10 +105,10 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedLeftBumper(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);
                     new ConditionalCommand(
-                            new ReturnCommand(),
                             new ShootBallsCommand(),
-                            () -> (shot == 3)
-                    );
+                            new ReturnCommand(),
+                            () -> (shot == 0)
+                    ).schedule();
                 })
                 .transition(() -> driver1.pressedDpadLeft(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
@@ -140,7 +140,7 @@ public class Tele extends BluLinearOpMode{
                             new RightTransferUpCommand()
                     ).schedule();
                 })
-                
+
                 .build();
 
         sm.setState(State.IDLE);
@@ -177,7 +177,7 @@ public class Tele extends BluLinearOpMode{
 //            sixWheel.setPosition(llTagDetector.getLLBotPose());
 //        }
 
-        if ((driver2.pressedA() && gamepad2.x) || (gamepad2.a && driver2.pressedX())) {
+        if (driver2.pressedA()) {
             gamepad2.rumble(1000);
             sixWheel.setPosition(new Pose2d(0, 0, 0));
         }
