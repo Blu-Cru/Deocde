@@ -25,7 +25,7 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = false;
-    public int rumbleDur = 1000;
+    public int rumbleDur = 200;
 
     public enum State{
         IDLE,
