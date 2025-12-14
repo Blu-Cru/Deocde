@@ -15,22 +15,19 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 
-public class ShootBallsCommand extends InstantCommand {
+public class ReturnCommand extends InstantCommand {
 
-    public ShootBallsCommand(){
+    public ReturnCommand(){
         super(() ->{
-                new SequentialCommandGroup(
-                        new LeftTransferUpCommand(),
-                        new WaitCommand(200),
-                        new MiddleTransferUpCommand(),
-                        new WaitCommand(200),
-                        new RightTransferUpCommand(),
-                        new WaitCommand(200),
-                        new AllTransferDownCommand(),
-                        new CenterTurretCommand(),
-                        new IdleShooterCommand(),
-                        new IntakeCommand()
-                ).schedule();}
+            new SequentialCommandGroup(
+                    new InstantCommand(() -> {
+                        Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInFloat();
+                    }),
+                    new AllTransferDownCommand(),
+                    new CenterTurretCommand(),
+                    new IdleShooterCommand(),
+                    new IntakeCommand()
+            ).schedule();}
         );
     }
 
