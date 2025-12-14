@@ -28,17 +28,42 @@ Every loop cycle (`read()` method):
 
 ---
 
-## 📉 The Kalman Filter
+## 📉 The Kalman Filter & Tuning Guide
 
-We added a **Kalman Filter** to smooth out the camera data. Vision data can be "noisy" (inputs jumping around slightly).
+The filter smooths out camera noise. You need to tune **Q** and **R**.
 
-*   **Q (Process Noise)**: How much we trust our "prediction" (physics). Higher = Faster reaction.
-*   **R (Measurement Noise)**: How much we trust the "sensor" (camera). Higher = More smoothing.
+*   **R (Measurement Noise)**: Trust in the **Camera**. (Increase = Smoother/Slower).
+*   **Q (Process Noise)**: Trust in the **Physics**. (Increase = Faster/Noisier).
 
-**Current Tuning:**
+### 🛠️ How to Choose: R vs Q?
+
+Since changing R or Q often does the same thing, how do you decide? Use this simple test:
+
+#### 1. The Stationary Test (Tune R)
+Park the robot in front of a tag and **don't move**.
+*   **Symptom**: Does the `Limelight Pose` numbers jitter or flicker?
+*   **Action**: **Increase R**.
+    *   Keep increasing R until the numbers are stable when stopped.
+    *   *Reason*: This filters out the static sensor noise.
+
+#### 2. The Driving Test (Tune Q)
+After R is tuned, drive the robot back and forth quickly.
+*   **Symptom**: Does the `Limelight Pose` feel "laggy" or trail behind the real robot?
+*   **Action**: **Increase Q**.
+    *   Keep increasing Q until the lag is gone.
+    *   *Reason*: This tells the filter "my robot is agile, trust the new data more."
+
+### Summary Table
+
+| Problem | Symptom | Solution |
+| :--- | :--- | :--- |
+| **Too Jittery** | Robot shakes on screen when stopped. | **Increase R** |
+| **Too Laggy** | Robot position trails behind real movement. | **Increase Q** |
+| **Drift** | Position slides away when stopped. | Check **IMU Calibration** or Camera Offsets. |
+
+**Current Defaults:**
 *   `Q = 0.1`
 *   `R = 0.3`
-*   *Result*: A smooth, stable position that doesn't jitter, but still reacts relatively quickly to movement.
 
 ---
 

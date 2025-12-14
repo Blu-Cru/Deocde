@@ -229,11 +229,13 @@ public class LimelightLocalizer implements RobotLocalizer {
         double avgError = (avgErrorX + avgErrorY) / 2.0;
 
         if (avgError > 2.0) { // Error > 2 inches
-            return "WARNING: High Jitter! Innovation > 2.0\". Suggestion: Increase R (try " + (R_X * 1.5) + ")";
-        } else if (avgError < 0.1) {
-            return "OK: Very smooth. If laggy, increase Q.";
+            // High innovation means measurement jumps away from prediction
+            return "High Jitter! (>2.0\") Suggest: Incr R (smoother) or Decr Q";
+        } else if (avgError < 0.5) {
+            // Low innovation means tracking well, but might be too slow
+            return "Smooth (<0.5\"). If laggy: Decr R (faster) or Incr Q";
         } else {
-            return "OK: Normal operation. Error approx " + String.format("%.2f", avgError) + "\"";
+            return "OK. Error: " + String.format("%.2f", avgError) + "\"";
         }
     }
 
