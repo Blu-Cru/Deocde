@@ -24,6 +24,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWhee
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,5 +187,14 @@ public class Robot {
         elevator = new Elevator();
         subsystems.add(elevator);
         return elevator;
+    }
+
+    public Pose2d getPose() {
+        if (mecanumDrivetrain != null) {
+            return mecanumDrivetrain.getCurrPose();
+        } else if (sixWheelDrivetrain != null) {
+            return sixWheelDrivetrain.getPos();
+        }
+        return new Pose2d(0, 0, 0); // Default if no drivetrain
     }
 }

@@ -81,9 +81,9 @@ public class Shooter implements BluSubsystem, Subsystem {
             case AUTO_AIM:
                 double dist = 40;
                 if (redAlliance) {
-                    dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
+                    dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().getPose().vec()).getDist());
                 }else{
-                    dist = Math.sqrt(Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
+                    dist = Math.sqrt(Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().getPose().vec()).getDist());
                 }
                 dist -= 6;
                 Globals.telemetry.addData("distance", dist);

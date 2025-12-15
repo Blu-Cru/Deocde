@@ -76,11 +76,11 @@ public class Turret implements BluSubsystem, Subsystem {
                         Globals.shootingGoalLPose.getX(),
                         Globals.shootingGoalLPose.getY()
                 );
-                Vector2d robot = Robot.getInstance().sixWheelDrivetrain.getPos().vec();
+                Vector2d robot = Robot.getInstance().getPose().vec();
 
                 // robot heading in field frame
                 double robotHeadingDeg =
-                        Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                        Math.toDegrees(Robot.getInstance().getPose().getH());
 
                 // turret center in field frame
                 double turretCenterX = robot.getX() - distFromCenter * Math.cos(Math.toRadians(robotHeadingDeg));
