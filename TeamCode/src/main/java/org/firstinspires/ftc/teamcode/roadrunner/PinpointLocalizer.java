@@ -18,7 +18,7 @@ public final class PinpointLocalizer implements Localizer {
 
     public static class Params {
         public double parYTicks = 138.5;
-        public double perpXTicks = 940.5;
+        public double perpXTicks = 94.05;
     }
 
     public static Params PARAMS = new Params();
