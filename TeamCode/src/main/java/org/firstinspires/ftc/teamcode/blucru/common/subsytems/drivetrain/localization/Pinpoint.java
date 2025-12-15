@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 @Config
 public class Pinpoint implements RobotLocalizer{
     //TODO TUNE PER ROBOT
-    public static double parallelYOffset = 138.5, perpXOffset = 940.5;
+    public static double parallelYOffset = 138.5, perpXOffset = 94.05;
     private GoBildaPinpointDriver pinpoint;
     private double headingOffset;
 
