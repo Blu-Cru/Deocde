@@ -17,6 +17,12 @@ import com.acmerobotics.dashboard.canvas.Canvas;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
@@ -50,60 +56,46 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
         // TankDrive should already be using your Pinpoint localizer internally
         drive = new TankDrive(hardwareMap, startPose);
 
-        path = drive.actionBuilder(startPose)
+        path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
-                .splineTo(new Vector2d(-35, 43), Math.toRadians(160+180))
-
-                .waitSeconds(2) // SHOOT PRELOAD
-
+                .splineTo(Globals.mapRRVector(new Vector2d(-32, 42)), Globals.mapAngle(Math.toRadians(135+180)))
+                .waitSeconds(0.4)
+                //.lineToX(-44)
+                .waitSeconds(1.2) // SHOOT PRELOAD
+                .turnTo(Globals.mapAngle(Math.toRadians(-90)))
                 .setReversed(true)
-//                        .lineToX(-32)
-                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .waitSeconds(2)
-//                        .turnTo(Math.toRadians(200))
+                .splineTo(Globals.mapRRVector(new Vector2d(-20, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
+                .splineTo(Globals.mapRRVector(new Vector2d(-15, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
+                .waitSeconds(0.3)
                 .setReversed(false)
-                .turnTo(Math.toRadians(200))
-
-                .splineTo(new Vector2d(-35, 43), Math.toRadians(135))
-                .waitSeconds(2) // SHOOT FIRST SET
+                .turnTo(Globals.mapAngle(Math.toRadians(200)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(120)))
+                .waitSeconds(1.2)
 
                 .setReversed(true)
-                .splineTo(new Vector2d(0, 47), Math.toRadians(0))
-                .splineTo(new Vector2d(10, 47), Math.toRadians(0))  // PICKUP SECOND SET
-                .waitSeconds(2)
+                .splineTo(Globals.mapRRVector(new Vector2d(5, 46)), Globals.mapAngle(Math.toRadians(0)), new TranslationalVelConstraint(20))
+                .lineToX(12.5)  // PICKUP SECOND SET
+                .waitSeconds(0.1)
                 .setReversed(false)
-                .splineTo(new Vector2d(-35, 43), Math.toRadians(140))
-                .waitSeconds(2) // SHOOT SECOND SET
+
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(130)))
+                .waitSeconds(1.2) // SHOOT SECOND SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(2, 53), Math.toRadians(90))
+                .splineTo(Globals.mapRRVector(new Vector2d(2, 53)), Globals.mapAngle(Math.toRadians(90)), new TranslationalVelConstraint(20))
 
-                .splineTo(new Vector2d(2, 56), Math.toRadians(90),
-                        new TranslationalVelConstraint(10.0)) // OPEN GATE
+                .splineTo(Globals.mapRRVector(new Vector2d(2, 55)), Globals.mapAngle(Math.toRadians(90))) // OPEN GATE
                 .waitSeconds(1)
                 .setReversed(false)
-                .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
+                .splineTo(Globals.mapRRVector(new Vector2d(-4, 45)), Globals.mapAngle(Math.toRadians(180)))
+                .setReversed(true)
 
-                .setReversed(true)
-                .splineTo(new Vector2d(30, 47), Math.toRadians(0))
-                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
-                .waitSeconds(2)
-//                .turnTo(Math.toRadians(90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
-                .waitSeconds(2) // SHOOT THIRD SET
-                .turnTo(Math.toRadians(-90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53,40), Math.toRadians(90))
-                .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
-                .waitSeconds(2)
-
+                .splineTo(Globals.mapRRVector(new Vector2d(28, 46)), Globals.mapAngle(Math.toRadians(0)), new TranslationalVelConstraint(30))
+                .splineTo(Globals.mapRRVector(new Vector2d(37, 46)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP THIRD SET
+                .waitSeconds(0.1)
                 .setReversed(false)
-                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
-                .turnTo(Math.toRadians(160))
-
-
-                .waitSeconds(2)
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(180)))
+                .turnTo(Globals.mapAngle(Math.toRadians(180)))
                 .build();
     }
 
@@ -115,6 +107,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
     @Override
     public void periodic() {
         // ==== 1) GET POSE FROM ROAD RUNNER (Pinpoint localizer feeds this) ====
+        drive.localizer.update();
         Pose2d pose = drive.localizer.getPose();  // com.acmerobotics.roadrunner.Pose2d
 
         double x = pose.position.x;
@@ -126,8 +119,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
         telemetry.addData("RR x", x);
         telemetry.addData("RR y", y);
         telemetry.addData("RR heading (deg)", headingDeg);
-        telemetry.update();
-
+/**
         // ==== 2) FIELD OVERLAY ON FTC DASHBOARD ====
         TelemetryPacket packet = new TelemetryPacket();
         packet.put("x", x);
@@ -145,7 +137,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
         double endY = y + arrowLen * Math.sin(headingRad);
         field.strokeLine(x, y, endX, endY);
 
-        dashboard.sendTelemetryPacket(packet);
+        dashboard.sendTelemetryPacket(packet);*/
     }
 }
 

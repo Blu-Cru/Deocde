@@ -1,14 +1,17 @@
 package org.firstinspires.ftc.teamcode.roadrunner.tuning;
 
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.PoseVelocity2d;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.roadrunner.MecanumDrive;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
-
+@TeleOp(group = "test")
 public final class SplineTest extends LinearOpMode {
+    TankDrive drive;
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(0, 0, 0);
@@ -23,7 +26,7 @@ public final class SplineTest extends LinearOpMode {
                         .splineTo(new Vector2d(0, 60), Math.PI)
                         .build());
         } else if (TuningOpModes.DRIVE_CLASS.equals(TankDrive.class)) {
-            TankDrive drive = new TankDrive(hardwareMap, beginPose);
+            drive = new TankDrive(hardwareMap, beginPose);
 
             waitForStart();
 
@@ -34,6 +37,13 @@ public final class SplineTest extends LinearOpMode {
                             .build());
         } else {
             throw new RuntimeException();
+        }
+        drive.setDrivePowers(new PoseVelocity2d(new Vector2d(0,0), 0));
+        waitForStart();
+        while(opModeIsActive()){
+            drive.updatePoseEstimate();
+            telemetry.addData("Robot Heading", drive.localizer.getPose().heading.toDouble());
+            telemetry.update();
         }
     }
 }
