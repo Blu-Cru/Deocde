@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
-
+import org.firstinspires.ftc.teamcode.blucru.common.util.AutoPathInterpreter;
 
 @Autonomous(name = "15 Ball Close Auto With Preload No Partner", group = "auto")
 public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
@@ -39,7 +39,7 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
     @Override
     public void initialize() {
-        manageRobotLoop=false;
+        manageRobotLoop = false;
 
         addShooter();
         addIntake();
@@ -49,10 +49,29 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         Command pickupBalls = new SequentialCommandGroup(
                 new IntakeCommand(),
                 new WaitCommand(500),
-                new TransferCommand(true)
-        );
+                new TransferCommand(true));
 
-        startPose = new Pose2d(-45, 52, Math.toRadians(127));
+        // Initialize from external file
+        // IMPORTANT: You must 'adb push TeamCode/15ball_auto.json
+        // /sdcard/FIRST/15ball_auto.json on the robot
+        // controller.
+        String filePath = "/sdcard/FIRST/15ball_auto.json";
+
+        // Try to load startPose from JSON
+        Pose2d stringStartPose = null;
+        try {
+            stringStartPose = AutoPathInterpreter.getStartPoseFromJSON(filePath);
+        } catch (Exception e) {
+            telemetry.addData("StartPose Load Failed", e.getMessage());
+        }
+
+        if (stringStartPose != null) {
+            startPose = stringStartPose;
+            telemetry.addData("StartPose", "Loaded from JSON");
+        } else {
+            startPose = new Pose2d(-45, 52, Math.toRadians(127)); // Fallback/Default
+            telemetry.addData("StartPose", "Using Default");
+        }
 
         drive = new TankDrive(hardwareMap, startPose);
         shooter.setHoodAngle(26);
@@ -65,78 +84,16 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         elevator.write();
         turret.resetEncoder();
 
-        path = drive.actionBuilder(startPose)
-                .setReversed(true)
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(130+180))
-                //.lineToX(-44)
-                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(850)))
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))//SHOOT PRELOAD
-                .waitSeconds(2) // SHOOT PRELOAD
-                .turnTo(Math.toRadians(-90))
-                .setReversed(true)
-                .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand())))
-                .splineTo(new Vector2d(-20, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(850, 26, 28, 26)))
-                .setReversed(false)
-                .turnTo(Math.toRadians(200))
-                .stopAndAdd(new FtclibCommandAction(new ElevatorDownCommand()))
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(125))
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand())) //SHOOT FIRST SET
-
-                .setReversed(true)
-                .splineTo(new Vector2d(5, 47), Math.toRadians(0))
-                .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(
-                        new IntakeStartCommand(),
-                        new ElevatorDownCommand()
-                )))
-
-                .lineToX(12.5)  // PICKUP SECOND SET
-                .waitSeconds(0.1)
-                .setReversed(false)
-                .afterTime(0.3, new FtclibCommandAction(new SequentialCommandGroup(
-                        new AutonomousTransferCommand(850, 26, 28, 26)
-                )))
-
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(120))
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
-                .waitSeconds(2) // SHOOT SECOND SET
-
-                .setReversed(true)
-                .splineTo(new Vector2d(2, 53), Math.toRadians(90))
-
-                .splineTo(new Vector2d(2, 56), Math.toRadians(90),
-                        new TranslationalVelConstraint(10.0)) // OPEN GATE
-                .waitSeconds(1)
-                .setReversed(false)
-                .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
-
-                .setReversed(true)
-                .splineTo(new Vector2d(30, 47), Math.toRadians(0))
-                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
-                .waitSeconds(2)
-//                .turnTo(Math.toRadians(90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
-                .waitSeconds(2) // SHOOT THIRD SET
-                .turnTo(Math.toRadians(-90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53,40), Math.toRadians(90))
-                .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
-                .waitSeconds(2)
-
-                .setReversed(false)
-                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
-                .turnTo(Math.toRadians(160))
-
-
-
-                .waitSeconds(2)
-                .build();
-
+        try {
+            path = AutoPathInterpreter.buildPathFromJSON(drive, startPose, filePath);
+            telemetry.addData("Path Loaded", "Success from " + filePath);
+        } catch (RuntimeException e) {
+            telemetry.addData("Path Load Failed", e.getMessage());
+            // Fallback or crash? For now let it crash or be null, but maybe provide an
+            // empty action?
+            // If path is null, run() will crash.
+            throw e;
+        }
 
         elevator.setDown();
         elevator.write();
@@ -170,7 +127,6 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
             telemetry.update();
         }
     }
-
 
     @Override
     public void periodic() {
