@@ -162,6 +162,7 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void periodic(){
+        llTagDetector.read();
         sm.update();
 
         //Shooter
@@ -213,6 +214,16 @@ public class Tele extends BluLinearOpMode{
         }
 
         telemetry.addData("State", sm.getState());
+
+
+        //relocalization
+        //rn assumes bot is stationary
+        if (driver2.pressedDpadUp()){
+            if (llTagDetector.validLLReads()){
+                gamepad1.rumble(200);
+                sixWheel.setPosition(llTagDetector.getLLBotPose());
+            }
+        }
     }
 
 }

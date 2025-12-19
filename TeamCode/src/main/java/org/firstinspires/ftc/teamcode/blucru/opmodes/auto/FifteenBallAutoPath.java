@@ -58,18 +58,18 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
 
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
-                .splineTo(Globals.mapRRVector(new Vector2d(-32, 42)), Globals.mapAngle(Math.toRadians(135+180)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-32, 42)), Globals.mapAngle(Math.toRadians(0)))
                 .waitSeconds(0.4)
                 //.lineToX(-44)
                 .waitSeconds(1.2) // SHOOT PRELOAD
-                .turnTo(Globals.mapAngle(Math.toRadians(-90)))
+                //.turnTo(Globals.mapAngle(Math.toRadians(-135)))
                 .setReversed(true)
                 .splineTo(Globals.mapRRVector(new Vector2d(-20, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
                 .splineTo(Globals.mapRRVector(new Vector2d(-15, 48)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP FIRST SET
                 .waitSeconds(0.3)
                 .setReversed(false)
                 .turnTo(Globals.mapAngle(Math.toRadians(200)))
-                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(120)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(150)))
                 .waitSeconds(1.2)
 
                 .setReversed(true)
@@ -78,7 +78,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .waitSeconds(0.1)
                 .setReversed(false)
 
-                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(130)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(150)))
                 .waitSeconds(1.2) // SHOOT SECOND SET
 
                 .setReversed(true)
@@ -94,8 +94,8 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
                 .splineTo(Globals.mapRRVector(new Vector2d(37, 46)), Globals.mapAngle(Math.toRadians(0)))  // PICKUP THIRD SET
                 .waitSeconds(0.1)
                 .setReversed(false)
-                .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(180)))
-                .turnTo(Globals.mapAngle(Math.toRadians(180)))
+                .splineTo(Globals.mapRRVector(new Vector2d(-15, 15)), Globals.mapAngle(Math.toRadians(-150)))
+                .waitSeconds(2)
                 .build();
     }
 

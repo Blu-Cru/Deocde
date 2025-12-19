@@ -87,6 +87,7 @@ public class BluServo extends ServoImpl implements BluHardwareDevice {
             telemetry.addData(name + " Pos: ", pos);
         } catch (Exception ignored){}
     }
+
     public void addLine(String str){
         try{
             Telemetry telemetry = Globals.telemetry;

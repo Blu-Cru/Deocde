@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWhee
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
+
 @Config
 public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
@@ -93,6 +95,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public void setPosition(Pose2d pose){
         localizer.setPosition(pose);
+    }
+    public void setXY(Vector2d xy){
+        localizer.setPosition(xy.getX(), xy.getY(), localizer.getHeading());
     }
 
     public void setHeading(double heading){
