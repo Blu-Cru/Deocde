@@ -20,6 +20,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.UntransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootReverseWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -71,7 +74,10 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     new SequentialCommandGroup(
                         new AllTransferMiddleCommand(),
-                        new ShootReverseWithVelocityCommand(150)
+                        new SetLeftHoodAngleCommand(26),
+                        new SetMiddleHoodAngleCommand(26),
+                        new SetRightHoodAngleCommand(26),
+                        new ShootReverseWithVelocityCommand(200)
                     ).schedule();
                 })
 
