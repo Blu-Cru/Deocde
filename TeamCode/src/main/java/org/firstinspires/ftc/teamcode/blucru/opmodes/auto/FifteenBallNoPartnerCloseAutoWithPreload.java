@@ -30,12 +30,16 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
 import org.firstinspires.ftc.teamcode.blucru.common.util.AutoPathInterpreter;
 
+import java.util.HashMap;
+
 @Autonomous(name = "15 Ball Close Auto With Preload No Partner", group = "auto")
 public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;
     private Pose2d startPose;
     private Action path;
+    double startingVel;
+    double startingTurretAngle;
 
     @Override
     public void initialize() {
@@ -46,10 +50,6 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         addTransfer();
         addElevator();
         addTurret();
-        Command pickupBalls = new SequentialCommandGroup(
-                new IntakeCommand(),
-                new WaitCommand(500),
-                new TransferCommand(true));
 
         // Initialize from external file
         // IMPORTANT: You must 'adb push TeamCode/15ball_auto.json
@@ -57,46 +57,40 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         // controller.
         String filePath = "/sdcard/FIRST/15ball_auto.json";
 
-        // Try to load startPose from JSON
-        Pose2d stringStartPose = null;
-        try {
-            stringStartPose = AutoPathInterpreter.getStartPoseFromJSON(filePath);
-        } catch (Exception e) {
-            telemetry.addData("StartPose Load Failed", e.getMessage());
-        }
-
-        if (stringStartPose != null) {
-            startPose = stringStartPose;
-            telemetry.addData("StartPose", "Loaded from JSON");
-        } else {
-            startPose = new Pose2d(-45, 52, Math.toRadians(127)); // Fallback/Default
-            telemetry.addData("StartPose", "Using Default");
-        }
-
+        // Try to create the interpreter
         drive = new TankDrive(hardwareMap, startPose);
-        shooter.setHoodAngle(26);
+        AutoPathInterpreter interpreter = null;
+        try {
+            interpreter = new AutoPathInterpreter(filePath, drive);
+        } catch (Exception e) {
+            telemetry.addData("Path Load Failed", e.getMessage());
+        }
+
+        //dont need to worry that interpreter might be null bc its wrapped in a try catch
+        startPose = interpreter.getStartPose();
+
+        path = interpreter.buildPathFromJSON(startPose);
+
+        startingVel = interpreter.getStartingShooterVel();
+
+        double[] startingHoodAngles = interpreter.getStartingHoodAngles();
+        shooter.setLeftHoodAngle(startingHoodAngles[0]);
+        shooter.setMiddleHoodAngle(startingHoodAngles[1]);
+        shooter.setRightHoodAngle(startingHoodAngles[2]);
         shooter.write();
+
+        startingTurretAngle = interpreter.getStartingTurretAngle();
+
         transfer.setAllMiddle();
         transfer.write();
+
         elevator.setUp();
         elevator.write();
+
         elevator.setDown();
         elevator.write();
+
         turret.resetEncoder();
-
-        try {
-            path = AutoPathInterpreter.buildPathFromJSON(drive, startPose, filePath);
-            telemetry.addData("Path Loaded", "Success from " + filePath);
-        } catch (RuntimeException e) {
-            telemetry.addData("Path Load Failed", e.getMessage());
-            // Fallback or crash? For now let it crash or be null, but maybe provide an
-            // empty action?
-            // If path is null, run() will crash.
-            throw e;
-        }
-
-        elevator.setDown();
-        elevator.write();
     }
 
     @Override
@@ -105,6 +99,8 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
 
         TelemetryPacket packet = new TelemetryPacket();
+        shooter.shootWithVelocity(startingVel);
+        turret.setAngle(startingTurretAngle);
 
         // 2. Run the loop
         // We add !isStopRequested() to ensure we exit cleanly if you press stop

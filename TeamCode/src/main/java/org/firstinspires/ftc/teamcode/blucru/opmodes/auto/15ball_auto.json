@@ -1,5 +1,8 @@
 {
     "startPose": { "x": -45, "y": 52, "headingDegrees": 127 },
+    "startingHoodAngles": {"leftHoodAngle":  26, "middleHoodAngle":  30, "rightHoodAngle":  26},
+    "startingShooterVel": {"vel": 830},
+    "startingTurretAngle": {"angle": 0},
     "steps": [
         { "type": "setReversed", "reversed": true },
         { "type": "splineTo", "x": -28, "y": 38, "tangentDegrees": 310 },

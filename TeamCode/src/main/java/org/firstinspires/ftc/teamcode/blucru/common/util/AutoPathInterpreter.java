@@ -16,12 +16,23 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.HashMap;
 
 public class AutoPathInterpreter {
+    JSONObject root;
+    TankDrive drive;
 
-    public static Pose2d getStartPoseFromJSON(String filePath) {
+    public AutoPathInterpreter(String fileName, TankDrive drive){
+        this.drive = drive;
         try {
-            JSONObject root = readJSONFile(filePath);
+            root = readJSONFile(fileName);
+        } catch (Exception e) {
+            throw new RuntimeException("Error reading JSON: " + e.getMessage(), e);
+        }
+    }
+
+    public Pose2d getStartPose() {
+        try {
             if (root.has("startPose")) {
                 JSONObject startPoseObj = root.getJSONObject("startPose");
                 double x = startPoseObj.getDouble("x");
@@ -29,17 +40,61 @@ public class AutoPathInterpreter {
                 double heading = Math.toRadians(startPoseObj.getDouble("headingDegrees"));
                 return new Pose2d(x, y, heading);
             }
-            return null;
+            return new Pose2d(0,0,0);
         } catch (Exception e) {
             throw new RuntimeException("Error reading startPose from JSON: " + e.getMessage(), e);
         }
     }
 
-    public static Action buildPathFromJSON(TankDrive drive, Pose2d startPose, String filePath) {
+    public double[] getStartingHoodAngles(){
+        try {
+            if (root.has("startingHoodAngles")) {
+
+                JSONObject hoodAnglesObj = root.getJSONObject("startingHoodAngles");
+                return new double[] {
+                        hoodAnglesObj.getDouble("leftHoodAngle"),
+                        hoodAnglesObj.getDouble("middleHoodAngle"),
+                        hoodAnglesObj.getDouble("rightHoodAngle")
+                };
+            }
+        } catch (Exception e){
+            throw new RuntimeException("cannot get starting info");
+        }
+
+        return new double[]{26,26,26};
+
+    }
+
+    public double getStartingShooterVel(){
+        try{
+            if (root.has("startingShooterVel")) {
+
+                JSONObject shooterVelObj = root.getJSONObject("startingShooterVel");
+                return shooterVelObj.getDouble("vel");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("cannot get starting shooter velocity");
+        }
+        return 0;
+    }
+
+    public double getStartingTurretAngle(){
+        try{
+            if (root.has("startingTurretAngle")) {
+
+                JSONObject shooterVelObj = root.getJSONObject("startingTurretAngle");
+                return shooterVelObj.getDouble("angle");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("cannot get starting shooter velocity");
+        }
+        return 0;
+    }
+
+    public Action buildPathFromJSON(Pose2d startPose) {
         TrajectoryActionBuilder builder = drive.actionBuilder(startPose);
 
         try {
-            JSONObject root = readJSONFile(filePath);
             JSONArray actions = root.getJSONArray("steps");
 
             for (int i = 0; i < actions.length(); i++) {
@@ -98,7 +153,7 @@ public class AutoPathInterpreter {
         return builder.build();
     }
 
-    public static String generateJavaCodeFromJSON(String filePath) {
+    public String generateJavaCodeFromJSON(String filePath) {
         StringBuilder code = new StringBuilder();
         try {
             JSONObject root = readJSONFile(filePath);
@@ -192,7 +247,7 @@ public class AutoPathInterpreter {
         return sb.toString();
     }
 
-    private static JSONObject readJSONFile(String filePath) throws java.io.IOException, org.json.JSONException {
+    private JSONObject readJSONFile(String filePath) throws java.io.IOException, org.json.JSONException {
         File file = new File(filePath);
         BufferedReader reader = new BufferedReader(new FileReader(file));
         StringBuilder jsonString = new StringBuilder();
