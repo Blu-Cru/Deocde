@@ -72,7 +72,7 @@ public final class TankDrive {
 
         // drive model parameters
         public double inPerTick = 0.0019773788;
-        public double trackWidthTicks = 5000; // not accurate, made up number
+        public double trackWidthTicks = 7838.6599; //manually calculated, tuner for it was not working
 
         // feedforward parameters (in tick units)
         public double kS =  2.620015192364042;
@@ -93,7 +93,7 @@ public final class TankDrive {
         public double ramseteBBar = 2.0; // positive
 
         // turn controller gains
-        public double turnGain = 0.0;
+        public double turnGain = 2;
         public double turnVelGain = 0.0;
     }
 

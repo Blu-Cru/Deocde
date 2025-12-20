@@ -11,8 +11,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServo;
     private BluBrushlandLabsColorSensor leftSensor, middleSensor, rightSensor;
-    private static final double DOWN_POSITION = 0;//TODO: find positions
+    private static final double DOWN_POSITION = 0.01;//TODO: find positions
     private static final double UP_POSITION = 0.3;
+    private static final double MIDDLE_POSITION = 0.13;
 
     public Elevator(){
         elevatorServo = new BluServo("elevator");
@@ -29,6 +30,14 @@ public class Elevator implements BluSubsystem, Subsystem {
     }
     public boolean ballInElevatorSlot(){
         return leftSensor.ballDetected() || middleSensor.ballDetected() || rightSensor.ballDetected();
+    }
+    public void turnOffElevatorServo(){
+        elevatorServo.disable();
+        //always want to write after a disable
+        elevatorServo.write();
+    }
+    public void setMiddle(){
+        elevatorServo.setPos(MIDDLE_POSITION);
     }
 
     @Override

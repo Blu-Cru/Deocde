@@ -40,10 +40,10 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     @Override
     public void read() {
         LLResult result = limelight.getLatestResult();
-
         if (result != null && result.isValid()){
             List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
             if (tags.size() == 0){
+                botpose = null;
                 Globals.telemetry.addLine("NO TAGS DETECTED");
             }
             for (LLResultTypes.FiducialResult res: tags){
@@ -55,23 +55,12 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
                 } else {
                     //location tag
                     Pose3D bot = res.getRobotPoseFieldSpace();
-                    Globals.telemetry.addData("Limelight Pos In Its Map", new Pose2d(bot.getPosition().x, bot.getPosition().y, bot.getOrientation().getYaw(AngleUnit.RADIANS)));
-                    Pose2d llPose = llFieldToCorrectField(new Pose2d(bot.getPosition().x, bot.getPosition().y, bot.getOrientation().getYaw(AngleUnit.RADIANS)));
-                    Globals.telemetry.addData("llPose", llPose);
-                    Vector2d llVec = llPose.vec();
-                    double llAngle = llPose.getH();
-                    Vector2d turretCenterToLimelight = Vector2d.polarToCartesian(turretCenterToLimelightDist, llAngle);
-                    Vector2d turretCenterToTag = llVec.addNotInPlace(turretCenterToLimelight);
-                    double robotAngle = wrapAngle(-1 * (Math.PI - Math.toRadians(Robot.getInstance().turret.getAngle()) - llAngle));
-                    Vector2d robotPositionToTurretCenter = Vector2d.polarToCartesian(robotPosToTurretCenter, robotAngle+Math.PI);
-                    Vector2d robotXY = turretCenterToTag.addNotInPlace(turretCenterToLimelight).addNotInPlace(robotPositionToTurretCenter);
-                    botpose = new Pose2d(robotXY, robotAngle);
-                    //translating to my field coordinates
-                    //botpose = new Pose2d(bot.getPosition().y * 1000 / 25.4, -bot.getPosition().x * 1000 / 25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI/2);
+                    botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS));
                 }
             }
         } else {
             Globals.telemetry.addLine("NO TAGS");
+            botpose = null;
         }
     }
 
@@ -85,15 +74,15 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
 
     }
 
-    public Pose2d llFieldToCorrectField(Pose2d pose2d){
-        return new Pose2d(pose2d.getY() * 1000.0/25.4, -pose2d.getX() * 1000.0/25.4, wrapAngle(pose2d.getH() - Math.toRadians(90)));
-    }
-
     public String[] getPattern(){
         return pattern;
     }
 
     public Pose2d getLLBotPose(){return botpose;}
+    public Vector2d getLLXY(){return botpose.vec();}
+    public boolean validLLReads(){
+        return botpose != null;
+    }
 
     public double wrapAngle(double angle){
         while (angle <= -Math.PI){

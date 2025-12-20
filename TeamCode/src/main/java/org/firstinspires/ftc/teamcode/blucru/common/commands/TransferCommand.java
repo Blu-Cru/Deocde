@@ -6,7 +6,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 // IMPORTS... (Keep your existing subsystem imports)
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.DisableElevatorCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -29,7 +31,7 @@ public class TransferCommand extends SequentialCommandGroup { // 1. Extend Seque
                 new ElevatorUpCommand(),
                 new ParallelizeIntakeCommand(),
                 new WaitCommand(400),
-                new ElevatorDownCommand(),
+                new ElevatorMiddleCommand(),
                 new WaitCommand(150),
                 new AllTransferMiddleCommand(),
                 new WaitCommand(300),
