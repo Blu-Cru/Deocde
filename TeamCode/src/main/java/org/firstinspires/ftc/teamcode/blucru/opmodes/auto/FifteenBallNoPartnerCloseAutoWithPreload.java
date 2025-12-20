@@ -59,17 +59,11 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
 
         // Try to create the interpreter
         drive = new TankDrive(hardwareMap, startPose);
-        AutoPathInterpreter interpreter = null;
-        try {
-            interpreter = new AutoPathInterpreter(filePath, drive);
-        } catch (Exception e) {
-            telemetry.addData("Path Load Failed", e.getMessage());
-        }
+        AutoPathInterpreter interpreter = new AutoPathInterpreter(filePath);
 
-        //dont need to worry that interpreter might be null bc its wrapped in a try catch
         startPose = interpreter.getStartPose();
 
-        path = interpreter.buildPathFromJSON(startPose);
+        path = interpreter.buildPathFromJSON(startPose, drive);
 
         startingVel = interpreter.getStartingShooterVel();
 

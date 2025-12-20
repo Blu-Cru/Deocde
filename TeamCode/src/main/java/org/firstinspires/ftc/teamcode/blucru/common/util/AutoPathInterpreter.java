@@ -20,10 +20,8 @@ import java.util.HashMap;
 
 public class AutoPathInterpreter {
     JSONObject root;
-    TankDrive drive;
 
-    public AutoPathInterpreter(String fileName, TankDrive drive){
-        this.drive = drive;
+    public AutoPathInterpreter(String fileName){
         try {
             root = readJSONFile(fileName);
         } catch (Exception e) {
@@ -91,7 +89,7 @@ public class AutoPathInterpreter {
         return 0;
     }
 
-    public Action buildPathFromJSON(Pose2d startPose) {
+    public Action buildPathFromJSON(Pose2d startPose, TankDrive drive) {
         TrajectoryActionBuilder builder = drive.actionBuilder(startPose);
 
         try {
