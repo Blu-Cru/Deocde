@@ -20,6 +20,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.UntransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootReverseWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
@@ -39,7 +41,8 @@ public class Tele extends BluLinearOpMode{
         IDLE,
         INTAKING,
         OUTTAKING,
-        DRIVING_TO_SHOOT
+        DRIVING_TO_SHOOT,
+        INTAKING_FROM_ABOVE
     }
 
     @Override
@@ -63,6 +66,13 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () ->{
                     gamepad1.rumble(rumbleDur);
                     new UnshootCommand().schedule();
+                })
+                .transition(() -> driver1.pressedA(), State.INTAKING_FROM_ABOVE, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    new SequentialCommandGroup(
+                        new AllTransferMiddleCommand(),
+                        new ShootReverseWithVelocityCommand(150)
+                    ).schedule();
                 })
 
                 .state(State.INTAKING)
@@ -140,7 +150,12 @@ public class Tele extends BluLinearOpMode{
                             new RightTransferUpCommand()
                     ).schedule();
                 })
-
+                .state(State.INTAKING_FROM_ABOVE)
+                .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot = 0;
+                    new TransferCommand(turreting).schedule();
+                })
                 .build();
 
         sm.setState(State.IDLE);

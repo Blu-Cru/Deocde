@@ -122,6 +122,17 @@ public class Shooter implements BluSubsystem, Subsystem {
         state = State.VELOCITY;
     }
 
+    public void shootReverseWithVelocity(double vel){
+        targetVel = -Math.abs(vel);
+        state = State.VELOCITY;
+    }
+
+    public void spinReverseSlowPower(){
+        shooter1.setPower(-Math.abs(idleSpeed));
+        shooter2.setPower(shooter1.getPower());
+        state = State.IDLE; // direct power mode
+    }
+
     public double getVel(){
         return shooter1.getVel();
     }
