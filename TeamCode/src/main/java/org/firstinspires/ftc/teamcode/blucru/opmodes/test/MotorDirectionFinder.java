@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithE
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-@TeleOp()
+//@TeleOp()
 public class MotorDirectionFinder extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {

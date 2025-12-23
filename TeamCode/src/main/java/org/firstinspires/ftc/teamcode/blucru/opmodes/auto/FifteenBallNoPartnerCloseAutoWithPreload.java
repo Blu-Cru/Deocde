@@ -28,7 +28,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
+import org.firstinspires.ftc.teamcode.blucru.common.util.AutoPathInterpreter;
 
+import java.util.HashMap;
 
 @Autonomous(name = "15 Ball Close Auto With Preload No Partner", group = "auto")
 public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
@@ -36,110 +38,59 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
     private Action path;
+    double startingVel;
+    double startingTurretAngle;
 
     @Override
     public void initialize() {
-        manageRobotLoop=false;
+        manageRobotLoop = false;
 
         addShooter();
         addIntake();
         addTransfer();
         addElevator();
         addTurret();
-        Command pickupBalls = new SequentialCommandGroup(
-                new IntakeCommand(),
-                new WaitCommand(500),
-                new TransferCommand(true)
-        );
 
-        startPose = new Pose2d(-45, 52, Math.toRadians(127));
+        // Initialize from external file
+        // IMPORTANT: You must 'adb push TeamCode/15ball_auto.json
+        // /sdcard/FIRST/15ball_auto.json on the robot
+        // controller.
+        String filePath = "/sdcard/FIRST/autopath/15ball_auto.json";
 
+        // Try to create the interpreter
+        AutoPathInterpreter interpreter = new AutoPathInterpreter(filePath);
+
+        startPose = interpreter.getStartPose();
         drive = new TankDrive(hardwareMap, startPose);
-        shooter.setHoodAngle(26);
+
+        path = interpreter.buildPathFromJSON(startPose, drive);
+
+        startingVel = interpreter.getStartingShooterVel();
+
+        double[] startingHoodAngles = interpreter.getStartingHoodAngles();
+        shooter.setLeftHoodAngle(startingHoodAngles[0]);
+        shooter.setMiddleHoodAngle(startingHoodAngles[1]);
+        shooter.setRightHoodAngle(startingHoodAngles[2]);
         shooter.write();
+
+        startingTurretAngle = interpreter.getStartingTurretAngle();
+
         transfer.setAllMiddle();
         transfer.write();
+
         elevator.setUp();
         elevator.write();
+
         elevator.setDown();
         elevator.write();
+
         turret.resetEncoder();
 
-        path = drive.actionBuilder(startPose)
-                .setReversed(true)
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(130+180))
-                //.lineToX(-44)
-                .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(850)))
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))//SHOOT PRELOAD
-                .waitSeconds(2) // SHOOT PRELOAD
-                .turnTo(Math.toRadians(-90))
-                .setReversed(true)
-                .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand())))
-                .splineTo(new Vector2d(-20, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .splineTo(new Vector2d(-15, 47), Math.toRadians(0))  // PICKUP FIRST SET
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(850, 26, 28, 26)))
-                .setReversed(false)
-                .turnTo(Math.toRadians(200))
-                .stopAndAdd(new FtclibCommandAction(new ElevatorDownCommand()))
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(125))
-                .waitSeconds(2)
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand())) //SHOOT FIRST SET
+    }
 
-                .setReversed(true)
-                .splineTo(new Vector2d(5, 47), Math.toRadians(0))
-                .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(
-                        new IntakeStartCommand(),
-                        new ElevatorDownCommand()
-                )))
-
-                .lineToX(12.5)  // PICKUP SECOND SET
-                .waitSeconds(0.1)
-                .setReversed(false)
-                .afterTime(0.3, new FtclibCommandAction(new SequentialCommandGroup(
-                        new AutonomousTransferCommand(850, 26, 28, 26)
-                )))
-
-                .splineTo(new Vector2d(-28, 38), Math.toRadians(120))
-                .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
-                .waitSeconds(2) // SHOOT SECOND SET
-
-                .setReversed(true)
-                .splineTo(new Vector2d(2, 53), Math.toRadians(90))
-
-                .splineTo(new Vector2d(2, 56), Math.toRadians(90),
-                        new TranslationalVelConstraint(10.0)) // OPEN GATE
-                .waitSeconds(1)
-                .setReversed(false)
-                .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
-
-                .setReversed(true)
-                .splineTo(new Vector2d(30, 47), Math.toRadians(0))
-                .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
-                .waitSeconds(2)
-//                .turnTo(Math.toRadians(90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
-                .waitSeconds(2) // SHOOT THIRD SET
-                .turnTo(Math.toRadians(-90))
-                .setReversed(true)
-                .splineTo(new Vector2d(53,40), Math.toRadians(90))
-                .splineTo(new Vector2d(53, 47), Math.toRadians(90), new TranslationalVelConstraint(5.0))   // PICKUP FOURTH SET
-                .waitSeconds(2)
-
-                .setReversed(false)
-                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
-                .turnTo(Math.toRadians(160))
-
-
-
-                .waitSeconds(2)
-                .build();
-
-
-        elevator.setDown();
-        elevator.write();
+    @Override
+    public void telemetry() {
+        telemetry.addData("Start Pose", startPose);
     }
 
     @Override
@@ -148,6 +99,8 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
 
         TelemetryPacket packet = new TelemetryPacket();
+        shooter.shootWithVelocity(startingVel);
+        turret.setAngle(startingTurretAngle);
 
         // 2. Run the loop
         // We add !isStopRequested() to ensure we exit cleanly if you press stop
@@ -170,7 +123,6 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
             telemetry.update();
         }
     }
-
 
     @Override
     public void periodic() {

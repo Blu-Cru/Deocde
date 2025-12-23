@@ -9,8 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@TeleOp
-@Config
+//@TeleOp
+//@Config
 public class ShooterPIDTuning extends BluLinearOpMode {
 
     public static double vel = 0;

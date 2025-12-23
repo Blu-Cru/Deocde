@@ -30,6 +30,7 @@ public class Turret implements BluSubsystem, Subsystem {
     Pose2d goalPose;
     public static double farP = 0.06, farI = 0, farD = 0;
     public static double closeP = 0.07, closeI = 0, closeD = 0.005;
+    public static double farVsCloseCutoff = 10;
     public static double acceptableError = 0;
     public static double powerClip = 0.8;
     public static double MAX_ANGLE = 100;
@@ -115,9 +116,11 @@ public class Turret implements BluSubsystem, Subsystem {
                 this.position = Range.clip(this.position, MIN_ANGLE, MAX_ANGLE);
                 double currentAngle = getAngle();
                 double rotateError = getRotateError(getAngle(), position);
-                if (Math.abs(rotateError) < 15){
+                if (Math.abs(rotateError) < farVsCloseCutoff){
+                    Globals.telemetry.addLine("CLOSE SETTINGS");
                     controller.setPID(closeP, closeI, closeD);
                 } else {
+                    Globals.telemetry.addLine("FAR SETTINGS");
                     controller.setPID(farP, farI, farD);
                 }
                 double power = -controller.calculate(rotateError, 0);
@@ -131,8 +134,9 @@ public class Turret implements BluSubsystem, Subsystem {
                 }
 
                 Globals.telemetry.addData("Power", power);
-                Globals.telemetry.addData("Turret Power", servos.getPower());
+                Globals.telemetry.addData("Calculate Power", power);
                 Globals.telemetry.addData("Position", position);
+                Globals.telemetry.addData("kP", controller.getP());
                 if (Math.abs(rotateError) > acceptableError) {
                     Globals.telemetry.addData("Rotate Error", rotateError);
                     servos.setPower(power);

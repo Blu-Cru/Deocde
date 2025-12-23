@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 import java.util.Objects;
 
@@ -59,7 +60,11 @@ public final class PinpointLocalizer implements Localizer {
 
     @Override
     public Pose2d getPose() {
-        return txWorldPinpoint.times(txPinpointRobot);
+        try {
+            return txWorldPinpoint.times(txPinpointRobot);
+        } catch (Exception e){
+            throw new RuntimeException("Get Pose not working, txWorldPinpoint: " + txWorldPinpoint+ " ,Error: " + e.getMessage() );
+        }
     }
 
     // In org/firstinspires/ftc/teamcode/roadrunner/PinpointLocalizer.java
