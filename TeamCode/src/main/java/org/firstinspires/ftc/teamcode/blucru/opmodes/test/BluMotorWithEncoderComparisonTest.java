@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class BluMotorWithEncoderComparisonTest extends BluLinearOpMode {
     BluMotorWithEncoder bluMotor;
     DcMotorEx dcMotor;

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 import java.util.Arrays;
 
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class ObeliskTagTest extends BluLinearOpMode {
 
     public void initialize(){

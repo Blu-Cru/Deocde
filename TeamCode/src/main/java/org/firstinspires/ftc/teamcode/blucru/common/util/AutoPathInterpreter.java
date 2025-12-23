@@ -90,6 +90,7 @@ public class AutoPathInterpreter {
     }
 
     public Action buildPathFromJSON(Pose2d startPose, TankDrive drive) {
+        Globals.telemetry.addData("StartingPose", startPose);
         TrajectoryActionBuilder builder = drive.actionBuilder(startPose);
 
         try {

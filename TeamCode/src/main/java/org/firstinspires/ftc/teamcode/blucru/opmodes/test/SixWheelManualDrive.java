@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@TeleOp
+//@TeleOp
 public class SixWheelManualDrive extends BluLinearOpMode {
     @Override
     public void initialize() {

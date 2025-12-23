@@ -55,13 +55,13 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         // IMPORTANT: You must 'adb push TeamCode/15ball_auto.json
         // /sdcard/FIRST/15ball_auto.json on the robot
         // controller.
-        String filePath = "/sdcard/FIRST/15ball_auto.json";
+        String filePath = "/sdcard/FIRST/autopath/15ball_auto.json";
 
         // Try to create the interpreter
-        drive = new TankDrive(hardwareMap, startPose);
         AutoPathInterpreter interpreter = new AutoPathInterpreter(filePath);
 
         startPose = interpreter.getStartPose();
+        drive = new TankDrive(hardwareMap, startPose);
 
         path = interpreter.buildPathFromJSON(startPose, drive);
 
@@ -85,6 +85,12 @@ public class FifteenBallNoPartnerCloseAutoWithPreload extends BluLinearOpMode {
         elevator.write();
 
         turret.resetEncoder();
+
+    }
+
+    @Override
+    public void telemetry() {
+        telemetry.addData("Start Pose", startPose);
     }
 
     @Override

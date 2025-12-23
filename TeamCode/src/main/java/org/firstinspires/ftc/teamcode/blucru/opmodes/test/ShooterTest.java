@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCom
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.TurnOnShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class ShooterTest extends BluLinearOpMode {
     enum State{
         IDLE,
