@@ -19,7 +19,7 @@ public class TurretPIDTuning extends BluLinearOpMode {
 
     @Override
     public void initialize() {
-        super.reportTelemetry = false;
+        super.reportTelemetry = true;
         robot.clear();
         addTurret();
         Globals.multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -29,16 +29,16 @@ public class TurretPIDTuning extends BluLinearOpMode {
         if (state == 0) {
             turret.setAngle(angle);
 
-            turret.updatePID();
+            turret.updatePD();
         }else{
             turret.setPower(power);
         }
 
-        Globals.multiTelemetry.addData("Turret Pos", turret.getAngle());
-        Globals.multiTelemetry.addData("Target Pos", angle);
-        Globals.multiTelemetry.addData("Target Power", turret.getPower());
-        Globals.multiTelemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
+        //Globals.multiTelemetry.addData("Turret Pos", turret.getAngle());
+        //Globals.multiTelemetry.addData("Target Pos", angle);
+        //Globals.multiTelemetry.addData("Target Power", turret.getPower());
+        //Globals.multiTelemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
         turret.telemetry(telemetry);
-        Globals.multiTelemetry.update();
+        //Globals.multiTelemetry.update();
     }
 }
