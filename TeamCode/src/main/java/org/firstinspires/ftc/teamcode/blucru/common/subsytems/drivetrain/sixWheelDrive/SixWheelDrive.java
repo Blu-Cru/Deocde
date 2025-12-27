@@ -42,7 +42,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 break;
             case PID:
                 double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
-                drive(-powers[0], -powers[1]);
+                drive(-powers[0], 0);
             case TELE_DRIVE:
                 break;
         }
@@ -86,6 +86,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         this.path = path;
         computer.resetLastFoundIndex();
         dtState = State.PID;
+    }
+    public void resetPurePursuit(){
+        computer.resetLastFoundIndex();
     }
 
     public void switchToIdle(){

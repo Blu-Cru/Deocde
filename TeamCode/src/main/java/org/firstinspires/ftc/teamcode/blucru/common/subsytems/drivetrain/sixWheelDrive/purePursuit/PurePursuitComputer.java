@@ -10,10 +10,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
  */
 public class PurePursuitComputer {
     private int lastFoundIndex;
-    private double dist;
     double totalPathLength = -1;
     Point2d[][] pointsSols;
-    public double vMax = 60, aAccel = 40, aDecel = 40; // Default values, should be tuned
+    public double vMax = 50, aAccel = 30, aDecel = 30; // Default values, should be tuned
 
     public PurePursuitComputer() {
         lastFoundIndex = 0;
@@ -144,9 +143,6 @@ public class PurePursuitComputer {
                         new Point2d(robotPose.getX(), robotPose.getY()), path[i + 1])) {
                     // going there would be bad, dont pick it
                     // there should be a better point
-                    // setting lastFoundIndex to always be the point ahead in case the robot cant
-                    // find a point in later sols
-                    // lastFoundIndex = i + 1; // Don't skip ahead aggressively
                 } else {
                     lastFoundIndex = i;
                     goalPoint = sols[0];
@@ -165,7 +161,6 @@ public class PurePursuitComputer {
                 if (findDistBetween2Points(closerPoint, path[i + 1]) > findDistBetween2Points(
                         new Point2d(robotPose.getX(), robotPose.getY()), path[i + 1])) {
                     // going to point would be bad, dont pick it
-                    // lastFoundIndex = i + 1;
                 } else {
                     lastFoundIndex = i;
                     goalPoint = closerPoint;
@@ -178,16 +173,31 @@ public class PurePursuitComputer {
         if (goalPoint == null) {
             // no goal point chosen, then go to last found index of intersection on path
             Globals.telemetry.addLine("No goal point set");
-            goalPoint = path[lastFoundIndex];
+            if (lastFoundIndex >= path.length - 2){
+                // If we are last segment, assume we are close/past end
+                goalPoint = path[path.length - 1];
+            } else {
+                //target next point
+                goalPoint = path[lastFoundIndex + 1];
+            }
+
 
         }
 
-        dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[lastFoundIndex]);
         return goalPoint;
     }
 
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
             SixWheelPID pid) {
+        Globals.telemetry.addData("Goal Point", goalPoint);
+        Globals.telemetry.addData("Robot XY", new Point2d(robotPose.getX(), robotPose.getY()));
+        double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
+        if (dist < 2){
+            return 0;
+        }
+
+        Globals.telemetry.addData("Dist", dist);
+
         return pid.getHeadingVel(robotPose, goalPoint, angleVel);
     }
 
@@ -233,6 +243,7 @@ public class PurePursuitComputer {
         // But robot might be off path.
         // Better approximation: Total Length - Distance to End.
 
+
         // Distance from goalPoint to End
         double distFromGoalToEnd = 0;
         // dist from goalPoint to path[lastFoundIndex+1]
@@ -260,6 +271,10 @@ public class PurePursuitComputer {
         if (currentDistTraveled < 0)
             currentDistTraveled = 0; // clamp
 
+        if (currentDistRemaining < 1){
+            rot = 0;
+        }
+
         // 2. Calculate Trapezoidal Profile Velocities
         // v_accel = sqrt(2 * a_accel * distTraveled)
         double vAccel = Math.sqrt(2 * aAccel * currentDistTraveled);
@@ -273,14 +288,14 @@ public class PurePursuitComputer {
         // Ensure we don't stall with 0 velocity if we are far?
         if (targetVel < 5 && currentDistRemaining > 2)
             targetVel = 5; // Minimum speed to overcome friction if not done
-        if (currentDistRemaining < 1)
-            targetVel = 0; // Stop at end
 
         // 3. Get Velocity Command from PID
         // Calculate current linear velocity magnitude
         double currentLinearVel = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
 
         double linear = pid.getProfiledLinearVel(targetVel, currentLinearVel);
+
+
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);

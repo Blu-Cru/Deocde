@@ -16,7 +16,7 @@ public class SixWheelPID {
     private double kXY = 0.05, dXY = 0;
 
     private double kR = 0.01, dR = 0;
-    private double kV = 0.015, kVel = 0.005; // Tunable values for Feedforward and Velocity P
+    private double kV = 0.035, kVel = 0.01; // Tunable values for Feedforward and Velocity P
 
     public SixWheelPID() {
         xy = new PDController(kXY, dXY);
