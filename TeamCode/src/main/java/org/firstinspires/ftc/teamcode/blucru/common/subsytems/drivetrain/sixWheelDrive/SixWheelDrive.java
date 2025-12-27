@@ -18,6 +18,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private Point2d[] path;
     private PurePursuitComputer computer;
     private final double LOOK_AHEAD_DIST = 5;
+    public static double END_TOLERANCE = 2.0;
     private SixWheelPID pid;
     public SixWheelDrive(){
         super();
@@ -41,8 +42,24 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
             case IDLE:
                 break;
             case PID:
+                // Check if we're close enough to the end point
+                if (path != null && path.length > 0) {
+                    Point2d endPoint = path[path.length - 1];
+                    double distToEnd = Math.sqrt(
+                        Math.pow(localizer.getPose().getX() - endPoint.getX(), 2) +
+                        Math.pow(localizer.getPose().getY() - endPoint.getY(), 2)
+                    );
+
+                    if (distToEnd < END_TOLERANCE) {
+                        // Close enough - stop
+                        switchToIdle();
+                        break;
+                    }
+                }
+
                 double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
                 drive(-powers[0], -powers[1]);
+                break;
             case TELE_DRIVE:
                 break;
         }

@@ -159,14 +159,24 @@ public class PurePursuitComputer {
         if (goalPoint == null) {
             // no goal point chosen, then go to last found index of intersection on path
             Globals.telemetry.addLine("No goal point set");
+            // Clamp lastFoundIndex to prevent out of bounds
+            if (lastFoundIndex >= path.length) {
+                lastFoundIndex = path.length - 1;
+            }
             goalPoint = path[lastFoundIndex];
 
         }
 
-        dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[lastFoundIndex + 1]);
-        for (int i = lastFoundIndex + 1; i < path.length - 1; i++) {
+        // Calculate distance remaining along the path
+        // Start from robot position to goal point, then sum remaining segments
+        dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
+
+        // Add remaining path segments from the current segment to the end
+        // Find which segment the goal point is on
+        for (int i = lastFoundIndex; i < path.length - 1; i++) {
             dist += findDistBetween2Points(path[i], path[i + 1]);
         }
+
         return goalPoint;
     }
 
@@ -185,11 +195,15 @@ public class PurePursuitComputer {
             SixWheelPID pid) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
+
+        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
 
-        double linear = pid.getLinearVel(robotPose, dist, robotVel);
+        double linear = pid.getLinearVel(robotPose, dist, robotVel, isDrivingBackwards);
+
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
+        Globals.telemetry.addData("Dist to End", dist);
 
         return new double[] { linear, rot };
     }
