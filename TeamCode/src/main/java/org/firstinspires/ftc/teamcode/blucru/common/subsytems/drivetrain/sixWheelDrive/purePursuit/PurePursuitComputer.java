@@ -182,6 +182,10 @@ public class PurePursuitComputer {
 
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
             SixWheelPID pid) {
+        double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
+        if (dist < 3){
+            return 0;
+        }
         return pid.getHeadingVel(robotPose, goalPoint, angleVel);
     }
 
@@ -199,7 +203,7 @@ public class PurePursuitComputer {
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
 
-        double linear = pid.getLinearVel(robotPose, dist, robotVel, isDrivingBackwards);
+        double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);

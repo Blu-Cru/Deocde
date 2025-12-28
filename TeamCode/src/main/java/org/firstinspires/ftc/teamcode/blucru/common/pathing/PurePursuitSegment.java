@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -17,8 +18,11 @@ public class PurePursuitSegment implements PathSegment{
     }
     @Override
     public boolean isDone() {
-        return (Robot.getInstance().sixWheelDrivetrain.getPos().
-                getDistTo(new Pose2d(path[path.length-1].getX(), path[path.length-1].getY(), 0))) < 1;
+        Globals.telemetry.addData("Last Point", path[path.length-1]);
+        double dist = Robot.getInstance().sixWheelDrivetrain.getPos().
+                getDistTo(new Pose2d(path[path.length-1].getX(), path[path.length-1].getY(), 0));
+        Globals.telemetry.addData("Dist", dist);
+        return dist < 2;
     }
 
     @Override

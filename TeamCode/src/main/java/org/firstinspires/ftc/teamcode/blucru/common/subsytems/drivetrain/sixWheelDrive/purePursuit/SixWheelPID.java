@@ -6,21 +6,21 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
+
 @Config
 public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    private double kXY = 0.15, dXY = 0.01;
-    private double kR = 0.03, dR = 0.001;
+    private double pXY = 0.1, dXY = 0.03;
+    private double pR = 0.03, dR = 0.001;
 
     public SixWheelPID(){
-        xy = new PDController(kXY, dXY);
-        r = new PDController(kR, dR);
+        xy = new PDController(pXY, dXY);
+        r = new PDController(pR, dR);
     }
 
-    public double getLinearVel(Pose2d robotPose, double dist, Pose2d robotVel, boolean isDrivingBackwards){
+    public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards){
 
         double robotVelXY = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
 
