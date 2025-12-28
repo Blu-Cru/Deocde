@@ -37,6 +37,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public static double distFromCenter = 72.35 / 25.4;
 
+    private Double lastSetpoint = null;
+
     private enum State {
         MANUAL,
         PID,
@@ -85,7 +87,12 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void setAngle(double angle) {
-        setAngle(angle, true);
+        if (lastSetpoint == null || Math.abs(angle - lastSetpoint) > 1e-6) {
+            controller.reset();
+            position = angle;
+            state = State.PID;
+            lastSetpoint = angle;
+        }
     }
 
     public void setAngle(double angle, boolean switchState) {

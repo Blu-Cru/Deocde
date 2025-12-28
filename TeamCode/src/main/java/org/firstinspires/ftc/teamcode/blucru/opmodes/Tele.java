@@ -186,6 +186,7 @@ public class Tele extends BluLinearOpMode{
         llTagDetector.read();
         sm.update();
 
+
         //Shooter
         if(driver2.pressedRightBumper()){
             shooter.redAlliance = true;
