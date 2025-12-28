@@ -11,7 +11,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
@@ -42,7 +42,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
         addElevator();
         addTurret();
         Command pickupBalls = new SequentialCommandGroup(
-                new IntakeCommand(),
+                new ResetForIntakeCommand(),
                 new WaitCommand(500),
                 new TransferCommand(true)
         );

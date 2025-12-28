@@ -2,19 +2,14 @@ package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,7 +28,7 @@ public class CommandFactory {
             case "WaitCommand":
                 return new WaitCommand(args.getLong(0));
             case "IntakeCommand":
-                return new IntakeCommand(); // Check constructor args if any
+                return new ResetForIntakeCommand(); // Check constructor args if any
             case "TransferCommand":
                 return new TransferCommand(args.getBoolean(0));
             case "AutonomousShootCloseCommand":
