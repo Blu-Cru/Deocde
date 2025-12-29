@@ -28,6 +28,7 @@ public class PurePursuitSegment implements PathSegment{
     @Override
     public void startSegment() {
         startTime = System.currentTimeMillis();
+        Robot.getInstance().sixWheelDrivetrain.followPath(path);
     }
 
     @Override
@@ -42,6 +43,6 @@ public class PurePursuitSegment implements PathSegment{
 
     @Override
     public void runSegment() {
-        Robot.getInstance().sixWheelDrivetrain.followPath(path);
+        // Path following continues automatically in the drivetrain's periodic update
     }
 }

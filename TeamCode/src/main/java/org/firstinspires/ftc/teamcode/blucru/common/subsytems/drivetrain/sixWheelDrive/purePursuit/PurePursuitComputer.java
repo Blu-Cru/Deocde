@@ -121,7 +121,7 @@ public class PurePursuitComputer {
                     // there should be a better point
                     // setting lastFoundIndex to always be the point ahead in case the robot cant
                     // find a point in later sols
-                    lastFoundIndex = i + 1;
+                    lastFoundIndex = Math.min(i + 1, path.length - 2);
                     Globals.telemetry.addLine("1 sol, and it moves the robot farther away");
                 } else {
                     lastFoundIndex = i;
@@ -146,7 +146,7 @@ public class PurePursuitComputer {
                     // setting lastFoundIndex to always be the point ahead in case the robot cant
                     // find a point in later sols
                     Globals.telemetry.addLine("2 sols, and closer one moves the robot farther away");
-                    lastFoundIndex = i + 1;
+                    lastFoundIndex = Math.min(i + 1, path.length - 2);
                 } else {
                     lastFoundIndex = i;
                     goalPoint = closerPoint;
@@ -157,13 +157,14 @@ public class PurePursuitComputer {
         }
 
         if (goalPoint == null) {
-            // no goal point chosen, then go to last found index of intersection on path
+            // no goal point chosen, then go to the end of the current segment (point ahead)
             Globals.telemetry.addLine("No goal point set");
             // Clamp lastFoundIndex to prevent out of bounds
-            if (lastFoundIndex >= path.length) {
-                lastFoundIndex = path.length - 1;
+            if (lastFoundIndex >= path.length - 1) {
+                lastFoundIndex = path.length - 2;
             }
-            goalPoint = path[lastFoundIndex];
+            // Go to the end of the current segment, not the start
+            goalPoint = path[lastFoundIndex + 1];
 
         }
 

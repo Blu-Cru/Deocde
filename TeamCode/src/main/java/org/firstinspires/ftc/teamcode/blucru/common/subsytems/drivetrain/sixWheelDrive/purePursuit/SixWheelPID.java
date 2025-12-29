@@ -12,8 +12,8 @@ public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    private double pXY = 0.1, dXY = 0.03;
-    private double pR = 0.03, dR = 0.001;
+    private double pXY = 0.05, dXY = 0.075;
+    private double pR = 0.01, dR = 0.01;
 
     public SixWheelPID(){
         xy = new PDController(pXY, dXY);
