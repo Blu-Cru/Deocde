@@ -178,6 +178,7 @@ public class PurePursuitComputer {
         // Calculate distance remaining along the path
         // Start from robot position to goal point, then sum remaining segments
         dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
+        dist += findDistBetween2Points(goalPoint, path[lastFoundIndex+1]);
 
         // Add remaining path segments after the current segment
         // Start from the next segment (lastFoundIndex + 1) since goalPoint is already on the current segment

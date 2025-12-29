@@ -12,11 +12,11 @@ public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    public static double pXY = 0.05, dXY = 0.075;
-    public static double pR = 0.01, dR = 0.01;
 
     // Stop linear movement when this close to goal to prevent oscillation
-    public static double STOP_DISTANCE = 3.0;
+    public static double STOP_DISTANCE = 2;
+    private double pXY = 0.1, dXY = 0.075;
+    private double pR = 0.03, dR = 0.01;
 
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;

@@ -15,9 +15,16 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 public class TestPurePursuitPath extends SixWheelPIDPathBuilder {
 
     // Test 1: Straight path forward, no heading control (baseline test)
-    Point2d[] straightPath = {
+    Point2d[] testPath = {
         new Point2d(0, 0),
-        new Point2d(40, 0)
+        new Point2d(20, 10),
+        new Point2d(40,10),
+        new Point2d(50, 0)
+    };
+
+    Point2d[] straightPath = {
+            new Point2d(0,0),
+            new Point2d(40,10)
     };
 
     // Test 2: Straight path with 90 degree heading
@@ -46,18 +53,18 @@ public class TestPurePursuitPath extends SixWheelPIDPathBuilder {
         super();
 
         // Test 1: No heading control (should work as before)
-        this.addMappedPurePursuitPath(straightPath, 5000);
+        this.addMappedPurePursuitPath(testPath,  5000);
         this.waitMilliseconds(500);
 
         // Test 2: End at 90 degrees (facing up)
-        this.addMappedPurePursuitPath(straightPath90, 90.0, 5000);
-        this.waitMilliseconds(500);
+        /*this.addMappedPurePursuitPath(straightPath90, 90.0, 5000);
+        this.waitMilliseconds(500);*/
 
         // Test 3: End at 180 degrees (facing left)
-        this.addMappedPurePursuitPath(curvedPath, 180.0, 5000);
+        /*this.addMappedPurePursuitPath(curvedPath, 180.0, 5000);
         this.waitMilliseconds(500);
 
         // Test 4: End at 0 degrees (facing right)
-        this.addMappedPurePursuitPath(returnPath, 0.0, 5000);
+        this.addMappedPurePursuitPath(returnPath, 0.0, 5000);*/
     }
 }

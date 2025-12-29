@@ -92,6 +92,13 @@ public class PIDPath implements Path{
                 Log.e("PID Path", "error running callback, " + e.getMessage());
             }
 
+            try{
+                //start path
+                segments.get(segmentIndex).startSegment();
+            } catch (Exception e){
+                Log.e("PID Path", "error running next segment, " + e.getMessage());
+            }
+
 
         }
     }
