@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
+    private Double targetHeading; // Target heading in degrees, null if no heading control
     private PurePursuitComputer computer;
     private final double LOOK_AHEAD_DIST = 5;
     public static double END_TOLERANCE = 2.0;
@@ -24,6 +25,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         super();
         drivePower = 1;
         path = null;
+        targetHeading = null;
         computer = new PurePursuitComputer();
         pid = new SixWheelPID();
     }
@@ -57,7 +59,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                     }
                 }
 
-                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
+                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid, targetHeading);
                 drive(-powers[0], -powers[1]);
                 break;
             case TELE_DRIVE:
@@ -101,6 +103,14 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
     public void followPath(Point2d[] path){
         this.path = path;
+        this.targetHeading = null; // No heading control
+        computer.resetLastFoundIndex();
+        dtState = State.PID;
+    }
+
+    public void followPath(Point2d[] path, Double targetHeading){
+        this.path = path;
+        this.targetHeading = targetHeading;
         computer.resetLastFoundIndex();
         dtState = State.PID;
     }

@@ -172,9 +172,10 @@ public class PurePursuitComputer {
         // Start from robot position to goal point, then sum remaining segments
         dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
 
-        // Add remaining path segments from the current segment to the end
-        // Find which segment the goal point is on
-        for (int i = lastFoundIndex; i < path.length - 1; i++) {
+        // Add remaining path segments after the current segment
+        // Start from the next segment (lastFoundIndex + 1) since goalPoint is already on the current segment
+        // This avoids double-counting part of the current segment
+        for (int i = lastFoundIndex + 1; i < path.length - 1; i++) {
             dist += findDistBetween2Points(path[i], path[i + 1]);
         }
 
@@ -198,11 +199,41 @@ public class PurePursuitComputer {
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
             SixWheelPID pid) {
+        return computeRotAndXY(path, robotPose, robotVel, lookAheadDist, pid, null);
+    }
+
+    public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
+            SixWheelPID pid, Double finalHeading) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
 
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
-        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
+        double rot;
+
+        // Transition distance for heading control (start controlling heading when within this distance)
+        double headingControlDist = 15.0;
+
+        // If we have a final heading and we're near the end, transition to heading control
+        if (finalHeading != null && dist < headingControlDist) {
+            // Blend between path following and final heading based on distance
+            double blendFactor = dist / headingControlDist; // 1.0 at far, 0.0 at goal
+
+            // Get rotation for path following
+            double pathRot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
+
+            // Get rotation for final heading
+            double headingRot = pid.getHeadingVelToTarget(robotPose, finalHeading, robotVel.getH());
+
+            // Blend the two rotations
+            rot = pathRot * blendFactor + headingRot * (1.0 - blendFactor);
+
+            Globals.telemetry.addData("Using Heading Control", true);
+            Globals.telemetry.addData("Blend Factor", blendFactor);
+        } else {
+            // Normal path following
+            rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
+            Globals.telemetry.addData("Using Heading Control", false);
+        }
 
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
 

@@ -93,4 +93,29 @@ public class SixWheelPID {
         return Math.abs(deltaAngle) > 90;
     }
 
+    /**
+     * Calculate angular velocity to reach a specific target heading
+     * @param robotPose Current robot pose
+     * @param targetHeadingDegrees Desired heading in degrees
+     * @param angleVel Current angular velocity
+     * @return Required angular velocity to reach target heading
+     */
+    public double getHeadingVelToTarget(Pose2d robotPose, double targetHeadingDegrees, double angleVel) {
+        double robotHeading = Math.toDegrees(robotPose.getH());
+        double deltaAngle = targetHeadingDegrees - robotHeading;
+
+        // Normalize to [-180, 180]
+        while (deltaAngle > 180) {
+            deltaAngle -= 360;
+        }
+        while (deltaAngle <= -180) {
+            deltaAngle += 360;
+        }
+
+        Globals.telemetry.addData("Target Heading Control", targetHeadingDegrees);
+        Globals.telemetry.addData("Delta Angle to Target", deltaAngle);
+
+        return r.calculate(deltaAngle, -angleVel);
+    }
+
 }
