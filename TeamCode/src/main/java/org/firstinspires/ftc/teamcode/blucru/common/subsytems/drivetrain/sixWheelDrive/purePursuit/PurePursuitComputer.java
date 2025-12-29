@@ -207,14 +207,20 @@ public class PurePursuitComputer {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
 
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
         double rot;
 
         // Transition distance for heading control (start controlling heading when within this distance)
         double headingControlDist = 15.0;
 
+        // Determine if we're in heading control mode
+        boolean inHeadingControl = (finalHeading != null && dist < headingControlDist);
+
+        // Only consider backwards driving if we're NOT in heading control mode
+        // This prevents violent toggling when trying to reach a final heading
+        boolean isDrivingBackwards = !inHeadingControl && pid.shouldDriveBackwards(robotPose, goalPoint);
+
         // If we have a final heading and we're near the end, transition to heading control
-        if (finalHeading != null && dist < headingControlDist) {
+        if (inHeadingControl) {
             // Blend between path following and final heading based on distance
             double blendFactor = dist / headingControlDist; // 1.0 at far, 0.0 at goal
 
@@ -240,6 +246,7 @@ public class PurePursuitComputer {
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
+        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
 
         return new double[] { linear, rot };
     }

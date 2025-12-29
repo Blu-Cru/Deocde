@@ -105,6 +105,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         this.path = path;
         this.targetHeading = null; // No heading control
         computer.resetLastFoundIndex();
+        pid.resetBackwardsDrivingState();
         dtState = State.PID;
     }
 
@@ -112,6 +113,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         this.path = path;
         this.targetHeading = targetHeading;
         computer.resetLastFoundIndex();
+        pid.resetBackwardsDrivingState();
         dtState = State.PID;
     }
 

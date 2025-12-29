@@ -15,9 +15,19 @@ public class SixWheelPID {
     private double pXY = 0.05, dXY = 0.075;
     private double pR = 0.01, dR = 0.01;
 
+    // Track previous backwards driving state for hysteresis
+    private boolean wasDriverBackwards = false;
+    // Hysteresis thresholds to prevent rapid toggling
+    private static final double BACKWARDS_THRESHOLD = 100.0; // Switch to backwards
+    private static final double FORWARDS_THRESHOLD = 80.0;   // Switch back to forwards
+
     public SixWheelPID(){
         xy = new PDController(pXY, dXY);
         r = new PDController(pR, dR);
+    }
+
+    public void resetBackwardsDrivingState() {
+        wasDriverBackwards = false;
     }
 
     public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards){
@@ -90,7 +100,25 @@ public class SixWheelPID {
             deltaAngle += 360;
         }
 
-        return Math.abs(deltaAngle) > 90;
+        double absDeltaAngle = Math.abs(deltaAngle);
+
+        // Hysteresis: use different thresholds based on previous state
+        // This prevents rapid toggling around the threshold
+        if (wasDriverBackwards) {
+            // Currently backwards: only switch to forwards if angle is small enough
+            if (absDeltaAngle < FORWARDS_THRESHOLD) {
+                wasDriverBackwards = false;
+                return false;
+            }
+            return true;
+        } else {
+            // Currently forwards: only switch to backwards if angle is large enough
+            if (absDeltaAngle > BACKWARDS_THRESHOLD) {
+                wasDriverBackwards = true;
+                return true;
+            }
+            return false;
+        }
     }
 
     /**
