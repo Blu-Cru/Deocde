@@ -12,14 +12,17 @@ public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
-    private double pXY = 0.05, dXY = 0.075;
-    private double pR = 0.01, dR = 0.01;
+    public static double pXY = 0.05, dXY = 0.075;
+    public static double pR = 0.01, dR = 0.01;
+
+    // Stop linear movement when this close to goal to prevent oscillation
+    public static double STOP_DISTANCE = 3.0;
 
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
     // Hysteresis thresholds to prevent rapid toggling
-    private static final double BACKWARDS_THRESHOLD = 100.0; // Switch to backwards
-    private static final double FORWARDS_THRESHOLD = 80.0;   // Switch back to forwards
+    public static double BACKWARDS_THRESHOLD = 100.0; // Switch to backwards
+    public static double FORWARDS_THRESHOLD = 80.0;   // Switch back to forwards
 
     public SixWheelPID(){
         xy = new PDController(pXY, dXY);
@@ -32,8 +35,13 @@ public class SixWheelPID {
 
     public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards){
 
-        double robotVelXY = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
+        // Stop moving when very close to goal to prevent oscillation
+        // The D term can overpower the P term at small distances
+        if (dist < STOP_DISTANCE) {
+            return 0;
+        }
 
+        double robotVelXY = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
 
         double error = dist;
 
