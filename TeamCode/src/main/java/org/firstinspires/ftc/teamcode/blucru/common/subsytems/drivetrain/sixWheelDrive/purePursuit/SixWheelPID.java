@@ -15,8 +15,10 @@ public class SixWheelPID {
 
     // Stop linear movement when this close to goal to prevent oscillation
     public static double STOP_DISTANCE = 2;
-    private double pXY = 0.1, dXY = 0.075;
-    private double pR = 0.03, dR = 0.01;
+
+    // PID gains - adjust these via FTC Dashboard for tuning
+    public static double pXY = 0.1, dXY = 0.075;
+    public static double pR = 0.03, dR = 0.01;
 
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;

@@ -26,25 +26,12 @@ public class SixWheelPIDPathBuilder {
         return this;
     }
 
-    public SixWheelPIDPathBuilder addPurePursuitPath(Point2d[] path, double targetHeading, double maxTime){
-        segments.add(new PurePursuitSegment(path, targetHeading, maxTime));
-        return this;
-    }
-
     public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double maxTime){
         for (int i = 0; i<path.length; i++){
             path[i] = Globals.mapPoint(path[i]);
         }
 
         return addPurePursuitPath(path, maxTime);
-    }
-
-    public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double targetHeading, double maxTime){
-        for (int i = 0; i<path.length; i++){
-            path[i] = Globals.mapPoint(path[i]);
-        }
-
-        return addPurePursuitPath(path, targetHeading, maxTime);
     }
 
     public SixWheelPIDPathBuilder addSegment(PathSegment segment){

@@ -25,7 +25,8 @@ public class SixWheelDriveBase implements BluSubsystem{
     public enum State{
         IDLE,
         PID,
-        TELE_DRIVE
+        TELE_DRIVE,
+        TURN
     }
 
     State dtState;

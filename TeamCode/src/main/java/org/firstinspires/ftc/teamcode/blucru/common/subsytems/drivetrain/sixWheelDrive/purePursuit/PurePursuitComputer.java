@@ -15,10 +15,6 @@ public class PurePursuitComputer {
     private int lastFoundIndex;
     private double dist;
 
-    // Two-stage control thresholds for heading control
-    public static double POSITION_THRESHOLD = 5.0;  // Stop linear movement within this distance
-    public static double HEADING_THRESHOLD = 10.0;  // Consider heading "good enough" within this angle
-
     public PurePursuitComputer() {
         lastFoundIndex = 0;
     }
@@ -207,82 +203,18 @@ public class PurePursuitComputer {
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
             SixWheelPID pid) {
-        return computeRotAndXY(path, robotPose, robotVel, lookAheadDist, pid, null);
-    }
-
-    public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
-            SixWheelPID pid, Double finalHeading) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
 
-        double rot;
-        double linear;
-
-        // If we have a final heading, use a two-stage approach:
-        // Stage 1: Get close to position (ignore heading)
-        // Stage 2: Fix heading while stopped (ignore small position errors)
-        if (finalHeading != null) {
-            // Calculate heading error
-            double robotHeadingDeg = Math.toDegrees(robotPose.getH());
-            double headingError = finalHeading - robotHeadingDeg;
-
-            // Normalize to [-180, 180]
-            while (headingError > 180) {
-                headingError -= 360;
-            }
-            while (headingError <= -180) {
-                headingError += 360;
-            }
-            double absHeadingError = Math.abs(headingError);
-
-            // Thresholds for two-stage control
-            boolean positionReached = dist < POSITION_THRESHOLD;
-            boolean headingReached = absHeadingError < HEADING_THRESHOLD;
-
-            if (positionReached && !headingReached) {
-                // Stage 2: Position is good, fix heading only
-                linear = 0;  // STOP linear movement
-                rot = pid.getHeadingVelToTarget(robotPose, finalHeading, robotVel.getH());
-
-                Globals.telemetry.addData("Control Stage", "HEADING ONLY");
-            } else if (!positionReached) {
-                // Stage 1: Approach position, allow some heading correction
-                boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
-                linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
-
-                // Use path following rotation with gentle heading bias
-                double pathRot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
-                double headingRot = pid.getHeadingVelToTarget(robotPose, finalHeading, robotVel.getH());
-
-                // Blend: mostly path following, slight heading correction
-                double headingBias = Math.min(0.3, (POSITION_THRESHOLD - dist) / POSITION_THRESHOLD); // 0 to 0.3
-                rot = pathRot * (1.0 - headingBias) + headingRot * headingBias;
-
-                Globals.telemetry.addData("Control Stage", "POSITION");
-                Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
-            } else {
-                // Both reached - stop everything
-                linear = 0;
-                rot = 0;
-                Globals.telemetry.addData("Control Stage", "COMPLETE");
-            }
-
-            Globals.telemetry.addData("Position Reached", positionReached);
-            Globals.telemetry.addData("Heading Reached", headingReached);
-            Globals.telemetry.addData("Heading Error", absHeadingError);
-        } else {
-            // No final heading specified - normal path following
-            boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
-            linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
-            rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
-
-            Globals.telemetry.addData("Control Stage", "PATH FOLLOW");
-            Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
-        }
+        // Simple pure pursuit - just follow the path
+        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
+        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
+        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
 
         return new double[] { linear, rot };
     }

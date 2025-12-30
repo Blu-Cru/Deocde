@@ -16,10 +16,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
-    private Double targetHeading; // Target heading in degrees, null if no heading control
+    private Double targetHeading; // Target heading for turnTo command
     private PurePursuitComputer computer;
-    private final double LOOK_AHEAD_DIST = 5;
+
+    // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but jerkier
+    public static double LOOK_AHEAD_DIST = 5.0;
     public static double END_TOLERANCE = 2.0;
+    public static double HEADING_TOLERANCE = 5.0; // Degrees
     private SixWheelPID pid;
     public SixWheelDrive(){
         super();
@@ -59,8 +62,40 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                     }
                 }
 
-                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid, targetHeading);
+                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
                 drive(-powers[0], -powers[1]);
+                break;
+            case TURN:
+                // Turn in place to target heading
+                if (targetHeading == null) {
+                    switchToIdle();
+                    break;
+                }
+
+                double robotHeadingDeg = Math.toDegrees(localizer.getPose().getH());
+                double headingError = targetHeading - robotHeadingDeg;
+
+                // Normalize to [-180, 180]
+                while (headingError > 180) {
+                    headingError -= 360;
+                }
+                while (headingError <= -180) {
+                    headingError += 360;
+                }
+
+                // Check if we're within tolerance
+                if (Math.abs(headingError) < HEADING_TOLERANCE) {
+                    switchToIdle();
+                    break;
+                }
+
+                // Calculate rotation command
+                double rotVel = pid.getHeadingVelToTarget(localizer.getPose(), targetHeading, localizer.getVel().getH());
+                drive(0, -rotVel); // No linear movement, only rotation
+
+                Globals.telemetry.addData("Turn Target", targetHeading);
+                Globals.telemetry.addData("Current Heading", robotHeadingDeg);
+                Globals.telemetry.addData("Heading Error", headingError);
                 break;
             case TELE_DRIVE:
                 break;
@@ -103,18 +138,43 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
     public void followPath(Point2d[] path){
         this.path = path;
-        this.targetHeading = null; // No heading control
+        this.targetHeading = null;
         computer.resetLastFoundIndex();
         pid.resetBackwardsDrivingState();
         dtState = State.PID;
     }
 
-    public void followPath(Point2d[] path, Double targetHeading){
-        this.path = path;
-        this.targetHeading = targetHeading;
-        computer.resetLastFoundIndex();
-        pid.resetBackwardsDrivingState();
-        dtState = State.PID;
+    /**
+     * Turn in place to a target heading
+     * @param headingDegrees Target heading in degrees (0 = right, 90 = up, 180 = left, -90 = down)
+     */
+    public void turnTo(double headingDegrees) {
+        this.targetHeading = headingDegrees;
+        this.path = null;
+        dtState = State.TURN;
+    }
+
+    /**
+     * Check if the turn is complete
+     * @return true if robot is within HEADING_TOLERANCE of target heading
+     */
+    public boolean isTurnComplete() {
+        if (dtState != State.TURN || targetHeading == null) {
+            return true; // Not turning
+        }
+
+        double robotHeadingDeg = Math.toDegrees(localizer.getPose().getH());
+        double headingError = targetHeading - robotHeadingDeg;
+
+        // Normalize to [-180, 180]
+        while (headingError > 180) {
+            headingError -= 360;
+        }
+        while (headingError <= -180) {
+            headingError += 360;
+        }
+
+        return Math.abs(headingError) < HEADING_TOLERANCE;
     }
 
     public void switchToIdle(){
@@ -131,6 +191,14 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public void setHeading(double heading){
         localizer.setHeading(heading);
+    }
+
+    public SixWheelPID getPID() {
+        return pid;
+    }
+
+    public double getLookAheadDist() {
+        return LOOK_AHEAD_DIST;
     }
 
     @Override
