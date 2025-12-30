@@ -90,7 +90,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 // Calculate rotation command
-                double rotVel = pid.getHeadingVelToTarget(localizer.getPose(), targetHeading, localizer.getVel().getH());
+                double rotVel = pid.getHeadingVelToTargetTurnTo(localizer.getPose(), targetHeading, localizer.getVel().getH());
                 drive(0, -rotVel); // No linear movement, only rotation
 
                 Globals.telemetry.addData("Turn Target", targetHeading);
@@ -208,5 +208,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public double cubicScaling(double value){
         return 64 / 27.0 * value * value * value;
+    }
+
+    public void updatePID(){
+        pid.updatePID();
     }
 }

@@ -12,13 +12,15 @@ public class SixWheelPID {
 
     private PDController xy;
     private PDController r;
+    private PDController rTurnTo;
 
     // Stop linear movement when this close to goal to prevent oscillation
     public static double STOP_DISTANCE = 2;
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.1, dXY = 0.075;
-    public static double pR = 0.03, dR = 0.01;
+    public static double pXY = 0.07, dXY = 0.015;
+    public static double pR = 0.015, dR = 0.12;
+    public static double pRTurnTo = 0.02, dRTurnTo = 0.1;
 
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
@@ -29,6 +31,7 @@ public class SixWheelPID {
     public SixWheelPID(){
         xy = new PDController(pXY, dXY);
         r = new PDController(pR, dR);
+        rTurnTo = new PDController(pRTurnTo, dRTurnTo);
     }
 
     public void resetBackwardsDrivingState() {
@@ -140,7 +143,7 @@ public class SixWheelPID {
      * @param angleVel Current angular velocity
      * @return Required angular velocity to reach target heading
      */
-    public double getHeadingVelToTarget(Pose2d robotPose, double targetHeadingDegrees, double angleVel) {
+    public double getHeadingVelToTargetTurnTo(Pose2d robotPose, double targetHeadingDegrees, double angleVel) {
         double robotHeading = Math.toDegrees(robotPose.getH());
         double deltaAngle = targetHeadingDegrees - robotHeading;
 
@@ -155,7 +158,11 @@ public class SixWheelPID {
         Globals.telemetry.addData("Target Heading Control", targetHeadingDegrees);
         Globals.telemetry.addData("Delta Angle to Target", deltaAngle);
 
-        return r.calculate(deltaAngle, -angleVel);
+        return rTurnTo.calculate(deltaAngle, -angleVel);
+    }
+    public void updatePID(){
+        xy.setPD(pXY, dXY);
+        r.setPD(pR, dR);
     }
 
 }

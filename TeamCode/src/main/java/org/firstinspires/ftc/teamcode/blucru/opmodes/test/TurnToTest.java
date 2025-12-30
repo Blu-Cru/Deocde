@@ -82,6 +82,10 @@ public class TurnToTest extends BluLinearOpMode {
             telemetry.addLine("✓ Position reset!");
         }
 
+        if (driver1.pressedLeftBumper()){
+            sixWheel.updatePID();
+        }
+
         // Monitor turn progress
         if (state == TestState.TURNING) {
             if (sixWheel.isTurnComplete()) {

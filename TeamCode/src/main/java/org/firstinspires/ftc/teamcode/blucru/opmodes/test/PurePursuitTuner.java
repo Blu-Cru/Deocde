@@ -157,7 +157,7 @@ public class PurePursuitTuner extends BluLinearOpMode {
             {
                 new Point2d(0, 0),
                 new Point2d(20, 10),
-                new Point2d(40, 10)
+                new Point2d(20, 30)
             },
             // Path 3: Sharp turn
             {
@@ -169,8 +169,8 @@ public class PurePursuitTuner extends BluLinearOpMode {
             {
                 new Point2d(0, 0),
                 new Point2d(15, 15),
-                new Point2d(30, 0),
-                new Point2d(45, -15)
+                new Point2d(0, 30),
+                new Point2d(-15, 45)
             }
         };
     }
@@ -273,8 +273,8 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
             case STAGE_6_FINAL_TEST:
                 // Final stage: cycle through all paths for comprehensive testing
-                selectedPath = testPaths[currentTestPathIndex];
-                pathDescription = getPathName(currentTestPathIndex);
+                selectedPath = testPaths[3];
+                pathDescription = getPathName(3);
                 currentTestPathIndex = (currentTestPathIndex + 1) % testPaths.length;
                 break;
 
