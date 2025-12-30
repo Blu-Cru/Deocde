@@ -187,18 +187,19 @@ public class PurePursuitComputer {
     }
 
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
-            SixWheelPID pid) {
+            SixWheelPID pid, boolean isDrivingBackwards) {
         double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
         if (dist < 3){
             return 0;
         }
-        return pid.getHeadingVel(robotPose, goalPoint, angleVel);
+        return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);
     }
 
     public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
+        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
 
-        return getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, angleVel, pid);
+        return getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, angleVel, pid, isDrivingBackwards);
     }
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
@@ -206,10 +207,12 @@ public class PurePursuitComputer {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
 
-        // Simple pure pursuit - just follow the path
+        // Determine backwards driving once, use for both linear and heading control
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+
+        // Both controllers use the same backwards driving decision
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
-        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid);
+        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid, isDrivingBackwards);
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);

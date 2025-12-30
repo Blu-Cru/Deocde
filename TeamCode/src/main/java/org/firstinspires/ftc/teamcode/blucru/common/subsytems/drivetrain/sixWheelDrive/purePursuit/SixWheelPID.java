@@ -58,7 +58,15 @@ public class SixWheelPID {
     }
 
 
-    public double getHeadingVel(Pose2d robotPose, Point2d goalPoint, double angleVel){
+    /**
+     * Calculate heading velocity to point toward a goal
+     * @param robotPose Current robot pose
+     * @param goalPoint Target point to face
+     * @param angleVel Current angular velocity
+     * @param isDrivingBackwards Whether robot is driving backwards (passed from shouldDriveBackwards)
+     * @return Required angular velocity
+     */
+    public double getHeadingVel(Pose2d robotPose, Point2d goalPoint, double angleVel, boolean isDrivingBackwards){
         double robotHeading = Math.toDegrees(robotPose.getH());
 
         //get turn req
@@ -74,13 +82,8 @@ public class SixWheelPID {
             deltaAngle += 360;
         }
 
-        // Check if we should drive backwards instead of turning around
-        // If the angle error is > 90 degrees, it's more efficient to drive backwards
-        boolean shouldDriveBackwards = Math.abs(deltaAngle) > 90;
-
-        if (shouldDriveBackwards) {
-            // Adjust the target angle to face the opposite direction
-            // This way we drive backwards toward the goal
+        // If driving backwards, adjust the target angle to face the opposite direction
+        if (isDrivingBackwards) {
             if (deltaAngle > 0) {
                 deltaAngle -= 180;
             } else {
@@ -91,7 +94,6 @@ public class SixWheelPID {
         Globals.telemetry.addData("Robot Heading", robotHeading);
         Globals.telemetry.addData("Turn Req", turnReq);
         Globals.telemetry.addData("Delta Angle", deltaAngle);
-        Globals.telemetry.addData("Driving Backwards", shouldDriveBackwards);
 
         return r.calculate(deltaAngle, -angleVel);
     }
