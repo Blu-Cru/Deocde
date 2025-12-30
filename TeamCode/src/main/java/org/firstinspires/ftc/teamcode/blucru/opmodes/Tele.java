@@ -53,7 +53,7 @@ public class Tele extends BluLinearOpMode{
         addElevator();
         addTransfer();
         addShooter();
-        addLLTagDetector();
+        //addLLTagDetector();
         addTurret();
 
         sm = new StateMachineBuilder()
@@ -164,12 +164,22 @@ public class Tele extends BluLinearOpMode{
         sm.start();
     }
 
+    public void initializePeriodic(){
+        telemetry.addLine( "TURN ON INTAKE: HOLD LEFT TRIGGER");
+        telemetry.addLine( "TURN OFF INTAKE: RELEASE LEFT TRIGGER");
+        telemetry.addLine( "EJECT: HOLD RIGHT TRIGGER");
+        telemetry.addLine("TRANSFER: LEFT BUMPER");
+        telemetry.addLine("SHOOT: RIGHT BUMPER");
+        telemetry.addLine("MAKE SURE ROBOT IS AT -45, 52, 127 (AUTO STARTING POS)");
+    }
+
     public void onStart(){
          new ElevatorDownCommand().schedule();
+         //TODO: REMOVE BEFORE COMP
+         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127)));
     }
 
     public void periodic(){
-        llTagDetector.read();
         sm.update();
 
         //Shooter

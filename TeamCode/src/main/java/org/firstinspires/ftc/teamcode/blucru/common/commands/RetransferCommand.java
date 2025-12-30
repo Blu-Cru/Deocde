@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -24,7 +25,9 @@ public class RetransferCommand extends InstantCommand {
                     new AllTransferDownCommand(),
                     //TODO: conditional wait based on turret
                     new WaitCommand(300),
-                    new ElevatorUpCommand()
+                    new ElevatorUpCommand(),
+                    new WaitCommand(300),
+                    new ElevatorMiddleCommand()
             ).schedule();
         });
     }
