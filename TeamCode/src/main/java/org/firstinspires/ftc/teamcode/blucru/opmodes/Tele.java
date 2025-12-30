@@ -27,6 +27,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 @TeleOp (group = "a")
@@ -185,8 +187,10 @@ public class Tele extends BluLinearOpMode{
         //Shooter
         if(driver2.pressedRightBumper()){
             shooter.redAlliance = true;
-        }else if(driver2.pressedRightTrigger()){
+            Globals.setAlliance(Alliance.RED);
+        } else if(driver2.pressedRightTrigger()){
             shooter.redAlliance = false;
+            Globals.setAlliance(Alliance.BLUE);
         }
 
         //Drivetrain

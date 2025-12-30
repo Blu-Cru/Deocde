@@ -34,8 +34,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double acceptableError = 0.5;
     public static double powerClip = 0.95;
 
-    public static double MAX_ANGLE = 110;
-    public static double MIN_ANGLE = -110;
+    public static double MAX_ANGLE = 90;
+    public static double MIN_ANGLE = -90;
 
     public static double distFromCenter = 72.35 / 25.4;
 
@@ -82,8 +82,6 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
-                turretTargetDeg *= -1;
-
                 setFieldCentricPosition(
                         turretTargetDeg,
                         Math.toDegrees(
@@ -126,8 +124,8 @@ public class Turret implements BluSubsystem, Subsystem {
         state = State.MANUAL;
     }
 
-    public void setFieldCentricPosition(double position, double robotHeading, boolean switchState) {
-        setAngle(180 - position - robotHeading, switchState);
+    public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
+        setAngle(targetHeading - robotHeading, switchState);
     }
 
     public void lockOnGoal() {
