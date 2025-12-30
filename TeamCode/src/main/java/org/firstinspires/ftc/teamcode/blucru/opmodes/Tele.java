@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
@@ -34,7 +35,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
-    public boolean turreting = false;
+    public boolean turreting = true;
     public int rumbleDur = 200;
     public int shot = 0;
 
@@ -230,7 +231,7 @@ public class Tele extends BluLinearOpMode{
             turret.setPower(gamepad2.right_stick_x*0.5);
         }
 
-        telemetry.addData("State", sm.getState());
+
 
 
         //relocalization
@@ -241,6 +242,10 @@ public class Tele extends BluLinearOpMode{
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
             }
         }
+    }
+
+    public void telemetry(){
+        telemetry.addData("State", sm.getState());
     }
 
 }
