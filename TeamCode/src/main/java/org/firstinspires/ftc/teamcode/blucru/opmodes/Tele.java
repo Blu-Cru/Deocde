@@ -28,6 +28,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 @TeleOp (group = "a")
@@ -177,7 +179,7 @@ public class Tele extends BluLinearOpMode{
     public void onStart(){
          new ElevatorDownCommand().schedule();
          //TODO: REMOVE BEFORE COMP
-         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127)));
+         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
     }
 
     public void periodic(){
@@ -186,8 +188,10 @@ public class Tele extends BluLinearOpMode{
         //Shooter
         if(driver2.pressedRightBumper()){
             shooter.redAlliance = true;
-        }else if(driver2.pressedRightTrigger()){
+            Globals.setAlliance(Alliance.RED);
+        } else if(driver2.pressedRightTrigger()){
             shooter.redAlliance = false;
+            Globals.setAlliance(Alliance.BLUE);
         }
 
         //Drivetrain
