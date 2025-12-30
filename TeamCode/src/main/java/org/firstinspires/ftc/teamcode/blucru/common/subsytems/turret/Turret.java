@@ -125,7 +125,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
-        setAngle(targetHeading - robotHeading, switchState);
+        setAngle(180 - targetHeading - robotHeading, switchState);
     }
 
     public void lockOnGoal() {
@@ -209,7 +209,7 @@ public class Turret implements BluSubsystem, Subsystem {
         double dx = target.getX() - turretCenterX;
         double dy = target.getY() - turretCenterY;
 
-        return Math.toDegrees(Math.atan2(dy, dx)) + 90;
+        return Math.toDegrees(Math.atan2(dx, dy)) - 90;
     }
 
 

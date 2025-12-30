@@ -178,7 +178,7 @@ public class Tele extends BluLinearOpMode{
     public void onStart(){
          new ElevatorDownCommand().schedule();
          //TODO: REMOVE BEFORE COMP
-         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127)));
+         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
     }
 
     public void periodic(){
