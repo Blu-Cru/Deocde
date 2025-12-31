@@ -65,13 +65,13 @@ public class TurnToTest extends BluLinearOpMode {
             }
             // Diagonal directions
             else if (driver1.pressedDpadUp()) {
-                startTurn(45.0, "UP-RIGHT (45°)");
+                startTurn(10, "UP-RIGHT (45°)");
             } else if (driver1.pressedDpadRight()) {
-                startTurn(-45.0, "DOWN-RIGHT (-45°)");
+                startTurn(-10, "DOWN-RIGHT (-45°)");
             } else if (driver1.pressedDpadLeft()) {
-                startTurn(135.0, "UP-LEFT (135°)");
+                startTurn(100, "UP-LEFT (135°)");
             } else if (driver1.pressedDpadDown()) {
-                startTurn(-135.0, "DOWN-LEFT (-135°)");
+                startTurn(-100, "DOWN-LEFT (-135°)");
             }
         }
 
