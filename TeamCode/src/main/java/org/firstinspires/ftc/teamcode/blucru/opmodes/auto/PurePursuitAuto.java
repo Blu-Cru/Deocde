@@ -4,7 +4,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
@@ -22,6 +21,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
@@ -34,7 +35,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                     new Point2d(-45, 52),
-                    new Point2d(-25, 42)
+                    new Point2d(-24, 44)
             }, 5000)
                     .waitMilliseconds(3000)
                     .callback(() -> {
@@ -47,13 +48,15 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new WaitCommand(200),
                                 new AllTransferDownCommand(),
                                 new IntakeStartCommand(),
-                                new ElevatorDownCommand()
+                                new ElevatorDownCommand(),
+                                new WaitCommand(200),
+                                new CenterTurretCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-25, 42),
-                            new Point2d(-10, 42)
+                            new Point2d(-24, 44),
+                            new Point2d(-10, 44)
                     }, 5000)
                     .waitMilliseconds(3000)
                     .callback(() -> {
@@ -64,7 +67,8 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new WaitCommand(300),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
-                                new AllTransferMiddleCommand()
+                                new AllTransferMiddleCommand(),
+                                new LockOnGoalCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
@@ -72,6 +76,19 @@ public class PurePursuitAuto extends BluLinearOpMode {
                             new Point2d(-10, 42),
                             new Point2d(-27, 42)
                     }, 5000)
+                    .waitMilliseconds(3000)
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new LeftTransferUpCommand(),
+                                new WaitCommand(200),
+                                new MiddleTransferUpCommand(),
+                                new WaitCommand(200),
+                                new RightTransferUpCommand(),
+                                new WaitCommand(200),
+                                new AllTransferDownCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(3000)
                     .callback(() -> {
                         telemetry.addLine("Path Ended");
                     })
@@ -92,11 +109,14 @@ public class PurePursuitAuto extends BluLinearOpMode {
         elevator.write();
         transfer.setAllMiddle();
         transfer.write();
+        turret.resetEncoder();
+        turret.write();
     }
 
     public void onStart(){
         shooter.setHoodAngleIndependent(26, 28, 26);
         shooter.shootWithVelocity(850);
+        turret.lockOnGoal();
         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
         currentPath = new TestingPath().build().start();
     }
