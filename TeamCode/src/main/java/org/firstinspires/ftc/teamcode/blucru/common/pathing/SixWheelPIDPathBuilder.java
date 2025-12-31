@@ -34,6 +34,14 @@ public class SixWheelPIDPathBuilder {
         return addPurePursuitPath(path, maxTime);
     }
 
+    public SixWheelPIDPathBuilder addTurnTo(double heading, double maxTime){
+        return addSegment(new TurnToSegment(heading, maxTime));
+    }
+
+    public SixWheelPIDPathBuilder addMappedTurnTo(double heading, double maxTime){
+        return addSegment(new TurnToSegment(Globals.mapAngle(heading), maxTime));
+    }
+
     public SixWheelPIDPathBuilder addSegment(PathSegment segment){
         segments.add(segment);
         return this;
