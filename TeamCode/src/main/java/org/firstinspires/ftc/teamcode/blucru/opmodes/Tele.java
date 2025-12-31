@@ -105,7 +105,7 @@ public class Tele extends BluLinearOpMode{
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
-                    new RetransferCommand().schedule();
+                    new RetransferCommand(turreting).schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);

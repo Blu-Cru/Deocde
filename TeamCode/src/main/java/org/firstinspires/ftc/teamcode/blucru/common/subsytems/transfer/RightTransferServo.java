@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 
 @Config
 public class RightTransferServo extends TransferServo{
-    public static double middlePos = 0.7;
+    public static double middlePos = 0.53;
     public RightTransferServo(){
         super("kickerRight");
     }
@@ -12,7 +12,7 @@ public class RightTransferServo extends TransferServo{
 
     @Override
     double getVerticalPos() {
-        return 0.74;
+        return 0.78;
     }
 
     @Override
