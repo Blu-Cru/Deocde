@@ -29,7 +29,7 @@ public class TurretPIDTuning extends BluLinearOpMode {
         if (state == 0) {
             turret.setAngle(angle);
 
-            turret.updatePD();
+            turret.updatePID();
         }else{
             turret.setPower(power);
         }
