@@ -71,8 +71,7 @@ public class SixWheelPIDPathBuilder {
      *units: milliseconds
      */
     public SixWheelPIDPathBuilder waitMilliseconds(double milliseconds){
-        //run a wait segment with the last position
-        segments.add(new WaitSegment(segments.get(segments.size() - 1), milliseconds));
+        segments.add(new WaitSegment(milliseconds));
         return this;
     }
     public PIDPath build(){

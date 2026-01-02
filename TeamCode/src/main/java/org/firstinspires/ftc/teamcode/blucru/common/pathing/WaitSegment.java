@@ -1,15 +1,17 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class WaitSegment implements PathSegment{
-    final PathSegment previous;
     private final double waitTime;
     private double startTime;
-    public WaitSegment(PathSegment previous, double waitTime){
-        this.previous = previous;
+    private Pose2d waitPose;  // Store pose where we started waiting
+
+    public WaitSegment(double waitTime){
         this.waitTime = waitTime;
     }
+
     @Override
     public boolean isDone() {
         return System.currentTimeMillis() - startTime >= waitTime;
@@ -18,6 +20,8 @@ public class WaitSegment implements PathSegment{
     @Override
     public void startSegment() {
         startTime = System.currentTimeMillis();
+        // Capture current pose when wait starts
+        waitPose = Robot.getInstance().sixWheelDrivetrain.getPos();
     }
 
     @Override
@@ -27,11 +31,12 @@ public class WaitSegment implements PathSegment{
 
     @Override
     public Pose2d getPose() {
-        return previous.getPose();
+        return waitPose;  // Return the pose where we started waiting
     }
 
     @Override
     public void runSegment() {
-        previous.runSegment();
+        // Do nothing - just wait. Drivetrain is already in IDLE mode
+        // from endSixWheel() being called when previous segment completed
     }
 }
