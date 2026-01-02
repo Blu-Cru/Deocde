@@ -38,22 +38,18 @@ public class PIDPath implements Path{
         segmentIndex = 0;
 
         try{
-            //schedule all commands
-            for (Command c: commands.get(segmentIndex)){
-                c.schedule();
+            //schedule commands for first segment
+            ArrayList<Command> firstCommands = commands.get(0);
+            if (firstCommands != null) {
+                for (Command c : firstCommands) {
+                    c.schedule();
+                }
             }
-        } catch (NullPointerException e){
-            //comes here if the command is null
-            Log.e("PID Path", "error scheduling command, null pointer");
+        } catch (Exception e){
+            Log.e("PID Path", "error scheduling command, " + e.getMessage());
         }
 
-        try{
-            //run callbacks
-            callbacks.get(segmentIndex).run();
-        } catch (NullPointerException e){
-            Log.e("PID Path", "error running callback, was a null pointer");
-        }
-
+        // Don't run callback at start - callbacks run when segments complete
         return this;
     }
 
@@ -66,40 +62,44 @@ public class PIDPath implements Path{
         PathSegment currSegment = segments.get(segmentIndex);
         currSegment.runSegment();
 
-        if (currSegment.isDone()){
-            //increase segment index
-            segmentIndex++;
-            if (isDone()){
-                //exit if done
-                endSixWheel();
-                return;
-            }
-
+        if (currSegment.isDone() || currSegment.failed()){
+            // Run callback for the segment that JUST COMPLETED
             try{
-                //schedule all commands
-                for (Command c: commands.get(segmentIndex)){
-                    c.schedule();
+                Callback completedCallback = callbacks.get(segmentIndex);
+                if (completedCallback != null) {
+                    completedCallback.run();
                 }
-            } catch (Exception e){
-                //comes here if the command is null
-                Log.e("PID Path", "error scheduling command, " + e.getMessage());
-            }
-
-            try{
-                //run callbacks
-                callbacks.get(segmentIndex).run();
             } catch (Exception e){
                 Log.e("PID Path", "error running callback, " + e.getMessage());
             }
 
+            //increase segment index
+            segmentIndex++;
+            endSixWheel();
+            
+            if (isDone()){
+                //exit if done
+                return;
+            }
+
             try{
-                //start path
+                //schedule commands for NEXT segment
+                ArrayList<Command> nextCommands = commands.get(segmentIndex);
+                if (nextCommands != null) {
+                    for (Command c : nextCommands) {
+                        c.schedule();
+                    }
+                }
+            } catch (Exception e){
+                Log.e("PID Path", "error scheduling command, " + e.getMessage());
+            }
+
+            try{
+                //start NEXT segment
                 segments.get(segmentIndex).startSegment();
             } catch (Exception e){
                 Log.e("PID Path", "error running next segment, " + e.getMessage());
             }
-
-
         }
     }
 

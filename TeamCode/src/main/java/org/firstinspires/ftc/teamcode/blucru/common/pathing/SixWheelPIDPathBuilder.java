@@ -58,11 +58,12 @@ public class SixWheelPIDPathBuilder {
     }
 
     public SixWheelPIDPathBuilder callback(Callback callback){
-        while(callbacks.size() <= segments.size()){
-            //add a dead callback
+        // Fill callbacks up to current segment
+        while(callbacks.size() < segments.size()){
             callbacks.add(null);
         }
-        callbacks.add(segments.size(), callback);
+        // Set callback for the segment that was just added
+        callbacks.set(segments.size() - 1, callback);
         return this;
     }
 

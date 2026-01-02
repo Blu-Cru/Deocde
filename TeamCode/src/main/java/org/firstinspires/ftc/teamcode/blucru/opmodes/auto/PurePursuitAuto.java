@@ -91,8 +91,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     .waitMilliseconds(3000)
                     .callback(() -> {
                         telemetry.addLine("Path Ended");
-                    })
-                    .build();
+                    });
         }
     }
     Path currentPath;
@@ -118,7 +117,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
         shooter.shootWithVelocity(850);
         turret.lockOnGoal();
         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
-        currentPath = new TestingPath().build().start();
+        currentPath = new TestingPath().start();
     }
 
     public void periodic(){
