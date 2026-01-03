@@ -41,22 +41,22 @@ public class LimelightRelocalizationTest extends LinearOpMode {
         ll.start();
 
         while (opModeIsActive()){
-            double turretAngle = -1 * turretEncoder.getCurrentPosition() / (8192 * 212.0/35) * 360;
-            pinpoint.update();
             LLResult result = ll.getLatestResult();
 
             if (result != null && result.isValid()){
                 List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
                 if (tags.isEmpty()){
                     telemetry.addLine("NO TAGS DETECTED");
+                    continue;
                 }
                 for (LLResultTypes.FiducialResult res: tags){
                     int id = res.getFiducialId();
+                    telemetry.addData("Tag ID", id);
                     if (id >= 21 && id <= 23){
                         //pattern id
-
                     } else {
                         //location tag
+                        telemetry.addLine("here");
                         Pose3D bot = res.getRobotPoseFieldSpace();
                         Pose2d botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS));
 
@@ -71,11 +71,13 @@ public class LimelightRelocalizationTest extends LinearOpMode {
                 telemetry.addData("Result Valid?", result.isValid());
                 telemetry.addLine("NO TAGS");
             }
+
             Pose2D botpose = pinpoint.getPosition();
             telemetry.addData("Pinpoint position", botpose);
-            telemetry.addData("Turret Angle", turretAngle);
             telemetry.update();
         }
+
+
     }
 
 }

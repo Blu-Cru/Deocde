@@ -37,10 +37,6 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         }
 
 
-        if (driver1.pressedB()){
-            sixWheel.setPosition(llTagDetector.getLLBotPose());
-        }
-
         if (driver1.pressedDpadDown()){
             transfer.middleSetUp();
         }
@@ -50,6 +46,10 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         if (gamepad1.dpad_right){
             transfer.rightSetUp();
         }
+        if (driver1.pressedLeftBumper()){
+            transfer.setAllUp();
+        }
+
         if (driver1.pressedDpadUp()){
             transfer.setAllMiddle();
         }
