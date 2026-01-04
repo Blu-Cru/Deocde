@@ -37,7 +37,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     new Point2d(-45, 52),
                     new Point2d(-24, 44)
             }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(200)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -53,12 +53,12 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new CenterTurretCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-24, 44),
                             new Point2d(-10, 44)
                     }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(200)
                     .callback(() -> {
                         telemetry.addLine("Here");
                         new SequentialCommandGroup(
@@ -71,12 +71,12 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new LockOnGoalCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(200)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-10, 42),
                             new Point2d(-27, 42)
                     }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(200)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -88,9 +88,10 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new AllTransferDownCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1000)
                     .callback(() -> {
-                        telemetry.addLine("Path Ended");
+                        sixWheel.switchToIdle();
+                        shooter.shoot(0);
                     });
         }
     }
