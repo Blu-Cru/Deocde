@@ -19,65 +19,29 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
+import java.util.Arrays;
 import java.util.List;
 
 @TeleOp
-public class LimelightRelocalizationTest extends LinearOpMode {
+public class LimelightRelocalizationTest extends BluLinearOpMode {
 
-    Limelight3A ll;
-    DcMotorEx turretEncoder;
-    public void runOpMode(){
-        ll = hardwareMap.get(Limelight3A.class, "limelight");
-        turretEncoder = hardwareMap.get(DcMotorEx.class, Globals.blMotorName);
-        turretEncoder.setDirection(DcMotorSimple.Direction.FORWARD);
-        ll.setPollRateHz(100);
-        ll.pipelineSwitch(0);
-        GoBildaPinpointDriver pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setOffsets(138.5,94.05,DistanceUnit.MM);
-        pinpoint.setPosition(new Pose2D(DistanceUnit.MM,0,0,AngleUnit.DEGREES,0));
-
-        waitForStart();
-        ll.start();
-
-        while (opModeIsActive()){
-            LLResult result = ll.getLatestResult();
-
-            if (result != null && result.isValid()){
-                List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
-                if (tags.isEmpty()){
-                    telemetry.addLine("NO TAGS DETECTED");
-                    continue;
-                }
-                for (LLResultTypes.FiducialResult res: tags){
-                    int id = res.getFiducialId();
-                    telemetry.addData("Tag ID", id);
-                    if (id >= 21 && id <= 23){
-                        //pattern id
-                    } else {
-                        //location tag
-                        telemetry.addLine("here");
-                        Pose3D bot = res.getRobotPoseFieldSpace();
-                        Pose2d botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS));
-
-                        telemetry.addData("Position", botpose);
-
-                        //translating to my field coordinates
-                        //botpose = new Pose2d(bot.getPosition().y * 1000 / 25.4, -bot.getPosition().x * 1000 / 25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS) + Math.PI/2);
-                    }
-                }
-            } else {
-                telemetry.addData("Result", result);
-                telemetry.addData("Result Valid?", result.isValid());
-                telemetry.addLine("NO TAGS");
-            }
-
-            Pose2D botpose = pinpoint.getPosition();
-            telemetry.addData("Pinpoint position", botpose);
-            telemetry.update();
-        }
-
-
+    public void initialize(){
+        addLLTagDetector();
+        addSixWheel();
     }
+    public void onStart(){
+        sixWheel.setPosition(new Pose2d(0,0,0));
+    }
+    public void periodic(){
+        if (gamepad1.x){
+            Pose2d llPose = llTagDetector.getLLBotPosePoseHistory();
+            if (llPose != null){
+                sixWheel.setPosition(llPose);
+            }
+        }
+        telemetry.addData("Pattern Detected?", llTagDetector.detectedPattern());
+        telemetry.addData("Pattern", Arrays.toString(llTagDetector.getPattern()));
+    }
+
 
 }
