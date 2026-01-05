@@ -84,11 +84,11 @@ public class Tele extends BluLinearOpMode{
                 .state(State.INTAKING)
                 .loop(() -> {
                     if (gamepad1.left_trigger > 0.2){
-                        new IntakeStartCommand().schedule();
+                        intake.setOut();
                     } else if (gamepad1.right_trigger > 0.2){
-                        new IntakeSpitCommand().schedule();
+                        intake.setIn();
                     } else {
-                        new IntakeStopCommand().schedule();
+                        intake.stop();
                     }
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
