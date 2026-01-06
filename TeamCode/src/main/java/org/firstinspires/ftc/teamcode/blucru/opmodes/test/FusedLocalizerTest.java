@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.FusedLocalizer;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 /**
  * Test opmode for verifying sensor fusion setup
@@ -30,14 +27,17 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
  * - Vision update rate >20% in tag-rich areas
  */
 @TeleOp(name = "Fused Localizer Test", group = "Test")
-public class FusedLocalizerTest extends OpMode {
+public class FusedLocalizerTest extends BluLinearOpMode {
 
     private FusedLocalizer localizer;
 
     @Override
-    public void init() {
-        // Setup telemetry
-        Globals.telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+    public void initialize() {
+        // Don't manage robot loop - we'll update localizer manually
+        manageRobotLoop = false;
+
+        // Enable FTC Dashboard
+        enableDash();
 
         // Initialize fused localizer
         localizer = new FusedLocalizer(
@@ -56,11 +56,10 @@ public class FusedLocalizerTest extends OpMode {
         telemetry.addLine("  Right Stick X: Turn");
         telemetry.addLine("  A: Reset position to (0, 0, 0)");
         telemetry.addLine("  B: Toggle vision correction");
-        telemetry.update();
     }
 
     @Override
-    public void loop() {
+    public void periodic() {
         // Update localizer
         localizer.read();
 
@@ -72,20 +71,20 @@ public class FusedLocalizerTest extends OpMode {
         // drivetrain.drive(forward, turn);
 
         // Reset position
-        if (gamepad1.a) {
+        if (driver1.pressedA()) {
             localizer.setPosition(new Pose2d(0, 0, 0));
             telemetry.addLine("Position reset!");
         }
 
         // Toggle vision
-        if (gamepad1.b) {
+        if (driver1.pressedB()) {
             FusedLocalizer.USE_VISION_CORRECTION = !FusedLocalizer.USE_VISION_CORRECTION;
         }
+    }
 
-        // Display comprehensive telemetry
+    @Override
+    public void telemetry() {
         displayTelemetry();
-
-        telemetry.update();
     }
 
     private void displayTelemetry() {
