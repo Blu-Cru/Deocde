@@ -52,26 +52,27 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
 
             //need to check for pipeline switch
             if (detectedPattern()){
-                limelight.pipelineSwitch(1);
+                limelight.pipelineSwitch(POSITION_PIPELINE);
             }
         }
     }
 
     public void positionPipelineInterpretation(){
-        limelight.updateRobotOrientation(Robot.getInstance().drivetrain.getHeading());
+        limelight.updateRobotOrientation(Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()){
-            captureTime = result.getControlHubTimeStamp();
+            captureTime = result.getControlHubTimeStampNanos();
             Pose3D bot = result.getBotpose_MT2();
             //using same heading because tags are not for heading correction
-            botpose = new Pose2d(bot.getPosition().x, bot.getPosition().y, Robot.getInstance().drivetrain.getHeading());
+            //multiplying by 1000/25.4 to account for unit change
+            botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
         } else {
             Globals.telemetry.addLine("NO POSITION TAGS");
         }
     }
 
     public void patternPipelineInterpretation(){
-        limelight.updateRobotOrientation(Robot.getInstance().drivetrain.getHeading());
+        limelight.updateRobotOrientation(Math.toRadians(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()){
             List<LLResultTypes.FiducialResult> res = result.getFiducialResults();
@@ -121,12 +122,15 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
         Vector2d offset = getLLXY().subtractNotInPlace(oldVec);
         //now that we know offsets we can assume we havent changed off that much
-        return new Pose2d(Robot.getInstance().drivetrain.getCurrPose().vec().addNotInPlace(offset), Robot.getInstance().drivetrain.getHeading());
+        return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
     }
     public Pose2d getLLBotPose(){return botpose;}
     public Vector2d getLLXY(){return botpose.vec();}
     public boolean validLLReads(){
         return botpose != null;
+    }
+    public double getPipeline(){
+        return limelight.getStatus().getPipelineIndex();
     }
 
     public double wrapAngle(double angle){

@@ -120,4 +120,8 @@ public class Vector2d {
     }
     public double getDist(){return x * x + y * y;}
 
+    public String toString(){
+        return x + ", " + y;
+    }
+
 }
