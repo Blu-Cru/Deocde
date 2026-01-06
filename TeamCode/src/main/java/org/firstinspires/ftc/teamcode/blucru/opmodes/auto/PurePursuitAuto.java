@@ -35,16 +35,17 @@ public class PurePursuitAuto extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                     new Point2d(-45, 52),
-                    new Point2d(-24, 44)
+                    new Point2d(-27, 44)
             }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1000)
+                    //SHOOT PRELOAD
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(200),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(200),
                                 new RightTransferUpCommand(),
+                                new WaitCommand(200),
+                                new CenterTurretCommand(),
                                 new WaitCommand(200),
                                 new AllTransferDownCommand(),
                                 new IntakeStartCommand(),
@@ -53,12 +54,54 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new CenterTurretCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1500)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-24, 44),
+                            new Point2d(-27, 44),
                             new Point2d(-10, 44)
                     }, 5000)
+                    .waitMilliseconds(1500)
+                    //INTAKE FIRST SET
+                    .callback(() -> {
+                        telemetry.addLine("Here");
+                        new SequentialCommandGroup(
+                                new ElevatorUpCommand(),
+                                new IntakeStopCommand(),
+                                new WaitCommand(300),
+                                new ElevatorMiddleCommand(),
+                                new WaitCommand(100),
+                                new AllTransferMiddleCommand(),
+                                new LockOnGoalCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(1500)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-10, 42),
+                            new Point2d(-27, 42)
+                    }, 5000)
+                    .waitMilliseconds(1500)
+                    //SHOOT FIRST SET
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new LeftTransferUpCommand(),
+                                new MiddleTransferUpCommand(),
+                                new RightTransferUpCommand(),
+                                new WaitCommand(200),
+                                new CenterTurretCommand(),
+                                new WaitCommand(200),
+                                new AllTransferDownCommand(),
+                                new IntakeStartCommand(),
+                                new ElevatorDownCommand(),
+                                new WaitCommand(200),
+                                new CenterTurretCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(1000)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-27, 42),
+                            new Point2d(12.5,42)
+                    }, 5000)
                     .waitMilliseconds(3000)
+                    //INTAKE SECOND SET
                     .callback(() -> {
                         telemetry.addLine("Here");
                         new SequentialCommandGroup(
@@ -73,19 +116,22 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(3000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10, 42),
+                            new Point2d(12.5, 42),
                             new Point2d(-27, 42)
                     }, 5000)
                     .waitMilliseconds(3000)
+                    //SHOOT SECOND SET
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(200),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(200),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(200),
-                                new AllTransferDownCommand()
+                                new AllTransferDownCommand(),
+                                new IntakeStartCommand(),
+                                new ElevatorDownCommand(),
+                                new WaitCommand(200),
+                                new CenterTurretCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
