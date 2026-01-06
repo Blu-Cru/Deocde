@@ -15,4 +15,5 @@ public interface RobotLocalizer {
     public Pose2d getVel();
     public void setHeading(double heading);
     public void telemetry(Telemetry telemetry);
+    public void reset();
 }

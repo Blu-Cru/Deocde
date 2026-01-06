@@ -24,8 +24,9 @@ public class RetransferCommand extends InstantCommand {
                     new ElevatorDownCommand(),
                     new IntakeSpitCommand(),
                     new CenterTurretCommand(),
-                    new AllTransferDownCommand(),
                     //TODO: conditional wait based on turret
+                    new WaitCommand(300),
+                    new AllTransferDownCommand(),
                     new WaitCommand(300),
                     new ElevatorUpCommand(),
                     new WaitCommand(300),

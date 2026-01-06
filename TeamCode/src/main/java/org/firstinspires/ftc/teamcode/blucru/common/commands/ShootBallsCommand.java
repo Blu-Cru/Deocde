@@ -22,9 +22,10 @@ public class ShootBallsCommand extends InstantCommand {
                         new WaitCommand(200),
                         new RightTransferUpCommand(),
                         new WaitCommand(200),
-                        new AllTransferDownCommand(),
                         new CenterTurretCommand(),
                         new IdleShooterCommand(),
+                        new WaitCommand(500),
+                        new AllTransferDownCommand(),
                         new ResetForIntakeCommand()
                 ).schedule();}
         );
