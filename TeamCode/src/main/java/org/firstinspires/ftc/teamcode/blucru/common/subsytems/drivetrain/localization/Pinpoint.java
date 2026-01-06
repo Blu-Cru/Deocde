@@ -32,7 +32,6 @@ public class Pinpoint implements RobotLocalizer{
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(parallelYOffset, perpXOffset, DistanceUnit.MM);
 
-        pinpoint.resetPosAndIMU();
         pinpointPose = pinpoint.getPosition();
     }
 
@@ -122,5 +121,9 @@ public class Pinpoint implements RobotLocalizer{
 
         telemetry.addData("Pinpoint heading", pinpoint.getHeading(AngleUnit.RADIANS));
 
+    }
+
+    public void reset(){
+        pinpoint.resetPosAndIMU();
     }
 }

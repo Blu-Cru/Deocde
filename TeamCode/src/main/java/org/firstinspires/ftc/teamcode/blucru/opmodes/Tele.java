@@ -173,13 +173,10 @@ public class Tele extends BluLinearOpMode{
         telemetry.addLine( "EJECT: HOLD RIGHT TRIGGER");
         telemetry.addLine("TRANSFER: LEFT BUMPER");
         telemetry.addLine("SHOOT: RIGHT BUMPER");
-        telemetry.addLine("MAKE SURE ROBOT IS AT -45, 52, 127 (AUTO STARTING POS)");
     }
 
     public void onStart(){
          new ElevatorDownCommand().schedule();
-         //TODO: REMOVE BEFORE COMP
-         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
     }
 
     public void periodic(){

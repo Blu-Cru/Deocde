@@ -102,6 +102,6 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     @Override
     public void reset() {
-        localizer.setPosition(new Pose2d(0,0,0));
+        localizer.reset();
     }
 }
