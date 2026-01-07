@@ -45,7 +45,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AllTransferUpCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(300),
                                 new CenterTurretCommand(),
                                 new WaitCommand(300),
                                 new IntakeStartCommand(),
@@ -55,12 +55,13 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(500)
+                    //INTAKE FIRST SET
+
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-27, 44),
                             new Point2d(-10, 46)
                     }, 5000)
                     .waitMilliseconds(500)
-                    //INTAKE FIRST SET
                     .callback(() -> {
                         telemetry.addLine("Here");
                         new SequentialCommandGroup(
@@ -73,7 +74,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new LockOnGoalCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(500)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-10, 46),
                             new Point2d(-27, 44)
@@ -83,7 +84,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AllTransferUpCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(300),
                                 new CenterTurretCommand(),
                                 new WaitCommand(300),
                                 new IntakeStartCommand(),
@@ -93,12 +94,13 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(500)
+                    //INTAKE SECOND SET
+
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-27, 44),
                             new Point2d(12.5,44)
                     }, 4000)
-                    .waitMilliseconds(3000)
-                    //INTAKE SECOND SET
+                    .waitMilliseconds(1000)
                     .callback(() -> {
                         telemetry.addLine("Here");
                         new SequentialCommandGroup(
@@ -120,15 +122,14 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     //SHOOT SECOND SET
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new LeftTransferUpCommand(),
-                                new MiddleTransferUpCommand(),
-                                new RightTransferUpCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand(),
+                                new AllTransferUpCommand(),
+                                new WaitCommand(300),
+                                new CenterTurretCommand(),
+                                new WaitCommand(300),
                                 new IntakeStartCommand(),
                                 new ElevatorDownCommand(),
                                 new WaitCommand(200),
-                                new CenterTurretCommand()
+                                new AllTransferDownCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
@@ -148,6 +149,41 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     }, 5000)
                     .waitMilliseconds(1000)
                     .addTurnTo(0, 2000)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(10,44),
+                            new Point2d(37,44)
+                    }, 4000)
+                    //INTAKE THIRD SET
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new ElevatorUpCommand(),
+                                new IntakeStopCommand(),
+                                new WaitCommand(300),
+                                new ElevatorMiddleCommand(),
+                                new WaitCommand(100),
+                                new AllTransferMiddleCommand(),
+                                new LockOnGoalCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(3000)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(37, 44),
+                            new Point2d(-27, 44)
+                    }, 5000)
+                    .waitMilliseconds(3000)
+                    //SHOOT THIRD SET
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new AllTransferUpCommand(),
+                                new WaitCommand(300),
+                                new CenterTurretCommand(),
+                                new WaitCommand(300),
+                                new IntakeStartCommand(),
+                                new ElevatorDownCommand(),
+                                new WaitCommand(200),
+                                new AllTransferDownCommand()
+                        ).schedule();
+                    })
                     .callback(() -> {
                         telemetry.addLine("Path Ended");
                     })
@@ -176,7 +212,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
 
     public void onStart(){
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
-        shooter.shootWithVelocity(1025); //orig 850 before switching to triple shot
+        shooter.shootWithVelocity(1000); //orig 850 before switching to triple shot
         turret.lockOnGoal();
         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
         currentPath = new TestingPath().build().start();
