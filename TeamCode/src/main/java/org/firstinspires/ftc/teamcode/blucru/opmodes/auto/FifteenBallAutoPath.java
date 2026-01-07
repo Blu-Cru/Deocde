@@ -41,7 +41,7 @@ public class FifteenBallAutoPath extends BluLinearOpMode {
         Command pickupBalls = new SequentialCommandGroup(
                 new ResetForIntakeCommand(),
                 new WaitCommand(500),
-                new TransferCommand(true)
+                new TransferCommand(true, true)
         );
 
         startPose = new Pose2d(-45, 52, Math.toRadians(127));

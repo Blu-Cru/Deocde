@@ -125,7 +125,7 @@ public class PurePursuitComputer {
                     // setting lastFoundIndex to always be the point ahead in case the robot cant
                     // find a point in later sols
                     lastFoundIndex = Math.min(i + 1, path.length - 2);
-                    Globals.telemetry.addLine("1 sol, and it moves the robot farther away");
+                    //Globals.telemetry.addLine("1 sol, and it moves the robot farther away");
                 } else {
                     lastFoundIndex = i;
                     goalPoint = sols[0];
@@ -138,7 +138,7 @@ public class PurePursuitComputer {
                 Point2d closerPoint = sols[1];
 
                 if (findDistBetween2Points(sols[0], path[i + 1]) < findDistBetween2Points(sols[1], path[i + 1])) {
-                    Globals.telemetry.addLine("closer sol");
+                    //Globals.telemetry.addLine("closer sol");
                     closerPoint = sols[0];
                 }
 
@@ -161,7 +161,7 @@ public class PurePursuitComputer {
 
         if (goalPoint == null) {
             // no goal point chosen, then go to the end of the current segment (point ahead)
-            Globals.telemetry.addLine("No goal point set");
+            //Globals.telemetry.addLine("No goal point set");
             // Clamp lastFoundIndex to prevent out of bounds
             if (lastFoundIndex >= path.length - 1) {
                 lastFoundIndex = path.length - 2;
@@ -205,7 +205,7 @@ public class PurePursuitComputer {
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
             SixWheelPID pid) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-        Globals.telemetry.addData("Target Point", goalPoint);
+        //Globals.telemetry.addData("Target Point", goalPoint);
 
         // Determine backwards driving once, use for both linear and heading control
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
@@ -214,10 +214,10 @@ public class PurePursuitComputer {
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid, isDrivingBackwards);
 
-        Globals.telemetry.addData("Rot", rot);
+        /*Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
-        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
+        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);*/
 
         return new double[] { linear, rot };
     }

@@ -64,6 +64,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     private double loopTimeSegmentSum = 0;
     private double amountOfLoopsInSegment = 0;
     private double amountOfLoopsOverall = 0;
+    private double lastTelemUpdate = 0;
+    private final double TELEM_UPDATE_INTERVAL = 100;
 
     // ===============================
     // MAIN OPMODE ENTRY
@@ -142,13 +144,18 @@ public abstract class BluLinearOpMode extends LinearOpMode {
                 robot.write();
             }
 
-            if (reportTelemetry) {
-                telemetry();
-                robot.telemetry(telemetry);
+            //buffering telem for loop speeds
+            double currTime = Globals.matchTime.milliseconds();
+            if (currTime - lastTelemUpdate > TELEM_UPDATE_INTERVAL){
+                if (reportTelemetry) {
+                    telemetry();
+                    robot.telemetry(telemetry);
+                }
                 double[] loopTimes = getLoopTimes();
                 telemetry.addData("Loop (ms)", loopTimes[0]);
                 telemetry.addData("Hz", loopTimes[1]);
                 telemetry.update();
+                lastTelemUpdate = currTime;
             }
         }
 

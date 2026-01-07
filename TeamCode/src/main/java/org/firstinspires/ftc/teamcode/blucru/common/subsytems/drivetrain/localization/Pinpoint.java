@@ -13,6 +13,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class Pinpoint implements RobotLocalizer{
     //TODO TUNE PER ROBOT
     public static double parallelYOffset = 138.5, perpXOffset = 94.05;
+
+    public static double writeX = 0, writeY = 0, writeH = 0;
     private GoBildaPinpointDriver pinpoint;
     private double headingOffset;
 
@@ -39,6 +41,11 @@ public class Pinpoint implements RobotLocalizer{
     public void read() {
         pinpoint.update();
         pinpointPose = pinpoint.getPosition();
+    }
+
+    @Override
+    public void write() {
+        pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, writeX, writeY, AngleUnit.RADIANS, writeH));
     }
 
     /**
@@ -88,18 +95,13 @@ public class Pinpoint implements RobotLocalizer{
      * inch, inch, radian
      * */
     public void setPosition(double x, double y, double h){
-        pinpoint.setPosX(x, DistanceUnit.INCH);
-        pinpoint.setPosY(y, DistanceUnit.INCH);
-        pinpoint.setHeading(h, AngleUnit.RADIANS);
-        read();
+        writeX = x;
+        writeY = y;
+        writeH = h;
     }
 
     @Override
     public void setPosition(Pose2d pose) {
-
-
-        Globals.telemetry.addData("Pose", "X: " + pose.getX() + ",Y: " + pose.getY() + ",H: " + pose.getH());
-
         pinpoint.setPosX(pose.getX(), DistanceUnit.INCH);
         pinpoint.setPosY(pose.getY(), DistanceUnit.INCH);
         pinpoint.setHeading(pose.getH(), AngleUnit.RADIANS);

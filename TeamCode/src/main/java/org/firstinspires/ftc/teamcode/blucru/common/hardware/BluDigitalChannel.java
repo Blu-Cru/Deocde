@@ -19,7 +19,7 @@ public class BluDigitalChannel implements BluHardwareDevice{
 
     @Override
     public void init() {
-
+        state = false;
     }
 
     @Override
