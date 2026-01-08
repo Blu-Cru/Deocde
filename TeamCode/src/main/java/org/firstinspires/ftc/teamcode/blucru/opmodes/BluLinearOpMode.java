@@ -145,11 +145,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             if (reportTelemetry) {
                 telemetry();
                 robot.telemetry(telemetry);
-                double[] loopTimes = getLoopTimes();
-                telemetry.addData("Loop (ms)", loopTimes[0]);
-                telemetry.addData("Hz", loopTimes[1]);
-                telemetry.update();
             }
+            double[] loopTimes = getLoopTimes();
+            telemetry.addData("Loop (ms)", loopTimes[0]);
+            telemetry.addData("Hz", loopTimes[1]);
+            telemetry.update();
         }
 
         // ===============================
