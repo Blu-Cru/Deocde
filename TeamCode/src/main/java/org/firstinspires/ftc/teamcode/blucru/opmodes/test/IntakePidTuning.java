@@ -21,6 +21,9 @@ public class IntakePidTuning extends BluLinearOpMode {
         if (gamepad1.x){
             intake.setPID();
         }
+        if (driver1.pressedDpadDown()){
+            intake.resetEncoder();
+        }
 
     }
 

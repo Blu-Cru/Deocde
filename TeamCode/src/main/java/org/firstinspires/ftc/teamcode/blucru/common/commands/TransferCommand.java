@@ -24,12 +24,12 @@ public class TransferCommand extends SequentialCommandGroup { // 1. Extend Seque
 
     public TransferCommand(boolean turreting) {
         addCommands(
+                new ParallelizeIntakeCommand(),
                 new AllTransferDownCommand(),
                 new CenterTurretCommand(),
                 new AutoAimCommand(),
                 new WaitCommand(100),
                 new ElevatorUpCommand(),
-                new ParallelizeIntakeCommand(),
                 new WaitCommand(400),
                 new ElevatorMiddleCommand(),
                 new WaitCommand(150),

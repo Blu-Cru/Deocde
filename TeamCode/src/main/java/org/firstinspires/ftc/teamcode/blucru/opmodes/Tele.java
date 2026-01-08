@@ -56,7 +56,7 @@ public class Tele extends BluLinearOpMode{
         addElevator();
         addTransfer();
         addShooter();
-        //addLLTagDetector();
+        addLLTagDetector();
         addTurret();
 
         sm = new StateMachineBuilder()

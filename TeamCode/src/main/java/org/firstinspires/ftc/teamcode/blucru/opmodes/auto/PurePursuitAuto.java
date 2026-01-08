@@ -208,6 +208,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
         turret.write();
         sixWheel.reset();
         sixWheel.write();
+        intake.resetEncoder();
     }
 
     public void onStart(){
