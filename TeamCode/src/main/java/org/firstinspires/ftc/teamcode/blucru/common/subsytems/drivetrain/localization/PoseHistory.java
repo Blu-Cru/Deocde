@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
+import android.os.SystemClock;
+
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 import java.util.LinkedList;
@@ -19,7 +22,7 @@ public class PoseHistory {
         poseList.addFirst(new PoseMarker(pose, vel));
 
         //remove old poses
-        long currentTime = System.nanoTime();
+        long currentTime = (long) (System.currentTimeMillis() * Math.pow(10, 6));
         while (!poseList.isEmpty() && currentTime - poseList.getLast().nanoTime > STORAGE_NANOSECONDS){
             poseList.removeLast();
         }
@@ -61,5 +64,9 @@ public class PoseHistory {
         for (PoseMarker marker: poseList){
             marker.setPose(new Pose2d(marker.getPose().vec().addNotInPlace(poseDelta.vec()), marker.getPose().getH()));
         }
+    }
+
+    public String toString() {
+        return poseList.toString();
     }
 }

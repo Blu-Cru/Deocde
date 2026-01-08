@@ -1,18 +1,23 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
 
+import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -21,15 +26,16 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     String[] pattern;
     int greenIndex;
     Pose2d botpose;
-    double turretCenterToLimelightDist = 225.8324 / 25.4;
-    double robotPosToTurretCenter = 72.35/25.4;
+    long captureTime;
+    private final int POSITION_PIPELINE = 0;
+    private final int PATTERN_PIPELINE = 1;
     public LimelightObeliskTagDetector(){
         limelight = Globals.hwMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
-        limelight.pipelineSwitch(0);
+        limelight.pipelineSwitch(PATTERN_PIPELINE);
         pattern = new String[]{"p","p","p"};
-        botpose = new Pose2d(0,0,0);
+        botpose = null;
     }
 
     @Override
@@ -39,29 +45,59 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
 
     @Override
     public void read() {
+        if (detectedPattern()){
+            positionPipelineInterpretation();
+        } else {
+            patternPipelineInterpretation();
+
+            //need to check for pipeline switch
+            if (detectedPattern()){
+                limelight.pipelineSwitch(POSITION_PIPELINE);
+            }
+        }
+    }
+
+    public void positionPipelineInterpretation(){
+        limelight.updateRobotOrientation(Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()){
-            List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
-            if (tags.size() == 0){
-                botpose = null;
-                Globals.telemetry.addLine("NO TAGS DETECTED");
+            captureTime = result.getControlHubTimeStampNanos();
+            Pose3D bot = result.getBotpose_MT2();
+            //using same heading because tags are not for heading correction
+            //multiplying by 1000/25.4 to account for unit change
+            botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        } else {
+            Globals.telemetry.addLine("NO POSITION TAGS");
+        }
+    }
+
+    public void patternPipelineInterpretation(){
+        limelight.updateRobotOrientation(Math.toRadians(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()){
+            List<LLResultTypes.FiducialResult> res = result.getFiducialResults();
+            if (res.size() > 1){
+                Log.e("Limelight", "Detected multiple pattern tags");
+                //dont want to do anything with the data because its not good data
+                return;
             }
-            for (LLResultTypes.FiducialResult res: tags){
-                int id = res.getFiducialId();
-                if (id >= 21 && id <= 23){
-                    //pattern id
-                    greenIndex = id-21;
-                    pattern[greenIndex] = "g";
-                } else {
-                    //location tag
-                    Pose3D bot = res.getRobotPoseFieldSpace();
-                    botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS));
-                }
+            if (res.isEmpty()){
+                //nothing in it, so just exit
+                return;
+            }
+            //this loop should only run once, but preferring to use a loop here in case
+            //having multiple pattern tags in view is fine
+            for (LLResultTypes.FiducialResult tag:res){
+                greenIndex = tag.getFiducialId() - 21;
+                pattern[greenIndex] = "g";
             }
         } else {
-            Globals.telemetry.addLine("NO TAGS");
-            botpose = null;
+            Globals.telemetry.addLine("NO PATTERN TAGS");
         }
+    }
+
+    public long getTimeOfPhoto(){
+        return captureTime;
     }
 
     @Override
@@ -78,10 +114,23 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         return pattern;
     }
 
+    public boolean detectedPattern(){
+        return !Arrays.equals(new String[]{"p","p","p"}, pattern);
+    }
+
+    public Pose2d getLLBotPosePoseHistory(){
+        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Vector2d offset = getLLXY().subtractNotInPlace(oldVec);
+        //now that we know offsets we can assume we havent changed off that much
+        return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
     public Pose2d getLLBotPose(){return botpose;}
     public Vector2d getLLXY(){return botpose.vec();}
     public boolean validLLReads(){
         return botpose != null;
+    }
+    public double getPipeline(){
+        return limelight.getStatus().getPipelineIndex();
     }
 
     public double wrapAngle(double angle){

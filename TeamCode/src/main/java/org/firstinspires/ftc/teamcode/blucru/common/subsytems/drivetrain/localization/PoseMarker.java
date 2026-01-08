@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
+import android.os.SystemClock;
 import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -11,7 +12,7 @@ public class PoseMarker {
     private Pose2d pose, vel;
 
     public PoseMarker(Pose2d pose, Pose2d vel){
-        nanoTime = System.nanoTime();
+        nanoTime = (long) (System.currentTimeMillis() * Math.pow(10, 6));
         this.pose = pose;
         this.vel = vel;
     }
@@ -38,6 +39,9 @@ public class PoseMarker {
 
     public void log(String tag){
         Log.v(tag, "PoseMarker at pose: " + pose + ", Vel:" + vel + ", Time: " + nanoTime/Math.pow(10.0,6));
+    }
+    public String toString(){
+        return pose.toString();
     }
 
 }

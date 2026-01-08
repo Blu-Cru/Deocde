@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.PoseHistory;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.PoseMarker;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
@@ -46,6 +48,7 @@ public class Robot {
     public SixWheelDrive sixWheelDrivetrain;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public PoseHistory positionHistory;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -61,6 +64,7 @@ public class Robot {
 
     private Robot(){
         subsystems = new ArrayList<>();
+        positionHistory = new PoseHistory();
     }
 
     public void setHwMap(HardwareMap hwMap){
