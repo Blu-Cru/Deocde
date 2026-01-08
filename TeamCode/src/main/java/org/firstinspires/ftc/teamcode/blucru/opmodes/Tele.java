@@ -86,9 +86,9 @@ public class Tele extends BluLinearOpMode{
                 .state(State.INTAKING)
                 .loop(() -> {
                     if (gamepad1.left_trigger > 0.2){
-                        intake.setOut();
-                    } else if (gamepad1.right_trigger > 0.2){
                         intake.setIn();
+                    } else if (gamepad1.right_trigger > 0.2){
+                        intake.setOut();
                     } else {
                         intake.stop();
                     }
@@ -121,9 +121,6 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     shot+=1;
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> {
-                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
-                            }),
                             new LeftTransferUpCommand()
                     ).schedule();
                 })
@@ -131,9 +128,6 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     shot+=1;
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> {
-                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
-                            }),
                             new MiddleTransferUpCommand()
                     ).schedule();
                 })
@@ -141,9 +135,6 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     shot+=1;
                     new SequentialCommandGroup(
-                            new InstantCommand(() -> {
-                                Robot.getInstance().sixWheelDrivetrain.makeMotorsBeInBrake();
-                            }),
                             new RightTransferUpCommand()
                     ).schedule();
                 })
