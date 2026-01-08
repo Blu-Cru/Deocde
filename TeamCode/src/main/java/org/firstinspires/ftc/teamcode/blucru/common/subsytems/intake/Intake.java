@@ -18,8 +18,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 @Config
 public class Intake implements BluSubsystem, Subsystem {
-    private BluMotor leftMotor;
-    private BluMotor rightMotor;
+    private BluMotorWithEncoder leftMotor;
+    private BluMotorWithEncoder rightMotor;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
@@ -69,8 +69,8 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public Intake(String leftMotorName, String rightMotorName, String sensorName) {
-        leftMotor = new BluMotor(leftMotorName, DcMotorSimple.Direction.FORWARD);
-        rightMotor = new BluMotor(rightMotorName, DcMotorSimple.Direction.REVERSE);
+        leftMotor = new BluMotorWithEncoder(leftMotorName, DcMotorSimple.Direction.FORWARD);
+        rightMotor = new BluMotorWithEncoder(rightMotorName, DcMotorSimple.Direction.REVERSE);
         parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(Globals.frMotorName);
         pid = new PDController(0.003, 0.001);
@@ -87,15 +87,15 @@ public class Intake implements BluSubsystem, Subsystem {
         leftMotor.init();
         rightMotor.init();
         encoder.init();
-        parallelSensor.init();
     }
 
     @Override
     public void read() {
         leftMotor.read();
         rightMotor.read();
+        double currentVoltage = Robot.getInstance().getVoltage();
 
-        jammed = (state == State.IN && encoder.getVel() < 100); // Jam detected, spit out the ball
+        jammed = (state == State.IN && leftMotor.getVelocity() > 100); // Jam detected, spit out the ball
     }
 
     public boolean armsParallel(){
@@ -137,7 +137,7 @@ public class Intake implements BluSubsystem, Subsystem {
                             curr += 145.1 / 2;
                         }
                         double power = pid.calculate(-curr, -leftMotor.getPower());
-                        //Globals.telemetry.addData("Curr", curr);
+                        Globals.telemetry.addData("Curr", curr);
                         leftMotor.setPower(power);
                         rightMotor.setPower(power);
                     }
@@ -153,6 +153,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public void telemetry(Telemetry telemetry) {
         leftMotor.telemetry();
         rightMotor.telemetry();
+        telemetry.addData("Current", leftMotor.getCurrent());
         telemetry.addData("Pos", encoder.getCurrentPos());
     }
 
@@ -162,9 +163,5 @@ public class Intake implements BluSubsystem, Subsystem {
         rightMotor.setPower(0);
         leftMotor.write();
         rightMotor.write();
-    }
-
-    public void resetIntakeArmsEncoder(){
-        encoder.reset();
     }
 }

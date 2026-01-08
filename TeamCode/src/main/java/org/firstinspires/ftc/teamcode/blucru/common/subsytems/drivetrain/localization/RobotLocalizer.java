@@ -5,7 +5,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public interface RobotLocalizer {
     public void read();
-    public void write();
     public Pose2d getPose();
     public double getX();
     public double getY();

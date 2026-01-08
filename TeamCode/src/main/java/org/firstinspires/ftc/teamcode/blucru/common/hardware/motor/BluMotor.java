@@ -54,7 +54,7 @@ public class BluMotor extends DcMotorImplEx implements BluHardwareDevice {
 
     @Override
     public void read() {
-
+        current = super.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
     @Override
@@ -76,6 +76,7 @@ public class BluMotor extends DcMotorImplEx implements BluHardwareDevice {
     public double getPower(){
         return power;
     }
+    public double getCurrent(){return current;}
 
     public double getDcMotorPower(){
         return super.getPower();

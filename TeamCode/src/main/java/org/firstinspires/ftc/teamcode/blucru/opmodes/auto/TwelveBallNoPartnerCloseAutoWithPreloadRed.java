@@ -44,7 +44,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
         Command pickupBalls = new SequentialCommandGroup(
                 new ResetForIntakeCommand(),
                 new WaitCommand(500),
-                new TransferCommand(true, true)
+                new TransferCommand(true)
         );
 
         startPose = new Pose2d(-45, 52, Math.toRadians(127));

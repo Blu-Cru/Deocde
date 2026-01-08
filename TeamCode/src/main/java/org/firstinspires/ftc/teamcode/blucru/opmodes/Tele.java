@@ -38,7 +38,6 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = true;
-    public boolean shooterAutoAim = true;
     public int rumbleDur = 200;
     public int shot = 0;
 
@@ -100,7 +99,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
-                    new TransferCommand(turreting, shooterAutoAim).schedule();
+                    new TransferCommand(turreting).schedule();
                 })
 
                 .state(State.DRIVING_TO_SHOOT)
@@ -150,7 +149,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
-                    new TransferCommand(turreting, shooterAutoAim).schedule();
+                    new TransferCommand(turreting).schedule();
                 })
                 .build();
 
@@ -213,7 +212,7 @@ public class Tele extends BluLinearOpMode{
 
         //Turret
 
-        //Turret auto-aim
+        //auto-aim
         if (driver2.pressedLeftBumper() && turreting) {
             gamepad2.rumble(1000);
             turreting = false;
@@ -233,14 +232,11 @@ public class Tele extends BluLinearOpMode{
             turret.setPower(gamepad2.right_stick_x*0.5);
         }
 
-        //shooter
-        if (driver2.pressedDpadDown()) {
-            gamepad2.rumble(1000);
-            shooterAutoAim = !shooterAutoAim;
-        }
+
 
 
         //relocalization
+        //rn assumes bot is stationary
         if (driver2.pressedDpadUp()){
             if (llTagDetector.validLLReads()){
                 gamepad1.rumble(200);

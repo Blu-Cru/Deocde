@@ -9,6 +9,7 @@ public class IntakeStopCommand extends InstantCommand {
     public IntakeStopCommand(){
         super(()->{
             Robot.getInstance().intake.stop();
+            Globals.telemetry.addLine("STOPPING INTAKE");
         });
         addRequirements(Robot.getInstance().intake);
     }

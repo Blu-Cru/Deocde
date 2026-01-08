@@ -76,7 +76,7 @@ public class Shooter implements BluSubsystem, Subsystem {
             case VELOCITY:
                 shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), targetVel));
                 shooter2.setPower(shooter1.getPower());
-                //Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
+                Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
                 break;
             case AUTO_AIM:
                 double dist = 40;
@@ -86,7 +86,7 @@ public class Shooter implements BluSubsystem, Subsystem {
                     dist = Math.sqrt(Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
                 }
                 dist -= 6;
-                //Globals.telemetry.addData("distance", dist);
+                Globals.telemetry.addData("distance", dist);
                 double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
                 double leftHoodAngle = interpolations[0];
                 double middleHoodAngle = interpolations[1];

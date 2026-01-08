@@ -30,7 +30,7 @@ public class CommandFactory {
             case "IntakeCommand":
                 return new ResetForIntakeCommand(); // Check constructor args if any
             case "TransferCommand":
-                return new TransferCommand(args.getBoolean(0), args.getBoolean(1));
+                return new TransferCommand(args.getBoolean(0));
             case "AutonomousShootCloseCommand":
                 return new AutonomousShootCloseCommand();
             case "AutonomousShootCommand":
