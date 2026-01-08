@@ -5,7 +5,25 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluPIDServo;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDriveBase;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
+import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +37,15 @@ public class Robot {
     //list of subsystems
     static ArrayList<BluSubsystem> subsystems;
     public Drivetrain drivetrain;
+    public Shooter shooter;
+    public Intake intake;
+    public Elevator elevator;
+    public Transfer transfer;
+    public Turret turret;
+    public Drivetrain mecanumDrivetrain;
+    public SixWheelDrive sixWheelDrivetrain;
+    public ObeliskTagDetector obeliskTagDetector;
+    public LimelightObeliskTagDetector llTagDetector;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -95,6 +122,11 @@ public class Robot {
             subsystem.telemetry(telemetry);
         }
     }
+    public void idleRobot(){
+        for (BluSubsystem subsystem: subsystems){
+            subsystem.reset();
+        }
+    }
 
     public double getAmountOfSubsystems(){
         return subsystems.size();
@@ -104,12 +136,54 @@ public class Robot {
     }
 
     public Drivetrain addDrivetrain(){
-        drivetrain = new Drivetrain();
-        subsystems.add(drivetrain);
-        return drivetrain;
+        mecanumDrivetrain = new Drivetrain();
+        subsystems.add(mecanumDrivetrain);
+        return mecanumDrivetrain;
+    }
+
+    public SixWheelDrive addSixWheelDrivetrain(){
+        sixWheelDrivetrain = new SixWheelDrive();
+        subsystems.add(sixWheelDrivetrain);
+        return sixWheelDrivetrain;
+    }
+
+    public Shooter addShooter() {
+        shooter = new Shooter();
+        subsystems.add(shooter);
+        return shooter;
+    }
+    public Transfer addTransfer(){
+        transfer = new Transfer(hwMap);
+        subsystems.add(transfer);
+        return transfer;
+    }
+    public Intake addIntake(){
+        intake = new Intake("intakeLeft", "intakeRight", "aligner");
+        subsystems.add(intake);
+        return intake;
+    }
+    public Turret addTurret(){
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.blMotorName));
+        subsystems.add(turret);
+        return turret;
+    }
+
+    public ObeliskTagDetector addObeliskTagDetector(){
+        obeliskTagDetector = ObeliskTagDetector.getInstance();
+        subsystems.add(obeliskTagDetector);
+        return obeliskTagDetector;
+    }
+
+    public LimelightObeliskTagDetector addLLTagDetector(){
+        llTagDetector = new LimelightObeliskTagDetector();
+        subsystems.add(llTagDetector);
+        return llTagDetector;
     }
 
 
-
-
+    public Elevator addElevator() {
+        elevator = new Elevator();
+        subsystems.add(elevator);
+        return elevator;
+    }
 }

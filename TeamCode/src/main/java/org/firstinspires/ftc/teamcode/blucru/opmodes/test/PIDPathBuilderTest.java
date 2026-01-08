@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp(group = "tuner")
+//@TeleOp(group = "tuner")
 public class PIDPathBuilderTest extends BluLinearOpMode {
     enum States
     {
@@ -35,7 +35,7 @@ public class PIDPathBuilderTest extends BluLinearOpMode {
                 .state(States.RUNNING_PATH)
                 .transition(() -> currentPath.isDone(), States.IDLE, () -> {
                     drivetrain.switchToIdle();
-                    currentPath.end();
+                    currentPath.endMecanum();
                 })
                 .loop(() -> currentPath.run())
                 .build();

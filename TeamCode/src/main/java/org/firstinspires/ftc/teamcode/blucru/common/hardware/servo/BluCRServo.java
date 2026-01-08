@@ -25,7 +25,7 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice {
         this.lastPower = 0;
     }
 
-    public void setPower(){
+    public void setPower(double power){
         this.power = Range.clip(power, -1, 1);
     }
     @Override

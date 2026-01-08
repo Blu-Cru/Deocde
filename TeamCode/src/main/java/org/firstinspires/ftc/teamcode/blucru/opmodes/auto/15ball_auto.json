@@ -1,0 +1,82 @@
+{
+    "startPose": { "x": -45, "y": 52, "headingDegrees": 127 },
+    "startingHoodAngles": {"leftHoodAngle":  26, "middleHoodAngle":  30, "rightHoodAngle":  26},
+    "startingShooterVel": {"vel": 830},
+    "startingTurretAngle": {"angle": 45},
+    "steps": [
+        { "type": "setReversed", "reversed": true },
+        { "type": "splineTo", "x": -24, "y": 36, "tangentDegrees": 0 },
+        { "type": "waitSeconds", "seconds": 1.5 },
+        { "type": "stopAndAdd", "command": "AutonomousShootCloseCommand" },
+        { "type": "waitSeconds", "seconds": 2 },
+        {
+            "type": "stopAndAdd",
+            "command": "SequentialCommandGroup",
+            "children": [
+                { "command": "IntakeStartCommand" },
+                { "command": "ElevatorDownCommand" }
+            ]
+        },
+        { "type": "setReversed", "reversed": true },
+        { "type": "splineTo", "x": -20, "y": 47, "tangentDegrees": 0 },
+        { "type": "splineTo", "x": -15, "y": 47, "tangentDegrees": 0 },
+        { "type": "waitSeconds", "seconds": 2 },
+        {
+            "type": "stopAndAdd",
+            "command": "AutonomousTransferCommand",
+            "args": [850, 26, 28, 26]
+        },
+        { "type": "setReversed", "reversed": false },
+        { "type": "turnTo", "headingDegrees": 200 },
+        { "type": "stopAndAdd", "command": "ElevatorDownCommand" },
+        { "type": "splineTo", "x": -28, "y": 38, "tangentDegrees": 125 },
+        { "type": "waitSeconds", "seconds": 2 },
+        { "type": "stopAndAdd", "command": "AutonomousShootCloseCommand" },
+        { "type": "setReversed", "reversed": true },
+        { "type": "splineTo", "x": 5, "y": 46, "tangentDegrees": 0 },
+        {
+            "type": "afterTime",
+            "delay": 0.1,
+            "command": "SequentialCommandGroup",
+            "children": [
+                { "command": "IntakeStartCommand" },
+                { "command": "ElevatorDownCommand" }
+            ]
+        },
+        { "type": "lineToX", "x": 12.5 },
+        { "type": "waitSeconds", "seconds": 0.1 },
+        { "type": "setReversed", "reversed": false },
+        {
+            "type": "afterTime",
+            "delay": 0.3,
+            "command": "SequentialCommandGroup",
+            "children": [
+                {
+                    "command": "AutonomousTransferCommand",
+                    "args": [850, 26, 28, 26]
+                }
+            ]
+        },
+        { "type": "splineTo", "x": -28, "y": 38, "tangentDegrees": 150 },
+        { "type": "stopAndAdd", "command": "AutonomousShootCloseCommand" },
+        { "type": "waitSeconds", "seconds": 2 },
+        { "type": "setReversed", "reversed": true },
+        { "type": "splineTo", "x": 2, "y": 53, "tangentDegrees": 90 },
+        {
+            "type": "splineTo",
+            "x": 2,
+            "y": 56,
+            "tangentDegrees": 90,
+            "velConstraint": 10.0
+        },
+        { "type": "waitSeconds", "seconds": 1 },
+        { "type": "setReversed", "reversed": false },
+        { "type": "splineTo", "x": -7, "y": 45, "tangentDegrees": 180 },
+        { "type": "setReversed", "reversed": true },
+        { "type": "splineTo", "x": 28, "y": 46, "tangentDegrees": 0 },
+        { "type": "splineTo", "x": 37, "y": 46, "tangentDegrees": 0 },
+        { "type": "waitSeconds", "seconds": 0.1 },
+        { "type": "splineTo", "x":  -15, "y":  15, "tangentDegrees":  -150},
+        { "type": "stopAndAdd", "command": "AutonomousShootCloseCommand"}
+    ]
+}

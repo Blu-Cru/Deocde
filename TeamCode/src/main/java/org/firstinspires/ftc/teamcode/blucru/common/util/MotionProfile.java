@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.opencv.core.Mat;
 
 public class MotionProfile {
     double vMax, aMax, xTarget, xI;
@@ -22,6 +21,7 @@ public class MotionProfile {
         this.xTarget = xTarget;
         this.xI = xI;
         this.vMax = vMax;
+        this.vI = 0;
         this.aMax = aMax;
         if (xTarget < xI){
             //going backwards

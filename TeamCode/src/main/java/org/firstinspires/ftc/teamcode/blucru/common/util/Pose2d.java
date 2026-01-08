@@ -47,5 +47,13 @@ public class Pose2d {
         this.x = x;
     }
 
+    public double getDistTo(Pose2d pose2d){
+        return Math.sqrt(Math.pow(pose2d.getX(),2) + Math.pow(pose2d.getY(),2));
+    }
+
+    public String toString(){
+        return "(" + x + ", " + y + ", " + h + ")";
+    }
+
 
 }

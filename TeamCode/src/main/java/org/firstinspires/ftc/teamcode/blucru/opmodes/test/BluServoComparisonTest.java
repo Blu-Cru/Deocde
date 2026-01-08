@@ -6,8 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp(group = "test")
-@Config
+//@TeleOp(group = "test")
+//@Config
 public class BluServoComparisonTest extends BluLinearOpMode {
 
     Servo servo;

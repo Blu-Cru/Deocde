@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
 public class BluServoTest extends BluLinearOpMode {
     BluServo servo;
-    public static String name;
+    public static String name = "elevator";
     public static double pos;
     public void initialize(){
         servo = new BluServo(name);
@@ -22,6 +22,8 @@ public class BluServoTest extends BluLinearOpMode {
     }
 
     public void periodic(){
+        servo.read();
+
         if (driver1.pressedA()){
             servo.setPos(pos);
         }
@@ -33,5 +35,10 @@ public class BluServoTest extends BluLinearOpMode {
                 servo.enable();
             }
         }
+
+        servo.write();
+        telemetry.addData("Servo pos", servo.getPos());
+
+        telemetry.addData("Servo name", name);
     }
 }
