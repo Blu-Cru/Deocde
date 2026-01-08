@@ -38,6 +38,7 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = true;
+    public boolean autoTagUpdating = true;
     public int rumbleDur = 200;
     public int shot = 0;
 
@@ -51,12 +52,12 @@ public class Tele extends BluLinearOpMode{
     @Override
     public void initialize(){
         robot.clear();
+        addLLTagDetector();
         addSixWheel();
         addIntake();
         addElevator();
         addTransfer();
         addShooter();
-        addLLTagDetector();
         addTurret();
 
         sm = new StateMachineBuilder()
@@ -184,9 +185,11 @@ public class Tele extends BluLinearOpMode{
 
         //Shooter
         if(driver2.pressedRightBumper()){
+            gamepad2.rumble(350);
             shooter.redAlliance = true;
             Globals.setAlliance(Alliance.RED);
         } else if(driver2.pressedRightTrigger()){
+            gamepad2.rumble(350);
             shooter.redAlliance = false;
             Globals.setAlliance(Alliance.BLUE);
         }
@@ -223,7 +226,7 @@ public class Tele extends BluLinearOpMode{
 
         //manual
         if (driver2.pressedShare()){
-            gamepad2.rumble(1000);
+            gamepad2.rumble(500);
             turret.resetEncoder();
             turret.toggleManual();
         }
@@ -236,12 +239,26 @@ public class Tele extends BluLinearOpMode{
 
 
         //relocalization
-        //rn assumes bot is stationary
         if (driver2.pressedDpadUp()){
             if (llTagDetector.validLLReads()){
                 gamepad1.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
             }
+        }
+        /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
+            if (llTagDetector.validLLReads()){
+                sixWheel.setPosition(llTagDetector.getLLBotPosePoseHistory());
+            }
+        }*/
+
+        if (driver2.pressedDpadUp()){
+            gamepad2.rumble(200);
+            autoTagUpdating = !autoTagUpdating;
+        }
+
+        //manual heading update
+        if (driver2.pressedDpadDown()){
+            sixWheel.setHeading(0);
         }
     }
 

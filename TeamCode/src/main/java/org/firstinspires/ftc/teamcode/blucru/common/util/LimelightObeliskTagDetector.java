@@ -29,11 +29,12 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     long captureTime;
     private final int POSITION_PIPELINE = 0;
     private final int PATTERN_PIPELINE = 1;
+    private boolean validReadsThisLoop = false;
     public LimelightObeliskTagDetector(){
         limelight = Globals.hwMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
-        limelight.pipelineSwitch(PATTERN_PIPELINE);
+        limelight.pipelineSwitch(POSITION_PIPELINE);
         pattern = new String[]{"p","p","p"};
         botpose = null;
     }
@@ -45,16 +46,16 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
 
     @Override
     public void read() {
-        if (detectedPattern()){
+        /*if (detectedPattern()){*/
             positionPipelineInterpretation();
-        } else {
+        /*} else {
             patternPipelineInterpretation();
 
             //need to check for pipeline switch
             if (detectedPattern()){
                 limelight.pipelineSwitch(POSITION_PIPELINE);
             }
-        }
+        }*/
     }
 
     public void positionPipelineInterpretation(){
@@ -63,16 +64,19 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         if (result != null && result.isValid()){
             captureTime = result.getControlHubTimeStampNanos();
             Pose3D bot = result.getBotpose_MT2();
+            Globals.telemetry.addData("Limelight Heading", bot.getOrientation().getYaw(AngleUnit.RADIANS));
             //using same heading because tags are not for heading correction
             //multiplying by 1000/25.4 to account for unit change
             botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+            validReadsThisLoop = true;
         } else {
             Globals.telemetry.addLine("NO POSITION TAGS");
+            validReadsThisLoop = false;
         }
     }
 
     public void patternPipelineInterpretation(){
-        limelight.updateRobotOrientation(Math.toRadians(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+        limelight.updateRobotOrientation(Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()){
             List<LLResultTypes.FiducialResult> res = result.getFiducialResults();
@@ -141,6 +145,9 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
             angle -= 2.0 * Math.PI;
         }
         return angle;
+    }
+    public boolean hasUpdatedPosition(){
+        return validReadsThisLoop;
     }
 
 

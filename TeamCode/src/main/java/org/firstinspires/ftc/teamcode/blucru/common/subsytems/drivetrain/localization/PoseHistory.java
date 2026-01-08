@@ -9,7 +9,7 @@ import java.util.LinkedList;
 
 public class PoseHistory {
 
-    private static double STORAGE_NANOSECONDS = Math.pow(10,9);
+    private static double STORAGE_NANOSECONDS = 2 * Math.pow(10,9);
 
     private LinkedList<PoseMarker> poseList;
 
@@ -31,7 +31,10 @@ public class PoseHistory {
     public PoseMarker getPoseAtTime(long nanoTime){
         PoseMarker poseMarkerAfterTime = poseList.get(0);
         PoseMarker poseMarkerBeforeTime = poseList.get(0);
-
+        Globals.telemetry.addData("list size", poseList.size());
+        Globals.telemetry.addData("nanoTime", nanoTime);
+        Globals.telemetry.addData("oth index time", poseList.get(0).nanoTime);
+        Globals.telemetry.addData("last index time", poseList.getLast().nanoTime);
         for(PoseMarker poseMarker: poseList){
             if (poseMarker.nanoTime < nanoTime){
                 poseMarkerBeforeTime = poseMarker;

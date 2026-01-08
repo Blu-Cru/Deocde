@@ -28,6 +28,7 @@ public class LimelightRelocalizationTest extends BluLinearOpMode {
     public void initialize(){
         addLLTagDetector();
         addSixWheel();
+        sixWheel.reset();
     }
     public void onStart(){
         sixWheel.setPosition(new Pose2d(0,0,0));
@@ -43,6 +44,7 @@ public class LimelightRelocalizationTest extends BluLinearOpMode {
         telemetry.addData("Pattern Detected?", llTagDetector.detectedPattern());
         telemetry.addData("Pattern", Arrays.toString(llTagDetector.getPattern()));
         telemetry.addData("Pipeline", llTagDetector.getPipeline());
+        sixWheel.teleDrive(gamepad1, 0.1);
     }
 
 
