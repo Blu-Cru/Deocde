@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServo;
-    private BluBrushlandLabsColorSensor leftSensor, middleSensor, rightSensor;
     private static final double DOWN_POSITION = 0.01;//TODO: find positions
     private static final double UP_POSITION = 0.3;
     private static final double MIDDLE_POSITION = 0.13;
@@ -27,9 +26,6 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public void setDown(){
         elevatorServo.setPos(DOWN_POSITION);
-    }
-    public boolean ballInElevatorSlot(){
-        return leftSensor.ballDetected() || middleSensor.ballDetected() || rightSensor.ballDetected();
     }
     public void turnOffElevatorServo(){
         elevatorServo.disable();

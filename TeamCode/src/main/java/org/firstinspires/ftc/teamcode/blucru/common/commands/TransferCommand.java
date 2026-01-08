@@ -6,11 +6,11 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 // IMPORTS... (Keep your existing subsystem imports)
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.DisableElevatorCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
@@ -22,11 +22,20 @@ public class TransferCommand extends SequentialCommandGroup { // 1. Extend Seque
     public static double vel = 900;
     public static double angle = 40;
 
-    public TransferCommand(boolean turreting) {
+    public TransferCommand(boolean turreting, boolean autoAiming) {
         addCommands(
                 new AllTransferDownCommand(),
                 new CenterTurretCommand(),
-                new AutoAimCommand(),
+
+                new ConditionalCommand(
+                        new AutoAimCommand(),
+                        new SequentialCommandGroup(
+                                new SetHoodAngleCommand(30),
+                                new ShootWithVelocityCommand(1000)
+                        ),
+                        () -> autoAiming
+                ),
+
                 new WaitCommand(100),
                 new ElevatorUpCommand(),
                 new ParallelizeIntakeCommand(),
