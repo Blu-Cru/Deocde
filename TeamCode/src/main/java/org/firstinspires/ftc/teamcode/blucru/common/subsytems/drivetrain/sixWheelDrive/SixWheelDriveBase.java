@@ -63,7 +63,6 @@ public class SixWheelDriveBase implements BluSubsystem{
         for (BluMotor motors: dtMotors){
             motors.write();
         }
-        localizer.write();
     }
 
     public void drive(double x, double r){
