@@ -24,6 +24,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     public static double END_TOLERANCE = 2.0;
     public static double HEADING_TOLERANCE = 5.0; // Degrees
     private SixWheelPID pid;
+    private double targetX;
     public SixWheelDrive(){
         super();
         drivePower = 1;
@@ -99,6 +100,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 break;
             case TELE_DRIVE:
                 break;
+            case LINE_TO_X:
+                drive(pid.lineToX(targetX, localizer.getPose(), localizer.getVel()),0);
         }
 
         super.write();
@@ -212,5 +215,10 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public void updatePID(){
         pid.updatePID();
+    }
+
+    public void lineToX(double x){
+        targetX = x;
+        dtState = State.LINE_TO_X;
     }
 }

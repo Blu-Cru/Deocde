@@ -165,4 +165,9 @@ public class SixWheelPID {
         r.setPD(pR, dR);
     }
 
+    public double lineToX(double targetX, Pose2d robotPose, Pose2d robotVel){
+        double dist = targetX - robotPose.getX();
+        return xy.calculate(dist, -robotVel.getX());
+    }
+
 }
