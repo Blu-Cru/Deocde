@@ -28,9 +28,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.test.TurretLockOnGoalTest;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
@@ -51,10 +53,12 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         addElevator();
         addTurret();
 
-
         startPose = new Pose2d(-45, 52, Math.toRadians(127));
 
         drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
+//        shooter.setRRPoseSupplier(() -> drive.localizer.getPose());
+//        turret.setRRPoseSupplier(() -> drive.localizer.getPose());
+
         shooter.setHoodAngle(26);
         shooter.setMiddleHoodAngle(30);
         shooter.write();
@@ -67,21 +71,21 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
 
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
-                .splineTo(new Vector2d(-28, 47), Math.toRadians(0))
+                .splineTo(new Vector2d(-33, 47), Math.toRadians(0))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new AllTransferUpCommand(),
+                                new WaitCommand(500),
+                                new TurnTurretToPosCommand(0),
                                 new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
                                 new ElevatorDownCommand(),
                                 new WaitCommand(200),
-                                new AllTransferDownCommand()
+                                new AllTransferDownCommand(),
+                                new IntakeStartCommand()
                         )
                 ))
-                .waitSeconds(3) // SHOOT PRELOAD
-                .lineToX(-15)// PICKUP FIRST SET
+                .waitSeconds(4) // SHOOT PRELOAD    `
+                .splineTo(new Vector2d(-25, 47), Math.toRadians(0))// PICKUP FIRST SET
                 .waitSeconds(2)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -91,28 +95,32 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new LockOnGoalCommand()
+                                new TurnTurretToPosCommand(30)
                         )
                 ))
                 .setReversed(false)
-                .lineToX(-28)
+                .splineTo(new Vector2d(-33, 47), Math.toRadians(180))
                 //SHOOT FIRST SET
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new TurnTurretToPosCommand(-30),
+                                new WaitCommand(500),
                                 new AllTransferUpCommand(),
                                 new WaitCommand(300),
                                 new CenterTurretCommand(),
                                 new WaitCommand(300),
-                                new IntakeStartCommand(),
                                 new ElevatorDownCommand(),
                                 new WaitCommand(200),
-                                new AllTransferDownCommand()
+                                new AllTransferDownCommand(),
+                                new IntakeStartCommand()
+
                         )
                 ))
                 .waitSeconds(2)
 
                 .setReversed(true)
-                .lineToX(10)//PICKUP SECOND SET
+                .splineTo(new Vector2d(10, 47), Math.toRadians(0))
+                //PICKUP SECOND SET
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -121,22 +129,25 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new LockOnGoalCommand()
+                                new TurnTurretToPosCommand(30)
                         )
                 ))
                 .waitSeconds(2)
                 .setReversed(false)
-                .splineTo(new Vector2d(-28, 47), Math.toRadians(180))
+                .splineTo(new Vector2d(-33, 47), Math.toRadians(180))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new TurnTurretToPosCommand(-30),
+                                new WaitCommand(500),
                                 new AllTransferUpCommand(),
                                 new WaitCommand(300),
                                 new CenterTurretCommand(),
                                 new WaitCommand(300),
-                                new IntakeStartCommand(),
                                 new ElevatorDownCommand(),
                                 new WaitCommand(200),
-                                new AllTransferDownCommand()
+                                new AllTransferDownCommand(),
+                                new IntakeStartCommand()
+
                         )
                 ))
                 .waitSeconds(2) // SHOOT SECOND SET
@@ -210,29 +221,30 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
         shooter.shootWithVelocity(1000); //orig 850 before switching to triple shot
-        turret.lockOnGoal();
-//        TelemetryPacket packet = new TelemetryPacket();
-//
-//        // 2. Run the loop
-//        // We add !isStopRequested() to ensure we exit cleanly if you press stop
-//        while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
-//
-//            // Update FTCLib Subsystems
-//            robot.read();
-//            CommandScheduler.getInstance().run();
-//            robot.write();
-//
-//            // 3. IMPORTANT: Send the packet to dashboard!
-//            // Without this, RoadRunner runs blind and you see no telemetry
-//            dash.sendTelemetryPacket(packet);
-//
-//            // Reset packet for the next loop
-//            packet = new TelemetryPacket();
-//
-//            // 4. Update standard telemetry to the driver station
-//            telemetry.addData("Path Running", "True");
-//            telemetry.update();
-//        }
+        turret.setAngle(30);
+        TelemetryPacket packet = new TelemetryPacket();
+        com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
+        while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
+
+            // Update FTCLib Subsystems
+            robot.read();
+
+            CommandScheduler.getInstance().run();
+            robot.write();
+
+            // 3. IMPORTANT: Send the packet to dashboard!
+            // Without this, RoadRunner runs blind and you see no telemetry
+            dash.sendTelemetryPacket(packet);
+
+            // Reset packet for the next loop
+            packet = new TelemetryPacket();
+
+            // 4. Update standard telemetry to the driver station
+            telemetry.addData("Path Running", "True");
+            telemetry.update();
+
+            idle();
+        }
     }
 
 
