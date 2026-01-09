@@ -101,7 +101,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
             case TELE_DRIVE:
                 break;
             case LINE_TO_X:
-                drive(pid.lineToX(targetX, localizer.getPose(), localizer.getVel()),0);
+                drive(-pid.lineToX(targetX, localizer.getPose(), localizer.getVel()),0);
         }
 
         super.write();

@@ -37,7 +37,9 @@ public class SixWheelPIDPathBuilder {
     public SixWheelPIDPathBuilder addTurnTo(double heading, double maxTime){
         return addSegment(new TurnToSegment(heading, maxTime));
     }
-
+    public SixWheelPIDPathBuilder addLineToX(double x, double maxTime){
+        return addSegment(new LineToXSegment(x, maxTime));
+    }
     public SixWheelPIDPathBuilder addMappedTurnTo(double heading, double maxTime){
         return addSegment(new TurnToSegment(Globals.mapAngle(heading), maxTime));
     }

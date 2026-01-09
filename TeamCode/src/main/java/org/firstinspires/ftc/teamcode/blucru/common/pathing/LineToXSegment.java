@@ -15,7 +15,7 @@ public class LineToXSegment implements PathSegment{
     @Override
     public boolean isDone() {
         //1 inch tol
-        return Math.abs(targetX - Robot.getInstance().sixWheelDrivetrain.getPos().getX()) < 1;
+        return Math.abs(targetX - Robot.getInstance().sixWheelDrivetrain.getPos().getX()) < 2;
     }
 
     @Override
