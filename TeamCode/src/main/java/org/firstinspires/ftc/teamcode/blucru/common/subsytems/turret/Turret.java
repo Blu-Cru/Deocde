@@ -104,6 +104,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void setAngle(double angle) {
+        angle = -angle;
         if (lastSetpoint == null || Math.abs(angle - lastSetpoint) > 1e-6) {
             controller.reset();
             lastSetpoint = angle;

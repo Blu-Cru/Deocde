@@ -26,11 +26,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class PurePursuitAuto extends BluLinearOpMode {
+    double closeTurretAngle = 30;
 
     public class TestingPath extends SixWheelPIDPathBuilder{
 
@@ -71,7 +73,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new LockOnGoalCommand()
+                                new TurnTurretToPosCommand(closeTurretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(500)
@@ -110,7 +112,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new LockOnGoalCommand()
+                                new TurnTurretToPosCommand(closeTurretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
@@ -213,8 +215,8 @@ public class PurePursuitAuto extends BluLinearOpMode {
 
     public void onStart(){
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
-        shooter.shootWithVelocity(1000); //orig 850 before switching to triple shot
-        turret.lockOnGoal();
+        shooter.shootWithVelocity(1025); //orig 850 before switching to triple shot
+        turret.setAngle(closeTurretAngle);
         sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
         currentPath = new TestingPath().build().start();
     }

@@ -7,6 +7,8 @@ import com.acmerobotics.roadrunner.Action;
 import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
 public class FtclibCommandAction implements Action {
     private final Command command;
     private boolean started = false;
@@ -27,6 +29,8 @@ public class FtclibCommandAction implements Action {
         // Your OpMode loop should call it once per iteration.
 
         // Block the RR action until the command finishes (IF the command actually takes time).
+        Globals.telemetry.addLine("here");
+        Globals.telemetry.update();
         return !command.isFinished();
     }
 }

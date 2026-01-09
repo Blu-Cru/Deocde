@@ -23,28 +23,86 @@ public class MeepMeepTesting {
         myBot.runAction(
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
-                        .splineTo(new Vector2d(-28, 47), Math.toRadians(0))
-                        //.lineToX(-44)
-//                        .stopAndAdd(new FtclibCommandAction(new ShootWithVelocityCommand(850)))
-//                        .afterTime(0.1, new FtclibCommandAction(new CenterTurretCommand()))
-//                        .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))//SHOOT PRELOAD
-                        .waitSeconds(3) // SHOOT PRELOAD
-//                        .afterTime(0.1, new FtclibCommandAction(new SequentialCommandGroup(new IntakeStartCommand(), new ElevatorDownCommand(), new CenterTurretCommand())))
-                        .lineToX(-15)// PICKUP FIRST SET
+                        .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
+//                .afterTime(0.1, new FtclibCommandAction(
+//                        new SequentialCommandGroup(
+//                                new AllTransferUpCommand(),
+//                                new WaitCommand(500),
+//                                new TurnTurretToPosCommand(0),
+//                                new WaitCommand(300),
+//                                new ElevatorDownCommand(),
+//                                new WaitCommand(200),
+//                                new AllTransferDownCommand(),
+//                                new IntakeStartCommand()
+//                        )
+//                ))
+                        .waitSeconds(4) // SHOOT PRELOAD    `
+                        .lineToX(-25)
+                        // PICKUP FIRST SET
                         .waitSeconds(2)
-//                        .stopAndAdd(new FtclibCommandAction(new AutonomousTransferCommand(850, 26, 28, 26)))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new TurnTurretToPosCommand(30)
+//                                )
+//                        ))
                         .setReversed(false)
-                        .lineToX(-28)
+                        .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
+                        //SHOOT FIRST SET
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new TurnTurretToPosCommand(-30),
+//                                        new WaitCommand(500),
+//                                        new AllTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new CenterTurretCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorDownCommand(),
+//                                        new WaitCommand(200),
+//                                        new AllTransferDownCommand(),
+//                                        new IntakeStartCommand()
+//
+//                                )
+//                        ))
                         .waitSeconds(2)
-//                        .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand())) //SHOOT FIRST SET
 
                         .setReversed(true)
-                        .lineToX(10)//PICKUP SECOND SET
-
+                        .splineTo(new Vector2d(10, 45), Math.toRadians(0))
+                        //PICKUP SECOND SET
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new TurnTurretToPosCommand(30)
+//                                )
+//                        ))
                         .waitSeconds(2)
                         .setReversed(false)
-                        .splineTo(new Vector2d(-28, 47), Math.toRadians(180))
-//                        .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
+                        .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new TurnTurretToPosCommand(-30),
+//                                        new WaitCommand(500),
+//                                        new AllTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new CenterTurretCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorDownCommand(),
+//                                        new WaitCommand(200),
+//                                        new AllTransferDownCommand(),
+//                                        new IntakeStartCommand()
+//
+//                                )
+//                        ))
                         .waitSeconds(2) // SHOOT SECOND SET
 
                         .setReversed(true)
@@ -57,8 +115,19 @@ public class MeepMeepTesting {
                         .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
 
                         .setReversed(true)
-                        .splineTo(new Vector2d(30, 47), Math.toRadians(0))
-                        .splineTo(new Vector2d(35, 47), Math.toRadians(0))  // PICKUP THIRD SET
+                        .splineTo(new Vector2d(30, 45), Math.toRadians(0))
+                        .splineTo(new Vector2d(35, 45), Math.toRadians(0))  // PICKUP THIRD SET
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new LockOnGoalCommand()
+//                                )
+//                        ))
                         .waitSeconds(2)
                         .setReversed(true)
                         .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
@@ -66,12 +135,32 @@ public class MeepMeepTesting {
                         .turnTo(Math.toRadians(-90))
                         .setReversed(true)
                         .splineTo(new Vector2d(53,40), Math.toRadians(90))
-                        .splineTo(new Vector2d(53, 47), Math.toRadians(90))// PICKUP FOURTH SET
+                        .splineTo(new Vector2d(53, 45), Math.toRadians(90))// PICKUP FOURTH SET
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new LockOnGoalCommand()
+//                                )
+//                        ))
                         .waitSeconds(2)
 
                         .setReversed(false)
                         .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                         .turnTo(Math.toRadians(160))
+//                        .stopAndAdd(
+//                                new FtclibCommandAction(
+//                                        new SequentialCommandGroup(
+//                                                new LockOnGoalCommand(),
+//                                                new AutoAimCommand(),
+//                                                new AutonomousShootCommand()
+//                                        )
+//
+//                                ))
 
 
 
