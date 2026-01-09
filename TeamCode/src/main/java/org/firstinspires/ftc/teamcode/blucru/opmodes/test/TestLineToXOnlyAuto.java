@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -48,9 +48,5 @@ public class TestLineToXOnlyAuto extends BluLinearOpMode {
         if (currentPath != null) {
             currentPath.run();
         }
-
-        // Optional basic telemetry (remove if your framework already logs)
-        telemetry.addLine("Running LineToX only");
-        telemetry.update();
     }
 }

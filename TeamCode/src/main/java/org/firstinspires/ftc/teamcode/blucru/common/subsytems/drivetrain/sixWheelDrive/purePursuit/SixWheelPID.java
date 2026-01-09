@@ -13,6 +13,7 @@ public class SixWheelPID {
     private PDController xy;
     private PDController r;
     private PDController rTurnTo;
+    private PDController xyLineTo;
 
     // Stop linear movement when this close to goal to prevent oscillation
     public static double STOP_DISTANCE = 2;
@@ -21,6 +22,7 @@ public class SixWheelPID {
     public static double pXY = 0.07, dXY = 0.015;
     public static double pR = 0.015, dR = 0.12;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
+    public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
@@ -32,6 +34,7 @@ public class SixWheelPID {
         xy = new PDController(pXY, dXY);
         r = new PDController(pR, dR);
         rTurnTo = new PDController(pRTurnTo, dRTurnTo);
+        xyLineTo = new PDController(pXYLineTo, dXYLineTo);
     }
 
     public void resetBackwardsDrivingState() {
@@ -167,7 +170,7 @@ public class SixWheelPID {
 
     public double lineToX(double targetX, Pose2d robotPose, Pose2d robotVel){
         double dist = targetX - robotPose.getX();
-        return xy.calculate(dist, -robotVel.getX());
+        return xyLineTo.calculate(dist, -robotVel.getX());
     }
 
 }
