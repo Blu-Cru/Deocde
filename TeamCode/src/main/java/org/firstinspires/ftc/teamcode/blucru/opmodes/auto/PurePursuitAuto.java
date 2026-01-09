@@ -102,6 +102,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                             new Point2d(-27, 44),
                             new Point2d(12.5,44)
                     }, 4000)
+                    .addTurnTo(0, 3)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         telemetry.addLine("Here");
@@ -116,10 +117,11 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(12.5, 44),
-                            new Point2d(-27, 44)
-                    }, 5000)
+                    .addLineToX(-27, 5)
+//                    .addPurePursuitPath(new Point2d[]{
+//                            new Point2d(12.5, 44),
+//                            new Point2d(-27, 44)
+//                    }, 5000)
                     .waitMilliseconds(3000)
                     //SHOOT SECOND SET
                     .callback(() -> {
@@ -135,10 +137,11 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 44),
-                            new Point2d(10, 44)
-                    }, 5000)
+                    .addLineToX(10,5)
+//                    .addPurePursuitPath(new Point2d[]{
+//                            new Point2d(-27, 44),
+//                            new Point2d(10, 44)
+//                    }, 5000)
                     .addTurnTo(90, 3000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(10, 44),

@@ -26,7 +26,8 @@ public class SixWheelDriveBase implements BluSubsystem{
         IDLE,
         PID,
         TELE_DRIVE,
-        TURN
+        TURN,
+        LINE_TO_X
     }
 
     State dtState;
