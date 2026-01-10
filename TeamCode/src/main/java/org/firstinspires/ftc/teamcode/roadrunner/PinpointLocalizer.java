@@ -9,17 +9,15 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
-import java.util.Objects;
+import java.util.function.Supplier;
 
 @Config
 public final class PinpointLocalizer implements Localizer {
 
     public static class Params {
         public double parYTicks = 138.5;
-        public double perpXTicks = 94.5; //old 94.05
+        public double perpXTicks = 94.5; // old 94.05
     }
 
     public static Params PARAMS = new Params();
@@ -28,11 +26,23 @@ public final class PinpointLocalizer implements Localizer {
     public final GoBildaPinpointDriver.EncoderDirection initialParDirection;
     public final GoBildaPinpointDriver.EncoderDirection initialPerpDirection;
 
+    private final Supplier<Double> headingRad;  // REV hub IMU heading (rad)
+    private final Supplier<Double> angVelRad;   // REV hub IMU ang vel (rad/s)
+
     private Pose2d txWorldPinpoint;
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
 
-    public PinpointLocalizer(HardwareMap hardwareMap, double inPerTick, Pose2d initialPose) {
+    public PinpointLocalizer(
+            HardwareMap hardwareMap,
+            double inPerTick,
+            Pose2d initialPose,
+            Supplier<Double> headingRad,
+            Supplier<Double> angVelRad
+    ) {
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+
+        this.headingRad = headingRad;
+        this.angVelRad = angVelRad;
 
         double ticksPerMm = 19.894;
         double mmPerTick = 1.0 / ticksPerMm;
@@ -48,6 +58,7 @@ public final class PinpointLocalizer implements Localizer {
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
         driver.setEncoderDirections(initialParDirection, initialPerpDirection);
 
+        // Keep if you want Pinpoint X/Y reset at init. Heading comes from REV IMU now.
         driver.resetPosAndIMU();
 
         txWorldPinpoint = initialPose;
@@ -60,21 +71,17 @@ public final class PinpointLocalizer implements Localizer {
 
     @Override
     public Pose2d getPose() {
-        try {
-            return txWorldPinpoint.times(txPinpointRobot);
-        } catch (Exception e){
-            throw new RuntimeException("Get Pose not working, txWorldPinpoint: " + txWorldPinpoint+ " ,Error: " + e.getMessage() );
-        }
+        return txWorldPinpoint.times(txPinpointRobot);
     }
-
-    // In org/firstinspires/ftc/teamcode/roadrunner/PinpointLocalizer.java
 
     @Override
     public PoseVelocity2d update() {
         driver.update();
 
-        double heading = driver.getHeading(UnnormalizedAngleUnit.RADIANS);
+        // Heading from REV hub IMU
+        double heading = headingRad.get();
 
+        // X/Y from Pinpoint, heading from REV IMU
         txPinpointRobot = new Pose2d(
                 driver.getPosX(DistanceUnit.INCH),
                 driver.getPosY(DistanceUnit.INCH),
@@ -86,13 +93,12 @@ public final class PinpointLocalizer implements Localizer {
                 driver.getVelY(DistanceUnit.INCH)
         );
 
-        Vector2d robotVelocity =
-                Rotation2d.fromDouble(txPinpointRobot.heading.log())
-                        .times(worldVelocity);
+        // Convert world -> robot frame (RR convention)
+        Vector2d robotVelocity = Rotation2d.fromDouble(-heading).times(worldVelocity);
 
-        double angVel = driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
+        // Angular velocity from REV hub IMU
+        double angVel = angVelRad.get();
 
         return new PoseVelocity2d(robotVelocity, angVel);
     }
-
 }

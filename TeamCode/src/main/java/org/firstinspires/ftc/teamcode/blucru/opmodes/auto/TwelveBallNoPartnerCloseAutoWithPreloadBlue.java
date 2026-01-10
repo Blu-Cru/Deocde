@@ -53,7 +53,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-@Autonomous(name = "12 Ball Close Auto BLUE", group = "auto")
+@Autonomous(name = "Old 12 Ball Close Auto BLUE", group = "auto")
 public class TwelveBallNoPartnerCloseAutoWithPreloadBlue extends BluLinearOpMode {
 
     private TankDrive drive;

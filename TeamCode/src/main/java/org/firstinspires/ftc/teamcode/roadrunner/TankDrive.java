@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
@@ -253,12 +255,26 @@ public final class TankDrive {
 
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
-                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
+        lazyImu = new LazyHardwareMapImu(
+                hardwareMap,
+                "imu",
+                new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)
+        );
+
+        lazyImu.get().initialize(new IMU.Parameters(
+                new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)
+        ));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
+        localizer = new PinpointLocalizer(
+                hardwareMap,
+                PARAMS.inPerTick,
+                pose,
+                () -> (double) lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS),
+                () -> (double) lazyImu.get().getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate
+        );
+
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }

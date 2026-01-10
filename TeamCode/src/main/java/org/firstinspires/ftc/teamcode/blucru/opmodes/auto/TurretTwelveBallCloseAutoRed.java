@@ -3,46 +3,33 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
-import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.test.TurretLockOnGoalTest;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
 @Autonomous(name = "12 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
-public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode {
+public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;
     private Pose2d startPose;
@@ -61,8 +48,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         startPose = new Pose2d(-45, 52, Math.toRadians(127));
 
         drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
-//        shooter.setRRPoseSupplier(() -> drive.localizer.getPose());
-//        turret.setRRPoseSupplier(() -> drive.localizer.getPose());
+
 
         shooter.setHoodAngle(26);
         shooter.setMiddleHoodAngle(30);
