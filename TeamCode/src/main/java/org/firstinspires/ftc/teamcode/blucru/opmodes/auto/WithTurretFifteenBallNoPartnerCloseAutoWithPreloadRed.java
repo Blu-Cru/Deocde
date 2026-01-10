@@ -82,7 +82,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new ElevatorDownCommand(),
                                 new WaitCommand(200),
                                 new AllTransferDownCommand()
-                        )
+                        ), false
                 ))
                 .waitSeconds(2) // SHOOT PRELOAD    `
                 .lineToX(-25)
