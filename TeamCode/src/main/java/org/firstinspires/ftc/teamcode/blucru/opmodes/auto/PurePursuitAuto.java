@@ -40,7 +40,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                     new Point2d(-45, 52),
-                    new Point2d(-27, 44)
+                    new Point2d(-27, 46)
             }, 5000)
                     .waitMilliseconds(500)
                     //SHOOT PRELOAD
@@ -60,7 +60,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     //INTAKE FIRST SET
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 44),
+                            new Point2d(-27, 46),
                             new Point2d(-10, 46)
                     }, 5000)
                     .waitMilliseconds(500)
@@ -79,7 +79,7 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     .waitMilliseconds(500)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-10, 46),
-                            new Point2d(-27, 44)
+                            new Point2d(-27, 46)
                     }, 5000)
 //                    .addTurnTo(0,1000)
                     .waitMilliseconds(1000)
@@ -98,8 +98,12 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(500)
                     //INTAKE SECOND SET
-                    .addLineToX(12.5,5000)
-//                    .addTurnTo(0, 1000)
+
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-27, 46),
+                            new Point2d(12.5,46)
+                    }, 4000)
+                    .addTurnTo(0, 3)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         telemetry.addLine("Here");
@@ -114,11 +118,12 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
-                    .addLineToX(-27, 5000)
-//                    .addPurePursuitPath(new Point2d[]{
-//                            new Point2d(12.5, 44),
-//                            new Point2d(-27, 44)
-//                    }, 5000)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(12.5, 44),
+                            new Point2d(0,44),
+                            new Point2d(-13.5, 44),
+                            new Point2d(-27, 44)
+                    }, 5000)
                     .waitMilliseconds(3000)
                     //SHOOT SECOND SET
                     .callback(() -> {
@@ -134,12 +139,13 @@ public class PurePursuitAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .waitMilliseconds(3000)
-                    .addLineToX(10,5000)
-//                    .addPurePursuitPath(new Point2d[]{
-//                            new Point2d(-27, 44),
-//                            new Point2d(10, 44)
-//                    }, 5000)
-//                    .addTurnTo(90, 3000)
+                    .addLineToX(10,5)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-27, 44),
+                            new Point2d(-7, 44),
+                            new Point2d(10, 44)
+                    }, 5000)
+                    .addTurnTo(90, 3000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(10, 44),
                             new Point2d(10, 49)
@@ -170,6 +176,9 @@ public class PurePursuitAuto extends BluLinearOpMode {
                     .waitMilliseconds(3000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(37, 44),
+                            new Point2d(20, 44),
+                            new Point2d(0, 44),
+                            new Point2d(-15, 44),
                             new Point2d(-27, 44)
                     }, 5000)
                     .waitMilliseconds(3000)
