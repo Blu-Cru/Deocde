@@ -153,8 +153,8 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 .setReversed(true)
                 .turnTo(-Math.toRadians(180))
                 .setReversed(true)
-                .splineTo(new Vector2d(0, -45), -Math.toRadians(90))
-                .splineTo(new Vector2d(0, -53), -Math.toRadians(90))
+                .splineTo(new Vector2d(2, -45), -Math.toRadians(90))
+                .splineTo(new Vector2d(2, -58), -Math.toRadians(90))
                 .waitSeconds(1.5)
 
                 .setReversed(false)
@@ -196,8 +196,9 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                                 new ElevatorDownCommand()
                         ), false
                 ))
-                .waitSeconds(2)
-
+                .waitSeconds(5)
+                .setReversed(true)
+                .splineTo(new Vector2d(0, -37), Math.toRadians(0))
                 .build();
     }
 

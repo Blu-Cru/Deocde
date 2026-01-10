@@ -21,100 +21,100 @@ public class MeepMeepCloseBlue {
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
                         .splineTo(new Vector2d(-33, -40), -Math.toRadians(0))
-//                        .afterTime(0.1, new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new LeftTransferUpCommand(),
-//                                        new WaitCommand(200),
-//                                        new MiddleTransferUpCommand(),
-//                                        new WaitCommand(200),
-//                                        new RightTransferUpCommand(),
-//                                        new WaitCommand(500),
-//                                        new CenterTurretCommand(),
-//                                        new WaitCommand(500),
-//                                        new AllTransferDownCommand(),
-//                                        new IntakeStartCommand(),
-//                                        new ElevatorDownCommand()
-//                                ), false
-//                        ))
+//.afterTime(0.1, new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new LeftTransferUpCommand(),
+//                new WaitCommand(200),
+//                new MiddleTransferUpCommand(),
+//                new WaitCommand(200),
+//                new RightTransferUpCommand(),
+//                new WaitCommand(500),
+//                new CenterTurretCommand(),
+//                new WaitCommand(500),
+//                new AllTransferDownCommand(),
+//                new IntakeStartCommand(),
+//                new ElevatorDownCommand()
+//        ), false
+//))
                         .waitSeconds(1.6)
 
                         .setReversed(true)
                         .splineTo(new Vector2d(-18, -45), -Math.toRadians(0))
                         .waitSeconds(1)
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new ElevatorUpCommand(),
-//                                        new WaitCommand(200),
-//                                        new IntakeStopCommand(),
-//                                        new ElevatorMiddleCommand(),
-//                                        new AllTransferMiddleCommand(),
-//                                        new WaitCommand(200),
-//                                        new TurnTurretToPosCommand(75)
-//                                ), false
-//                        ))
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new ElevatorUpCommand(),
+//                new WaitCommand(200),
+//                new IntakeStopCommand(),
+//                new ElevatorMiddleCommand(),
+//                new AllTransferMiddleCommand(),
+//                new WaitCommand(200),
+//                new TurnTurretToPosCommand(-75)
+//        ), false
+//))
 
                         .setReversed(false)
                         .splineTo(new Vector2d(-27, -37), -Math.toRadians(210))
                         .waitSeconds(0.3)
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new LeftTransferUpCommand(),
-//                                        new WaitCommand(100),
-//                                        new MiddleTransferUpCommand(),
-//                                        new WaitCommand(100),
-//                                        new RightTransferUpCommand(),
-//                                        new WaitCommand(500),
-//                                        new CenterTurretCommand(),
-//                                        new WaitCommand(500),
-//                                        new AllTransferDownCommand(),
-//                                        new IntakeStartCommand(),
-//                                        new ElevatorDownCommand()
-//                                ), false
-//                        ))
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new LeftTransferUpCommand(),
+//                new WaitCommand(100),
+//                new MiddleTransferUpCommand(),
+//                new WaitCommand(100),
+//                new RightTransferUpCommand(),
+//                new WaitCommand(500),
+//                new CenterTurretCommand(),
+//                new WaitCommand(500),
+//                new AllTransferDownCommand(),
+//                new IntakeStartCommand(),
+//                new ElevatorDownCommand()
+//        ), false
+//))
                         .waitSeconds(1.5)
 
                         .setReversed(true)
                         .splineTo(new Vector2d(5, -38), -Math.toRadians(0))
                         .waitSeconds(2)
 
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new ElevatorUpCommand(),
-//                                        new WaitCommand(300),
-//                                        new ElevatorMiddleCommand(),
-//                                        new WaitCommand(100),
-//                                        new AllTransferMiddleCommand(),
-//                                        new WaitCommand(300),
-//                                        new IntakeStopCommand(),
-//                                        new TurnTurretToPosCommand(90)
-//                                ), false
-//                        ))
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new ElevatorUpCommand(),
+//                new WaitCommand(300),
+//                new ElevatorMiddleCommand(),
+//                new WaitCommand(100),
+//                new AllTransferMiddleCommand(),
+//                new WaitCommand(300),
+//                new IntakeStopCommand(),
+//                new TurnTurretToPosCommand(-90)
+//        ), false
+//))
 
                         .setReversed(false)
                         .setTangent(-Math.toRadians(180))
                         .splineTo(new Vector2d(-19, -32), -Math.toRadians(190))
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new LeftTransferUpCommand(),
-//                                        new WaitCommand(100),
-//                                        new MiddleTransferUpCommand(),
-//                                        new WaitCommand(100),
-//                                        new RightTransferUpCommand(),
-//                                        new WaitCommand(500),
-//                                        new CenterTurretCommand(),
-//                                        new WaitCommand(500),
-//                                        new AllTransferDownCommand(),
-//                                        new IntakeStartCommand(),
-//                                        new ElevatorDownCommand()
-//                                ), false
-//                        ))
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new LeftTransferUpCommand(),
+//                new WaitCommand(100),
+//                new MiddleTransferUpCommand(),
+//                new WaitCommand(100),
+//                new RightTransferUpCommand(),
+//                new WaitCommand(500),
+//                new CenterTurretCommand(),
+//                new WaitCommand(500),
+//                new AllTransferDownCommand(),
+//                new IntakeStartCommand(),
+//                new ElevatorDownCommand()
+//        ), false
+//))
                         .waitSeconds(2)
 
                         .setReversed(true)
                         .turnTo(-Math.toRadians(180))
                         .setReversed(true)
-                        .splineTo(new Vector2d(0, -45), -Math.toRadians(90))
-                        .splineTo(new Vector2d(0, -53), -Math.toRadians(90))
+                        .splineTo(new Vector2d(2, -45), -Math.toRadians(90))
+                        .splineTo(new Vector2d(2, -58), -Math.toRadians(90))
                         .waitSeconds(1.5)
 
                         .setReversed(false)
@@ -123,40 +123,42 @@ public class MeepMeepCloseBlue {
                         .setReversed(true)
                         .splineTo(new Vector2d(25, -45), -Math.toRadians(0))
                         .waitSeconds(0.5)
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new WaitCommand(500),
-//                                        new ElevatorUpCommand(),
-//                                        new WaitCommand(300),
-//                                        new ElevatorMiddleCommand(),
-//                                        new WaitCommand(100),
-//                                        new AllTransferMiddleCommand(),
-//                                        new WaitCommand(300),
-//                                        new IntakeStopCommand(),
-//                                        new WaitCommand(500),
-//                                        new TurnTurretToPosCommand(85)
-//                                )
-//                        ))
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new WaitCommand(500),
+//                new ElevatorUpCommand(),
+//                new WaitCommand(300),
+//                new ElevatorMiddleCommand(),
+//                new WaitCommand(100),
+//                new AllTransferMiddleCommand(),
+//                new WaitCommand(300),
+//                new IntakeStopCommand(),
+//                new WaitCommand(500),
+//                new TurnTurretToPosCommand(-85)
+//        )
+//))
                         .waitSeconds(1.2)
 
                         .setReversed(false)
                         .splineTo(new Vector2d(-20, -37), -Math.toRadians(180))
-//                        .stopAndAdd(new FtclibCommandAction(
-//                                new SequentialCommandGroup(
-//                                        new LeftTransferUpCommand(),
-//                                        new WaitCommand(200),
-//                                        new MiddleTransferUpCommand(),
-//                                        new WaitCommand(200),
-//                                        new RightTransferUpCommand(),
-//                                        new WaitCommand(500),
-//                                        new CenterTurretCommand(),
-//                                        new WaitCommand(500),
-//                                        new AllTransferDownCommand(),
-//                                        new IntakeStartCommand(),
-//                                        new ElevatorDownCommand()
-//                                ), false
-//                        ))
-                        .waitSeconds(2)
+//.stopAndAdd(new FtclibCommandAction(
+//        new SequentialCommandGroup(
+//                new LeftTransferUpCommand(),
+//                new WaitCommand(200),
+//                new MiddleTransferUpCommand(),
+//                new WaitCommand(200),
+//                new RightTransferUpCommand(),
+//                new WaitCommand(500),
+//                new CenterTurretCommand(),
+//                new WaitCommand(500),
+//                new AllTransferDownCommand(),
+//                new IntakeStartCommand(),
+//                new ElevatorDownCommand()
+//        ), false
+//))
+                        .waitSeconds(5)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(0, -37), Math.toRadians(0))
 
                         .build());
 
