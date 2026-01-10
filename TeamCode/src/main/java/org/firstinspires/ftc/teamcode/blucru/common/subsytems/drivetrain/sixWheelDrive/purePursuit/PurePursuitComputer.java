@@ -15,6 +15,10 @@ public class PurePursuitComputer {
     private int lastFoundIndex;
     private double dist;
 
+    // Debug tracking
+    private Point2d lastGoalPoint = new Point2d(0, 0);
+    private double lastDistanceRemaining = 0;
+
     public PurePursuitComputer() {
         lastFoundIndex = 0;
     }
@@ -101,6 +105,9 @@ public class PurePursuitComputer {
         if (findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()),
                 path[path.length - 1]) < lookAheadDist) {
             dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[path.length - 1]);
+            // Store debug values for early return
+            lastGoalPoint = path[path.length - 1];
+            lastDistanceRemaining = dist;
             return path[path.length - 1];
         }
 
@@ -183,6 +190,10 @@ public class PurePursuitComputer {
             dist += findDistBetween2Points(path[i], path[i + 1]);
         }
 
+        // Store debug values
+        lastGoalPoint = goalPoint;
+        lastDistanceRemaining = dist;
+
         return goalPoint;
     }
 
@@ -221,5 +232,10 @@ public class PurePursuitComputer {
 
         return new double[] { linear, rot };
     }
+
+    // Debug getters
+    public Point2d getLastGoalPoint() { return lastGoalPoint; }
+    public double getLastDistanceRemaining() { return lastDistanceRemaining; }
+    public int getLastSegmentIndex() { return lastFoundIndex; }
 
 }

@@ -200,6 +200,10 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         return pid;
     }
 
+    public PurePursuitComputer getPurePursuitComputer() {
+        return computer;
+    }
+
     public double getLookAheadDist() {
         return LOOK_AHEAD_DIST;
     }
@@ -220,5 +224,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     public void lineToX(double x){
         targetX = x;
         dtState = State.LINE_TO_X;
+    }
+
+    public State getState() {
+        return dtState;
     }
 }

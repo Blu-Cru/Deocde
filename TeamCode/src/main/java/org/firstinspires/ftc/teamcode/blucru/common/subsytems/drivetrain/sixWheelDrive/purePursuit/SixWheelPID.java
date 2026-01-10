@@ -30,6 +30,20 @@ public class SixWheelPID {
     public static double BACKWARDS_THRESHOLD = 100.0; // Switch to backwards
     public static double FORWARDS_THRESHOLD = 80.0;   // Switch back to forwards
 
+    // Debug tracking - stores last calculation values
+    private static double lastLinearError = 0;
+    private static double lastLinearPTerm = 0;
+    private static double lastLinearDTerm = 0;
+    private static double lastLinearOutput = 0;
+
+    private static double lastHeadingError = 0;
+    private static double lastHeadingTarget = 0;
+    private static double lastHeadingPTerm = 0;
+    private static double lastHeadingDTerm = 0;
+    private static double lastHeadingOutput = 0;
+
+    private static boolean lastBackwardsState = false;
+
     public SixWheelPID(){
         xy = new PDController(pXY, dXY);
         r = new PDController(pR, dR);
@@ -46,6 +60,10 @@ public class SixWheelPID {
         // Stop moving when very close to goal to prevent oscillation
         // The D term can overpower the P term at small distances
         if (dist < STOP_DISTANCE) {
+            lastLinearError = dist;
+            lastLinearPTerm = 0;
+            lastLinearDTerm = 0;
+            lastLinearOutput = 0;
             return 0;
         }
 
@@ -55,9 +73,16 @@ public class SixWheelPID {
 
         double linearVel = xy.calculate(error, -robotVelXY);
 
+        // Store debug values
+        lastLinearError = error;
+        lastLinearPTerm = pXY * error;
+        lastLinearDTerm = dXY * (-robotVelXY);
+        lastLinearOutput = linearVel;
+
         // If driving backwards, negate the linear velocity
         if (isDrivingBackwards) {
             linearVel = -linearVel;
+            lastLinearOutput = linearVel; // Update output after negation
         }
 
         return linearVel;
@@ -97,11 +122,20 @@ public class SixWheelPID {
             }
         }
 
+        // Store debug values
+        lastBackwardsState = isDrivingBackwards;
+        lastHeadingError = deltaAngle;
+        lastHeadingTarget = robotHeading + deltaAngle; // Calculate target heading
+        lastHeadingPTerm = pR * deltaAngle;
+        lastHeadingDTerm = dR * (-angleVel);
+        double headingVel = r.calculate(deltaAngle, -angleVel);
+        lastHeadingOutput = headingVel;
+
         Globals.telemetry.addData("Robot Heading", robotHeading);
         Globals.telemetry.addData("Turn Req", turnReq);
         Globals.telemetry.addData("Delta Angle", deltaAngle);
 
-        return r.calculate(deltaAngle, -angleVel);
+        return headingVel;
     }
 
     public boolean shouldDriveBackwards(Pose2d robotPose, Point2d goalPoint) {
@@ -172,5 +206,19 @@ public class SixWheelPID {
         double dist = targetX - robotPose.getX();
         return xyLineTo.calculate(dist, -robotVel.getX());
     }
+
+    // Debug getters - provide access to last calculation
+    public static double getLastLinearError() { return lastLinearError; }
+    public static double getLastLinearPTerm() { return lastLinearPTerm; }
+    public static double getLastLinearDTerm() { return lastLinearDTerm; }
+    public static double getLastLinearOutput() { return lastLinearOutput; }
+
+    public static double getLastHeadingError() { return lastHeadingError; }
+    public static double getLastHeadingTarget() { return lastHeadingTarget; }
+    public static double getLastHeadingPTerm() { return lastHeadingPTerm; }
+    public static double getLastHeadingDTerm() { return lastHeadingDTerm; }
+    public static double getLastHeadingOutput() { return lastHeadingOutput; }
+
+    public static boolean getLastBackwardsState() { return lastBackwardsState; }
 
 }
