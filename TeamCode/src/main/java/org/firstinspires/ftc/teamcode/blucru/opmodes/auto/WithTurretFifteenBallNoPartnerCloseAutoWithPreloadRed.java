@@ -24,9 +24,14 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorU
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.MiddleTransferServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.RightTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
@@ -61,7 +66,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
 //        turret.setRRPoseSupplier(() -> drive.localizer.getPose());
 
         shooter.setHoodAngle(26);
-        shooter.setMiddleHoodAngle(30);
+        shooter.setMiddleHoodAngle(26);
+        //shooter.setRightHoodAngle(29);
         shooter.write();
         transfer.setAllMiddle();
         transfer.write();
@@ -69,55 +75,29 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         elevator.write();
         turret.resetEncoder();
         turret.write();
+        intake.resetEncoder();
+        intake.write();
 
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
-                .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
-                                .afterTime(0.1, new FtclibCommandAction(
-                                                new SequentialCommandGroup(
-                                                                new AllTransferUpCommand(),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "AllTransferUpCommand completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new WaitCommand(2000),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after AllTransferUp completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new CenterTurretCommand(),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "CenterTurretCommand completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new WaitCommand(2000),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after CenterTurret completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new IntakeStartCommand(),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "IntakeStartCommand completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new ElevatorDownCommand(),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "ElevatorDownCommand completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new WaitCommand(2000),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after ElevatorDown completed");
-                                                                        Globals.telemetry.update();
-                                                                }),
-                                                                new AllTransferDownCommand(),
-                                                                new InstantCommand(() -> {
-                                                                        Globals.telemetry.addData("FirstSegment", "AllTransferDownCommand completed");
-                                                                        Globals.telemetry.update();
-                                                                })
-                                                ), false
-                                ))
-                .waitSeconds(2) // SHOOT PRELOAD    `
+                .splineTo(new Vector2d(-33.5, 48), Math.toRadians(0))
+                .afterTime(0.1, new FtclibCommandAction(
+                        new SequentialCommandGroup(
+                                new LeftTransferUpCommand(),
+                                new WaitCommand(400),
+                                new MiddleTransferUpCommand(),
+                                new WaitCommand(400),
+                                new RightTransferUpCommand(),
+                                new WaitCommand(400),
+                                new CenterTurretCommand(),
+                                new WaitCommand(300),
+                                new IntakeStartCommand(),
+                                new ElevatorDownCommand(),
+                                new WaitCommand(200),
+                                new AllTransferDownCommand()
+                        )
+                ))
+                .waitSeconds(1) // SHOOT PRELOAD
                 .lineToX(-25)
                 // PICKUP FIRST SET
                 .waitSeconds(2)
@@ -128,17 +108,17 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                         new WaitCommand(300),
                                         new ElevatorMiddleCommand(),
                                         new WaitCommand(100),
-                                        new AllTransferMiddleCommand()
-                                       // new TurnTurretToPosCommand(30)
+                                        new AllTransferMiddleCommand() ,
+                                        new TurnTurretToPosCommand(30),
+                                        new ShootWithVelocityCommand(1000)
                                 )
                         ))
+                .waitSeconds(0.5)
                 .setReversed(false)
-                .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
+                .splineTo(new Vector2d(-33, 48), Math.toRadians(180))
                 //SHOOT FIRST SET
                         .stopAndAdd(new FtclibCommandAction(
                                 new SequentialCommandGroup(
-                                        new TurnTurretToPosCommand(-30),
-                                        new WaitCommand(500),
                                         new AllTransferUpCommand(),
                                         new WaitCommand(300),
                                         new CenterTurretCommand(),
@@ -171,8 +151,6 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
                         .stopAndAdd(new FtclibCommandAction(
                                 new SequentialCommandGroup(
-                                        new TurnTurretToPosCommand(-30),
-                                        new WaitCommand(500),
                                         new AllTransferUpCommand(),
                                         new WaitCommand(300),
                                         new CenterTurretCommand(),
@@ -253,9 +231,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
 
     @Override
     public void onStart() {
-        shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
-        shooter.shootWithVelocity(1050); //orig 850 before switching to triple shot
-        turret.setAngle(25);
+        shooter.shootWithVelocity(1000); //orig 850 before switching to triple shot
+        turret.setAngle(22);
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {

@@ -46,22 +46,8 @@ public class FtclibCommandAction implements Action {
         // DO NOT call CommandScheduler.run() here.
         // Your OpMode loop should call it once per iteration.
 
-        if (!blockUntilFinished) {
-            // Do not block RoadRunner; action considered finished immediately.
-            try {
-                packet.put("FtclibCommandAction", "Non-blocking: " + command.getClass().getSimpleName());
-            } catch (Exception ignored) {
-            }
-            return false;
-        }
 
-        boolean stillScheduled = CommandScheduler.getInstance().isScheduled(command);
-        if (!stillScheduled) {
-            try {
-                packet.put("FtclibCommandAction", "Finished: " + command.getClass().getSimpleName());
-            } catch (Exception ignored) {
-            }
-        }
-        return stillScheduled;
+        // Block the RR action until the command finishes (IF the command actually takes time).
+        return false;
     }
 }
