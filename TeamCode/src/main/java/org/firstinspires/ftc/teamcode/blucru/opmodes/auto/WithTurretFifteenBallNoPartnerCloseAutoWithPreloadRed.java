@@ -110,7 +110,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 ))
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-30, 40), Math.toRadians(210))
+                .splineTo(new Vector2d(-27, 40), Math.toRadians(210))
                 .waitSeconds(0.3)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -147,8 +147,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .waitSeconds(1) // PICKUP SECOND SET
 
                 .setReversed(false)
-                .setTangent(Math.toRadians(0)) // Fixed: keeps path flat at Y=40
-                .splineTo(new Vector2d(-25, 40), Math.toRadians(190))
+                .setTangent(Math.toRadians(180)) // Fixed: keeps path flat at Y=40
+                .splineTo(new Vector2d(-22, 35), Math.toRadians(190))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -167,7 +167,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
-                .turnTo(Math.toRadians(0))
+                .turnTo(Math.toRadians(180))
+                .setReversed(true)
                 .splineTo(new Vector2d(-2, 50), Math.toRadians(90)) // Waypoint for stability
                 .splineTo(new Vector2d(-2, 56), Math.toRadians(90)) // OPEN GATE
                 .waitSeconds(1)
