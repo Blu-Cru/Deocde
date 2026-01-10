@@ -41,7 +41,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.test.TurretLockOnGoalTest;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "15 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
+@Autonomous(name = "12 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
 public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;
@@ -92,11 +92,11 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new ElevatorDownCommand()
                         ), false
                 ))
-                .waitSeconds(2) // SHOOT PRELOAD
+                .waitSeconds(1.6) // SHOOT PRELOAD
 
                 .setReversed(true)
                 .splineTo(new Vector2d(-18, 45), Math.toRadians(0))
-                .waitSeconds(1.3) // PICKUP FIRST SET
+                .waitSeconds(1) // PICKUP FIRST SET
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -106,11 +106,11 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(200),
                                 new TurnTurretToPosCommand(75)
-                        )
+                        ), false
                 ))
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-27, 40), Math.toRadians(210))
+                .splineTo(new Vector2d(-27, 37), Math.toRadians(210))
                 .waitSeconds(0.3)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -127,11 +127,12 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new ElevatorDownCommand()
                         ), false
                 ))
-                .waitSeconds(2) // SHOOT FIRST SET
+                .waitSeconds(1.5) // SHOOT FIRST SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(5, 37), Math.toRadians(0))
-                .waitSeconds(2)
+                .splineTo(new Vector2d(5, 38), Math.toRadians(0))
+                .waitSeconds(2)                // PICKUP SECOND SET
+
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -144,11 +145,10 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new TurnTurretToPosCommand(90)
                         ), false
                 ))
-                .waitSeconds(1) // PICKUP SECOND SET
 
                 .setReversed(false)
                 .setTangent(Math.toRadians(180)) // Fixed: keeps path flat at Y=40
-                .splineTo(new Vector2d(-22, 35), Math.toRadians(190))
+                .splineTo(new Vector2d(-19, 32), Math.toRadians(190))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -169,30 +169,35 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .setReversed(true)
                 .turnTo(Math.toRadians(180))
                 .setReversed(true)
-                .splineTo(new Vector2d(-2, 50), Math.toRadians(90)) // Waypoint for stability
-                .splineTo(new Vector2d(-2, 56), Math.toRadians(90)) // OPEN GATE
-                .waitSeconds(1)
+                .splineTo(new Vector2d(0, 45), Math.toRadians(90)) // Waypoint for stability
+                .splineTo(new Vector2d(0, 53), Math.toRadians(90)) // OPEN GATE
+                .waitSeconds(1.5)
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
 
                 .setReversed(true)
-                .splineTo(new Vector2d(30, 45), Math.toRadians(0))
+                .splineTo(new Vector2d(25, 45), Math.toRadians(0))
+                .waitSeconds(0.5)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new WaitCommand(500),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
-                                new IntakeStopCommand(),
                                 new ElevatorMiddleCommand(),
+                                new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new WaitCommand(200),
-                                new TurnTurretToPosCommand(70)
+                                new WaitCommand(300),
+                                new IntakeStopCommand(),
+                                new WaitCommand(500),
+                                new TurnTurretToPosCommand(85)
+
                         )
                 ))
-                .waitSeconds(2) // PICKUP THIRD SET
+                .waitSeconds(1.2) // PICKUP THIRD SET
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-30, 40), Math.toRadians(210))
+                .splineTo(new Vector2d(-20, 37), Math.toRadians(180))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -210,33 +215,33 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 ))
                 .waitSeconds(2) // SHOOT THIRD SET
 
-                .setReversed(true)
-                .splineTo(new Vector2d(53, 40), Math.toRadians(90))
-                .splineTo(new Vector2d(53, 45), Math.toRadians(90))
-                .stopAndAdd(new FtclibCommandAction(
-                        new SequentialCommandGroup(
-                                new ElevatorUpCommand(),
-                                new IntakeStopCommand(),
-                                new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new WaitCommand(300),
-                                new TurnTurretToPosCommand(30)
-                        )
-                ))
-                .waitSeconds(2) // PICKUP FOURTH SET
-
-                .setReversed(false)
-                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
-                .turnTo(Math.toRadians(160))
-                .stopAndAdd(new FtclibCommandAction(
-                        new SequentialCommandGroup(
-                                new LockOnGoalCommand(),
-                                new AutoAimCommand(),
-                                new AutonomousShootCommand()
-                        )
-                ))
+//                .setReversed(true)
+//                .splineTo(new Vector2d(53, 40), Math.toRadians(90))
+//                .splineTo(new Vector2d(53, 45), Math.toRadians(90))
+//                .stopAndAdd(new FtclibCommandAction(
+//                        new SequentialCommandGroup(
+//                                new ElevatorUpCommand(),
+//                                new IntakeStopCommand(),
+//                                new WaitCommand(300),
+//                                new ElevatorMiddleCommand(),
+//                                new WaitCommand(100),
+//                                new AllTransferMiddleCommand(),
+//                                new WaitCommand(300),
+//                                new TurnTurretToPosCommand(30)
+//                        )
+//                ))
+//                .waitSeconds(2) // PICKUP FOURTH SET
+//
+//                .setReversed(false)
+//                .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
+//                .turnTo(Math.toRadians(160))
+//                .stopAndAdd(new FtclibCommandAction(
+//                        new SequentialCommandGroup(
+//                                new LockOnGoalCommand(),
+//                                new AutoAimCommand(),
+//                                new AutonomousShootCommand()
+//                        )
+//                ))
                 .waitSeconds(2)
                 .build();
 
@@ -247,17 +252,18 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
         shooter.shootWithVelocity(900); //orig 850 before switching to triple shot
-        turret.setAngle(35);
+        turret.setAngle(40);
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
 
             // Update FTCLib Subsystems
             robot.read();
+            double headingDeg =
+                    Math.toDegrees(drive.localizer.getPose().heading.toDouble());
 
             CommandScheduler.getInstance().run();
             robot.write();
-
             // 3. IMPORTANT: Send the packet to dashboard!
             // Without this, RoadRunner runs blind and you see no telemetry
             dash.sendTelemetryPacket(packet);
@@ -266,6 +272,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
             packet = new TelemetryPacket();
 
             // 4. Update standard telemetry to the driver station
+            telemetry.addData("Heading (deg)", headingDeg);
             telemetry.addData("Path Running", "True");
             telemetry.update();
 
@@ -279,5 +286,9 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         // If this auto is *just* the RR path, you can leave this empty.
         // If you want extra telemetry or non-RR logic during the match,
         // put it here.
+    }
+    @Override
+    public void telemetry(){
+
     }
 }

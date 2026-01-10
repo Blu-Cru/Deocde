@@ -80,9 +80,9 @@ public final class TankDrive {
         public double kA = 0.00005;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 50;//orig 50
-        public double minProfileAccel = -40; //orig -30
-        public double maxProfileAccel = 40; //orig 50
+        public double maxWheelVel = 65;//orig 50
+        public double minProfileAccel = -45; //orig -30
+        public double maxProfileAccel = 46; //orig 50
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path

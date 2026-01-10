@@ -19,7 +19,7 @@ public final class PinpointLocalizer implements Localizer {
 
     public static class Params {
         public double parYTicks = 138.5;
-        public double perpXTicks = 940.5; //old 94.05
+        public double perpXTicks = 94.5; //old 94.05
     }
 
     public static Params PARAMS = new Params();
@@ -73,35 +73,26 @@ public final class PinpointLocalizer implements Localizer {
     public PoseVelocity2d update() {
         driver.update();
 
-        if (Objects.requireNonNull(driver.getDeviceStatus())
-                == GoBildaPinpointDriver.DeviceStatus.READY) {
+        double heading = driver.getHeading(UnnormalizedAngleUnit.RADIANS);
 
-            // FIX: Remove the negative sign here
-            double heading = driver.getHeading(UnnormalizedAngleUnit.RADIANS);
+        txPinpointRobot = new Pose2d(
+                driver.getPosX(DistanceUnit.INCH),
+                driver.getPosY(DistanceUnit.INCH),
+                heading
+        );
 
-            txPinpointRobot = new Pose2d(
-                    driver.getPosX(DistanceUnit.INCH),
-                    driver.getPosY(DistanceUnit.INCH),
-                    heading
-            );
+        Vector2d worldVelocity = new Vector2d(
+                driver.getVelX(DistanceUnit.INCH),
+                driver.getVelY(DistanceUnit.INCH)
+        );
 
-            Vector2d worldVelocity = new Vector2d(
-                    driver.getVelX(DistanceUnit.INCH),
-                    driver.getVelY(DistanceUnit.INCH)
-            );
+        Vector2d robotVelocity =
+                Rotation2d.fromDouble(txPinpointRobot.heading.log())
+                        .times(worldVelocity);
 
-            // This logic remains the same (Rotation2d handles the math)
-            Vector2d robotVelocity =
-                    Rotation2d.fromDouble(txPinpointRobot.heading.log())
-                            .times(worldVelocity);
+        double angVel = driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
 
-            // FIX: Remove the negative sign here as well
-            double angVel = driver.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
-
-            return new PoseVelocity2d(robotVelocity, angVel);
-        }
-
-        // Small typo fix in your original code: 'asd' -> 'PoseVelocity2d'
-        return new PoseVelocity2d(new Vector2d(0, 0), 0);
+        return new PoseVelocity2d(robotVelocity, angVel);
     }
+
 }
