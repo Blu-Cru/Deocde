@@ -23,7 +23,7 @@ public class MeepMeepTesting {
         myBot.runAction(
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
-                        .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
+                        .splineTo(new Vector2d(-33, 40), Math.toRadians(0))
 //                        .afterTime(0.1, new FtclibCommandAction(
 //                                new SequentialCommandGroup(
 //                                        new AutonomousShootCloseCommand(),
@@ -37,7 +37,9 @@ public class MeepMeepTesting {
 //                                ), false
 //                        ))
                         .waitSeconds(2) // SHOOT PRELOAD    `
-                        .lineToX(-25)
+//                        .lineToX(-25)
+                        .setReversed(true)
+                        .splineTo(new Vector2d(-20, 45),Math.toRadians(0))
                         // PICKUP FIRST SET
                         .waitSeconds(2)
 //                        .stopAndAdd(new FtclibCommandAction(
@@ -52,7 +54,7 @@ public class MeepMeepTesting {
 //                                )
 //                        ))
                         .setReversed(false)
-                        .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
+                        .splineTo(new Vector2d(-33, 40), Math.toRadians(180))
                         //SHOOT FIRST SET
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
@@ -87,7 +89,7 @@ public class MeepMeepTesting {
 //                        ))
                         .waitSeconds(2)
                         .setReversed(false)
-                        .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
+                        .splineTo(new Vector2d(-33, 40), Math.toRadians(180))
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
 //                                        new TurnTurretToPosCommand(-30),
@@ -115,7 +117,6 @@ public class MeepMeepTesting {
                         .splineTo(new Vector2d(-7, 45), Math.toRadians(180))
 
                         .setReversed(true)
-                        .splineTo(new Vector2d(30, 45), Math.toRadians(0))
                         .splineTo(new Vector2d(35, 45), Math.toRadians(0))  // PICKUP THIRD SET
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
@@ -129,10 +130,9 @@ public class MeepMeepTesting {
 //                                )
 //                        ))
                         .waitSeconds(2)
-                        .setReversed(true)
-                        .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
+                        .setReversed(false)
+                        .splineTo(new Vector2d(-33, 40), Math.toRadians(180))
                         .waitSeconds(2) // SHOOT THIRD SET
-                        .turnTo(Math.toRadians(-90))
                         .setReversed(true)
                         .splineTo(new Vector2d(53,40), Math.toRadians(90))
                         .splineTo(new Vector2d(53, 45), Math.toRadians(90))// PICKUP FOURTH SET

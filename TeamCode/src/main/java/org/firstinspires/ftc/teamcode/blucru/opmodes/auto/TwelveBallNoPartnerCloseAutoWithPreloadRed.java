@@ -11,7 +11,6 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
@@ -24,7 +23,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "12 Ball Close Auto With Preload No Partner Red", group = "auto")
+@Autonomous(name = "Old 12 Ball Close Auto Red", group = "auto")
 public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;
@@ -41,11 +40,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
         addTransfer();
         addElevator();
         addTurret();
-        Command pickupBalls = new SequentialCommandGroup(
-                new ResetForIntakeCommand(),
-                new WaitCommand(500),
-                new TransferCommand(true)
-        );
+
 
         startPose = new Pose2d(-45, 52, Math.toRadians(127));
 
@@ -119,7 +114,7 @@ public class TwelveBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode 
                 .setReversed(false)
                 .afterTime(0.3, new FtclibCommandAction(
                         new AutonomousTransferCommand(830, 26, 33, 28
-                )))
+                        )))
                 .splineTo(Globals.mapRRVector(new Vector2d(-28, 38)), Globals.mapAngle(Math.toRadians(150)))
                 .stopAndAdd(new FtclibCommandAction(new AutonomousShootCloseCommand()))
 
