@@ -24,19 +24,19 @@ public class MeepMeepTesting {
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(true)
                         .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
-//                .afterTime(0.1, new FtclibCommandAction(
-//                        new SequentialCommandGroup(
-//                                new AllTransferUpCommand(),
-//                                new WaitCommand(500),
-//                                new TurnTurretToPosCommand(0),
-//                                new WaitCommand(300),
-//                                new ElevatorDownCommand(),
-//                                new WaitCommand(200),
-//                                new AllTransferDownCommand(),
-//                                new IntakeStartCommand()
-//                        )
-//                ))
-                        .waitSeconds(4) // SHOOT PRELOAD    `
+//                        .afterTime(0.1, new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new AutonomousShootCloseCommand(),
+//                                        new WaitCommand(2000),
+//                                        new CenterTurretCommand(),
+//                                        new WaitCommand(2000),
+//                                        new IntakeStartCommand(),
+//                                        new ElevatorDownCommand(),
+//                                        new WaitCommand(200),
+//                                        new AllTransferDownCommand()
+//                                ), false
+//                        ))
+                        .waitSeconds(2) // SHOOT PRELOAD    `
                         .lineToX(-25)
                         // PICKUP FIRST SET
                         .waitSeconds(2)
