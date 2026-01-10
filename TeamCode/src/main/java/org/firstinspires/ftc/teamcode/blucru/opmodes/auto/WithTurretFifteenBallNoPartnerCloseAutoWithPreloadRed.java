@@ -96,22 +96,22 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
 
                 .setReversed(true)
                 .splineTo(new Vector2d(-18, 45), Math.toRadians(0))
-                .waitSeconds(2) // PICKUP FIRST SET
+                .waitSeconds(1.3) // PICKUP FIRST SET
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
-                                new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(200),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(60)
+                                new ElevatorMiddleCommand(),
+                                new AllTransferMiddleCommand(),
+                                new WaitCommand(200),
+                                new TurnTurretToPosCommand(75)
                         )
                 ))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-30, 40), Math.toRadians(210))
+                .waitSeconds(0.3)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -130,7 +130,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .waitSeconds(2) // SHOOT FIRST SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(5, 40), Math.toRadians(0))
+                .splineTo(new Vector2d(5, 37), Math.toRadians(0))
+                .waitSeconds(2)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -140,14 +141,14 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(300),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(60)
-                        )
+                                new TurnTurretToPosCommand(90)
+                        ), false
                 ))
-                .waitSeconds(2) // PICKUP SECOND SET
+                .waitSeconds(1) // PICKUP SECOND SET
 
                 .setReversed(false)
-                .setTangent(Math.toRadians(180)) // Fixed: keeps path flat at Y=40
-                .splineTo(new Vector2d(-25, 40), Math.toRadians(210))
+                .setTangent(Math.toRadians(0)) // Fixed: keeps path flat at Y=40
+                .splineTo(new Vector2d(-25, 40), Math.toRadians(190))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -166,6 +167,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
+                .turnTo(Math.toRadians(0))
                 .splineTo(new Vector2d(-2, 50), Math.toRadians(90)) // Waypoint for stability
                 .splineTo(new Vector2d(-2, 56), Math.toRadians(90)) // OPEN GATE
                 .waitSeconds(1)
@@ -179,12 +181,11 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new WaitCommand(300),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(60)
+                                new ElevatorMiddleCommand(),
+                                new AllTransferMiddleCommand(),
+                                new WaitCommand(200),
+                                new TurnTurretToPosCommand(70)
                         )
                 ))
                 .waitSeconds(2) // PICKUP THIRD SET
@@ -194,9 +195,9 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(100),
+                                new WaitCommand(200),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(100),
+                                new WaitCommand(200),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(500),
                                 new CenterTurretCommand(),
@@ -245,7 +246,7 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
         shooter.shootWithVelocity(900); //orig 850 before switching to triple shot
-        turret.setAngle(45);
+        turret.setAngle(35);
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
