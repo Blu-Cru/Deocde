@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.InstantCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
@@ -72,18 +73,50 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
                 .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
-                .afterTime(0.1, new FtclibCommandAction(
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        ), false
-                ))
+                                .afterTime(0.1, new FtclibCommandAction(
+                                                new SequentialCommandGroup(
+                                                                new AllTransferUpCommand(),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "AllTransferUpCommand completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new WaitCommand(2000),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after AllTransferUp completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new CenterTurretCommand(),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "CenterTurretCommand completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new WaitCommand(2000),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after CenterTurret completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new IntakeStartCommand(),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "IntakeStartCommand completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new ElevatorDownCommand(),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "ElevatorDownCommand completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new WaitCommand(2000),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "Wait 2000 after ElevatorDown completed");
+                                                                        Globals.telemetry.update();
+                                                                }),
+                                                                new AllTransferDownCommand(),
+                                                                new InstantCommand(() -> {
+                                                                        Globals.telemetry.addData("FirstSegment", "AllTransferDownCommand completed");
+                                                                        Globals.telemetry.update();
+                                                                })
+                                                ), false
+                                ))
                 .waitSeconds(2) // SHOOT PRELOAD    `
                 .lineToX(-25)
                 // PICKUP FIRST SET
