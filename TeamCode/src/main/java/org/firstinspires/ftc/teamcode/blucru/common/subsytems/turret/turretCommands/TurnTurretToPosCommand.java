@@ -8,12 +8,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 public class TurnTurretToPosCommand extends InstantCommand {
 
     public TurnTurretToPosCommand(double angle){
-        super(() -> {
-            new RunCommand(
-                    () -> Robot.getInstance().turret.setAngle(angle),
-                    Robot.getInstance().turret
-            ).schedule();
-        });
+        super(() -> {Robot.getInstance().turret.setAngle(angle);}
+        );
+
+        addRequirements(Robot.getInstance().turret);
     }
 
 

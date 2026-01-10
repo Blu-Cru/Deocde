@@ -11,6 +11,8 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
     public static double rightAngle = 0;
     public static double middleAngle = 0;
 
+    public static double turretAngle = 20;
+
     public static double vel = 0;
 
     public void initialize(){
@@ -18,9 +20,17 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         addSixWheel();
         addLLTagDetector();
         addTransfer();
+        addTurret();
+        turret.resetEncoder();
     }
 
     public void periodic(){
+        if (gamepad1.b){
+            turret.setAngle(0);
+        } else {
+            turret.setAngle(turretAngle);
+        }
+
         if (driver1.pressedA()){
             shooter.setLeftHoodAngle(leftAngle);
             shooter.setMiddleHoodAngle(middleAngle);
