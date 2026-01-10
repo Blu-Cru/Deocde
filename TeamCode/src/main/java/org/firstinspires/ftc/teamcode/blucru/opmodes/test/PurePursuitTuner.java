@@ -29,7 +29,7 @@ public class PurePursuitTuner extends BluLinearOpMode {
     @Config
     public static class TestPath {
         // Simple test path for initial tuning
-        public static double straightDistance = 40.0;
+        public static double straightDistance = 80.0;
         public static double curveRadius = 20.0;
 
         // Path timeout

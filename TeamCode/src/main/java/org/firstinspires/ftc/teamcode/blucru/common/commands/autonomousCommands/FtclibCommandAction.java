@@ -29,8 +29,6 @@ public class FtclibCommandAction implements Action {
         // Your OpMode loop should call it once per iteration.
 
         // Block the RR action until the command finishes (IF the command actually takes time).
-        Globals.telemetry.addLine("here");
-        Globals.telemetry.update();
-        return !command.isFinished();
+        return true;
     }
 }

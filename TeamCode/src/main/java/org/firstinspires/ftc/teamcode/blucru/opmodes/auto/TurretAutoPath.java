@@ -5,17 +5,12 @@ import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCloseCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
@@ -32,12 +27,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.test.TurretLockOnGoalTest;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "15 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
-public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLinearOpMode {
+@Autonomous(name = "Turret Auto Path", group = "auto")
+public class TurretAutoPath extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;
     private Pose2d startPose;
@@ -72,85 +66,85 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
                 .splineTo(new Vector2d(-33, 45), Math.toRadians(0))
-                .afterTime(0.1, new FtclibCommandAction(
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        )
-                ))
-                .waitSeconds(2) // SHOOT PRELOAD    `
+//                .afterTime(0.1, new FtclibCommandAction(
+//                        new SequentialCommandGroup(
+//                                new AllTransferUpCommand(),
+//                                new WaitCommand(500),
+//                                new TurnTurretToPosCommand(0),
+//                                new WaitCommand(300),
+//                                new ElevatorDownCommand(),
+//                                new WaitCommand(200),
+//                                new AllTransferDownCommand(),
+//                                new IntakeStartCommand()
+//                        )
+//                ))
+                .waitSeconds(4) // SHOOT PRELOAD    `
                 .lineToX(-25)
                 // PICKUP FIRST SET
                 .waitSeconds(2)
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new ElevatorUpCommand(),
-                                        new IntakeStopCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorMiddleCommand(),
-                                        new WaitCommand(100),
-                                        new AllTransferMiddleCommand()
-                                       // new TurnTurretToPosCommand(30)
-                                )
-                        ))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new TurnTurretToPosCommand(30)
+//                                )
+//                        ))
                 .setReversed(false)
                 .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
                 //SHOOT FIRST SET
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new TurnTurretToPosCommand(-30),
-                                        new WaitCommand(500),
-                                        new AllTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new CenterTurretCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorDownCommand(),
-                                        new WaitCommand(200),
-                                        new AllTransferDownCommand(),
-                                        new IntakeStartCommand()
-
-                                )
-                        ))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new TurnTurretToPosCommand(-30),
+//                                        new WaitCommand(500),
+//                                        new AllTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new CenterTurretCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorDownCommand(),
+//                                        new WaitCommand(200),
+//                                        new AllTransferDownCommand(),
+//                                        new IntakeStartCommand()
+//
+//                                )
+//                        ))
                 .waitSeconds(2)
 
                 .setReversed(true)
                 .splineTo(new Vector2d(10, 45), Math.toRadians(0))
                 //PICKUP SECOND SET
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new ElevatorUpCommand(),
-                                        new IntakeStopCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorMiddleCommand(),
-                                        new WaitCommand(100),
-                                        new AllTransferMiddleCommand(),
-                                        new TurnTurretToPosCommand(30)
-                                )
-                        ))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
+//                                        new TurnTurretToPosCommand(30)
+//                                )
+//                        ))
                 .waitSeconds(2)
                 .setReversed(false)
                 .splineTo(new Vector2d(-33, 45), Math.toRadians(180))
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new TurnTurretToPosCommand(-30),
-                                        new WaitCommand(500),
-                                        new AllTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new CenterTurretCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorDownCommand(),
-                                        new WaitCommand(200),
-                                        new AllTransferDownCommand(),
-                                        new IntakeStartCommand()
-
-                                )
-                        ))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new TurnTurretToPosCommand(-30),
+//                                        new WaitCommand(500),
+//                                        new AllTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new CenterTurretCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorDownCommand(),
+//                                        new WaitCommand(200),
+//                                        new AllTransferDownCommand(),
+//                                        new IntakeStartCommand()
+//
+//                                )
+//                        ))
                 .waitSeconds(2) // SHOOT SECOND SET
 
                 .setReversed(true)
@@ -165,17 +159,17 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .setReversed(true)
                 .splineTo(new Vector2d(30, 45), Math.toRadians(0))
                 .splineTo(new Vector2d(35, 45), Math.toRadians(0))  // PICKUP THIRD SET
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new ElevatorUpCommand(),
-                                        new IntakeStopCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorMiddleCommand(),
-                                        new WaitCommand(100),
-                                        new AllTransferMiddleCommand()
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
 //                                        new LockOnGoalCommand()
-                                )
-                        ))
+//                                )
+//                        ))
                 .waitSeconds(2)
                 .setReversed(true)
                 .splineTo(new Vector2d(53, 13), Math.toRadians(-20))
@@ -184,31 +178,31 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
                 .setReversed(true)
                 .splineTo(new Vector2d(53,40), Math.toRadians(90))
                 .splineTo(new Vector2d(53, 45), Math.toRadians(90))// PICKUP FOURTH SET
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new ElevatorUpCommand(),
-                                        new IntakeStopCommand(),
-                                        new WaitCommand(300),
-                                        new ElevatorMiddleCommand(),
-                                        new WaitCommand(100),
-                                        new AllTransferMiddleCommand()
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ElevatorUpCommand(),
+//                                        new IntakeStopCommand(),
+//                                        new WaitCommand(300),
+//                                        new ElevatorMiddleCommand(),
+//                                        new WaitCommand(100),
+//                                        new AllTransferMiddleCommand(),
 //                                        new LockOnGoalCommand()
-                                )
-                        ))
+//                                )
+//                        ))
                 .waitSeconds(2)
 
                 .setReversed(false)
                 .splineTo(new Vector2d(52.5, 13), Math.toRadians(270))
                 .turnTo(Math.toRadians(160))
-                        .stopAndAdd(
-                                new FtclibCommandAction(
-                                        new SequentialCommandGroup(
-                                                new LockOnGoalCommand(),
-                                                new AutoAimCommand(),
-                                                new AutonomousShootCommand()
-                                        )
-
-                                ))
+//                        .stopAndAdd(
+//                                new FtclibCommandAction(
+//                                        new SequentialCommandGroup(
+//                                                new LockOnGoalCommand(),
+//                                                new AutoAimCommand(),
+//                                                new AutonomousShootCommand()
+//                                        )
+//
+//                                ))
 
 
 
@@ -221,8 +215,8 @@ public class WithTurretFifteenBallNoPartnerCloseAutoWithPreloadRed extends BluLi
     @Override
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
-        shooter.shootWithVelocity(1050); //orig 850 before switching to triple shot
-        turret.setAngle(25);
+//        shooter.shootWithVelocity(1050); //orig 850 before switching to triple shot
+//        turret.setAngle(25);
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
