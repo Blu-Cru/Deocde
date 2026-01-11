@@ -267,7 +267,13 @@ public final class TankDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose,)
+        localizer = new PinpointLocalizer(
+                hardwareMap,
+                PARAMS.inPerTick,
+                pose,
+                () -> (double) lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS),
+                () -> (double) lazyImu.get().getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate
+        );
 
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
