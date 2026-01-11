@@ -18,9 +18,13 @@ public class MeepMeepFarRed {
                 .build();
 
         myBot.runAction(
+
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(false)
                         .splineTo(new Vector2d(48, 10), Math.toRadians(220))
+//                .stopAndAdd(new FtclibCommandAction(
+//                        new Seque
+//                ))
                         .waitSeconds(2)//SHOOT PRELOAD
                         .turnTo(Math.toRadians(270))
                         .setReversed(true)
@@ -32,7 +36,8 @@ public class MeepMeepFarRed {
                         .waitSeconds(2)//SHOOT FIRST SET
                         .turnTo(Math.toRadians(270))
                         .setReversed(true)
-                        .splineTo(new Vector2d(35, 37), Math.toRadians(180))
+                        .splineTo(new Vector2d(25, 37), Math.toRadians(180))
+                        .waitSeconds(2)
                         //INTAKE SECOND SET
                         .setReversed(false)
                         .splineTo(new Vector2d(48, 10), Math.toRadians(270))

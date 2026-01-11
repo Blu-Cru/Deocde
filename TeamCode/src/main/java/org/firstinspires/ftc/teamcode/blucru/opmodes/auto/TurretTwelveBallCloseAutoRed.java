@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -89,17 +90,18 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
                                 new WaitCommand(200),
-                                new IntakeStopCommand(),
+                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new AllTransferMiddleCommand(),
-                                new WaitCommand(200),
-                                new TurnTurretToPosCommand(80)
+                                new WaitCommand(700),
+                                new IntakeStopCommand(),
+                                new TurnTurretToPosCommand(70)
                         ), false
                 ))
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-27, 37), Math.toRadians(205))
-                .waitSeconds(0.3)
+                .waitSeconds(0.8)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -118,25 +120,27 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
                 .waitSeconds(1.5) // SHOOT FIRST SET
 
                 .setReversed(true)
-                .splineTo(new Vector2d(5, 40), Math.toRadians(0))
+                .splineTo(new Vector2d(5, 41), Math.toRadians(0))
                 .waitSeconds(1.5)                // PICKUP SECOND SET
 
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
+                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(700),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(90)
+                                new TurnTurretToPosCommand(80)
                         ), false
                 ))
 
                 .setReversed(false)
                 .setTangent(Math.toRadians(180)) // Fixed: keeps path flat at Y=40
                 .splineTo(new Vector2d(-19, 32), Math.toRadians(190))
+                .waitSeconds(0.5)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -172,10 +176,11 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
                                 new WaitCommand(500),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
+                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(700),
                                 new IntakeStopCommand(),
                                 new WaitCommand(500),
                                 new TurnTurretToPosCommand(90)
@@ -185,7 +190,8 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
                 .waitSeconds(0.6) // PICKUP THIRD SET
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-17, 35), Math.toRadians(175))
+                .splineTo(new Vector2d(-22, 30), Math.toRadians(160))
+                .waitSeconds(0.5)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -240,7 +246,7 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
         shooter.shootWithVelocity(900); //orig 850 before switching to triple shot
-        turret.setAngle(40);
+        turret.setAngle(35);
 
 
         drive.lazyImu.get().resetYaw();                 // IMU yaw = 0
