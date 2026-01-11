@@ -22,23 +22,71 @@ public class MeepMeepFarRed {
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(false)
                         .splineTo(new Vector2d(48, 10), Math.toRadians(220))
-//                .stopAndAdd(new FtclibCommandAction(
-//                        new Seque
-//                ))
+                        .waitSeconds(1)
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new LeftTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new MiddleTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new RightTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new AllTransferMiddleCommand(),
+//                                        new WaitCommand(200),
+//                                        new IdleShooterCommand(),
+//                                        new CenterTurretCommand(),
+//                                        new IntakeStartCommand(),
+//                                        new WaitCommand(400),
+//                                        new AllTransferDownCommand()
+//                                )
+//                        ))
                         .waitSeconds(2)//SHOOT PRELOAD
                         .turnTo(Math.toRadians(270))
                         .setReversed(true)
-                        .splineTo(new Vector2d(48, 47), Math.toRadians(90))//INTAKE FIRST SET
-                        .waitSeconds(1)
+                        .splineTo(new Vector2d(49, 46), Math.toRadians(90))//INTAKE FIRST SET
+                        .waitSeconds(2)
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new ShootWithVelocityCommand(1580),
+//                                        new ElevatorUpCommand(),
+//                                        new WaitCommand(200),
+//                                        new IntakeSpitCommand(),
+//                                        new ElevatorMiddleCommand(),
+//                                        new AllTransferMiddleCommand(),
+//                                        new WaitCommand(700),
+//                                        new IntakeStopCommand(),
+//                                        new TurnTurretToPosCommand(60)
+//                                ), false
+//                        ))
+                        .waitSeconds(3)
                         .setReversed(false)
                         .lineToY(10)
                         .turnTo(Math.toRadians(220))
+//                        .stopAndAdd(new FtclibCommandAction(
+//                                new SequentialCommandGroup(
+//                                        new LeftTransferUpCommand(),
+//                                        new WaitCommand(200),
+//                                        new MiddleTransferUpCommand(),
+//                                        new WaitCommand(200),
+//                                        new RightTransferUpCommand(),
+//                                        new WaitCommand(300),
+//                                        new AllTransferMiddleCommand(),
+//                                        new WaitCommand(200),
+//                                        new IdleShooterCommand(),
+//                                        new CenterTurretCommand()
+//                                )
+//                        ))
                         .waitSeconds(2)//SHOOT FIRST SET
                         .turnTo(Math.toRadians(270))
                         .setReversed(true)
-                        .splineTo(new Vector2d(25, 37), Math.toRadians(180))
+                        .lineToY(37)
+                        .turnTo(Math.toRadians(0))
+//                        .splineTo(new Vector2d(25, 37), Math.toRadians(180))
+                        .lineToX(25)
                         .waitSeconds(2)
                         //INTAKE SECOND SET
+                        .turnTo(Math.toRadians(-45))
+
                         .setReversed(false)
                         .splineTo(new Vector2d(48, 10), Math.toRadians(270))
                         .turnTo(Math.toRadians(220))
@@ -53,6 +101,8 @@ public class MeepMeepFarRed {
                         .turnTo(Math.toRadians(220))
 
                         .waitSeconds(2)
+
+
 //
 //                        //INTAKE FOURTH SET
 //                        .turnTo(Math.toRadians(90))

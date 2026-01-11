@@ -30,13 +30,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-
-@Autonomous(name = "Far auto red", group = "auto")
-public class TurretFarAutoRed extends BluLinearOpMode {
+@Autonomous(name = "Far auto blue (mirrored)", group = "auto")
+public class TurretFarAutoBlue extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
     private Action path;
-    protected Alliance alliance = Alliance.RED;
+    protected Alliance alliance = Alliance.BLUE;
+
     @Override
     public void initialize() {
         Globals.setAlliance(alliance);
@@ -47,10 +47,11 @@ public class TurretFarAutoRed extends BluLinearOpMode {
         addElevator();
         addTurret();
 
-        startPose = new Pose2d(60, 20, Math.toRadians(180));
+        // Mirror over x-axis: (x, y, heading) -> (x, -y, -heading)
+        startPose = new Pose2d(60, -15, Math.toRadians(180));
 
-        drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
-
+        // NO mapRRPose2d
+        drive = new TankDrive(hardwareMap, startPose);
 
         shooter.setHoodAngle(26);
         shooter.setMiddleHoodAngle(30);
@@ -62,75 +63,76 @@ public class TurretFarAutoRed extends BluLinearOpMode {
         turret.resetEncoder();
         turret.write();
 
-
-
-        path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
+        // NO mapRRPose2d
+        path = drive.actionBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(48, 10), Math.toRadians(220))
+                .splineTo(new Vector2d(52, -10), Math.toRadians(-220))
                 .waitSeconds(1)
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new LeftTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new MiddleTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new RightTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new AllTransferMiddleCommand(),
-                                        new WaitCommand(200),
-                                        new IdleShooterCommand(),
-                                        new CenterTurretCommand(),
-                                        new IntakeStartCommand(),
-                                        new WaitCommand(400),
-                                        new AllTransferDownCommand()
-                                )
-                        ))
-                .waitSeconds(2)//SHOOT PRELOAD
-                .turnTo(Math.toRadians(270))
+                .stopAndAdd(new FtclibCommandAction(
+                        new SequentialCommandGroup(
+                                new LeftTransferUpCommand(),
+                                new WaitCommand(300),
+                                new MiddleTransferUpCommand(),
+                                new WaitCommand(300),
+                                new RightTransferUpCommand(),
+                                new WaitCommand(300),
+                                new AllTransferMiddleCommand(),
+                                new WaitCommand(200),
+                                new IdleShooterCommand(),
+                                new CenterTurretCommand(),
+                                new IntakeStartCommand(),
+                                new WaitCommand(400),
+                                new AllTransferDownCommand()
+                        )
+                ))
+                .waitSeconds(2) // SHOOT PRELOAD
+
+                .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .splineTo(new Vector2d(52, 46), Math.toRadians(90))//INTAKE FIRST SET
+                .splineTo(new Vector2d(55, -46), Math.toRadians(-90)) // INTAKE FIRST SET
                 .waitSeconds(2)
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new ElevatorUpCommand(),
-                                        new WaitCommand(200),
-                                        new IntakeSpitCommand(),
-                                        new ElevatorMiddleCommand(),
-                                        new ShootWithVelocityCommand(1580),
-                                        new AllTransferMiddleCommand(),
-                                        new WaitCommand(700),
-                                        new IntakeStopCommand(),
-                                        new TurnTurretToPosCommand(56)
-                                ), false
-                        ))
+                .stopAndAdd(new FtclibCommandAction(
+                        new SequentialCommandGroup(
+                                new ElevatorUpCommand(),
+                                new WaitCommand(200),
+                                new IntakeSpitCommand(),
+                                new ElevatorMiddleCommand(),
+                                new ShootWithVelocityCommand(1580),
+                                new AllTransferMiddleCommand(),
+                                new WaitCommand(700),
+                                new IntakeStopCommand(),
+                                new TurnTurretToPosCommand(-56)
+                        ), false
+                ))
+                .turnTo(Math.toRadians(-260))
                 .setReversed(false)
-                .lineToY(10)
-                .turnTo(Math.toRadians(220))
-                        .stopAndAdd(new FtclibCommandAction(
-                                new SequentialCommandGroup(
-                                        new LeftTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new MiddleTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new RightTransferUpCommand(),
-                                        new WaitCommand(300),
-                                        new AllTransferMiddleCommand(),
-                                        new WaitCommand(200),
-                                        new IdleShooterCommand(),
-                                        new ElevatorDownCommand(),
-                                        new ElevatorDownCommand(),
-                                        new CenterTurretCommand(),
-                                        new IntakeStartCommand(),
-                                        new WaitCommand(400),
-                                        new AllTransferDownCommand()
-                                )
-                        ))
-                .waitSeconds(2)//SHOOT FIRST SET
-                .turnTo(Math.toRadians(270))
+                .lineToY(-10)
+                .turnTo(Math.toRadians(-220))
+                .stopAndAdd(new FtclibCommandAction(
+                        new SequentialCommandGroup(
+                                new LeftTransferUpCommand(),
+                                new WaitCommand(300),
+                                new MiddleTransferUpCommand(),
+                                new WaitCommand(300),
+                                new RightTransferUpCommand(),
+                                new WaitCommand(300),
+                                new AllTransferMiddleCommand(),
+                                new WaitCommand(200),
+                                new IdleShooterCommand(),
+                                new ElevatorDownCommand(),
+                                new ElevatorDownCommand(),
+                                new CenterTurretCommand(),
+                                new IntakeStartCommand(),
+                                new WaitCommand(400),
+                                new AllTransferDownCommand()
+                        )
+                ))
+                .waitSeconds(2) // SHOOT FIRST SET
+
+                .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .lineToY(23)
+                .lineToY(-23)
                 .turnTo(Math.toRadians(0))
-//                        .splineTo(new Vector2d(25, 37), Math.toRadians(180))
                 .lineToX(32)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -143,16 +145,15 @@ public class TurretFarAutoRed extends BluLinearOpMode {
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(300),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(55)
+                                new TurnTurretToPosCommand(-55)
                         ), false
                 ))
                 .waitSeconds(2)
-                //INTAKE SECOND SET
-                .turnTo(Math.toRadians(-45))
 
+                .turnTo(Math.toRadians(45))
                 .setReversed(false)
-                .splineTo(new Vector2d(42, 10), Math.toRadians(270))
-                .turnTo(Math.toRadians(220))
+                .splineTo(new Vector2d(45, -10), Math.toRadians(-270))
+                .turnTo(Math.toRadians(-220))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -170,12 +171,12 @@ public class TurretFarAutoRed extends BluLinearOpMode {
                                 new AllTransferDownCommand()
                         )
                 ))
-                .waitSeconds(2)//SHOOT SECOND SET
-                .turnTo(Math.toRadians(270))
+                .waitSeconds(2) // SHOOT SECOND SET
 
+                .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .splineTo(new Vector2d(45, 46), Math.toRadians(90))
-                .waitSeconds(1)//INTAKE THIRD SET
+                .splineTo(new Vector2d(45, -46), Math.toRadians(-90))
+                .waitSeconds(1) // INTAKE THIRD SET
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -187,13 +188,14 @@ public class TurretFarAutoRed extends BluLinearOpMode {
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(300),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(60)
+                                new TurnTurretToPosCommand(-60)
                         ), false
                 ))
                 .waitSeconds(2)
+
                 .setReversed(false)
-                .splineTo(new Vector2d(48, 10), Math.toRadians(270)) //SHOOT THIRD SET
-                .turnTo(Math.toRadians(220))
+                .splineTo(new Vector2d(48, -10), Math.toRadians(-270)) // SHOOT THIRD SET
+                .turnTo(Math.toRadians(-220))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -213,70 +215,34 @@ public class TurretFarAutoRed extends BluLinearOpMode {
                 ))
                 .waitSeconds(2)
 
-
-//
-//                        //INTAKE FOURTH SET
-//                        .turnTo(Math.toRadians(90))
-//
-//                        .setReversed(true)
-//                        .splineTo(new Vector2d(50, 47), Math.toRadians(90))
-//                        .waitSeconds(1)
-//                        //SHOOT FOURTH SET
-//                        .setReversed(false)
-//                        .splineTo(new Vector2d(48, 10), Math.toRadians(270))
-//                        .turnTo(Math.toRadians(220))
-
                 .build();
-
-
     }
 
     @Override
     public void onStart() {
-
-        turret.setAngle(66.5);
+        turret.setAngle(-66.5);
         shooter.shootWithVelocity(1560);
         shooter.setHoodAngleIndependent(37, 37, 37);
 
-        drive.lazyImu.get().resetYaw();                 // IMU yaw = 0
-        drive.localizer.setPose(Globals.mapRRPose2d(startPose));  // RR pose heading = startPose.heading
+        drive.lazyImu.get().resetYaw();
+        drive.localizer.setPose(startPose);
 
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
         while (opModeIsActive() && !isStopRequested() && path.run(packet)) {
-
-            // Update FTCLib Subsystems
             robot.read();
-            double headingDeg =
-                    Math.toDegrees(drive.localizer.getPose().heading.toDouble());
 
             CommandScheduler.getInstance().run();
             robot.write();
-            // 3. IMPORTANT: Send the packet to dashboard!
-            // Without this, RoadRunner runs blind and you see no telemetry
-            dash.sendTelemetryPacket(packet);
 
-            // Reset packet for the next loop
+            dash.sendTelemetryPacket(packet);
             packet = new TelemetryPacket();
 
-            // 4. Update standard telemetry to the driver station
-            telemetry.addData("Heading (deg)", headingDeg);
-            telemetry.addData("Path Running", "True");
             telemetry.update();
-
             idle();
         }
     }
 
-
-    @Override
-    public void periodic() {
-        // If this auto is *just* the RR path, you can leave this empty.
-        // If you want extra telemetry or non-RR logic during the match,
-        // put it here.
-    }
-    @Override
-    public void telemetry(){
-
-    }
+    @Override public void periodic() {}
+    @Override public void telemetry() {}
 }
