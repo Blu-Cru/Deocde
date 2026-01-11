@@ -21,7 +21,7 @@ public class MeepMeepFarBlue {
 
                 myBot.getDrive().actionBuilder(startPose)
                         .setReversed(false)
-                        .splineTo(new Vector2d(52, -10), Math.toRadians(-220))
+                        .splineTo(new Vector2d(52, -10), Math.toRadians(-200))
                         .waitSeconds(1)
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
@@ -44,7 +44,7 @@ public class MeepMeepFarBlue {
 
                         .turnTo(Math.toRadians(-270))
                         .setReversed(true)
-                        .splineTo(new Vector2d(55, -46), Math.toRadians(-90)) // INTAKE FIRST SET
+                        .splineTo(new Vector2d(55, -46), Math.toRadians(-80)) // INTAKE FIRST SET
                         .waitSeconds(2)
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
@@ -61,7 +61,7 @@ public class MeepMeepFarBlue {
 //                        ))
                         .turnTo(Math.toRadians(-260))
                         .setReversed(false)
-                        .lineToY(-10)
+                        .lineToY(-14)
                         .turnTo(Math.toRadians(-220))
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
