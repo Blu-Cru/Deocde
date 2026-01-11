@@ -65,9 +65,9 @@ public class TurretFarAutoRed extends BluLinearOpMode {
 
                 .setReversed(false)
                 .splineTo(new Vector2d(48, 10), Math.toRadians(220))
-                .stopAndAdd(new FtclibCommandAction(
-                        new Seque
-                ))
+//                .stopAndAdd(new FtclibCommandAction(
+//                        new Seque
+//                ))
                 .waitSeconds(2)//SHOOT PRELOAD
                 .turnTo(Math.toRadians(270))
                 .setReversed(true)
