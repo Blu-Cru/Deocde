@@ -66,7 +66,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
         // NO mapRRPose2d
         path = drive.actionBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(52, -10), Math.toRadians(-220))
+                .splineTo(new Vector2d(55, -8), Math.toRadians(-220))
                 .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -89,12 +89,12 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
                 .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .splineTo(new Vector2d(55, -46), Math.toRadians(-90)) // INTAKE FIRST SET
+                .splineTo(new Vector2d(58, -46), Math.toRadians(-90)) // INTAKE FIRST SET
                 .waitSeconds(2)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(500),
                                 new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new ShootWithVelocityCommand(1580),
@@ -106,7 +106,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                 ))
                 .turnTo(Math.toRadians(-260))
                 .setReversed(false)
-                .lineToY(-10)
+                .lineToY(-18)
                 .turnTo(Math.toRadians(-220))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -137,7 +137,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(500),
                                 new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new ShootWithVelocityCommand(1580),
@@ -180,7 +180,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(500),
                                 new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new ShootWithVelocityCommand(1580),
@@ -220,7 +220,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        turret.setAngle(-66.5);
+        turret.setAngle(-69);
         shooter.shootWithVelocity(1560);
         shooter.setHoodAngleIndependent(37, 37, 37);
 
