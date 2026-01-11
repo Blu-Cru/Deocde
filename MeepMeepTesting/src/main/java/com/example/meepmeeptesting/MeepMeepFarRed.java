@@ -20,15 +20,19 @@ public class MeepMeepFarRed {
         myBot.runAction(
 
                 myBot.getDrive().actionBuilder(startPose)
+                        .setTangent(Math.toRadians(180))
+
                         .setReversed(false)
-                        .splineTo(new Vector2d(48, 10), Math.toRadians(220))
+                        .lineToX(53)
+                        .turnTo(Math.toRadians(270))
+                        .splineTo(new Vector2d(49, 10), Math.toRadians(220))
                         .waitSeconds(1)
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
 //                                        new LeftTransferUpCommand(),
-//                                        new WaitCommand(300),
+//                                        new WaitCommand(500),
 //                                        new MiddleTransferUpCommand(),
-//                                        new WaitCommand(300),
+//                                        new WaitCommand(500),
 //                                        new RightTransferUpCommand(),
 //                                        new WaitCommand(300),
 //                                        new AllTransferMiddleCommand(),
@@ -41,10 +45,11 @@ public class MeepMeepFarRed {
 //                                )
 //                        ))
                         .waitSeconds(2)//SHOOT PRELOAD
-                        .turnTo(Math.toRadians(270))
+                        .turnTo(Math.toRadians(250))
                         .setReversed(true)
-                        .splineTo(new Vector2d(49, 46), Math.toRadians(90))//INTAKE FIRST SET
+                        .splineTo(new Vector2d(55, 46), Math.toRadians(90))//INTAKE FIRST SET
                         .waitSeconds(2)
+                        .turnTo(Math.toRadians(260))
 //                        .stopAndAdd(new FtclibCommandAction(
 //                                new SequentialCommandGroup(
 //                                        new ShootWithVelocityCommand(1580),

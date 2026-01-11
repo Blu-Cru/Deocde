@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
@@ -70,14 +71,14 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
         // NO mapRRPose2d
         path = drive.actionBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(55, -8), Math.toRadians(-200))
+                .splineTo(new Vector2d(57, -8), Math.toRadians(-200))
                 .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(300),
                                 new AllTransferMiddleCommand(),
@@ -93,19 +94,21 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
                 .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .splineTo(new Vector2d(61, -46), Math.toRadians(-75)) // INTAKE FIRST SET
+                .splineTo(new Vector2d(62, -46), Math.toRadians(-75)) // INTAKE FIRST SET
                 .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new CenterTurretCommand(),
                                 new IntakeSpitCommand(),
                                 new WaitCommand(500),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(400),
                                 new ElevatorMiddleCommand(),
-                                new ShootWithVelocityCommand(1550),
+                                new ShootWithVelocityCommand(1450),
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(700),
                                 new IntakeStopCommand(),
+                                new ParallelizeIntakeCommand(),
                                 new TurnTurretToPosCommand(-60)
                         ), false
                 ))
@@ -117,9 +120,9 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(300),
                                 new AllTransferMiddleCommand(),
@@ -150,12 +153,13 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new ElevatorUpCommand(),
                                 new WaitCommand(500),
                                 new ElevatorMiddleCommand(),
-                                new ShootWithVelocityCommand(1520),
+                                new ShootWithVelocityCommand(1450),
                                 new WaitCommand(800),
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(300),
                                 new IntakeStopCommand(),
                                 new WaitCommand(500),
+                                new ParallelizeIntakeCommand(),
                                 new TurnTurretToPosCommand(-69)
                         ), false
                 ))
@@ -168,9 +172,9 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(300),
+                                new WaitCommand(500),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(300),
                                 new AllTransferMiddleCommand(),
@@ -233,8 +237,8 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        turret.setAngle(-52);
-        shooter.shootWithVelocity(1540);
+        turret.setAngle(-50);
+        shooter.shootWithVelocity(1430);
         shooter.setHoodAngleIndependent(41, 43, 41);
 
         drive.lazyImu.get().resetYaw();
