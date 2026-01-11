@@ -85,12 +85,12 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new AllTransferDownCommand()
                         )
                 ))
-                .waitSeconds(2) // SHOOT PRELOAD
+                .waitSeconds(1.5) // SHOOT PRELOAD
 
                 .turnTo(Math.toRadians(-270))
                 .setReversed(true)
                 .splineTo(new Vector2d(58, -46), Math.toRadians(-90)) // INTAKE FIRST SET
-                .waitSeconds(2)
+                .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -104,9 +104,10 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new TurnTurretToPosCommand(-56)
                         ), false
                 ))
+                .waitSeconds(0.5)
                 .turnTo(Math.toRadians(-260))
                 .setReversed(false)
-                .lineToY(-18)
+                .lineToY(-20)
                 .turnTo(Math.toRadians(-220))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -120,18 +121,17 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new WaitCommand(200),
                                 new IdleShooterCommand(),
                                 new ElevatorDownCommand(),
-                                new ElevatorDownCommand(),
                                 new CenterTurretCommand(),
                                 new IntakeStartCommand(),
                                 new WaitCommand(400),
                                 new AllTransferDownCommand()
                         )
                 ))
-                .waitSeconds(2) // SHOOT FIRST SET
+                .waitSeconds(1.3) // SHOOT FIRST SET
 
                 .turnTo(Math.toRadians(-270))
                 .setReversed(true)
-                .lineToY(-23)
+                .lineToY(-40)
                 .turnTo(Math.toRadians(0))
                 .lineToX(32)
                 .stopAndAdd(new FtclibCommandAction(
@@ -152,7 +152,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
                 .turnTo(Math.toRadians(45))
                 .setReversed(false)
-                .splineTo(new Vector2d(45, -10), Math.toRadians(-270))
+                .splineTo(new Vector2d(45, -12), Math.toRadians(-270))
                 .turnTo(Math.toRadians(-220))
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -165,6 +165,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(200),
                                 new IdleShooterCommand(),
+                                new ElevatorDownCommand(),
                                 new CenterTurretCommand(),
                                 new IntakeStartCommand(),
                                 new WaitCommand(400),
@@ -191,7 +192,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
                                 new TurnTurretToPosCommand(-60)
                         ), false
                 ))
-                .waitSeconds(2)
+                .waitSeconds(1)//orig 2
 
                 .setReversed(false)
                 .splineTo(new Vector2d(48, -10), Math.toRadians(-270)) // SHOOT THIRD SET
@@ -220,7 +221,7 @@ public class TurretFarAutoBlue extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        turret.setAngle(-69);
+        turret.setAngle(-70);
         shooter.shootWithVelocity(1560);
         shooter.setHoodAngleIndependent(37, 37, 37);
 
