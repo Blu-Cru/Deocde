@@ -65,36 +65,36 @@ public class TurretFarAutoRed extends BluLinearOpMode {
 
                 .setReversed(false)
                 .splineTo(new Vector2d(48, 10), Math.toRadians(220))
+                .stopAndAdd(new FtclibCommandAction(
+                        new Seque
+                ))
                 .waitSeconds(2)//SHOOT PRELOAD
                 .turnTo(Math.toRadians(270))
                 .setReversed(true)
                 .splineTo(new Vector2d(48, 47), Math.toRadians(90))//INTAKE FIRST SET
                 .waitSeconds(1)
                 .setReversed(false)
-                .splineTo(new Vector2d(48,10), Math.toRadians(220))
+                .lineToY(10)
+                .turnTo(Math.toRadians(220))
                 .waitSeconds(2)//SHOOT FIRST SET
+                .turnTo(Math.toRadians(270))
                 .setReversed(true)
-                .splineTo(new Vector2d(43, 37), Math.toRadians(180))
+                .splineTo(new Vector2d(35, 37), Math.toRadians(180))
                 //INTAKE SECOND SET
                 .setReversed(false)
-                .splineTo(new Vector2d(48, 10), Math.toRadians(220))
+                .splineTo(new Vector2d(48, 10), Math.toRadians(270))
+                .turnTo(Math.toRadians(220))
                 .waitSeconds(2)//SHOOT SECOND SET
+                .turnTo(Math.toRadians(270))
+
                 .setReversed(true)
                 .splineTo(new Vector2d(50, 47), Math.toRadians(90))
                 .waitSeconds(1)//INTAKE THIRD SET
                 .setReversed(false)
-                .splineTo(new Vector2d(48, 10), Math.toRadians(220)) //SHOOT THIRD SET
-                .waitSeconds(2)
+                .splineTo(new Vector2d(48, 10), Math.toRadians(270)) //SHOOT THIRD SET
+                .turnTo(Math.toRadians(220))
 
-                //INTAKE FOURTH SET
-                .setReversed(true)
-                .splineTo(new Vector2d(50, 47), Math.toRadians(90))
-                .waitSeconds(1)
-                //SHOOT FOURTH SET
-                .setReversed(false)
-                .splineTo(new Vector2d(48, 10), Math.toRadians(220))
-
-                .build();
+                .waitSeconds(2)                .build();
 
 
     }
