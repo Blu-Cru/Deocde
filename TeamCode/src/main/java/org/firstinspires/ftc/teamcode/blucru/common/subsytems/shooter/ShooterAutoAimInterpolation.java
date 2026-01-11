@@ -12,7 +12,7 @@ public class ShooterAutoAimInterpolation {
     private static final double[] leftAngles = {26, 27, 29, 32, 36, 36, 36, 35.5, 38, 41, 39, 39, 38, 38, 37, 37};
     private static final double[] middleAngles = {26, 27, 28, 31, 37, 39, 40, 42, 46, 48, 46, 47, 38, 39, 38, 38.5};
     private static final double[] rightAngles = {26, 27, 28, 32, 38, 38, 38, 39, 40, 42.5, 43, 44, 39, 39, 39, 39.5};
-    private static final double[] velocities = {850, 870, 900, 930, 970, 1000, 1030, 1070, 1140, 1180, 1200, 1260, 1300, 1360, 1440, 1500};
+    private static final double[] velocities = {870, 890, 920, 950, 990, 1020, 1050, 1090, 1160, 1200, 1220, 1280, 1320, 1380, 1460, 1520};
 
     public static double[] interpolate(double dist){
         // clamp to range to prevent hardware damage or crashes

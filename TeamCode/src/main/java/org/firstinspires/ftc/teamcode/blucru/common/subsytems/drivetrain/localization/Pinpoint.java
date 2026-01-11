@@ -33,8 +33,8 @@ public class Pinpoint implements RobotLocalizer{
                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(parallelYOffset, perpXOffset, DistanceUnit.MM);
-
         pinpointPose = new Pose2d(pinpoint.getPosition().getX(DistanceUnit.INCH), pinpoint.getPosition().getY(DistanceUnit.INCH), pinpoint.getPosition().getHeading(AngleUnit.RADIANS));
+
     }
 
     @Override

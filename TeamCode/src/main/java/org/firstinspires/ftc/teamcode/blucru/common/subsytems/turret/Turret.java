@@ -134,7 +134,12 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void toggleManual() {
-        state = State.MANUAL;
+        if (state != State.MANUAL) {
+            state = State.MANUAL;
+        } else {
+            position = 0;
+            state = State.PID;
+        }
     }
 
     public boolean isManual() {

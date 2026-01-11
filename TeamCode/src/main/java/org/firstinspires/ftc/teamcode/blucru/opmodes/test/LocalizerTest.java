@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-//@TeleOp(group = "test")
+@TeleOp(group = "test")
 public class LocalizerTest extends BluLinearOpMode {
 
     @Override
