@@ -60,9 +60,11 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
         turret.resetEncoder();
         turret.write();
 
+
+
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
                 .setReversed(true)
-                .splineTo(new Vector2d(-33, 40), Math.toRadians(0))
+                .splineTo(new Vector2d(-30, 40), Math.toRadians(0))
                 .afterTime(0.1, new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -96,7 +98,7 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
                 ))
 
                 .setReversed(false)
-                .splineTo(new Vector2d(-27, 37), Math.toRadians(210))
+                .splineTo(new Vector2d(-27, 37), Math.toRadians(205))
                 .waitSeconds(0.3)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
