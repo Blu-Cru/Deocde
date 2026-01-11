@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
@@ -84,14 +85,15 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new IntakeSpitCommand(),
+                                new WaitCommand(300),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(200),
-                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(500),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(-75)
+                                new TurnTurretToPosCommand(-80)
                         ), false
                 ))
 
@@ -121,9 +123,10 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
 
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new IntakeSpitCommand(),
+                                new WaitCommand(300),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
-                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
@@ -169,9 +172,10 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 .waitSeconds(0.7)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
+                                new IntakeSpitCommand(),
+                                new WaitCommand(300),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(300),
-                                new IntakeSpitCommand(),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(100),
                                 new AllTransferMiddleCommand(),
