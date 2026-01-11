@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
+import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -60,6 +61,7 @@ public class Tele extends BluLinearOpMode{
         addTransfer();
         addShooter();
         addTurret();
+        CommandScheduler.getInstance().reset();
 
         sm = new StateMachineBuilder()
 
