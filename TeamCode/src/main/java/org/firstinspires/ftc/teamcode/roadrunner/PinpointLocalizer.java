@@ -16,8 +16,8 @@ import java.util.function.Supplier;
 public final class PinpointLocalizer implements Localizer {
 
     public static class Params {
-        public double parYMM = 138.5;
-        public double perpXMM = 94.5; // old 94.05
+        public double parYTicks = 138.5;
+        public double perpXTicks = 94.5; // old 94.05
     }
 
     public static Params PARAMS = new Params();
@@ -49,8 +49,8 @@ public final class PinpointLocalizer implements Localizer {
 
         driver.setEncoderResolution(ticksPerMm, DistanceUnit.MM);
         driver.setOffsets(
-                PARAMS.parYMM,
-                PARAMS.perpXMM,
+                mmPerTick * PARAMS.parYTicks,
+                mmPerTick * PARAMS.perpXTicks,
                 DistanceUnit.MM
         );
 
