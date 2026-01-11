@@ -80,7 +80,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 .waitSeconds(1.6)
 
                 .setReversed(true)
-                .splineTo(new Vector2d(-18, -45), -Math.toRadians(0))
+                .splineTo(new Vector2d(-18, -42), -Math.toRadians(0))
                 .waitSeconds(1)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -97,7 +97,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-27, -37), -Math.toRadians(210))
-                .waitSeconds(0.3)
+                .waitSeconds(0.8)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -117,7 +117,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
 
                 .setReversed(true)
                 .splineTo(new Vector2d(5, -38), -Math.toRadians(0))
-                .waitSeconds(2)
+                .waitSeconds(1.3)
 
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
@@ -129,13 +129,14 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                                 new AllTransferMiddleCommand(),
                                 new WaitCommand(500),
                                 new IntakeStopCommand(),
-                                new TurnTurretToPosCommand(-90)
+                                new TurnTurretToPosCommand(-80)
                         ), false
                 ))
 
                 .setReversed(false)
                 .setTangent(-Math.toRadians(180))
-                .splineTo(new Vector2d(-19, -32), -Math.toRadians(190))
+                .splineTo(new Vector2d(-15, -32), -Math.toRadians(190))
+                .waitSeconds(0.5)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
@@ -151,7 +152,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                                 new ElevatorDownCommand()
                         ), false
                 ))
-                .waitSeconds(2)
+                .waitSeconds(1.)
 
                 .setReversed(true)
                 .turnTo(-Math.toRadians(180))
@@ -164,8 +165,8 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 .splineTo(new Vector2d(-7, -45), -Math.toRadians(180))
 
                 .setReversed(true)
-                .splineTo(new Vector2d(25, -45), -Math.toRadians(0))
-                .waitSeconds(0.5)
+                .splineTo(new Vector2d(25, -40), -Math.toRadians(0))
+                .waitSeconds(0.7)
                 .stopAndAdd(new FtclibCommandAction(
                         new SequentialCommandGroup(
                                 new ElevatorUpCommand(),
@@ -177,10 +178,9 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                                 new WaitCommand(500),
                                 new IntakeStopCommand(),
                                 new WaitCommand(300),
-                                new TurnTurretToPosCommand(-85)
+                                new TurnTurretToPosCommand(20)
                         )
                 ))
-                .waitSeconds(1.2)
 
                 .setReversed(false)
                 .splineTo(new Vector2d(-20, -37), -Math.toRadians(180))
@@ -201,7 +201,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
                 ))
                 .waitSeconds(5)
                 .setReversed(true)
-                .splineTo(new Vector2d(0, -37), Math.toRadians(0))
+                .splineTo(new Vector2d(0, -37), Math.toRadians(-90))
                 .build();
     }
 
@@ -209,7 +209,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
     public void onStart() {
         shooter.setHoodAngleIndependent(26, 26, 26);
         shooter.shootWithVelocity(900);
-        turret.setAngle(-40);
+        turret.setAngle(-32.5);
 
         drive.lazyImu.get().resetYaw();                 // IMU yaw = 0
         drive.localizer.setPose(Globals.mapRRPose2d(startPose));  // RR pose heading = startPose.heading
