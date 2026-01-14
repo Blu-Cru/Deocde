@@ -68,11 +68,20 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     public void drive(double x, double r){
         double[] powers = SixWheelKinematics.getPowers(x,r);
-        dtMotors[0].setPower(powers[0]);
-        dtMotors[2].setPower(powers[0]);
-        dtMotors[1].setPower(powers[1]);
-        dtMotors[3].setPower(powers[1]);
+
+        //going to use average current from front 2 motors, back 2 should be the same
+        double avgCurrent = (dtMotors[0].getCurrent() + dtMotors[1].getCurrent())/2;
+
+        //multiplying for current limiting, might cause small power oscillations but bc
+        //this is mainly for defense current saving it should be fine
+
+        dtMotors[0].setPower(powers[0] * 7 / avgCurrent);
+        dtMotors[2].setPower(powers[0] * 7 / avgCurrent);
+        dtMotors[1].setPower(powers[1] * 7 / avgCurrent);
+        dtMotors[3].setPower(powers[1] * 7 / avgCurrent);
+
         Globals.telemetry.addData("Powers", Arrays.toString(powers));
+        Globals.telemetry.addData("Avg Current", avgCurrent);
     }
 
     public void makeMotorsBeInBrake(){
