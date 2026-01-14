@@ -22,6 +22,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private PIDController controller;
 
     private double position;
+    private double targetVel;
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 8192 * 212.0 / 35;
@@ -54,6 +55,8 @@ public class Turret implements BluSubsystem, Subsystem {
         this.encoder = encoder;
         controller = new PIDController(kP, kI, kD);
         state = State.MANUAL;
+        targetVel = 0;
+        position = 0;
     }
 
     @Override
@@ -75,11 +78,14 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-                double turretTargetDeg =
+                double[] turretInfo =
                         getFieldCentricTargetGoalAngle(
-                                Robot.getInstance().sixWheelDrivetrain.getPos()
+                                Robot.getInstance().sixWheelDrivetrain.getPos(),
+                                Robot.getInstance().sixWheelDrivetrain.getVel()
                         );
 
+                double turretTargetDeg = turretInfo[0];
+                targetVel = turretInfo[1];
                 Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
                 setFieldCentricPosition(
@@ -90,11 +96,12 @@ public class Turret implements BluSubsystem, Subsystem {
                         false
                 );
 
-                updateControlLoop();
+                updateControlLoop(targetVel);
                 break;
 
             case PID:
-                updateControlLoop();
+                targetVel = 0;
+                updateControlLoop(targetVel);
                 break;
         }
 
@@ -150,7 +157,7 @@ public class Turret implements BluSubsystem, Subsystem {
         controller.setPID(kP, kI, kD);
     }
 
-    public void updateControlLoop() {
+    public void updateControlLoop(double targetVel) {
         updatePID();
 
         while (position > 180) position -= 360;
@@ -198,7 +205,7 @@ public class Turret implements BluSubsystem, Subsystem {
         encoder.reset();
     }
 
-    public double getFieldCentricTargetGoalAngle(Pose2d robotPose) {
+    public double[] getFieldCentricTargetGoalAngle(Pose2d robotPose, Pose2d robotVel) {
         Vector2d target = Globals.mapVector(
                 Globals.shootingGoalLPose.getX(),
                 Globals.shootingGoalLPose.getY()
@@ -212,10 +219,16 @@ public class Turret implements BluSubsystem, Subsystem {
         double turretCenterY =
                 robotVec.getY() - distFromCenter * Math.sin(Math.toRadians(robotHeadingDeg));
 
-        double dx = target.getX() - turretCenterX;
-        double dy = target.getY() - turretCenterY;
+        double deltax = target.getX() - turretCenterX;
+        double deltay = target.getY() - turretCenterY;
 
-        return Math.toDegrees(Math.atan2(dx, dy)) - 90;
+        //calculating angle vel for turret so that it matches the robots angular vel
+        double xyAngleVel = robotVel.getY() / robotVel.getX() * 1/Math.sqrt(deltay * deltay / (deltax * deltax) -1);
+        double totalRobotAngVel = xyAngleVel + robotVel.getH();
+
+        double targetAngle = Math.toDegrees(Math.atan2(deltax, deltay)) - 90;
+
+        return new double[] {targetAngle , -totalRobotAngVel};
     }
 
 
