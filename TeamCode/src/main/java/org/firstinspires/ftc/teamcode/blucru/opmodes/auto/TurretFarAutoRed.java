@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
@@ -33,6 +34,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
@@ -279,6 +281,29 @@ public class TurretFarAutoRed extends BluLinearOpMode {
 
             CommandScheduler.getInstance().run();
             robot.write();
+            
+            // Draw field visualization (only if pose history has data)
+            if (drive.poseHistory.size() > 1) {
+                Canvas c = packet.fieldOverlay();
+                
+                // Draw current robot position (blue circle with heading line)
+                c.setStroke("#3F51B5");
+                Drawing.drawRobot(c, drive.localizer.getPose());
+                
+                // Draw pose history (blue line trail) - use efficient polyline drawing
+                c.setStrokeWidth(1);
+                c.setStroke("#3F51B5");
+                double[] xPoints = new double[drive.poseHistory.size()];
+                double[] yPoints = new double[drive.poseHistory.size()];
+                int idx = 0;
+                for (Pose2d pose : drive.poseHistory) {
+                    xPoints[idx] = pose.position.x;
+                    yPoints[idx] = pose.position.y;
+                    idx++;
+                }
+                c.strokePolyline(xPoints, yPoints);
+            }
+            
             // 3. IMPORTANT: Send the packet to dashboard!
             // Without this, RoadRunner runs blind and you see no telemetry
             dash.sendTelemetryPacket(packet);

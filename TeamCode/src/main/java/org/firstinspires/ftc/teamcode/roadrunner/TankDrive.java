@@ -91,12 +91,12 @@ public final class TankDrive {
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double ramseteZeta = 0.7; // in the range (0, 1)
-        public double ramseteBBar = 2.0; // positive
+        public double ramseteZeta = 0.52; // more aggressive convergence
+        public double ramseteBBar = 4.5; // positive - stronger correction
 
         // turn controller gains
-        public double turnGain = 2;
-        public double turnVelGain = 0.0;
+        public double turnGain = 7; // stronger heading correction
+        public double turnVelGain = 0.25; // damping to smooth without blocking
     }
 
     public static Params PARAMS = new Params();
@@ -112,7 +112,6 @@ public final class TankDrive {
             ));
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
-
     public final List<DcMotorEx> leftMotors, rightMotors;
 
     public final LazyImu lazyImu;
@@ -120,7 +119,7 @@ public final class TankDrive {
     public final VoltageSensor voltageSensor;
 
     public final Localizer localizer;
-    private final LinkedList<Pose2d> poseHistory = new LinkedList<>();
+    public final LinkedList<Pose2d> poseHistory = new LinkedList<>();
 
     private final DownsampledWriter estimatedPoseWriter = new DownsampledWriter("ESTIMATED_POSE", 50_000_000);
     private final DownsampledWriter targetPoseWriter = new DownsampledWriter("TARGET_POSE", 50_000_000);
