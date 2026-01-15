@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "12 Ball Close Auto Red - Path Only", group = "auto")
+@Autonomous(name = "Odo drift test", group = "auto")
 public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
@@ -30,20 +30,23 @@ public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
         drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
 
         path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
+                .setReversed(false)
+                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
+                .waitSeconds(1)
                 .setReversed(true)
-                .splineTo(new Vector2d(-30, 40), Math.toRadians(0))
-                .waitSeconds(1) // SHOOT PRELOAD
-                .lineToX(40)
+                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
                 .waitSeconds(1)
-                .lineToX(-30)
-                .waitSeconds(1) // SHOOT PRELOAD
-                .lineToX(40)
+                .setReversed(false)
+                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
                 .waitSeconds(1)
-                .lineToX(-30)
-                .waitSeconds(1) // SHOOT PRELOAD
-                .lineToX(40)
+                .setReversed(true)
+                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
                 .waitSeconds(1)
-                .lineToX(-30)
+                .setReversed(false)
+                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
+                .waitSeconds(1)
+                .setReversed(true)
+                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
 
                 .build();
     }
