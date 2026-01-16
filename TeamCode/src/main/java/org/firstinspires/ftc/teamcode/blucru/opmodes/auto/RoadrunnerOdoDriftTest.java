@@ -26,27 +26,27 @@ public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
         Globals.setAlliance(alliance);
         robot.clear();
 
-        startPose = new Pose2d(-45, 52, Math.toRadians(130));
-        drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
+        startPose = new Pose2d(-45, 30, Math.toRadians(0));
+        drive = new TankDrive(hardwareMap, startPose);
 
-        path = drive.actionBuilder(Globals.mapRRPose2d(startPose))
+        path = drive.actionBuilder(startPose)
                 .setReversed(false)
-                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
+                .lineToX(40)
                 .waitSeconds(1)
                 .setReversed(true)
-                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
+                .lineToX(-45)
                 .waitSeconds(1)
                 .setReversed(false)
-                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
+                .lineToX(40)
                 .waitSeconds(1)
                 .setReversed(true)
-                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
+                .lineToX(-45)
                 .waitSeconds(1)
                 .setReversed(false)
-                .splineTo(new Vector2d(40, 30), Math.toRadians(0))
+                .lineToX(40)
                 .waitSeconds(1)
                 .setReversed(true)
-                .splineTo(new Vector2d(-45, 30), Math.toRadians(180))
+                .lineToX(-45)
 
                 .build();
     }
