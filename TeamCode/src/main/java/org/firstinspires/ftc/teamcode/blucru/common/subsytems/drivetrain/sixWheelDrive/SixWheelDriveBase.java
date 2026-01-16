@@ -75,9 +75,12 @@ public class SixWheelDriveBase implements BluSubsystem{
         //multiplying for current limiting, might cause small power oscillations but bc
         //this is mainly for defense current saving it should be fine
 
-        if (avgCurrent > 7){
-            dtMotors[0].setPower(powers[0]);
-            dtMotors[1].setPower(powers[1]);
+        if (avgCurrent > 7000){
+            dtMotors[2].setPower(powers[0]);
+            dtMotors[3].setPower(powers[1]);
+            dtMotors[0].setPower(0);
+            dtMotors[1].setPower(0);
+            Globals.telemetry.addLine("rear wheel drive");
         } else {
             dtMotors[0].setPower(powers[0]);
             dtMotors[2].setPower(powers[0]);
