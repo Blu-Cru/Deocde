@@ -21,7 +21,7 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     private BluMotor[] dtMotors;
 
-    RobotLocalizer localizer;
+    Pinpoint localizer;
     public enum State{
         IDLE,
         PID,
@@ -69,13 +69,10 @@ public class SixWheelDriveBase implements BluSubsystem{
     public void drive(double x, double r){
         double[] powers = SixWheelKinematics.getPowers(x,r);
 
-        //going to use average current from front 2 motors, back 2 should be the same
-        double avgCurrent = (dtMotors[0].getCurrent() + dtMotors[1].getCurrent())/2;
-
-        //multiplying for current limiting, might cause small power oscillations but bc
         //this is mainly for defense current saving it should be fine
+        //detection based on accel and vel
 
-        if (avgCurrent > 7000){
+        if (beingPushed()){
             dtMotors[2].setPower(powers[0]);
             dtMotors[3].setPower(powers[1]);
             dtMotors[0].setPower(0);
@@ -89,7 +86,7 @@ public class SixWheelDriveBase implements BluSubsystem{
         }
 
         Globals.telemetry.addData("Powers", Arrays.toString(powers));
-        Globals.telemetry.addData("Avg Current", avgCurrent);
+        Globals.telemetry.addData("Being Pushed?", beingPushed());
     }
 
     public void makeMotorsBeInBrake(){
@@ -121,5 +118,12 @@ public class SixWheelDriveBase implements BluSubsystem{
     @Override
     public void reset() {
         localizer.reset();
+    }
+
+    public boolean beingPushed(){
+        //low vel and low accel
+        Pose2d vel = localizer.getVel();
+        double xyVel = Math.hypot(vel.getX(), vel.getY());
+        return (localizer.getXyAccel() < 1 && localizer.gethAccel() < 0.3) && (xyVel < 3 && vel.getH() < 0.1);
     }
 }

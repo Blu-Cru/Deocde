@@ -17,8 +17,12 @@ public class Pinpoint implements RobotLocalizer{
     public static double parallelYOffset = 138.5, perpXOffset = 94.05;
     private GoBildaPinpointDriver pinpoint;
     private double headingOffset;
-
     private Pose2d pinpointPose;
+    private double xyAccel;
+    private double hAccel;
+    private Pose2d lastLoopVel;
+    private double lastLoopTime;
+    private Pose2d vel;
 
     public Pinpoint(String name){
         this(Globals.hwMap.get(GoBildaPinpointDriver.class, name));
@@ -34,6 +38,8 @@ public class Pinpoint implements RobotLocalizer{
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(parallelYOffset, perpXOffset, DistanceUnit.MM);
         pinpointPose = new Pose2d(pinpoint.getPosition().getX(DistanceUnit.INCH), pinpoint.getPosition().getY(DistanceUnit.INCH), pinpoint.getPosition().getHeading(AngleUnit.RADIANS));
+        lastLoopVel = new Pose2d(0,0,0);
+        lastLoopTime = 0;
 
     }
 
@@ -43,8 +49,17 @@ public class Pinpoint implements RobotLocalizer{
         Pose2D pinpointPose2D = pinpoint.getPosition();
         pinpointPose = new Pose2d(pinpointPose2D.getX(DistanceUnit.INCH), pinpointPose2D.getY(DistanceUnit.INCH), pinpointPose2D.getHeading(AngleUnit.RADIANS));
 
-        Pose2D vel = pinpoint.getVelocity();
-        Robot.getInstance().positionHistory.add(pinpointPose, new Pose2d(vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.RADIANS)));
+        Pose2D velPose2D = pinpoint.getVelocity();
+
+        vel = new Pose2d(velPose2D.getX(DistanceUnit.INCH), velPose2D.getX(DistanceUnit.INCH), velPose2D.getHeading(AngleUnit.RADIANS));
+        double currTime = Globals.matchTime.milliseconds();
+        double xAccel = (vel.getX() - lastLoopVel.getX())/(currTime - lastLoopTime) * 1000.0;
+        double yAccel = (vel.getY() - lastLoopVel.getY())/(currTime - lastLoopTime) * 1000.0;
+        xyAccel = Math.hypot(xAccel, yAccel);
+        hAccel = (vel.getH() - lastLoopVel.getH())/(currTime - lastLoopTime) * 1000.0;
+
+        Robot.getInstance().positionHistory.add(pinpointPose, vel);
+
     }
 
     /**
@@ -112,7 +127,7 @@ public class Pinpoint implements RobotLocalizer{
 
     @Override
     public Pose2d getVel() {
-        return new Pose2d(pinpoint.getVelX(DistanceUnit.INCH), pinpoint.getVelY(DistanceUnit.INCH), pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS));
+        return vel;
     }
 
     @Override
@@ -125,6 +140,14 @@ public class Pinpoint implements RobotLocalizer{
 
         telemetry.addData("Pinpoint heading", pinpoint.getHeading(AngleUnit.RADIANS));
 
+    }
+
+    public double getXyAccel(){
+        return xyAccel;
+    }
+
+    public double gethAccel(){
+        return hAccel;
     }
 
     public void reset(){
