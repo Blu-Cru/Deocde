@@ -18,8 +18,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 @Config
 public class Intake implements BluSubsystem, Subsystem {
-    private BluMotorWithEncoder leftMotor;
-    private BluMotorWithEncoder rightMotor;
+    private BluMotor motor;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
@@ -68,9 +67,8 @@ public class Intake implements BluSubsystem, Subsystem {
         return state;
     }
 
-    public Intake(String leftMotorName, String rightMotorName, String sensorName) {
-        leftMotor = new BluMotorWithEncoder(leftMotorName, DcMotorSimple.Direction.FORWARD);
-        rightMotor = new BluMotorWithEncoder(rightMotorName, DcMotorSimple.Direction.REVERSE);
+    public Intake(String motorName, String sensorName) {
+        motor = new BluMotor(motorName, DcMotorSimple.Direction.FORWARD);
         parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(Globals.frMotorName);
         pid = new PDController(0.011, 0.001);
@@ -84,18 +82,16 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void init() {
-        leftMotor.init();
-        rightMotor.init();
+        motor.init();
         encoder.init();
     }
 
     @Override
     public void read() {
-        leftMotor.read();
-        rightMotor.read();
+        motor.read();
         //double currentVoltage = Robot.getInstance().getVoltage();
 
-        jammed = (state == State.IN && leftMotor.getVelocity() > 100); // Jam detected, spit out the ball
+        jammed = (state == State.IN && encoder.getVelocity() > 100); // Jam detected, spit out the ball
     }
 
     public boolean armsParallel(){
@@ -105,25 +101,20 @@ public class Intake implements BluSubsystem, Subsystem {
     @Override
     public void write() {
         if (jammed){
-            leftMotor.setPower(-1);
-            rightMotor.setPower(-1);
+            motor.setPower(-1);
         } else {
             switch(state){
                 case IN:
-                    leftMotor.setPower(1);
-                    rightMotor.setPower(1);
+                    motor.setPower(1);
                     break;
                 case OUT:
-                    leftMotor.setPower(-1);
-                    rightMotor.setPower(-1);
+                    motor.setPower(-1);
                     break;
                 case IDlE:
-                    leftMotor.setPower(0);
-                    rightMotor.setPower(0);
+                    motor.setPower(0);
                     break;
                 case CUSTOM_POWER:
-                    leftMotor.setPower(power);
-                    rightMotor.setPower(power);
+                    motor.setPower(power);
                 case PID:
                     parallelSensor.read();
                     encoder.read();
@@ -136,33 +127,27 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (curr < -145.1 / 4) {
                             curr += 145.1 / 2;
                         }
-                        double power = pid.calculate(curr, -leftMotor.getPower());
+                        double power = pid.calculate(curr, -motor.getPower());
                         Globals.telemetry.addData("Curr", curr);
-                        leftMotor.setPower(power);
-                        rightMotor.setPower(power);
+                        motor.setPower(power);
                     }
             }
         }
 
-        leftMotor.write();
-        rightMotor.write();
+        motor.write();
     }
 
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        leftMotor.telemetry();
-        rightMotor.telemetry();
-        telemetry.addData("Current", leftMotor.getCurrent());
+        motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
     }
 
     @Override
     public void reset() {
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        leftMotor.write();
-        rightMotor.write();
+        motor.setPower(0);
+        motor.write();
     }
 
     public void resetEncoder(){
