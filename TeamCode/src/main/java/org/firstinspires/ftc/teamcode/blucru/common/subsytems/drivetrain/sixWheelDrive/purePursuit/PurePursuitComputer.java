@@ -235,13 +235,36 @@ public class PurePursuitComputer {
         // Determine backwards driving once, use for both linear and heading control
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
 
-        // Both controllers use the same backwards driving decision
-        double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards);
+        // Calculate heading error for speed scaling
+        double robotHeading = Math.toDegrees(robotPose.getH());
+        double turnReq = Math.toDegrees(Math.atan2(goalPoint.getY() - robotPose.getY(), goalPoint.getX() - robotPose.getX()));
+        double deltaAngle = turnReq - robotHeading;
+
+        // Normalize to [-180, 180]
+        while (deltaAngle > 180) {
+            deltaAngle -= 360;
+        }
+        while (deltaAngle <= -180) {
+            deltaAngle += 360;
+        }
+
+        // Adjust for backwards driving
+        if (isDrivingBackwards) {
+            if (deltaAngle > 0) {
+                deltaAngle -= 180;
+            } else {
+                deltaAngle += 180;
+            }
+        }
+
+        // Both controllers use the same backwards driving decision and heading error
+        double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards, deltaAngle);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid, isDrivingBackwards);
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
+        Globals.telemetry.addData("Heading Error", deltaAngle);
         Globals.telemetry.addData("Effective Lookahead", lastEffectiveLookahead);
         Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
 

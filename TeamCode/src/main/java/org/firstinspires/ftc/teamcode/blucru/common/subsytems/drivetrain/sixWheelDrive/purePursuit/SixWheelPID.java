@@ -18,9 +18,13 @@ public class SixWheelPID {
     // Stop linear movement when this close to goal to prevent oscillation
     public static double STOP_DISTANCE = 2;
 
+    // Heading-based speed scaling
+    public static boolean ENABLE_HEADING_SPEED_SCALING = true;  // Enable/disable cosine scaling
+    public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
+
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.05, dXY = 0.005;
-    public static double pR = 0.03, dR = 0.3;
+    public static double pXY = 0.035, dXY = 0.014;
+    public static double pR = 0.02, dR = 0.5;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
@@ -55,7 +59,7 @@ public class SixWheelPID {
         wasDriverBackwards = false;
     }
 
-    public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards){
+    public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards, double headingErrorDeg){
 
         // Stop moving when very close to goal to prevent oscillation
         // The D term can overpower the P term at small distances
@@ -72,6 +76,16 @@ public class SixWheelPID {
         double error = dist;
 
         double linearVel = xy.calculate(error, -robotVelXY);
+
+        // Apply heading-based speed scaling (cosine scaling)
+        if (ENABLE_HEADING_SPEED_SCALING) {
+            // Use cosine of heading error to scale speed
+            // 0° error → 1.0x speed, 90° error → 0.0x speed
+            double cosineMultiplier = Math.abs(Math.cos(Math.toRadians(headingErrorDeg)));
+            // Ensure minimum speed multiplier
+            double speedMultiplier = Math.max(MIN_SPEED_MULTIPLIER, cosineMultiplier);
+            linearVel *= speedMultiplier;
+        }
 
         // Store debug values
         lastLinearError = error;
