@@ -265,7 +265,7 @@ public class PurePursuitDebugTeleOp extends BluLinearOpMode {
         data.targetY = target.getY();
         data.distanceRemaining = computer.getLastDistanceRemaining();
         data.currentSegmentIndex = computer.getLastSegmentIndex();
-        data.lookAheadDistance = sixWheel.getLookAheadDist();
+        data.lookAheadDistance = computer.getLastEffectiveLookahead();
 
         // PID values
         data.linearError = SixWheelPID.getLastLinearError();

@@ -15,9 +15,14 @@ public class PurePursuitComputer {
     private int lastFoundIndex;
     private double dist;
 
+    // Dynamic lookahead parameters - adjust via FTC Dashboard
+    public static double MIN_LOOKAHEAD = 2.0;  // Minimum lookahead distance
+    public static double LOOKAHEAD_SCALE_FACTOR = 0.6;  // Scale lookahead by this factor of remaining distance
+
     // Debug tracking
     private Point2d lastGoalPoint = new Point2d(0, 0);
     private double lastDistanceRemaining = 0;
+    private double lastEffectiveLookahead = 0;
 
     public PurePursuitComputer() {
         lastFoundIndex = 0;
@@ -102,9 +107,18 @@ public class PurePursuitComputer {
 
     public Point2d findOptimalGoToPoint(Pose2d robotPose, Point2d[] path, double lookAheadDist) {
 
-        if (findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()),
-                path[path.length - 1]) < lookAheadDist) {
-            dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), path[path.length - 1]);
+        // Calculate distance to goal to enable dynamic lookahead scaling
+        double distToGoal = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()),
+                path[path.length - 1]);
+
+        // Scale down lookahead as we approach the end for smoother arrival
+        // effectiveLookahead = max(MIN_LOOKAHEAD, min(requestedLookahead, distToGoal * SCALE_FACTOR))
+        double effectiveLookahead = Math.max(MIN_LOOKAHEAD,
+                                             Math.min(lookAheadDist, distToGoal * LOOKAHEAD_SCALE_FACTOR));
+        lastEffectiveLookahead = effectiveLookahead;
+
+        if (distToGoal < effectiveLookahead) {
+            dist = distToGoal;
             // Store debug values for early return
             lastGoalPoint = path[path.length - 1];
             lastDistanceRemaining = dist;
@@ -115,7 +129,7 @@ public class PurePursuitComputer {
         Point2d goalPoint = null;
         Point2d[][] pointsSols = new Point2d[path.length - 1][2];
         for (int i = lastFoundIndex; i < path.length - 1; i++) {
-            pointsSols[i] = getLineIntersections(path[i], path[i + 1], robotPose, lookAheadDist);
+            pointsSols[i] = getLineIntersections(path[i], path[i + 1], robotPose, effectiveLookahead);
         }
 
         for (int i = lastFoundIndex; i < pointsSols.length; i++) {
@@ -228,6 +242,7 @@ public class PurePursuitComputer {
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
+        Globals.telemetry.addData("Effective Lookahead", lastEffectiveLookahead);
         Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
 
         return new double[] { linear, rot };
@@ -237,5 +252,6 @@ public class PurePursuitComputer {
     public Point2d getLastGoalPoint() { return lastGoalPoint; }
     public double getLastDistanceRemaining() { return lastDistanceRemaining; }
     public int getLastSegmentIndex() { return lastFoundIndex; }
+    public double getLastEffectiveLookahead() { return lastEffectiveLookahead; }
 
 }
