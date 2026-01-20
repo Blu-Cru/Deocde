@@ -68,9 +68,9 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public Intake(String motorName, String sensorName) {
-        motor = new BluMotor(motorName, DcMotorSimple.Direction.FORWARD);
+        motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE);
         parallelSensor = new BluDigitalChannel(sensorName);
-        encoder = new BluEncoder(Globals.frMotorName);
+        encoder = new BluEncoder(motorName);
         pid = new PDController(0.011, 0.001);
         state = State.IDlE;
         jammed = false;
