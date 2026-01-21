@@ -20,7 +20,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static double limit = 20;
     public static boolean redAlliance = true; //false  for blueAlliance
 
-    private ShooterPod leftShooter, middleShooter, rightShooter;
+    public ShooterPod leftShooter, middleShooter, rightShooter;
     public HoodLeft hoodLeft;
     public HoodMiddle hoodMiddle;
     public HoodRight hoodRight;
@@ -36,7 +36,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public Shooter(){
         ShooterVelocityPID leftPID = new ShooterVelocityPID(leftP, leftI, leftD, leftF);
         BluMotorWithEncoder leftShooterMotor = new BluMotorWithEncoder("leftShooter");
-        leftShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
         leftShooter = new ShooterPod(leftShooterMotor, new HoodLeft(), leftPID);
 
         ShooterVelocityPID middlePID = new ShooterVelocityPID(middleP, middleI, middleD, middleF);
