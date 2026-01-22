@@ -14,9 +14,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double leftP = 0.01,leftI = 0, leftD = 0, leftF = 0.00058;
-    public static double middleP = 0.01,middleI = 0, middleD = 0, middleF = 0.00058;
-    public static double rightP = 0.01,rightI = 0, rightD = 0, rightF = 0.00058;
+    public static double leftP = 0.001,leftI = 0, leftD = 0, leftF =
+            0.000410000067
+            ;
+    public static double middleP = 0.001,middleI = 0, middleD = 0, middleF = 0.000415500067;
+    public static double rightP = 0.001,rightI = 0, rightD = 0, rightF = 0.000415500067;
     public static double limit = 20;
     public static boolean redAlliance = true; //false  for blueAlliance
 
@@ -73,6 +75,7 @@ public class Shooter implements BluSubsystem, Subsystem {
                 targetVel = 0;
                 break;
             case VELOCITY:
+                Globals.multiTelemetry.addData("leftShooterTargetPower", leftShooter.getPowerToGoToVel());
                 leftShooter.setPower(leftShooter.getPowerToGoToVel());
                 middleShooter.setPower(middleShooter.getPowerToGoToVel());
                 rightShooter.setPower(rightShooter.getPowerToGoToVel());
@@ -123,11 +126,17 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
     public void shootWithVelocity(double vel){
         targetVel = vel;
+        leftShooter.setVel(vel);
+        middleShooter.setVel(vel);
+        rightShooter.setVel(vel);
         state = State.VELOCITY;
     }
 
     public void shootReverseWithVelocity(double vel){
         targetVel = -Math.abs(vel);
+        leftShooter.setVel(targetVel);
+        middleShooter.setVel(targetVel);
+        rightShooter.setVel(targetVel);
         state = State.VELOCITY;
     }
 

@@ -18,7 +18,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
     public void initialize(){
         addShooter();
         addSixWheel();
-        addLLTagDetector();
+        //addLLTagDetector();
         addTransfer();
         addTurret();
         turret.resetEncoder();
