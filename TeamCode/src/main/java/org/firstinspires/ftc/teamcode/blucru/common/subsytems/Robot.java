@@ -162,7 +162,7 @@ public class Robot {
         return transfer;
     }
     public Intake addIntake(){
-        intake = new Intake("intakeLeft", "intakeRight", "aligner");
+        intake = new Intake("intake", "aligner");
         subsystems.add(intake);
         return intake;
     }
