@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
@@ -68,10 +69,10 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public Intake(String motorName, String sensorName) {
-        motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE);
+        motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
         parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(motorName);
-        pid = new PDController(0.014, 0.001);
+        pid = new PDController(0.014, 0.002);
         state = State.IDlE;
         jammed = false;
     }
@@ -111,7 +112,13 @@ public class Intake implements BluSubsystem, Subsystem {
                     motor.setPower(-1);
                     break;
                 case IDlE:
-                    motor.setPower(0);
+                    if (motor.getPower() > 0.05){
+                        motor.setPower(-0.01);
+                    } else if (motor.getPower() < -0.05){
+                        motor.setPower(0.01);
+                    } {
+                        motor.setPower(0);
+                    }
                     break;
                 case CUSTOM_POWER:
                     motor.setPower(power);
