@@ -71,7 +71,7 @@ public class Intake implements BluSubsystem, Subsystem {
         motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE);
         parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(motorName);
-        pid = new PDController(0.011, 0.001);
+        pid = new PDController(0.014, 0.001);
         state = State.IDlE;
         jammed = false;
     }
@@ -118,6 +118,7 @@ public class Intake implements BluSubsystem, Subsystem {
                 case PID:
                     parallelSensor.read();
                     encoder.read();
+                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
                     if (!parallelSensor.getState()) {
                         double curr = encoder.getCurrentPos() % (145.1 / 2);
                         if (curr > 145.1 / 4) {
@@ -128,6 +129,7 @@ public class Intake implements BluSubsystem, Subsystem {
                             curr += 145.1 / 2;
                         }
                         double power = pid.calculate(curr, -motor.getPower());
+                        Globals.telemetry.addData("Power", power);
                         Globals.telemetry.addData("Curr", curr);
                         motor.setPower(power);
                     }
@@ -142,6 +144,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public void telemetry(Telemetry telemetry) {
         motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
+        telemetry.addData("State", state);
     }
 
     @Override

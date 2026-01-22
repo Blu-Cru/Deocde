@@ -44,7 +44,8 @@ public class intakeTest extends BluLinearOpMode {
             state = State.IDLE;
         }
 
-        if (driver1.pressedB()){
+        if (gamepad1.b){
+            telemetry.addLine("here");
             new ParallelizeIntakeCommand().schedule();
         }
 
