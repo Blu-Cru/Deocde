@@ -40,8 +40,10 @@ public class Elevator implements BluSubsystem, Subsystem {
     }
     public void turnOffElevatorServo(){
         elevatorServoLeft.disable();
+        elevatorServoRight.disable();
         //always want to write after a disable
         elevatorServoLeft.write();
+        elevatorServoRight.write();
     }
     public void setMiddle(){
         elevatorServoLeft.setPos(MIDDLE_POSITION_LEFT);
@@ -51,21 +53,25 @@ public class Elevator implements BluSubsystem, Subsystem {
     @Override
     public void init() {
         elevatorServoLeft.init();
+        elevatorServoRight.init();
     }
 
     @Override
     public void read() {
         elevatorServoLeft.read();
+        elevatorServoRight.read();
     }
 
     @Override
     public void write() {
         elevatorServoLeft.write();
+        elevatorServoRight.write();
     }
 
     @Override
     public void telemetry(Telemetry telemetry) {
         elevatorServoLeft.telemetry();
+        elevatorServoRight.telemetry();
     }
 
     @Override
