@@ -27,15 +27,15 @@ public class ShooterPIDTuning extends BluLinearOpMode {
            shooter.shootWithVelocity(vel);
         }
         if (gamepad1.x){
-            shooter.leftShooter.setPower(0);
+            shooter.leftShooter.setPower(0.5);
         }
 
         if (gamepad1.y){
-            shooter.middleShooter.setPower(0);
+            shooter.middleShooter.setPower(0.5);
         }
 
         if (gamepad1.b){
-            shooter.rightShooter.setPower(0);
+            shooter.rightShooter.setPower(0.5);
         }
 
     }

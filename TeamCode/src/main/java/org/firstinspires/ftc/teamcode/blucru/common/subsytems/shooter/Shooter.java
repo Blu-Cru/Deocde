@@ -14,11 +14,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double leftP = 0.001,leftI = 0, leftD = 0, leftF =
-            0.000410000067
+    public static double leftP = 0.0015,leftI = 0, leftD = 0, leftF =
+            0.000485
             ;
-    public static double middleP = 0.001,middleI = 0, middleD = 0, middleF = 0.000415500067;
-    public static double rightP = 0.001,rightI = 0, rightD = 0, rightF = 0.000415500067;
+    public static double middleP = 0.0015,middleI = 0, middleD = 0, middleF = 0.00044;
+    public static double rightP = 0.0015,rightI = 0, rightD = 0, rightF = 0.00045;
     public static double limit = 20;
     public static boolean redAlliance = true; //false  for blueAlliance
 
@@ -82,21 +82,11 @@ public class Shooter implements BluSubsystem, Subsystem {
             case AUTO_AIM:
                 Vector2d robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
                 Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                Vector2d leftShooterToRobot = new Vector2d(140/25.4,0).rotate(180 + Math.toRadians(-Robot.getInstance().turret.getAngle()));
-                Vector2d middleShooterToRobot = new Vector2d(0,0).rotate(180 + Math.toRadians(-Robot.getInstance().turret.getAngle()));
-                Vector2d rightShooterToRobot = new Vector2d(-140/25.4,0).rotate(180 + Math.toRadians(-Robot.getInstance().turret.getAngle()));
-                Globals.telemetry.addData("Left Shooter To Bot Vector", robotToGoal.addNotInPlace(turretToRobot).addNotInPlace(leftShooterToRobot));
-                double leftDist = Math.sqrt(robotToGoal.addNotInPlace(turretToRobot).addNotInPlace(leftShooterToRobot).getDist());
-                double middleDist = Math.sqrt(robotToGoal.addNotInPlace(turretToRobot).addNotInPlace(middleShooterToRobot).getDist());
-                double rightDist = Math.sqrt(robotToGoal.addNotInPlace(turretToRobot).addNotInPlace(rightShooterToRobot).getDist());
-                Globals.telemetry.addData("left distance", leftDist);
-                Globals.telemetry.addData("middle distance", middleDist);
-                Globals.telemetry.addData("right distance", rightDist);
-                double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(leftDist);
-                double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(middleDist);
-                double[] rightLerps = ShooterAutoAimInterpolation.interpolateRight(rightDist);
-
-                Globals.telemetry.addData("leftLerps hoodAngle", leftLerps[1]);
+                double dist = Math.sqrt(turretToRobot.addNotInPlace(robotToGoal).getDist());
+                Globals.telemetry.addData("dist", dist);
+                double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(dist);
+                double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
+                double[] rightLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
 
                 leftShooter.setVel(leftLerps[0]);
                 leftShooter.setHoodAngle(leftLerps[1]);
@@ -135,6 +125,13 @@ public class Shooter implements BluSubsystem, Subsystem {
         leftShooter.setVel(vel);
         middleShooter.setVel(vel);
         rightShooter.setVel(vel);
+        state = State.VELOCITY;
+    }
+
+    public void shootWithVelocityIndependent(double leftVel, double middleVel, double rightVel){
+        leftShooter.setVel(leftVel);
+        middleShooter.setVel(middleVel);
+        rightShooter.setVel(rightVel);
         state = State.VELOCITY;
     }
 

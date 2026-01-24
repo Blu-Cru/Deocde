@@ -13,7 +13,9 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
 
     public static double turretAngle = 20;
 
-    public static double vel = 0;
+    public static double leftVel = 0;
+    public static double middleVel = 0;
+    public static double rightVel = 0;
 
     public void initialize(){
         addShooter();
@@ -38,7 +40,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         }
 
         if (driver1.pressedY()){
-            shooter.shootWithVelocity(vel);
+            shooter.shootWithVelocityIndependent(leftVel, middleVel, rightVel);
         }
 
         if (gamepad1.x){
