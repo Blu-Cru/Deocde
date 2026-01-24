@@ -64,7 +64,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
-                drive(-powers[0], -powers[1]);
+                drive(powers[0], powers[1]);
                 break;
             case TURN:
                 // Turn in place to target heading
