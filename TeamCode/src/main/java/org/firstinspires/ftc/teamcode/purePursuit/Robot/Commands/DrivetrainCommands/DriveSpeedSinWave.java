@@ -43,8 +43,8 @@ public class DriveSpeedSinWave extends Command {
     public void periodic() {
         double speed = this.speed + Math.sin(timer.seconds() * 3) * 5;
 
-        double leftVelocity = odom.getLeftVelocity();
-        double rightVelocity = odom.getRightVelocity();
+        double leftVelocity = Odometry.encoderTicksToInches(odom.leftEncoder.getVelocity());
+        double rightVelocity = Odometry.encoderTicksToInches(odom.rightEncoder.getVelocity());
 
         drivetrain.setPower(leftController.calculate(speed, leftVelocity, maxAccel), rightController.calculate(speed, rightVelocity, maxAccel));
 

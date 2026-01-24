@@ -1,79 +1,115 @@
 package org.firstinspires.ftc.teamcode.purePursuit.Robot.Subsystems;
 
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.KalmanFilter;
+import com.ThermalEquilibrium.homeostasis.Filters.FilterAlgorithms.LowPassFilter;
 import com.ThermalEquilibrium.homeostasis.Utils.Vector;
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.GoBildaPinpointDriver;
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.teamcode.purePursuit.CommandFramework.Subsystem;
 import org.firstinspires.ftc.teamcode.purePursuit.Math.Geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.purePursuit.Math.Geometry.Rotation2d;
+import org.firstinspires.ftc.teamcode.purePursuit.Utils.ExtraUtils;
 
 import static org.firstinspires.ftc.teamcode.purePursuit.Utils.ExtraUtils.drawRobot;
 
 public class Odometry extends Subsystem {
-	GoBildaPinpointDriver pinpoint;
 
+	private BNO055IMU imu;
+	public DcMotorEx leftEncoder;
+	public DcMotorEx rightEncoder;
+	private double leftPrev = 0;
+	private double rightPrev = 0;
+	double trackWidth = 35.70453809697589;
 	double velocityX = 0;
-	double velocityY = 0;
 	double velocityTheta = 0;
+	double thetaZeroAngle = 0;
 
 	Vector position = new Vector(3);
 
 	ElapsedTime timer = new ElapsedTime();
+
+	KalmanFilter kf;
+	LowPassFilter lowPassFilter;
+
+	double leftVelocity = 0;
+	double rightVelocity = 0;
+	double leftDelta = 0;
+	double rightDelta = 0;
 	@Override
 	public void initAuto(HardwareMap hwMap) {
-		pinpoint = hwMap.get(GoBildaPinpointDriver.class, "pinpoint");
+		imu = hwMap.get(BNO055IMU.class, "imu");
+		BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
+		parameters.mode = BNO055IMU.SensorMode.NDOF;
+		parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
+		imu.initialize(parameters);
 
-		// Configure the Pinpoint driver
-		// Set encoder resolution - adjust these values based on your specific pods
-		pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-
-		// Set encoder directions - adjust if needed based on your robot
-		pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD,
-									  GoBildaPinpointDriver.EncoderDirection.FORWARD);
-
-		// Reset position and calibrate IMU
-		// Robot must be stationary during initialization
-		pinpoint.resetPosAndIMU();
+		if (Robot.IS_NEW_6wd) {
+			leftEncoder = hwMap.get(DcMotorEx.class, "BackLeft");
+			rightEncoder = hwMap.get(DcMotorEx.class, "BackRight");
+		} else {
+			leftEncoder = hwMap.get(DcMotorEx.class, "FrontLeft");
+			rightEncoder = hwMap.get(DcMotorEx.class, "FrontRight");
+		}
+		kf = new KalmanFilter(0.3,1,3);
+		lowPassFilter = new LowPassFilter(0.6);
 	}
 
 	@Override
 	public void periodic() {
-		// Update the Pinpoint to get latest sensor data
-		pinpoint.update();
+		double left = encoderTicksToInches(leftEncoder.getCurrentPosition());
+		double right = encoderTicksToInches(rightEncoder.getCurrentPosition());
+		leftVelocity = encoderTicksToInches(leftEncoder.getVelocity());
+		rightVelocity = encoderTicksToInches(rightEncoder.getVelocity());
+		velocityX = (leftVelocity + rightVelocity) / 2;
 
-		// Get position from Pinpoint (convert from mm to inches)
-		double x = pinpoint.getPosX(DistanceUnit.INCH);
-		double y = pinpoint.getPosY(DistanceUnit.INCH);
-		double theta = pinpoint.getHeading(AngleUnit.RADIANS);
-
-		// Get velocities from Pinpoint (convert from mm/sec to inches/sec)
-		velocityX = pinpoint.getVelX(DistanceUnit.INCH);
-		velocityY = pinpoint.getVelY(DistanceUnit.INCH);
-		velocityTheta = pinpoint.getHeadingVelocity(UnnormalizedAngleUnit.RADIANS);
-
-		// Update position vector
-		position.set(x, 0);
-		position.set(y, 1);
-		position.set(theta, 2);
-
-		// Dashboard telemetry
-		Dashboard.packet.put("pinpoint x", x);
-		Dashboard.packet.put("pinpoint y", y);
-		Dashboard.packet.put("pinpoint heading", theta);
-		Dashboard.packet.put("pinpoint vx", velocityX);
-		Dashboard.packet.put("pinpoint vy", velocityY);
-		Dashboard.packet.put("pinpoint vtheta", velocityTheta);
-		Dashboard.packet.put("pinpoint status", pinpoint.getDeviceStatus().toString());
-		Dashboard.packet.put("pinpoint frequency", pinpoint.getFrequency());
+		leftDelta = left - leftPrev;
+		rightDelta = right - rightPrev;
+		leftPrev = left;
+		rightPrev = right;
+		double xDelta = (leftDelta + rightDelta) / 2;
+		double yDelta = 0;
+		double thetaDelta = (rightDelta - leftDelta) / (trackWidth);
+		AngularVelocity imuAngularVelocity = imu.getAngularVelocity();
+		double gyroVelocity;
+		if (Robot.IS_NEW_6wd) {
+			gyroVelocity = imuAngularVelocity.zRotationRate;
+		} else {
+			gyroVelocity = imuAngularVelocity.xRotationRate;
+		}
+		velocityTheta = gyroVelocity;
+		Dashboard.packet.put("gyro velocity",gyroVelocity);
+		Dashboard.packet.put("left encoder",leftEncoder.getCurrentPosition());
+		Dashboard.packet.put("right encoder",rightEncoder.getCurrentPosition());
+		Dashboard.packet.put("x angular",imuAngularVelocity.xRotationRate);
+		Dashboard.packet.put("y angular",imuAngularVelocity.yRotationRate);
+		Dashboard.packet.put("z angular",imuAngularVelocity.zRotationRate);
 
 		timer.reset();
 
+		double imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle + thetaZeroAngle);
+
+		Vector nu = new Vector(new double[] {
+				xDelta,
+				yDelta,
+				thetaDelta
+		});
+
+		ExtraUtils.rotate(nu, imuAngle);
+
+		try {
+			position = position.add(nu);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		position.set(imuAngle,2);
+
 		drawRobot(position, Dashboard.packet);
+
 	}
 
 	@Override
@@ -82,17 +118,19 @@ public class Odometry extends Subsystem {
 	}
 
 	public void setEstimate(Vector estimate) {
-		// Set the position on the Pinpoint driver
-		org.firstinspires.ftc.robotcore.external.navigation.Pose2D newPose =
-				new org.firstinspires.ftc.robotcore.external.navigation.Pose2D(
-						DistanceUnit.INCH,
-						estimate.get(0),
-						estimate.get(1),
-						AngleUnit.RADIANS,
-						estimate.get(2)
-				);
-		pinpoint.setPosition(newPose);
+		thetaZeroAngle = estimate.get(2);
 		position = estimate;
+	}
+
+	public static double encoderTicksToInches(double ticks) {
+		double WHEEL_RADIUS ;
+		if (Robot.IS_NEW_6wd) {
+			WHEEL_RADIUS = 3.0708661 / 2;
+		} else {
+			WHEEL_RADIUS = 3.77953 / 2;
+		}
+		double ticksPerRevolution = 28.0 * 13.7;
+		return WHEEL_RADIUS * 2 * Math.PI * 1 * ticks / ticksPerRevolution;
 	}
 
 	public Vector getPosition() {
@@ -110,30 +148,24 @@ public class Odometry extends Subsystem {
 	public Vector getVelocity() {
 		return new Vector(new double[] {
 				velocityX,
-				velocityY,
+				0,
 				velocityTheta
 		});
 	}
 
-	// Legacy methods for compatibility - these may not be meaningful with Pinpoint
-	// but are kept in case they're called elsewhere
 	public double getLeftVelocity() {
-		// Return forward velocity as approximation
-		return velocityX;
+		return leftVelocity;
 	}
 
 	public double getRightVelocity() {
-		// Return forward velocity as approximation
-		return velocityX;
+		return rightVelocity;
 	}
 
 	public double getLeftDelta() {
-		// Return forward delta as approximation
-		return velocityX * timer.seconds();
+		return leftDelta;
 	}
 
 	public double getRightDelta() {
-		// Return forward delta as approximation
-		return velocityX * timer.seconds();
+		return rightDelta;
 	}
 }

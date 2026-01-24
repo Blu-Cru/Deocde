@@ -35,10 +35,10 @@ public class QuasiStaticVelocity extends Command {
     @Override
     public void periodic() {
         double leftPower = Range.clip(drivetrain.getLeftPower(), 0.00, 1);
-        double leftVelocity = odometry.getLeftVelocity();
+        double leftVelocity = Odometry.encoderTicksToInches(odometry.leftEncoder.getVelocity());
 
         double rightPower = Range.clip(drivetrain.getRightPower(), 0.00, 1);
-        double rightVelocity = odometry.getRightVelocity();
+        double rightVelocity = Odometry.encoderTicksToInches(odometry.rightEncoder.getVelocity());
 
         RobotLog.ii("SysID (P/V)", "(" + leftPower + "," + leftVelocity + "),(" + rightPower + "," + rightVelocity + ")");
 

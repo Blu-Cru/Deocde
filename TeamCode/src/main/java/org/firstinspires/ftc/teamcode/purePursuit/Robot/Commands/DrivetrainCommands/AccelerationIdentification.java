@@ -44,8 +44,8 @@ public class AccelerationIdentification extends Command {
     @Override
     public void periodic() {
         double time = timer.seconds();
-        double velocityLeft = odometry.getLeftVelocity();
-        double velocityRight = odometry.getRightVelocity();
+        double velocityLeft = Odometry.encoderTicksToInches(odometry.leftEncoder.getVelocity());
+        double velocityRight = Odometry.encoderTicksToInches(odometry.rightEncoder.getVelocity());
 
         double accelerationLeft = (velocityLeft - velocityLeftPrev) / (time - timePrev);
         double accelerationRight = (velocityRight - velocityRightPrev) / (time - timePrev);
@@ -53,7 +53,7 @@ public class AccelerationIdentification extends Command {
         double leftAccelerationPower = drivetrain.getLeftPower() - (kV * velocityLeft + kS);
         double rightAccelerationPower = drivetrain.getRightPower() - (kV * velocityRight + kS);
 
-        Dashboard.packet.put("Velocity", odometry.getLeftVelocity());
+        Dashboard.packet.put("Velocity", Odometry.encoderTicksToInches(odometry.leftEncoder.getVelocity()));
         Dashboard.packet.put("Acceleration", accelerationLeft);
         Dashboard.packet.put("Velocity Delta", velocityLeft - velocityLeftPrev);
 
