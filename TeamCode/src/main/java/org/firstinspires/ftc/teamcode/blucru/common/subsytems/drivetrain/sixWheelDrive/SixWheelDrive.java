@@ -58,49 +58,51 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
                     double xError = target.getX() - currentPose.getX();
                     double yError = target.getY() - currentPose.getY();
-                    double theta = Math.atan2(yError, xError);
-
+                    double targetAngle = Math.atan2(yError, xError);
                     double distance = Math.hypot(xError, yError);
 
-                    // Check if reached target
-                    if (distance < 2.0) { // Tolerance of 2 inches
-                        currentPathIndex++;
-                        if (currentPathIndex >= path.length) {
-                            switchToIdle();
-                            break;
-                        }
-                        // Update target
-                        target = path[currentPathIndex];
-                        xError = target.getX() - currentPose.getX();
-                        yError = target.getY() - currentPose.getY();
-                        theta = Math.atan2(yError, xError);
-                        distance = Math.hypot(xError, yError);
-                    }
-
-                    // Angle error wrapping
-                    double angleError = theta - currentPose.getH();
+                    // Angle error wrapping (-PI to PI)
+                    double angleError = targetAngle - currentPose.getH();
                     while (angleError > Math.PI)
                         angleError -= 2 * Math.PI;
                     while (angleError <= -Math.PI)
                         angleError += 2 * Math.PI;
 
-                    // Differential Drive Controller with Cosine Trick
-                    // Drives forward while turning towards target, then stops forward once close
+                    // Store for telemetry
+                    lastDistance = distance;
+                    lastAngleError = Math.toDegrees(angleError);
+
+                    // Check if reached target (increased tolerance to 4 inches)
+                    if (distance < 4.0) {
+                        currentPathIndex++;
+                        if (currentPathIndex >= path.length) {
+                            switchToIdle();
+                            break;
+                        }
+                    }
+
+                    // SIMPLIFIED NAIVE CONTROLLER
+                    // Always turn toward target and drive forward
+                    // No backward mode - keep it simple
+
                     double f = 0;
                     double t = 0;
-                    
-                    if (distance < 2.0) {
-                        // Within distance threshold: focus on final angle
-                        f = 0;
-                        t = angleController.calculate(currentPose.getH(), theta);
+
+                    // Turn toward target
+                    t = angleController.calculate(0, angleError);
+
+                    // Drive forward, scaled by how aligned we are (cosine trick)
+                    // cos(0) = 1 (full power when aligned)
+                    // cos(90°) = 0 (no forward when perpendicular)
+                    // cos(180°) = -1 (would drive backward, but we clamp to 0)
+                    double cosScale = Math.cos(angleError);
+
+                    if (cosScale > 0) {
+                        // Only drive forward when target is somewhat in front
+                        f = distanceController.calculate(0, distance) * cosScale;
                     } else {
-                        // Far from target: drive to position while turning
-                        f = distanceController.calculate(0, distance);
-                        t = angleController.calculate(currentPose.getH(), theta);
-                        
-                        // Cosine trick: reduce forward power when angle error is high
-                        double clippedAngleError = Math.max(-Math.PI/2, Math.min(Math.PI/2, angleError));
-                        f *= Math.cos(clippedAngleError);
+                        // Target is behind - just turn, don't drive
+                        f = 0;
                     }
 
                     drive(f, t);
@@ -113,6 +115,18 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         }
 
         super.write();
+    }
+
+    // Debug values for telemetry
+    private double lastDistance = 0;
+    private double lastAngleError = 0;
+
+    public double getLastDistance() {
+        return lastDistance;
+    }
+
+    public double getLastAngleError() {
+        return lastAngleError;
     }
 
     public void teleDrive(Gamepad g1, double tol) {
