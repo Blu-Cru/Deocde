@@ -19,13 +19,15 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private Double targetHeading; // Target heading for turnTo command
     private PurePursuitComputer computer;
 
-    // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but jerkier
-    public static double LOOK_AHEAD_DIST = 5.0;
+    // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but
+    // jerkier
+    public static double LOOK_AHEAD_DIST = 10.5;
     public static double END_TOLERANCE = 2.0;
     public static double HEADING_TOLERANCE = 5.0; // Degrees
     private SixWheelPID pid;
     private double targetX;
-    public SixWheelDrive(){
+
+    public SixWheelDrive() {
         super();
         drivePower = 1;
         path = null;
@@ -35,16 +37,16 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     @Override
-    public void init(){
+    public void init() {
         super.init();
     }
 
-    public void read(){
+    public void read() {
         super.read();
     }
 
-    public void write(){
-        switch(dtState){
+    public void write() {
+        switch (dtState) {
             case IDLE:
                 break;
             case PID:
@@ -52,9 +54,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 if (path != null && path.length > 0) {
                     Point2d endPoint = path[path.length - 1];
                     double distToEnd = Math.sqrt(
-                        Math.pow(localizer.getPose().getX() - endPoint.getX(), 2) +
-                        Math.pow(localizer.getPose().getY() - endPoint.getY(), 2)
-                    );
+                            Math.pow(localizer.getPose().getX() - endPoint.getX(), 2) +
+                                    Math.pow(localizer.getPose().getY() - endPoint.getY(), 2));
 
                     if (distToEnd < END_TOLERANCE) {
                         // Close enough - stop
@@ -63,8 +64,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                     }
                 }
 
-                double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
-                drive(powers[0], powers[1]);
+                double[] powers = computer.computeRotAndXY(path, localizer.getPose(), localizer.getVel(),
+                        LOOK_AHEAD_DIST, pid);
+                drive(powers[0], -powers[1]); // Negate rotation to match TURN convention
                 break;
             case TURN:
                 // Turn in place to target heading
@@ -91,7 +93,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 // Calculate rotation command
-                double rotVel = pid.getHeadingVelToTargetTurnTo(localizer.getPose(), targetHeading, localizer.getVel().getH());
+                double rotVel = pid.getHeadingVelToTargetTurnTo(localizer.getPose(), targetHeading,
+                        localizer.getVel().getH());
                 drive(0, -rotVel); // No linear movement, only rotation
 
                 Globals.telemetry.addData("Turn Target", targetHeading);
@@ -101,45 +104,47 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
             case TELE_DRIVE:
                 break;
             case LINE_TO_X:
-                drive(-pid.lineToX(targetX, localizer.getPose(), localizer.getVel()),0);
+                drive(-pid.lineToX(targetX, localizer.getPose(), localizer.getVel()), 0);
         }
 
         super.write();
     }
 
-    public void teleDrive(Gamepad g1, double tol){
+    public void teleDrive(Gamepad g1, double tol) {
         double x = cubicScaling(g1.left_stick_y);
         double r = cubicScaling(g1.right_stick_x);
 
-        if (Math.abs(x) <= tol){
+        if (Math.abs(x) <= tol) {
             x = 0;
         }
-        if (Math.abs(r) <= tol){
+        if (Math.abs(r) <= tol) {
             r = 0;
         }
 
-        if (x == 0 && r == 0){
-            if (dtState == State.PID){
-                //in pid
+        if (x == 0 && r == 0) {
+            if (dtState == State.PID) {
+                // in pid
             } else {
-                //either stopped driving or idle alr
+                // either stopped driving or idle alr
                 dtState = State.IDLE;
-                drive(0,0);
+                drive(0, 0);
             }
         } else {
             dtState = State.TELE_DRIVE;
-            drive(x,r);
+            drive(x, r);
         }
 
     }
 
-    public void setDrivePower(double power){
+    public void setDrivePower(double power) {
         this.drivePower = power;
     }
-    public double getDrivePower(){
+
+    public double getDrivePower() {
         return drivePower;
     }
-    public void followPath(Point2d[] path){
+
+    public void followPath(Point2d[] path) {
         this.path = path;
         this.targetHeading = null;
         computer.resetLastFoundIndex();
@@ -149,7 +154,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Turn in place to a target heading
-     * @param headingDegrees Target heading in degrees (0 = right, 90 = up, 180 = left, -90 = down)
+     * 
+     * @param headingDegrees Target heading in degrees (0 = right, 90 = up, 180 =
+     *                       left, -90 = down)
      */
     public void turnTo(double headingDegrees) {
         this.targetHeading = headingDegrees;
@@ -159,6 +166,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Check if the turn is complete
+     * 
      * @return true if robot is within HEADING_TOLERANCE of target heading
      */
     public boolean isTurnComplete() {
@@ -180,19 +188,20 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         return Math.abs(headingError) < HEADING_TOLERANCE;
     }
 
-    public void switchToIdle(){
-        drive(0,0);
+    public void switchToIdle() {
+        drive(0, 0);
         dtState = State.IDLE;
     }
 
-    public void setPosition(Pose2d pose){
+    public void setPosition(Pose2d pose) {
         localizer.setPosition(pose);
     }
-    public void setXY(Vector2d xy){
+
+    public void setXY(Vector2d xy) {
         localizer.setPosition(xy.getX(), xy.getY(), localizer.getHeading());
     }
 
-    public void setHeading(double heading){
+    public void setHeading(double heading) {
         localizer.setHeading(heading);
     }
 
@@ -213,15 +222,15 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         super.telemetry(telemetry);
     }
 
-    public double cubicScaling(double value){
+    public double cubicScaling(double value) {
         return 64 / 27.0 * value * value * value;
     }
 
-    public void updatePID(){
+    public void updatePID() {
         pid.updatePID();
     }
 
-    public void lineToX(double x){
+    public void lineToX(double x) {
         targetX = x;
         dtState = State.LINE_TO_X;
     }
