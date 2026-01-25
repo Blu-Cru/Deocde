@@ -213,10 +213,9 @@ public class PurePursuitComputer {
 
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
             SixWheelPID pid, boolean isDrivingBackwards) {
-        double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
-        if (dist < 3){
-            return 0;
-        }
+        // Removed the dist < 3 early return - it was causing heading control to stop
+        // too early, leaving the robot pointed in the wrong direction near the goal.
+        // Linear velocity already has its own STOP_DISTANCE check in SixWheelPID.
         return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);
     }
 

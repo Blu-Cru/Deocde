@@ -18,12 +18,18 @@ public class SixWheelPID {
     // Stop linear movement when this close to goal to prevent oscillation
     public static double STOP_DISTANCE = 2;
 
+    // Minimum linear output to overcome motor deadband and static friction.
+    // At small errors (2-3 inches), the PD output can be too weak (e.g., 0.05) to
+    // actually move the robot, causing it to stop short of the goal. This ensures
+    // the robot keeps moving until it reaches STOP_DISTANCE.
+    public static double MIN_LINEAR_OUTPUT = 0.15;
+
     // Heading-based speed scaling
     public static boolean ENABLE_HEADING_SPEED_SCALING = true;  // Enable/disable cosine scaling
     public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.04, dXY = 0.005;
+    public static double pXY = 0.035, dXY = 0.005;
     public static double pR = 0.025, dR = 0.1;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
@@ -77,8 +83,6 @@ public class SixWheelPID {
 
         double linearVel = xy.calculate(error, -robotVelXY);
 
-        linearVel = Math.min(1, linearVel);
-
         // Apply heading-based speed scaling (cosine scaling)
         if (ENABLE_HEADING_SPEED_SCALING) {
             // Use cosine of heading error to scale speed
@@ -87,6 +91,15 @@ public class SixWheelPID {
             // Ensure minimum speed multiplier
             double speedMultiplier = Math.max(MIN_SPEED_MULTIPLIER, cosineMultiplier);
             linearVel *= speedMultiplier;
+        }
+
+        // Ensure minimum output to overcome motor deadband/friction.
+        // Without this, the robot stops short of the goal because the PD output
+        // becomes too small (e.g., 0.05) to actually move the motors.
+        // Only apply to positive outputs - negative values are intentional damping
+        // from the D term to prevent overshoot during high-speed deceleration.
+        if (linearVel > 0 && linearVel < MIN_LINEAR_OUTPUT) {
+            linearVel = MIN_LINEAR_OUTPUT;
         }
 
         // Store debug values
