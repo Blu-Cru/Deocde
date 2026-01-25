@@ -23,8 +23,8 @@ public class SixWheelPID {
     public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.017, dXY = 0.002;
-    public static double pR = 0.003, dR = 0.005;
+    public static double pXY = 0.038, dXY = 0.01;
+    public static double pR = 0.015, dR = 0.005;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
