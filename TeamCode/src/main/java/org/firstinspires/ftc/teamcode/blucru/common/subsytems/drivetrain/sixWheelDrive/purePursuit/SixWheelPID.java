@@ -23,8 +23,8 @@ public class SixWheelPID {
     public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.035, dXY = 0.014;
-    public static double pR = 0.02, dR = 0.5;
+    public static double pXY = 0.04, dXY = 0.005;
+    public static double pR = 0.025, dR = 0.1;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
@@ -76,6 +76,8 @@ public class SixWheelPID {
         double error = dist;
 
         double linearVel = xy.calculate(error, -robotVelXY);
+
+        linearVel = Math.min(1, linearVel);
 
         // Apply heading-based speed scaling (cosine scaling)
         if (ENABLE_HEADING_SPEED_SCALING) {

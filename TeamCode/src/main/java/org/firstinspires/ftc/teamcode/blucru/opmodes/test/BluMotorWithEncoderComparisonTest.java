@@ -1,18 +1,21 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-//@TeleOp(group = "test")
+@TeleOp(group = "test")
 public class BluMotorWithEncoderComparisonTest extends BluLinearOpMode {
     BluMotorWithEncoder bluMotor;
     DcMotorEx dcMotor;
     @Override
     public void initialize(){
-        bluMotor = new BluMotorWithEncoder("br");
-        dcMotor = hardwareMap.get(DcMotorEx.class, "bl");
+        bluMotor = new BluMotorWithEncoder("BR");
+        bluMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dcMotor = hardwareMap.get(DcMotorEx.class, "FL");
+        bluMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         bluMotor.setPower(0);
         bluMotor.write();
         dcMotor.setPower(0);
@@ -21,9 +24,14 @@ public class BluMotorWithEncoderComparisonTest extends BluLinearOpMode {
     public void periodic(){
         //motors should both head the same way
         bluMotor.read();
-        bluMotor.setPower(0.2);
+        if (gamepad1.a){
+            bluMotor.setPower(0);
+            dcMotor.setPower(0);
+        } else {
+            bluMotor.setPower(1);
+            dcMotor.setPower(1);
+        }
         bluMotor.write();
-        dcMotor.setPower(0.2);
     }
 
     public void telemetry(){

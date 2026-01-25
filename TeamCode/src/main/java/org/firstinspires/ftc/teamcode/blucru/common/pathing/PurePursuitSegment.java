@@ -22,6 +22,8 @@ public class PurePursuitSegment implements PathSegment{
         Globals.telemetry.addData("Last Point", path[path.length-1]);
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         double dist = robotPose.getDistTo(new Pose2d(path[path.length-1].getX(), path[path.length-1].getY(), 0));
+        Globals.telemetry.addData("Delta X", robotPose.getX() - path[path.length - 1].getX());
+        Globals.telemetry.addData("Delta Y", robotPose.getY() - path[path.length - 1].getY());
         Globals.telemetry.addData("Dist", dist);
 
         return dist < 2;

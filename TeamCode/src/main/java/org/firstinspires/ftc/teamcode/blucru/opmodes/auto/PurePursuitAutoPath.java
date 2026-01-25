@@ -40,39 +40,66 @@ public class PurePursuitAutoPath extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                             new Point2d(-45, 52),
-                            new Point2d(-27, 46)
+                            new Point2d(-27, 44)
                     }, 5000)
                     .waitMilliseconds(500)
                     //SHOOT PRELOAD
                     //INTAKE FIRST SET
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
-                            new Point2d(-10, 46)
+                            new Point2d(-27, 44),
+                            new Point2d(-10, 44)
                     }, 5000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(200)
+
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-10, 44),
+                            new Point2d(0, 44),
+                            new Point2d(4, 48)
+                    }, 5000)
+                    .waitMilliseconds(3000)
                     //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-4, 48),
+                            new Point2d(-4, 44),
+                            new Point2d(-27, 44)
                     }, 5000)
                     .waitMilliseconds(1000)
                     //SHOOT FIRST SET
 
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-27, 44),
+                            new Point2d(3,44)
+                    }, 4000)
+                    .addTurnTo(90, 2000)
+                    //OPEN GATE
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(3, 44),
+                            new Point2d(3,46)
+                    }, 4000)
+                    .waitMilliseconds(2000)
+
+
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(3, 48),
+                            new Point2d(3,44)
+                    }, 4000)
+                    .addTurnTo(0, 2000)
                     //INTAKE SECOND SET
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
-                            new Point2d(12.5,46)
+                            new Point2d(3, 44),
+                            new Point2d(12.5,44)
                     }, 4000)
                     .waitMilliseconds(1000)
 
                     //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(12.5, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(12.5, 44),
+                            new Point2d(-27, 44)
                     }, 5000)
                     .waitMilliseconds(500)
                     //SHOOT SECOND SET
+//                    .a
                     .build();
         }
     }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
+import static org.firstinspires.ftc.teamcode.blucru.common.util.Globals.telemetry;
+
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -35,5 +37,8 @@ public class TurnToSegment implements PathSegment{
     @Override
     public void runSegment() {
         //dont do anything, segment already started
+        heading = Robot.getInstance().sixWheelDrivetrain.getPos().getH();
+
+        telemetry.addData("heading", heading);
     }
 }

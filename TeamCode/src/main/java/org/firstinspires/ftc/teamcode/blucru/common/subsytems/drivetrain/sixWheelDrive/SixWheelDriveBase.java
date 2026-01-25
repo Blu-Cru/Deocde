@@ -33,15 +33,19 @@ public class SixWheelDriveBase implements BluSubsystem{
     State dtState;
 
     public SixWheelDriveBase(){
-        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.BRAKE),
-                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE));
+        this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD),
+                new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE),
+                new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD),
+                new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE));
     }
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br){
         dtMotors = new BluMotor[]{fl, fr, bl, br};
         localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
+        dtMotors[0].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtMotors[1].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtMotors[2].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        dtMotors[3].setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     @Override

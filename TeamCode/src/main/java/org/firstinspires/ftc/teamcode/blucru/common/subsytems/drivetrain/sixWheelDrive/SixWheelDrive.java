@@ -64,7 +64,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 double[] powers = computer.computeRotAndXY(path,localizer.getPose(), localizer.getVel(), LOOK_AHEAD_DIST, pid);
-                drive(powers[0], powers[1]);
+                drive(powers[0], -powers[1]);
                 break;
             case TURN:
                 // Turn in place to target heading
@@ -92,7 +92,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
                 // Calculate rotation command
                 double rotVel = pid.getHeadingVelToTargetTurnTo(localizer.getPose(), targetHeading, localizer.getVel().getH());
-                drive(0, -rotVel); // No linear movement, only rotation
+                drive(0, rotVel); // No linear movement, only rotation
 
                 Globals.telemetry.addData("Turn Target", targetHeading);
                 Globals.telemetry.addData("Current Heading", robotHeadingDeg);
