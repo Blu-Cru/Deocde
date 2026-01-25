@@ -24,7 +24,7 @@ public class SixWheelPID {
 
     // PID gains - adjust these via FTC Dashboard for tuning
     public static double pXY = 0.038, dXY = 0.01;
-    public static double pR = 0.015, dR = 0.005;
+    public static double pR = 0.0135, dR = 0.01;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
