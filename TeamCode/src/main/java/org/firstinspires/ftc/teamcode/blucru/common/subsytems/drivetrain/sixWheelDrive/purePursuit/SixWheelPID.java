@@ -29,7 +29,7 @@ public class SixWheelPID {
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
     // Path following improvements
-    public static double Kp_CTE = 0.05; // Cross-track error gain (higher = more aggressive correction)
+    public static double Kp_CTE = 0.02; // Cross-track error gain (higher = more aggressive correction)
     public static double TANGENT_BLEND_DISTANCE = 10.0; // Distance from end to start blending tangent
 
     // Track previous backwards driving state for hysteresis
