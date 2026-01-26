@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.commands;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 
 import java.util.function.BooleanSupplier;
 

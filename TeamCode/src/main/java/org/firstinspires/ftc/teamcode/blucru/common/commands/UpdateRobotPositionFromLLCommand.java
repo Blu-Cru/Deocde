@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.commands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 
 public class UpdateRobotPositionFromLLCommand extends InstantCommand {
 

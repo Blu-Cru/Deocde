@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitDebugData;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.sixWheelDrive.purePursuit.PurePursuitDebugData;
 
 import java.io.BufferedWriter;
 import java.io.File;
