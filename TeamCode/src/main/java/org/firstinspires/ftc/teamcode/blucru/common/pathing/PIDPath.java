@@ -105,6 +105,8 @@ public class PIDPath implements Path {
     }
 
     public boolean failed() {
+        if (segmentIndex >= segments.size())
+            return false; // Path completed successfully
         return segments.get(segmentIndex).failed();
     }
 

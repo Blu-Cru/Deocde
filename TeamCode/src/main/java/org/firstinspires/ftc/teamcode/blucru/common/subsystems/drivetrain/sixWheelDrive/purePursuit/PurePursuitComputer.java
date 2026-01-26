@@ -271,17 +271,39 @@ public class PurePursuitComputer {
                 .toDegrees(Math.atan2(goalPoint.getY() - robotPose.getY(), goalPoint.getX() - robotPose.getX()));
 
         if (distToEnd < SixWheelPID.TANGENT_BLEND_DISTANCE && lastFoundIndex == path.length - 2) {
-            // Smoothly blend from look-ahead heading to segment tangent as distToEnd -> 0
-            double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
-            targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
-            Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
+            // FINISH PHASE:
+            // When we are very close to the end, standard Pure Pursuit with lookahead can
+            // cause orbiting if the lookahead point
+            // is not perfectly coincident with the robot's capabilities.
+            // 1. If we are within a critical distance (e.g. 5 inches), just aim directly
+            // for the end point to settle.
+            // 2. Otherwise, blend the tangent.
+
+            if (distToEnd < 5.0) {
+                // Close range: Point directly at the goal to avoid orbiting/spiraling
+                targetHeadingDeg = Math.toDegrees(Math.atan2(path[path.length - 1].getY() - robotPose.getY(),
+                        path[path.length - 1].getX() - robotPose.getX()));
+                Globals.telemetry.addLine("Heading Mode: DIRECT TO GOAL");
+            } else {
+                // Mid-range approach: Blend standard lookahead with tangent for smooth entry
+                // Smoothly blend from look-ahead heading to segment tangent as distToEnd -> 0
+                double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
+                targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
+                Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
+            }
         } else {
             targetHeadingDeg = lookAheadHeadingDeg;
             Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
         }
 
-        // Apply CTE correction
+        // Apply CTE correction (optional near end, but good for main path)
         targetHeadingDeg += cteCorrection;
+
+        // --- BUG FIX: Adjust target heading for backwards driving ---
+        // If we are driving backwards, the PID needs to face the opposite way
+        if (isDrivingBackwards) {
+            targetHeadingDeg += 180;
+        }
 
         // Calculate final heading error
         double robotHeading = Math.toDegrees(robotPose.getH());
@@ -295,20 +317,18 @@ public class PurePursuitComputer {
             deltaAngle += 360;
         }
 
-        // Adjust for backwards driving
-        if (isDrivingBackwards) {
-            if (deltaAngle > 0) {
-                deltaAngle -= 180;
-            } else {
-                deltaAngle += 180;
-            }
-        }
-
         // Both controllers use the same backwards driving decision and heading error
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards, deltaAngle);
-        // We use a modified version of getHeadingVel that takes an explicit target
-        // heading
-        double rot = pid.getHeadingVelToTargetTurnTo(robotPose, targetHeadingDeg, robotVel.getH());
+
+        // --- BUG FIX: Re-introduce deadzone for rotation calculation ---
+        double rot;
+        if (dist < 0.5) {
+            rot = 0; // Stop jittering/oscillating once we are basically there
+        } else {
+            // We use a modified version of getHeadingVel that takes an explicit target
+            // heading
+            rot = pid.getHeadingVelToTargetTurnTo(robotPose, targetHeadingDeg, robotVel.getH());
+        }
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);

@@ -24,7 +24,7 @@ public class SixWheelPID {
     public static double MIN_SPEED_MULTIPLIER = 0.1; // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.038, dXY = 0.01;
+    public static double pXY = 0.038, dXY = 0.007;
     public static double pR = 0.0135, dR = 0.01;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
@@ -36,7 +36,7 @@ public class SixWheelPID {
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
     // Hysteresis thresholds to prevent rapid toggling
-    public static double BACKWARDS_THRESHOLD = 120.0; // Switch to backwards //prev 100
+    public static double BACKWARDS_THRESHOLD = 140.0; // Switch to backwards //prev 100
     public static double FORWARDS_THRESHOLD = 80.0; // Switch back to forwards
 
     // Debug tracking - stores last calculation values
