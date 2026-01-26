@@ -16,8 +16,8 @@ public class PurePursuitComputer {
     private double dist;
 
     // Dynamic lookahead parameters - adjust via FTC Dashboard
-    public static double MIN_LOOKAHEAD = 2.0;  // Minimum lookahead distance
-    public static double LOOKAHEAD_SCALE_FACTOR = 0.6;  // Scale lookahead by this factor of remaining distance
+    public static double MIN_LOOKAHEAD = 2.0; // Minimum lookahead distance
+    public static double LOOKAHEAD_SCALE_FACTOR = 0.6; // Scale lookahead by this factor of remaining distance
 
     // Debug tracking
     private Point2d lastGoalPoint = new Point2d(0, 0);
@@ -112,9 +112,10 @@ public class PurePursuitComputer {
                 path[path.length - 1]);
 
         // Scale down lookahead as we approach the end for smoother arrival
-        // effectiveLookahead = max(MIN_LOOKAHEAD, min(requestedLookahead, distToGoal * SCALE_FACTOR))
+        // effectiveLookahead = max(MIN_LOOKAHEAD, min(requestedLookahead, distToGoal *
+        // SCALE_FACTOR))
         double effectiveLookahead = Math.max(MIN_LOOKAHEAD,
-                                             Math.min(lookAheadDist, distToGoal * LOOKAHEAD_SCALE_FACTOR));
+                Math.min(lookAheadDist, distToGoal * LOOKAHEAD_SCALE_FACTOR));
         lastEffectiveLookahead = effectiveLookahead;
 
         if (distToGoal < effectiveLookahead) {
@@ -195,10 +196,11 @@ public class PurePursuitComputer {
         // Calculate distance remaining along the path
         // Start from robot position to goal point, then sum remaining segments
         dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
-        dist += findDistBetween2Points(goalPoint, path[lastFoundIndex+1]);
+        dist += findDistBetween2Points(goalPoint, path[lastFoundIndex + 1]);
 
         // Add remaining path segments after the current segment
-        // Start from the next segment (lastFoundIndex + 1) since goalPoint is already on the current segment
+        // Start from the next segment (lastFoundIndex + 1) since goalPoint is already
+        // on the current segment
         // This avoids double-counting part of the current segment
         for (int i = lastFoundIndex + 1; i < path.length - 1; i++) {
             dist += findDistBetween2Points(path[i], path[i + 1]);
@@ -214,7 +216,7 @@ public class PurePursuitComputer {
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
             SixWheelPID pid, boolean isDrivingBackwards) {
         double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
-        if (dist < 3){
+        if (dist < 3) {
             return 0;
         }
         return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);
@@ -235,10 +237,55 @@ public class PurePursuitComputer {
         // Determine backwards driving once, use for both linear and heading control
         boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
 
-        // Calculate heading error for speed scaling
+        // --- Path Following Improvements ---
+
+        // 1. Calculate Segment Tangent
+        // Use the current segment defined by lastFoundIndex
+        Point2d p1 = path[lastFoundIndex];
+        Point2d p2 = path[lastFoundIndex + 1];
+        double segmentAngleRad = Math.atan2(p2.getY() - p1.getY(), p2.getX() - p1.getX());
+        double segmentAngleDeg = Math.toDegrees(segmentAngleRad);
+
+        // 2. Cross-Track Error (CTE) Correction
+        // Distance from point (robot) to line (p1-p2)
+        // formula: |(x2-x1)(y1-y0) - (x1-x0)(y2-y1)| / distance(p1,p2)
+        double dx = p2.getX() - p1.getX();
+        double dy = p2.getY() - p1.getY();
+        double L = Math.sqrt(dx * dx + dy * dy);
+        double cte = ((p2.getX() - p1.getX()) * (p1.getY() - robotPose.getY())
+                - (p1.getX() - robotPose.getX()) * (p2.getY() - p1.getY())) / L;
+
+        // Apply CTE correction to the heading target
+        // This effectively "leans" the robot back towards the path line
+        double cteCorrection = cte * SixWheelPID.Kp_CTE * 57.2958; // Convert to degrees approx (or tune gain
+                                                                   // accordingly)
+
+        // 3. Tangent Blending
+        // As we reach the end of the path, we want to align with the last segment's
+        // tangent
+        double targetHeadingDeg;
+        double distToEnd = dist; // use global 'dist' calculated in findOptimalGoToPoint
+
+        // Calculate standard look-ahead heading
+        double lookAheadHeadingDeg = Math
+                .toDegrees(Math.atan2(goalPoint.getY() - robotPose.getY(), goalPoint.getX() - robotPose.getX()));
+
+        if (distToEnd < SixWheelPID.TANGENT_BLEND_DISTANCE && lastFoundIndex == path.length - 2) {
+            // Smoothly blend from look-ahead heading to segment tangent as distToEnd -> 0
+            double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
+            targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
+            Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
+        } else {
+            targetHeadingDeg = lookAheadHeadingDeg;
+            Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
+        }
+
+        // Apply CTE correction
+        targetHeadingDeg += cteCorrection;
+
+        // Calculate final heading error
         double robotHeading = Math.toDegrees(robotPose.getH());
-        double turnReq = Math.toDegrees(Math.atan2(goalPoint.getY() - robotPose.getY(), goalPoint.getX() - robotPose.getX()));
-        double deltaAngle = turnReq - robotHeading;
+        double deltaAngle = targetHeadingDeg - robotHeading;
 
         // Normalize to [-180, 180]
         while (deltaAngle > 180) {
@@ -259,11 +306,14 @@ public class PurePursuitComputer {
 
         // Both controllers use the same backwards driving decision and heading error
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards, deltaAngle);
-        double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid, isDrivingBackwards);
+        // We use a modified version of getHeadingVel that takes an explicit target
+        // heading
+        double rot = pid.getHeadingVelToTargetTurnTo(robotPose, targetHeadingDeg, robotVel.getH());
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
+        Globals.telemetry.addData("CTE", cte);
         Globals.telemetry.addData("Heading Error", deltaAngle);
         Globals.telemetry.addData("Effective Lookahead", lastEffectiveLookahead);
         Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
@@ -272,9 +322,20 @@ public class PurePursuitComputer {
     }
 
     // Debug getters
-    public Point2d getLastGoalPoint() { return lastGoalPoint; }
-    public double getLastDistanceRemaining() { return lastDistanceRemaining; }
-    public int getLastSegmentIndex() { return lastFoundIndex; }
-    public double getLastEffectiveLookahead() { return lastEffectiveLookahead; }
+    public Point2d getLastGoalPoint() {
+        return lastGoalPoint;
+    }
+
+    public double getLastDistanceRemaining() {
+        return lastDistanceRemaining;
+    }
+
+    public int getLastSegmentIndex() {
+        return lastFoundIndex;
+    }
+
+    public double getLastEffectiveLookahead() {
+        return lastEffectiveLookahead;
+    }
 
 }

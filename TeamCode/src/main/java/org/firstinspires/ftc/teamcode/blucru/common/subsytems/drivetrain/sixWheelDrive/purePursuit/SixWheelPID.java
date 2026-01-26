@@ -28,6 +28,10 @@ public class SixWheelPID {
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
+    // Path following improvements
+    public static double Kp_CTE = 0.05; // Cross-track error gain (higher = more aggressive correction)
+    public static double TANGENT_BLEND_DISTANCE = 10.0; // Distance from end to start blending tangent
+
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
     // Hysteresis thresholds to prevent rapid toggling
