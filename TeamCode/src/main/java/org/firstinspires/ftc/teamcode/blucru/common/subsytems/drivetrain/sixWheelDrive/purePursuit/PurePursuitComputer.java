@@ -216,7 +216,7 @@ public class PurePursuitComputer {
     public double getReqAngleVelTowardsTargetPoint(Pose2d robotPose, Point2d goalPoint, double angleVel,
             SixWheelPID pid, boolean isDrivingBackwards) {
         double dist = findDistBetween2Points(new Point2d(robotPose.getX(), robotPose.getY()), goalPoint);
-        if (dist < 3) {
+        if (dist < 0.5) {
             return 0;
         }
         return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);

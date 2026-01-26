@@ -16,7 +16,8 @@ public class SixWheelPID {
     private PDController xyLineTo;
 
     // Stop linear movement when this close to goal to prevent oscillation
-    public static double STOP_DISTANCE = 2;
+    public static double STOP_DISTANCE = 0.5;
+    public static double kS = 0.08; // Static friction compensation
 
     // Heading-based speed scaling
     public static boolean ENABLE_HEADING_SPEED_SCALING = true;  // Enable/disable cosine scaling
@@ -89,6 +90,11 @@ public class SixWheelPID {
             // Ensure minimum speed multiplier
             double speedMultiplier = Math.max(MIN_SPEED_MULTIPLIER, cosineMultiplier);
             linearVel *= speedMultiplier;
+        }
+
+        // Apply kS to overcome static friction
+        if (Math.abs(linearVel) > 0.001) {
+            linearVel += Math.signum(linearVel) * kS;
         }
 
         // Store debug values

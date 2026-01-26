@@ -10,18 +10,20 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PIDPath implements Path{
+public class PIDPath implements Path {
 
     ArrayList<PathSegment> segments;
     ArrayList<Callback> callbacks;
-    HashMap<Integer, ArrayList<Command>> commands; //each segment has a list of commands
+    HashMap<Integer, ArrayList<Command>> commands; // each segment has a list of commands
     int segmentIndex;
     boolean pathDone;
-    public PIDPath(ArrayList<PathSegment> segments, HashMap<Integer, ArrayList<Command>> commands){
+
+    public PIDPath(ArrayList<PathSegment> segments, HashMap<Integer, ArrayList<Command>> commands) {
         this(segments, commands, new ArrayList<>(segments.size()));
     }
 
-    public PIDPath(ArrayList<PathSegment> segments, HashMap<Integer, ArrayList<Command>> commands, ArrayList<Callback> callbacks){
+    public PIDPath(ArrayList<PathSegment> segments, HashMap<Integer, ArrayList<Command>> commands,
+            ArrayList<Callback> callbacks) {
         this.segments = segments;
         this.callbacks = callbacks;
         this.commands = commands;
@@ -33,24 +35,24 @@ public class PIDPath implements Path{
     public Path start() {
         pathDone = false;
 
-        //start first segment
+        // start first segment
         segments.get(0).startSegment();
         segmentIndex = 0;
 
-        try{
-            //schedule all commands
-            for (Command c: commands.get(segmentIndex)){
+        try {
+            // schedule all commands
+            for (Command c : commands.get(segmentIndex)) {
                 c.schedule();
             }
-        } catch (NullPointerException e){
-            //comes here if the command is null
+        } catch (NullPointerException e) {
+            // comes here if the command is null
             Log.e("PID Path", "error scheduling command, null pointer");
         }
 
-        try{
-            //run callbacks
+        try {
+            // run callbacks
             callbacks.get(segmentIndex).run();
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Log.e("PID Path", "error running callback, was a null pointer");
         }
 
@@ -59,51 +61,50 @@ public class PIDPath implements Path{
 
     @Override
     public void run() {
-        if (isDone()){
-            //it should exit
+        if (isDone()) {
+            // it should exit
             return;
         }
         PathSegment currSegment = segments.get(segmentIndex);
         currSegment.runSegment();
 
-        if (currSegment.isDone()){
-            //increase segment index
+        if (currSegment.isDone()) {
+            // increase segment index
             segmentIndex++;
-            if (isDone()){
-                //exit if done
+            if (isDone()) {
+                // exit if done
                 endSixWheel();
                 return;
             }
 
-            try{
-                //schedule all commands
-                for (Command c: commands.get(segmentIndex)){
+            try {
+                // schedule all commands
+                for (Command c : commands.get(segmentIndex)) {
                     c.schedule();
                 }
-            } catch (Exception e){
-                //comes here if the command is null
+            } catch (Exception e) {
+                // comes here if the command is null
                 Log.e("PID Path", "error scheduling command, " + e.getMessage());
             }
 
-            try{
-                //run callbacks
+            try {
+                // run callbacks
                 callbacks.get(segmentIndex).run();
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("PID Path", "error running callback, " + e.getMessage());
             }
 
-            try{
-                //start path
+            try {
+                // start path
                 segments.get(segmentIndex).startSegment();
-            } catch (Exception e){
+            } catch (Exception e) {
                 Log.e("PID Path", "error running next segment, " + e.getMessage());
             }
-
 
         }
     }
 
-    public boolean failed(){
+    public boolean failed() {
         return segments.get(segmentIndex).failed();
     }
 
@@ -123,9 +124,10 @@ public class PIDPath implements Path{
         Robot.getInstance().sixWheelDrivetrain.switchToIdle();
     }
 
-    public void telemetry(){
+    public void telemetry() {
         Globals.telemetry.addData("Path done: ", isDone());
         Globals.telemetry.addData("Path failed: ", failed());
         Globals.telemetry.addData("Path index", segmentIndex);
+        Globals.telemetry.addData("Path length", segments.size());
     }
 }

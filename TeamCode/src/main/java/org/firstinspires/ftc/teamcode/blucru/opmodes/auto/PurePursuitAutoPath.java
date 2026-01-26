@@ -30,66 +30,71 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+
 @Autonomous
 public class PurePursuitAutoPath extends BluLinearOpMode {
     double closeTurretAngle = 30;
 
-    public class TestingPath extends SixWheelPIDPathBuilder{
+    public class TestingPath extends SixWheelPIDPathBuilder {
 
-        public TestingPath(){
+        public TestingPath() {
             super();
-            this.addPurePursuitPath(new Point2d[]{
-                            new Point2d(-45, 52),
-                            new Point2d(-27, 46)
-                    }, 5000)
+            this.addPurePursuitPath(new Point2d[] {
+                    new Point2d(-45, 52),
+                    new Point2d(-34, 47),
+                    new Point2d(-27, 46)
+            }, 5000)
                     .waitMilliseconds(500)
-                    //SHOOT PRELOAD
-                    //INTAKE FIRST SET
-                    .addPurePursuitPath(new Point2d[]{
+                    // SHOOT PRELOAD
+                    // INTAKE FIRST SET
+                    .addPurePursuitPath(new Point2d[] {
                             new Point2d(-27, 46),
                             new Point2d(-10, 46)
                     }, 5000)
                     .waitMilliseconds(500)
-                    //HEAD BACK
-                    .addPurePursuitPath(new Point2d[]{
+                    // HEAD BACK
+                    .addPurePursuitPath(new Point2d[] {
                             new Point2d(-10, 46),
                             new Point2d(-27, 46)
                     }, 5000)
                     .waitMilliseconds(1000)
-                    //SHOOT FIRST SET
+                    // SHOOT FIRST SET
 
-                    //INTAKE SECOND SET
+                    // INTAKE SECOND SET
 
-                    .addPurePursuitPath(new Point2d[]{
+                    .addPurePursuitPath(new Point2d[] {
                             new Point2d(-27, 46),
-                            new Point2d(12.5,46)
+                            new Point2d(12.5, 46)
                     }, 4000)
                     .waitMilliseconds(1000)
 
-                    //HEAD BACK
-                    .addPurePursuitPath(new Point2d[]{
+                    // HEAD BACK
+                    .addPurePursuitPath(new Point2d[] {
                             new Point2d(12.5, 46),
                             new Point2d(-27, 46)
                     }, 5000)
                     .waitMilliseconds(500)
-                    //SHOOT SECOND SET
+                    // SHOOT SECOND SET
                     .build();
         }
     }
+
     Path currentPath;
 
-    public void initialize(){
+    public void initialize() {
         addSixWheel();
     }
 
-    public void onStart(){
-        sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127+180)));
+    public void onStart() {
+        sixWheel.setPosition(new Pose2d(-45, 52, Math.toRadians(127 + 180)));
         currentPath = new TestingPath().build().start();
     }
 
-    public void periodic(){
+    public void periodic() {
         currentPath.run();
+        if (currentPath instanceof PIDPath) {
+            ((PIDPath) currentPath).telemetry();
+        }
     }
-
 
 }
