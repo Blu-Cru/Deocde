@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class TurnToSegment implements PathSegment{

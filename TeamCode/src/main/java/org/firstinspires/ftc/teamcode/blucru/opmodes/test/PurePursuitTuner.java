@@ -366,7 +366,7 @@ public class PurePursuitTuner extends BluLinearOpMode {
         telemetry.addLine("─── Current Gains (FTC Dashboard) ───");
 
         // Get current PID instance
-        org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID pid = sixWheel
+        org.firstinspires.ftc.teamcode.blucru.common.subsystems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID pid = sixWheel
                 .getPID();
 
         telemetry.addData("pXY (Linear P)", "%.3f", pid.pXY);

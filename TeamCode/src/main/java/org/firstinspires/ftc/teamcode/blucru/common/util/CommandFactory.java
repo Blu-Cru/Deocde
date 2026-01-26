@@ -5,9 +5,9 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.*;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 

@@ -4,9 +4,9 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.Intake;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.IntakeStartCommand;
 
 public class OuttakeCommand extends InstantCommand {
 

@@ -6,18 +6,18 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.elevator.ElevatorUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.SetHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.SetLeftHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.transfer.transferCommands.AllTransferDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.transfer.transferCommands.AllTransferMiddleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsystems.turret.turretCommands.CenterTurretCommand;
 
 @Config
 public class AutonomousTransferCommand extends InstantCommand {
