@@ -26,8 +26,8 @@ public final class PinpointLocalizer implements Localizer {
     public final GoBildaPinpointDriver.EncoderDirection initialParDirection;
     public final GoBildaPinpointDriver.EncoderDirection initialPerpDirection;
 
-    private final Supplier<Double> headingRad;  // REV hub IMU heading (rad)
-    private final Supplier<Double> angVelRad;   // REV hub IMU ang vel (rad/s)
+    private final Supplier<Double> headingRad; // REV hub IMU heading (rad)
+    private final Supplier<Double> angVelRad; // REV hub IMU ang vel (rad/s)
 
     private Pose2d txWorldPinpoint;
     private Pose2d txPinpointRobot = new Pose2d(0, 0, 0);
@@ -37,8 +37,7 @@ public final class PinpointLocalizer implements Localizer {
             double inPerTick,
             Pose2d initialPose,
             Supplier<Double> headingRad,
-            Supplier<Double> angVelRad
-    ) {
+            Supplier<Double> angVelRad) {
         driver = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
 
         this.headingRad = headingRad;
@@ -51,8 +50,7 @@ public final class PinpointLocalizer implements Localizer {
         driver.setOffsets(
                 mmPerTick * PARAMS.parYTicks,
                 mmPerTick * PARAMS.perpXTicks,
-                DistanceUnit.MM
-        );
+                DistanceUnit.MM);
 
         initialParDirection = GoBildaPinpointDriver.EncoderDirection.REVERSED;
         initialPerpDirection = GoBildaPinpointDriver.EncoderDirection.FORWARD;
@@ -85,13 +83,11 @@ public final class PinpointLocalizer implements Localizer {
         txPinpointRobot = new Pose2d(
                 driver.getPosX(DistanceUnit.INCH),
                 driver.getPosY(DistanceUnit.INCH),
-                heading
-        );
+                heading);
 
         Vector2d worldVelocity = new Vector2d(
                 driver.getVelX(DistanceUnit.INCH),
-                driver.getVelY(DistanceUnit.INCH)
-        );
+                driver.getVelY(DistanceUnit.INCH));
 
         // Convert world -> robot frame (RR convention)
         Vector2d robotVelocity = Rotation2d.fromDouble(-heading).times(worldVelocity);

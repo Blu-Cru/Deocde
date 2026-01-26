@@ -13,10 +13,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 public class ImuOrientationTest extends LinearOpMode {
 
     // Change these to match your Control Hub mount
-    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO =
-            RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
-    public static RevHubOrientationOnRobot.UsbFacingDirection USB =
-            RevHubOrientationOnRobot.UsbFacingDirection.UP;
+    public static RevHubOrientationOnRobot.LogoFacingDirection LOGO = RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
+    public static RevHubOrientationOnRobot.UsbFacingDirection USB = RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
     @Override
     public void runOpMode() {
@@ -31,7 +29,8 @@ public class ImuOrientationTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            if (gamepad1.a) imu.resetYaw();
+            if (gamepad1.a)
+                imu.resetYaw();
 
             YawPitchRollAngles ypr = imu.getRobotYawPitchRollAngles();
             AngularVelocity av = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
