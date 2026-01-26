@@ -1,0 +1,21 @@
+# Task: Compare and Merge PurePursuit Modifications
+
+- [x] Identify current branch and colleague's branch <!-- id: 0 -->
+- [x] Compare `purepursuit-jason-refinement-1` and `Michael-purepursuit-1` <!-- id: 1 -->
+    - [x] Find common ancestor <!-- id: 2 -->
+    - [x] List modified files in both branches <!-- id: 3 -->
+    - [x] Identify overlapping "purepursuit" modifications <!-- id: 4 -->
+- [x] Analyze differences in code logic <!-- id: 5 -->
+- [x] Recommend strategy (new branch, merge, etc.) <!-- id: 6 -->
+- [x] Create new branch and perform merge <!-- id: 7 -->
+    - [x] Create branch `purepursuit-jason-michael-1` <!-- id: 8 -->
+    - [x] Merge Michael's changes <!-- id: 9 -->
+    - [x] Resolve conflicts and combine logic <!-- id: 10 -->
+- [x] Verify combined logic with tests <!-- id: 11 -->
+- [x] Create walkthrough <!-- id: 12 -->
+- [x] Expand unit tests for Michael's logic <!-- id: 13 -->
+    - [x] Create MockTelemetry for unit testing <!-- id: 14 -->
+    - [x] Add CTE calculation test <!-- id: 15 -->
+    - [x] Add Tangent Blending test <!-- id: 16 -->
+    - [x] Add Backwards Driving Orientation test <!-- id: 17 -->
+- [x] Migrate artifacts to workspace `.brain` folder <!-- id: 18 -->
