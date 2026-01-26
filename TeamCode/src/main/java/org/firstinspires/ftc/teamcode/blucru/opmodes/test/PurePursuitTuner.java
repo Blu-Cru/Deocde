@@ -132,6 +132,7 @@ public class PurePursuitTuner extends BluLinearOpMode {
     private TuningStage currentStage;
     private Path currentPath;
     private boolean pathRunning;
+    private boolean manualDriveEnabled = false;
 
     // Test paths
     private Point2d[][] testPaths;
@@ -184,23 +185,41 @@ public class PurePursuitTuner extends BluLinearOpMode {
         // CRITICAL: Sync Dashboard PID values with actual controllers
         sixWheel.updatePID();
 
-        // Stage navigation
-        if (driver1.pressedB()) {
-            nextStage();
+        // Manual drive toggle
+        if (driver1.pressedDpadUp()) {
+            manualDriveEnabled = !manualDriveEnabled;
+            if (manualDriveEnabled) {
+                // Cancel any running path when entering manual drive
+                currentPath = null;
+                pathRunning = false;
+                telemetry.speak("Manual drive on");
+            } else {
+                sixWheel.switchToIdle();
+                telemetry.speak("Manual drive off");
+            }
         }
-        if (driver1.pressedX()) {
-            previousStage();
+
+        if (manualDriveEnabled) {
+            sixWheel.teleDrive(gamepad1, 0.05);
+        } else {
+            // Stage navigation
+            if (driver1.pressedB()) {
+                nextStage();
+            }
+            if (driver1.pressedX()) {
+                previousStage();
+            }
+
+            // Run test path
+            if (driver1.pressedA()) {
+                runTestPath();
+            }
         }
 
         // Reset position
         if (driver1.pressedY()) {
             sixWheel.setPosition(new Pose2d(0, 0, 0));
             telemetry.addLine("✓ Position reset to (0, 0, 0)");
-        }
-
-        // Run test path
-        if (driver1.pressedA()) {
-            runTestPath();
         }
 
         // Path execution
@@ -366,7 +385,14 @@ public class PurePursuitTuner extends BluLinearOpMode {
         telemetry.addData("Robot Pos", "X=%.1f, Y=%.1f, H=%.1f°",
                 robotPose.getX(), robotPose.getY(), Math.toDegrees(robotPose.getH()));
 
-        if (pathRunning && currentPath != null) {
+        if (manualDriveEnabled) {
+            telemetry.addLine("═══════════════════════════════");
+            telemetry.addLine("⚠ MANUAL DRIVE ACTIVE ⚠");
+            telemetry.addLine("═══════════════════════════════");
+            telemetry.addLine("L Stick: Move | R Stick: Turn");
+            telemetry.addLine("Y: Reset Pos | Dpad Up: EXIT");
+            telemetry.addLine();
+        } else if (pathRunning && currentPath != null) {
             telemetry.addData("Path Status", "RUNNING");
 
             // Stage-specific telemetry
@@ -415,7 +441,7 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
         telemetry.addLine();
         telemetry.addLine("─── Controls ───");
-        telemetry.addLine("A = Run Path | B = Next | X = Prev | Y = Reset Pos");
+        telemetry.addLine("A: Run Path | B: Next | X: Prev | Y: Reset Pos | Dpad Up: MANUAL");
     }
 
 }
