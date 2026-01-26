@@ -59,10 +59,9 @@ public class SixWheelPID {
         wasDriverBackwards = false;
     }
 
-    public double getLinearVel(double dist, Pose2d robotVel, boolean isDrivingBackwards, double headingErrorDeg){
+    public double getLinearVel(double dist, Pose2d robotPose, Pose2d robotVel, Point2d goalPoint, boolean isDrivingBackwards, double headingErrorDeg){
 
         // Stop moving when very close to goal to prevent oscillation
-        // The D term can overpower the P term at small distances
         if (dist < STOP_DISTANCE) {
             lastLinearError = dist;
             lastLinearPTerm = 0;
@@ -71,32 +70,39 @@ public class SixWheelPID {
             return 0;
         }
 
-        double robotVelXY = Math.sqrt(robotVel.getX() * robotVel.getX() + robotVel.getY() * robotVel.getY());
+        // Project robot velocity onto the vector to the goal point
+        // This is a much better D-term than raw speed because it only dampens progress towards the goal
+        double dx = goalPoint.getX() - robotPose.getX();
+        double dy = goalPoint.getY() - robotPose.getY();
+        double dMag = Math.sqrt(dx * dx + dy * dy);
+        
+        double projectedVel = 0;
+        if (dMag > 0.1) {
+            projectedVel = (robotVel.getX() * dx + robotVel.getY() * dy) / dMag;
+        }
 
         double error = dist;
-
-        double linearVel = xy.calculate(error, -robotVelXY);
+        double linearVel = xy.calculate(error, -projectedVel);
 
         // Apply heading-based speed scaling (cosine scaling)
         if (ENABLE_HEADING_SPEED_SCALING) {
-            // Use cosine of heading error to scale speed
-            // 0° error → 1.0x speed, 90° error → 0.0x speed
-            double cosineMultiplier = Math.abs(Math.cos(Math.toRadians(headingErrorDeg)));
-            // Ensure minimum speed multiplier
-            double speedMultiplier = Math.max(MIN_SPEED_MULTIPLIER, cosineMultiplier);
+            // Use cosine squared of heading error to scale speed for a sharper drop-off
+            // This ensures the robot faces the goal before committing full power
+            double cosine = Math.cos(Math.toRadians(headingErrorDeg));
+            double speedMultiplier = Math.max(MIN_SPEED_MULTIPLIER, cosine * cosine);
             linearVel *= speedMultiplier;
         }
 
         // Store debug values
         lastLinearError = error;
-        lastLinearPTerm = pXY * error;
-        lastLinearDTerm = dXY * (-robotVelXY);
+        lastLinearPTerm = xy.getP() * error;
+        lastLinearDTerm = xy.getD() * (-projectedVel);
         lastLinearOutput = linearVel;
 
         // If driving backwards, negate the linear velocity
         if (isDrivingBackwards) {
             linearVel = -linearVel;
-            lastLinearOutput = linearVel; // Update output after negation
+            lastLinearOutput = linearVel;
         }
 
         return linearVel;
