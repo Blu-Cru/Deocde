@@ -258,7 +258,7 @@ public class PurePursuitComputer {
         }
 
         // Both controllers use the same backwards driving decision and heading error
-        double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards, deltaAngle);
+        double linear = pid.getLinearVel(dist, robotPose, robotVel, goalPoint, isDrivingBackwards, deltaAngle);
         double rot = getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, robotVel.getH(), pid, isDrivingBackwards);
 
         Globals.telemetry.addData("Rot", rot);
