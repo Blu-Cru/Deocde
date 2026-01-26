@@ -234,8 +234,14 @@ public class PurePursuitComputer {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         Globals.telemetry.addData("Target Point", goalPoint);
 
-        // Determine backwards driving once, use for both linear and heading control
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        // Determine backwards driving - lock it when close to goal to prevent rapid
+        // flipping
+        boolean isDrivingBackwards;
+        if (dist > 10.0) {
+            isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        } else {
+            isDrivingBackwards = SixWheelPID.getLastBackwardsState();
+        }
 
         // --- Path Following Improvements ---
 
@@ -256,9 +262,11 @@ public class PurePursuitComputer {
                 - (p1.getX() - robotPose.getX()) * (p2.getY() - p1.getY())) / L;
 
         // Apply CTE correction to the heading target
-        // This effectively "leans" the robot back towards the path line
-        double cteCorrection = cte * SixWheelPID.Kp_CTE * 57.2958; // Convert to degrees approx (or tune gain
-                                                                   // accordingly)
+        // Disable near the end to prevent fighting the settlement
+        double cteCorrection = 0;
+        if (dist > 3.0) {
+            cteCorrection = cte * SixWheelPID.Kp_CTE * 57.2958;
+        }
 
         // 3. Tangent Blending
         // As we reach the end of the path, we want to align with the last segment's
@@ -275,18 +283,18 @@ public class PurePursuitComputer {
             // When we are very close to the end, standard Pure Pursuit with lookahead can
             // cause orbiting if the lookahead point
             // is not perfectly coincident with the robot's capabilities.
-            // 1. If we are within a critical distance (e.g. 5 inches), just aim directly
-            // for the end point to settle.
-            // 2. Otherwise, blend the tangent.
+            // 1. If we are within a critical distance (e.g. 5 inches), use the stable
+            // segment tangent.
+            // This avoids the "atan2 singularity" where overshooting the point by 0.01"
+            // flips the heading 180.
+            // 2. Otherwise, blend the lookahead with the tangent.
 
             if (distToEnd < 5.0) {
-                // Close range: Point directly at the goal to avoid orbiting/spiraling
-                targetHeadingDeg = Math.toDegrees(Math.atan2(path[path.length - 1].getY() - robotPose.getY(),
-                        path[path.length - 1].getX() - robotPose.getX()));
-                Globals.telemetry.addLine("Heading Mode: DIRECT TO GOAL");
+                // Close range: Use stable tangent to finish the move without spinning
+                targetHeadingDeg = segmentAngleDeg;
+                Globals.telemetry.addLine("Heading Mode: STABLE TANGENT");
             } else {
                 // Mid-range approach: Blend standard lookahead with tangent for smooth entry
-                // Smoothly blend from look-ahead heading to segment tangent as distToEnd -> 0
                 double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
                 targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
                 Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
@@ -296,7 +304,7 @@ public class PurePursuitComputer {
             Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
         }
 
-        // Apply CTE correction (optional near end, but good for main path)
+        // Apply CTE correction
         targetHeadingDeg += cteCorrection;
 
         // --- BUG FIX: Adjust target heading for backwards driving ---

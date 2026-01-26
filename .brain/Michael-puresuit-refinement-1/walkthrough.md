@@ -1,17 +1,18 @@
-# Walkthrough - Manual Drive Reset, Path Improvements & Bug Fixes
+# Walkthrough - Manual Drive Reset, Path Improvements & Stability Fixes
 
-I have implemented the manual drive reset mode, improved path following accuracy, and resolved critical robot bugs including stalling, undesired flipping, and end-point circling.
+I have implemented the manual drive reset mode, improved path following accuracy, and resolved critical robot bugs including stalling, undesired flipping, and violent endpoint oscillations.
 
 ## Improvements & Fixes
 
-### 1. 180-Degree Flip Bug (Fixed)
-The robot was performing undesired 180-degree turns when the path direction reversed or when it decided to drive backwards.
-- **Fixed Heading Target**: In `PurePursuitComputer`, I now adjust the target heading by 180 degrees when `isDrivingBackwards` is true. This ensures the robot's rear correctly tracks the goal without trying to flip the body around.
+### 1. Stability & Transition Fixes (NEW)
+The robot was performing undesired 180-degree spins at segment transitions and showing "violent" turning near the end point.
+- **Direction Locking**: Once the robot is within **10.0 inches** of the goal, it now locks its "forwards" or "backwards" decision. This prevents the robot from rapidly flipping its world view if it jitters over the target.
+- **Stable Tangent Approach**: When within **5.0 inches** of the goal, the robot now aligns its heading with the stable **path tangent** instead of pointing directly at the coordinate. This eliminates the "atan2 singularity" where overshooting by 0.01" would cause a 180-degree spin.
+- **Selective CTE**: Cross-Track Error (CTE) correction is now disabled when within **3.0 inches** of the goal to prevent lateral fighting during the final settlement.
 
 ### 2. Point Oscillation & Circling (Fixed)
 The robot was oscillating or driving in circles near the final point.
-- **Finish Phase Logic**: Added a "Direct-to-Goal" mode in `PurePursuitComputer`. When within **5.0 inches** of the target, the robot ignores lookahead scaling and tangent blending to point *directly* at the final coordinate. This prevents the "orbiting" behavior caused by lookahead math singularities at short distances.
-- **Heading Deadzone**: Re-introduced a **0.5" deadzone** for heading correction. Once the robot is within 0.5" of the goal, it stops trying to pivot, preventing high-frequency oscillations.
+- **Heading Deadzone**: Re-introduced a **0.5" deadzone** for heading correction. Once the robot is within 0.5" of the goal, it stops trying to pivot.
 
 ### 3. Stalling & Static Friction Fix
 - **kS (Static Friction Compensation)**: Increased to **0.12** in `SixWheelPID`.
@@ -28,8 +29,7 @@ Added a manual drive toggle accessible via **D-pad Up** at any stage.
 
 ## Verification Results
 - [x] **Project Build**: Successfully completed.
-- [x] **Logic**: Heading target flips for backwards driving; direct-to-goal mode engages at <5" to stop circling.
+- [x] **Logic**: Heading target remains stable even during overshoot; direction is locked near the goal.
 
-render_diffs(file:///c:/Users/micha/Documents/GitHub/Deocde/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/blucru/common/subsystems/drivetrain/sixWheelDrive/SixWheelDrive.java)
 render_diffs(file:///c:/Users/micha/Documents/GitHub/Deocde/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/blucru/common/subsystems/drivetrain/sixWheelDrive/purePursuit/SixWheelPID.java)
 render_diffs(file:///c:/Users/micha/Documents/GitHub/Deocde/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/blucru/common/subsystems/drivetrain/sixWheelDrive/purePursuit/PurePursuitComputer.java)
