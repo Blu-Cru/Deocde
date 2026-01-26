@@ -11,3 +11,4 @@
 - [x] Research segment transition "stuck at 2" issue <!-- id: 8 -->
 - [x] Implement transition fix and verify heading units <!-- id: 9 -->
 - [x] Design and implement root cause fix for stalling (friction/cutoffs) <!-- id: 10 -->
+- [x] Resolve internal END_TOLERANCE conflict causing stall <!-- id: 16 -->
