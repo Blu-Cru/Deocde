@@ -76,8 +76,8 @@ public final class TankDrive {
         public double trackWidthTicks = 7838.6599; // manually calculated, tuner for it was not working
 
         // feedforward parameters (in tick units)
-        public double kS = 1.0973167197332252;
-        public double kV = 0.0005574658354646497;
+        public double kS = 1.0839347339836327;
+        public double kV = 0.0005585696238049696;
         public double kA = 0.00005;
 
         // path profile parameters (in inches)
@@ -264,12 +264,7 @@ public final class TankDrive {
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(
-                hardwareMap,
-                PARAMS.inPerTick,
-                pose,
-                () -> (double) lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS),
-                () -> (double) lazyImu.get().getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate);
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
