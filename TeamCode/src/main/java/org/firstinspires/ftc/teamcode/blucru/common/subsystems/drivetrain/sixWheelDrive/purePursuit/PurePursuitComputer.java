@@ -232,7 +232,8 @@ public class PurePursuitComputer {
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
             SixWheelPID pid) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-        Globals.telemetry.addData("Target Point", goalPoint);
+        if (Globals.telemetry != null)
+            Globals.telemetry.addData("Target Point", goalPoint);
 
         // Determine backwards driving - lock it when close to goal to prevent rapid
         // flipping
@@ -292,16 +293,19 @@ public class PurePursuitComputer {
             if (distToEnd < 5.0) {
                 // Close range: Use stable tangent to finish the move without spinning
                 targetHeadingDeg = segmentAngleDeg;
-                Globals.telemetry.addLine("Heading Mode: STABLE TANGENT");
+                if (Globals.telemetry != null)
+                    Globals.telemetry.addLine("Heading Mode: STABLE TANGENT");
             } else {
                 // Mid-range approach: Blend standard lookahead with tangent for smooth entry
                 double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
                 targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
-                Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
+                if (Globals.telemetry != null)
+                    Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
             }
         } else {
             targetHeadingDeg = lookAheadHeadingDeg;
-            Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
+            if (Globals.telemetry != null)
+                Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
         }
 
         // Apply CTE correction
