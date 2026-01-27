@@ -1,10 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator;
 
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
@@ -20,13 +18,13 @@ public class Elevator implements BluSubsystem, Subsystem {
     private static final double TOP_PURPLE_BLUE = 100;
     private static final double BOTTOM_GREEN_GREEN = 70;
     private static final double TOP_GREEN_GREEN = 140;
-    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorBottom, middleSensorTop, rightSensorBottom, rightSensorTop;
+    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom, rightSensorTop;
     public Elevator(){
         elevatorServo = new BluServo("elevator");
         leftSensorBottom = new BluColorSensor("leftColorSensorBottom");
         leftSensorTop = new BluColorSensor("leftColorSensorTop");
-        middleSensorBottom = new BluColorSensor("middleColorSensorBottom");
-        middleSensorTop = new BluColorSensor("middleColorSensorTop");
+        middleSensorRight = new BluColorSensor("middleColorSensorRight");
+        middleSensorLeft = new BluColorSensor("middleColorSensorLeft");
         rightSensorBottom = new BluColorSensor("rightColorSensorBottom");
         rightSensorTop = new BluColorSensor("rightColorSensorTop");
         setDown();
@@ -67,10 +65,10 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public void updateMiddleBallColor(){
         BallColor targetColor = BallColor.UNKNOWN;
-        middleSensorTop.read();
-        if (middleSensorTop.getBlue() < TOP_PURPLE_BLUE && middleSensorTop.getBlue() > BOTTOM_PURPLE_BLUE){
+        middleSensorLeft.read();
+        if (middleSensorLeft.getBlue() < TOP_PURPLE_BLUE && middleSensorLeft.getBlue() > BOTTOM_PURPLE_BLUE){
             targetColor = BallColor.PURPLE;
-        } else if (middleSensorTop.getGreen() < TOP_GREEN_GREEN && middleSensorTop.getGreen() > BOTTOM_GREEN_GREEN){
+        } else if (middleSensorLeft.getGreen() < TOP_GREEN_GREEN && middleSensorLeft.getGreen() > BOTTOM_GREEN_GREEN){
             targetColor = BallColor.GREEN;
         }
 
@@ -80,10 +78,10 @@ public class Elevator implements BluSubsystem, Subsystem {
             return;
         }
 
-        middleSensorBottom.read();
-        if (middleSensorBottom.getBlue() < TOP_PURPLE_BLUE && middleSensorBottom.getBlue() > BOTTOM_PURPLE_BLUE){
+        middleSensorRight.read();
+        if (middleSensorRight.getBlue() < TOP_PURPLE_BLUE && middleSensorRight.getBlue() > BOTTOM_PURPLE_BLUE){
             targetColor = BallColor.PURPLE;
-        } else if (middleSensorBottom.getGreen() < TOP_GREEN_GREEN && middleSensorBottom.getGreen() > BOTTOM_GREEN_GREEN){
+        } else if (middleSensorRight.getGreen() < TOP_GREEN_GREEN && middleSensorRight.getGreen() > BOTTOM_GREEN_GREEN){
             targetColor = BallColor.GREEN;
         }
         ShooterMotifCoordinator.setMiddleColor(targetColor);

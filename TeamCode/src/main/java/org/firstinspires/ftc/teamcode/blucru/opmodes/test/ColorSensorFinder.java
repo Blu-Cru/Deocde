@@ -16,12 +16,12 @@ public class ColorSensorFinder extends LinearOpMode {
     RevColorSensorV3 sensor6;
 
     public void runOpMode() {
-        sensor1 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor1");
-        sensor2 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor2");
-        sensor3 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor3");
-        sensor4 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor4");
-        sensor5 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor5");
-        sensor6 = hardwareMap.tryGet(RevColorSensorV3.class, "colorSensor6");
+        sensor1 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor1"); //middle left
+        sensor2 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor2"); //left top
+        sensor3 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor3"); //left bottom
+        sensor4 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor4"); //middle right
+        sensor5 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor5"); //right bottom
+        sensor6 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor6"); //right top
 
         waitForStart();
 
