@@ -9,68 +9,55 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
 public class Elevator implements BluSubsystem, Subsystem {
-    private BluServo elevatorServoLeft;
-    private BluServo elevatorServoRight;
+    private BluServo elevatorServo;
     private BluBrushlandLabsColorSensor leftSensor, middleSensor, rightSensor;
-    private static final double DOWN_POSITION = 0.47;//TODO: find positions
-    private static final double UP_POSITION = 0.65;
-    private static final double MIDDLE_POSITION = 0.55;
+    private static final double DOWN_POSITION = 0.01;//TODO: find positions
+    private static final double UP_POSITION = 0.3;
+    private static final double MIDDLE_POSITION = 0.13;
 
     public Elevator(){
-        elevatorServoLeft = new BluServo("elevatorLeft");
-
-        elevatorServoRight = new BluServo("elevatorRight");
+        elevatorServo = new BluServo("elevator");
         setDown();
         write();
     }
 
     public void setUp(){
-        elevatorServoLeft.setPos(UP_POSITION);
-        elevatorServoRight.setPos(UP_POSITION);
+        elevatorServo.setPos(UP_POSITION);
     }
 
     public void setDown(){
-        elevatorServoLeft.setPos(DOWN_POSITION);
-        elevatorServoRight.setPos(DOWN_POSITION);
-
+        elevatorServo.setPos(DOWN_POSITION);
     }
     public boolean ballInElevatorSlot(){
         return leftSensor.ballDetected() || middleSensor.ballDetected() || rightSensor.ballDetected();
     }
     public void turnOffElevatorServo(){
-        elevatorServoLeft.disable();
-        elevatorServoRight.disable();
+        elevatorServo.disable();
         //always want to write after a disable
-        elevatorServoLeft.write();
-        elevatorServoRight.write();
+        elevatorServo.write();
     }
     public void setMiddle(){
-        elevatorServoLeft.setPos(MIDDLE_POSITION);
-        elevatorServoRight.setPos(MIDDLE_POSITION);
+        elevatorServo.setPos(MIDDLE_POSITION);
     }
 
     @Override
     public void init() {
-        elevatorServoLeft.init();
-        elevatorServoRight.init();
+        elevatorServo.init();
     }
 
     @Override
     public void read() {
-        elevatorServoLeft.read();
-        elevatorServoRight.read();
+        elevatorServo.read();
     }
 
     @Override
     public void write() {
-        elevatorServoLeft.write();
-        elevatorServoRight.write();
+        elevatorServo.write();
     }
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        elevatorServoLeft.telemetry();
-        elevatorServoRight.telemetry();
+        elevatorServo.telemetry();
     }
 
     @Override
