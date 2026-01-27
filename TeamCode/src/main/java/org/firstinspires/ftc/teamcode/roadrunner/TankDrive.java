@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.roadrunner;
 
 import androidx.annotation.NonNull;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.AccelConstraint;
 import com.acmerobotics.roadrunner.Action;
@@ -50,6 +48,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.DriveCommandMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.PoseMessage;
 import org.firstinspires.ftc.teamcode.roadrunner.messages.TankCommandMessage;
@@ -74,29 +73,29 @@ public final class TankDrive {
 
         // drive model parameters
         public double inPerTick = 0.0019773788;
-        public double trackWidthTicks = 7838.6599; //manually calculated, tuner for it was not working
+        public double trackWidthTicks = 7838.6599;
 
         // feedforward parameters (in tick units)
-        public double kS =  2.620015192364042;
+        public double kS = 2.620015192364042;
         public double kV = 0.0002567612186786349;
         public double kA = 0.00005;
 
         // path profile parameters (in inches)
-        public double maxWheelVel = 65;//orig 50
-        public double minProfileAccel = -45; //orig -30
-        public double maxProfileAccel = 46; //orig 50
+        public double maxWheelVel = 50;
+        public double minProfileAccel = -30;
+        public double maxProfileAccel = 50;
 
         // turn profile parameters (in radians)
         public double maxAngVel = Math.PI; // shared with path
         public double maxAngAccel = Math.PI;
 
         // path controller gains
-        public double ramseteZeta = 0.52; // more aggressive convergence
-        public double ramseteBBar = 4.5; // positive - stronger correction
+        public double ramseteZeta = 0.7; // in the range (0, 1)
+        public double ramseteBBar = 2.0; // positive
 
         // turn controller gains
-        public double turnGain = 7; // stronger heading correction
-        public double turnVelGain = 0.25; // damping to smooth without blocking
+        public double turnGain = 0.0;
+        public double turnVelGain = 0.0;
     }
 
     public static Params PARAMS = new Params();
@@ -112,6 +111,7 @@ public final class TankDrive {
             ));
     public final AccelConstraint defaultAccelConstraint =
             new ProfileAccelConstraint(PARAMS.minProfileAccel, PARAMS.maxProfileAccel);
+
     public final List<DcMotorEx> leftMotors, rightMotors;
 
     public final LazyImu lazyImu;
@@ -248,32 +248,17 @@ public final class TankDrive {
         }
 
         // TODO: reverse motor directions if needed
-            leftMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
-            leftMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
-
-
+        //   leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
+        leftMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
+        leftMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
-        lazyImu = new LazyHardwareMapImu(
-                hardwareMap,
-                "imu",
-                new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)
-        );
-
-        lazyImu.get().initialize(new IMU.Parameters(
-                new RevHubOrientationOnRobot(PARAMS.logoFacingDirection, PARAMS.usbFacingDirection)
-        ));
+        lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
+                PARAMS.logoFacingDirection, PARAMS.usbFacingDirection));
 
         voltageSensor = hardwareMap.voltageSensor.iterator().next();
 
-        localizer = new PinpointLocalizer(
-                hardwareMap,
-                PARAMS.inPerTick,
-                pose,
-                () -> (double) lazyImu.get().getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS),
-                () -> (double) lazyImu.get().getRobotAngularVelocity(AngleUnit.RADIANS).zRotationRate
-        );
-
+        localizer = new PinpointLocalizer(hardwareMap, PARAMS.inPerTick, pose);
 
         FlightRecorder.write("TANK_PARAMS", PARAMS);
     }
@@ -435,13 +420,10 @@ public final class TankDrive {
             PoseVelocity2dDual<Time> command = new PoseVelocity2dDual<>(
                     Vector2dDual.constant(new Vector2d(0, 0), 3),
                     txWorldTarget.heading.velocity().plus(
-                            -(
-                                    PARAMS.turnGain * localizer.getPose().heading.minus(txWorldTarget.heading.value()) +
-                                            PARAMS.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
-                            )
+                            PARAMS.turnGain * localizer.getPose().heading.minus(txWorldTarget.heading.value()) +
+                            PARAMS.turnVelGain * (robotVelRobot.angVel - txWorldTarget.heading.velocity().value())
                     )
             );
-
             driveCommandWriter.write(new DriveCommandMessage(command));
 
             TankKinematics.WheelVelocities<Time> wheelVels = kinematics.inverse(command);
