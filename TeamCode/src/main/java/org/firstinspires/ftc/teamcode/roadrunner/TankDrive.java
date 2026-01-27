@@ -78,7 +78,7 @@ public final class TankDrive {
         // feedforward parameters (in tick units)
         public double kS = 1.1428018482575584;
         public double kV = 0.0005522834615197689;
-        public double kA = 0.00013;
+        public double kA = 0.00055;  //0.00055
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
