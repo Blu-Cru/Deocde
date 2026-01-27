@@ -10,8 +10,13 @@ public class BluColorSensor implements BluHardwareDevice{
     double red;
     double blue;
     double green;
-    public BluColorSensor(String name){
+    double[] purpleBottomThreshold, purpleTopThreshold, greenBottomThreshold, greenTopThreshold;
+    public BluColorSensor(String name, double[][] thresholds){
         colorSensor = Globals.hwMap.get(RevColorSensorV3.class, name);
+        purpleBottomThreshold = thresholds[0];
+        purpleTopThreshold = thresholds[1];
+        greenBottomThreshold = thresholds[2];
+        greenTopThreshold = thresholds[3];
     }
     @Override
     public void init() {
@@ -44,5 +49,22 @@ public class BluColorSensor implements BluHardwareDevice{
     }
     public double getGreen(){
         return green;
+    }
+
+    public boolean isPurple(){
+        return (red < purpleTopThreshold[0]
+                && red > purpleBottomThreshold[0]
+                && green < purpleTopThreshold[1]
+                && green > purpleBottomThreshold[1]
+                && blue < purpleTopThreshold[2]
+                && blue > purpleBottomThreshold[2]);
+    }
+    public boolean isGreen(){
+        return (red < greenTopThreshold[0]
+                && red > greenBottomThreshold[0]
+                && green < greenTopThreshold[1]
+                && green > greenBottomThreshold[1]
+                && blue < greenTopThreshold[2]
+                && blue > greenBottomThreshold[2]);
     }
 }
