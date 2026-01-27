@@ -73,12 +73,12 @@ public final class TankDrive {
 
         // drive model parameters
         public double inPerTick = 0.0019773788;
-        public double trackWidthTicks = 7838.6599;
+        public double trackWidthTicks = 5629.860174566189;
 
         // feedforward parameters (in tick units)
-        public double kS = 2.620015192364042;
-        public double kV = 0.0002567612186786349;
-        public double kA = 0.00005;
+        public double kS = 1.1428018482575584;
+        public double kV = 0.0005522834615197689;
+        public double kA = 0.00013;
 
         // path profile parameters (in inches)
         public double maxWheelVel = 50;
@@ -249,8 +249,8 @@ public final class TankDrive {
 
         // TODO: reverse motor directions if needed
         //   leftMotors.get(0).setDirection(DcMotorSimple.Direction.REVERSE);
-        leftMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
-        leftMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
+        rightMotors.get(1).setDirection(DcMotor.Direction.REVERSE);
+        rightMotors.get(0).setDirection(DcMotor.Direction.REVERSE);
         // TODO: make sure your config has an IMU with this name (can be BNO or BHI)
         //   see https://ftc-docs.firstinspires.org/en/latest/hardware_and_software_configuration/configuring/index.html
         lazyImu = new LazyHardwareMapImu(hardwareMap, "imu", new RevHubOrientationOnRobot(
