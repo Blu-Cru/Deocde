@@ -41,29 +41,30 @@ public class PurePursuitAutoPath extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[] {
                     new Point2d(-45, 52),
-                    new Point2d(-34, 47),
-                    new Point2d(-27, 46)
+                    new Point2d(-10, 35)
             }, 8000)
                     .waitMilliseconds(500)
                     // SHOOT PRELOAD
+                    .addTurnTo(90, 4000)
                     // INTAKE FIRST SET
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 35),
                             new Point2d(-10, 46)
                     }, 8000)
                     .waitMilliseconds(500)
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-10, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 35)
                     }, 8000)
                     .waitMilliseconds(1000)
                     // SHOOT FIRST SET
 
                     // INTAKE SECOND SET
+                    .addTurnTo(45, 4000)
 
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 35),
                             new Point2d(12.5, 46)
                     }, 8000)
                     .waitMilliseconds(1000)
@@ -71,7 +72,7 @@ public class PurePursuitAutoPath extends BluLinearOpMode {
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(12.5, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 35)
                     }, 8000)
                     .waitMilliseconds(500)
                     // SHOOT SECOND SET
