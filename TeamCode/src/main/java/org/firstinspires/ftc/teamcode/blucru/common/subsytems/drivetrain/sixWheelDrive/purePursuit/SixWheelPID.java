@@ -16,7 +16,7 @@ public class SixWheelPID {
     private PDController xyLineTo;
 
     // Stop linear movement when this close to goal to prevent oscillation
-    public static double STOP_DISTANCE = 1;
+    public static double STOP_DISTANCE = 0.5;
 
     // Heading-based speed scaling
     public static boolean ENABLE_HEADING_SPEED_SCALING = true;  // Enable/disable cosine scaling
@@ -25,7 +25,7 @@ public class SixWheelPID {
     // PID gains - adjust these via FTC Dashboard for tuning
     public static double pXY = 0.038, dXY = 0.008, kS = 0.05;
     public static double pR = 0.0135, dR = 0.01;
-    public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
+    public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.05;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
     // Path following improvements

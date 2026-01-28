@@ -22,7 +22,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but
     // jerkier
     public static double LOOK_AHEAD_DIST = 15.0;
-    public static double END_TOLERANCE = 3.0;
+    public static double END_TOLERANCE = 1.5;
     public static double HEADING_TOLERANCE = 5.0; // Degrees
     private SixWheelPID pid;
     private double targetX;

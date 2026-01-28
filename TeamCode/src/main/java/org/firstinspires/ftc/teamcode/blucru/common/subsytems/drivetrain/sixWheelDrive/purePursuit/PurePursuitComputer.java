@@ -17,7 +17,7 @@ public class PurePursuitComputer {
 
     // Dynamic lookahead parameters - adjust via FTC Dashboard
     public static double MIN_LOOKAHEAD = 2.0; // Minimum lookahead distance
-    public static double LOOKAHEAD_SCALE_FACTOR = 0.6; // Scale lookahead by this factor of remaining distance
+    public static double LOOKAHEAD_SCALE_FACTOR = 0.85; // Scale lookahead by this factor of remaining distance
 
     // Debug tracking
     private Point2d lastGoalPoint = new Point2d(0, 0);
