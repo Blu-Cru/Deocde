@@ -162,6 +162,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     public void switchToMotif(){
         timer.reset();
         limelight.pipelineSwitch(PATTERN_PIPELINE);
+        detectedMotif = false;
     }
 
     @Override
