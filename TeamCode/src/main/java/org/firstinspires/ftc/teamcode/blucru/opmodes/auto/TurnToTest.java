@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-@Autonomous(name = "Odo drift test", group = "auto")
-public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
+@Autonomous(name = "RR turn to test", group = "auto")
+public class TurnToTest extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
     private Action path;
@@ -36,22 +36,7 @@ public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
     private Action buildPath() {
         return drive.actionBuilder(drive.localizer.getPose())
                 .setReversed(false)
-                .lineToX(40)
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToX(-45)
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToX(40)
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToX(-45)
-                .waitSeconds(1)
-                .setReversed(false)
-                .lineToX(40)
-                .waitSeconds(1)
-                .setReversed(true)
-                .lineToX(-45)
+                .turnTo(Math.toRadians(90))
                 .build();
     }
 
@@ -62,8 +47,6 @@ public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
 
         TelemetryPacket packet = new TelemetryPacket();
         com.acmerobotics.dashboard.FtcDashboard dash = com.acmerobotics.dashboard.FtcDashboard.getInstance();
-
-        double lastTime = System.nanoTime();
 
         while (opModeIsActive() && !isStopRequested()) {
 
@@ -164,11 +147,6 @@ public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
             telemetry.addData("X", "%.2f", drive.localizer.getPose().position.x);
             telemetry.addData("Y", "%.2f", drive.localizer.getPose().position.y);
             telemetry.addData("Heading (deg)", "%.1f", headingDeg);
-            double currentTime = System.nanoTime();
-            double loopTimeMs = (currentTime - lastTime) / 1e6;
-            lastTime = currentTime;
-
-            telemetry.addData("Loop Time (ms)", "%.2f", loopTimeMs);
             telemetry.update();
 
             idle();

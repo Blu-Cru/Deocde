@@ -73,10 +73,12 @@ public final class TankDrive {
 
         // drive model parameters
         public double inPerTick = 0.0019773788;
-        public double trackWidthTicks = 5629.860174566189;
+        //track width is 7838 when measured physically
+        //3550 is when tuned with 90 deg turn, not good number
+        public double trackWidthTicks = 5629.860174566189; //5629.860174566189 calculated with angularramplogger, dont know if its accurate
 
-        // feedforward parameters (in tick units)
         public double kS = 1.1428018482575584;
+        // feedforward parameters (in tick units)
         public double kV = 0.0005522834615197689;
         public double kA = 0.00055;  //0.00055
 
@@ -94,7 +96,7 @@ public final class TankDrive {
         public double ramseteBBar = 3.0; // positive
 
         // turn controller gains
-        public double turnGain = 0.0;
+        public double turnGain = 0.5;
         public double turnVelGain = 0.0;
     }
 
