@@ -17,56 +17,56 @@ public class PPFarRedAutoPath extends BluLinearOpMode {
         public TestingPath(){
             super();
             this.addPurePursuitPath(new Point2d[]{
-                            new Point2d(-45, 52),
-                            new Point2d(-10, 17)
+                            new Point2d(56, 22),
+                            //INTAKE FIRST SET
+                            new Point2d(55, 57)
                     }, 5000)
                     .waitMilliseconds(500)
-                    //SHOOT PRELOAD
-                    //INTAKE FIRST SET
-//                    .addTurnTo(0, 1000)
-                    .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10, 17),
-                            new Point2d(-10, 46)
+                            new Point2d(55, 57),
+                            //SHOOT FIRST SET
+                            new Point2d(54, 22)
                     }, 5000)
+                    .waitMilliseconds(1000)
+
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(54,22),
+                            //INTAKE SECOND SET
+                            new Point2d(55,57)
+                    },5000)
                     .waitMilliseconds(500)
-                    //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10, 46),
-                            new Point2d(-10, 17)
+                            new Point2d(55, 57),
+                            //SHOOT SECOND SET
+                            new Point2d(54, 22)
                     }, 5000)
-                    //SHOOT FIRST SET
                     .waitMilliseconds(1000)
 
-                    //INTAKE SECOND SET
-                    .addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10, 17),
-                            new Point2d(12.5,46)
-                    }, 4000)
+                            new Point2d(54,22),
+                            //INTAKE THIRD SET
+                            new Point2d(55,57)
+                    },5000)
+                    .waitMilliseconds(500)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(55, 57),
+                            //SHOOT THIRD SET
+                            new Point2d(54, 22)
+                    }, 5000)
                     .waitMilliseconds(1000)
 
-                    //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(12.5, 46),
-                            new Point2d(-10, 17)
+                            new Point2d(54,22),
+                            //INTAKE FOURTH SET
+                            new Point2d(55,57)
+                    },5000)
+                    .waitMilliseconds(500)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(55, 57),
+                            //SHOOT FOURTH SET
+                            new Point2d(54, 22)
                     }, 5000)
                     .waitMilliseconds(1000)
-                    //SHOOT SECOND SET
-
-                    //PICKUP THIRD SET
-                    .addTurnTo(45,1000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-10,17),
-                            new Point2d(37,46)
-                    }, 5000)
-                    .waitMilliseconds(1000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(37,46),
-                            new Point2d(-10,17)
-                    }, 5000)
-                    .waitMilliseconds(1000)
-                    //SHOOT THIRD SET
                     .build();
         }
     }
@@ -77,7 +77,7 @@ public class PPFarRedAutoPath extends BluLinearOpMode {
     }
 
     public void onStart(){
-        sixWheel.setPosition(new Pose2d(-54, 52, Math.toRadians(127+180)));
+        sixWheel.setPosition(new Pose2d(56, 22, Math.toRadians(90)));
         currentPath = new TestingPath().build().start();
     }
 
