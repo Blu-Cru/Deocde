@@ -14,6 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -42,7 +43,7 @@ public class LimelightRelocalizationTest extends BluLinearOpMode {
             }
         }
         telemetry.addData("Pattern Detected?", llTagDetector.detectedPattern());
-        telemetry.addData("Pattern", Arrays.toString(llTagDetector.getPattern()));
+        telemetry.addData("Pattern", ShooterMotifCoordinator.getMotif());
         telemetry.addData("Pipeline", llTagDetector.getPipeline());
         sixWheel.teleDrive(gamepad1, 0.1);
     }

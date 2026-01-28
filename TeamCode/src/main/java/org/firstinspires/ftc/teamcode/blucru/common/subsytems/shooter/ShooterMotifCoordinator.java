@@ -19,6 +19,7 @@ import java.util.HashMap;
 public class ShooterMotifCoordinator {
     private static HashMap<String, Command> mapper;
     private static BallColor leftColor, middleColor, rightColor;
+    private static MotifPattern motif;
     static{
         mapper = new HashMap<>();
         mapper.put("RED_PURPLE_PURPLE_GREEN_PPG", new SequentialCommandGroup(
@@ -116,8 +117,8 @@ public class ShooterMotifCoordinator {
         ));
     }
 
-    public static Command getOrderToShoot(Alliance alliance, MotifPattern pattern){
-        String key = alliance.toString() + "_" + leftColor.toString() + "_" + middleColor.toString() + "_" + rightColor.toString() + "_" + pattern.toString();
+    public static Command getOrderToShoot(Alliance alliance){
+        String key = alliance.toString() + "_" + leftColor.toString() + "_" + middleColor.toString() + "_" + rightColor.toString() + "_" + motif.toString();
         if (!mapper.containsKey(key)){
             return new SequentialCommandGroup(
                     new AllTransferUpCommand()
@@ -136,6 +137,10 @@ public class ShooterMotifCoordinator {
 
     public static void setRightColor(BallColor color){
         rightColor = color;
+    }
+    public static void setMotif(MotifPattern motif){ShooterMotifCoordinator.motif = motif;}
+    public static MotifPattern getMotif(){
+        return motif;
     }
 
 }
