@@ -306,9 +306,13 @@ public class PurePursuitComputer {
 
         // Both controllers use the same backwards driving decision and heading error
         double linear = pid.getLinearVel(dist, robotVel, isDrivingBackwards, deltaAngle);
-        // We use a modified version of getHeadingVel that takes an explicit target
-        // heading
-        double rot = pid.getHeadingVelToTargetTurnTo(robotPose, targetHeadingDeg, robotVel.getH());
+        
+        // If driving backwards, we want to point the BACK of the robot at the target.
+        // The rotation PID should target the heading opposite to the goal direction.
+        double adjustedTargetHeadingDeg = isDrivingBackwards ? targetHeadingDeg + 180 : targetHeadingDeg;
+        
+        // We use a modified version of getHeadingVel that takes an explicit target heading
+        double rot = pid.getHeadingVelToTargetTurnTo(robotPose, adjustedTargetHeadingDeg, robotVel.getH());
 
         Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);

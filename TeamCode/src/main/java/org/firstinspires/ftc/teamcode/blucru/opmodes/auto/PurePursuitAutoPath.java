@@ -40,28 +40,30 @@ public class PurePursuitAutoPath extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                             new Point2d(-45, 52),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 17)
                     }, 5000)
                     .waitMilliseconds(500)
                     //SHOOT PRELOAD
                     //INTAKE FIRST SET
+//                    .addTurnTo(0, 1000)
+                    .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 17),
                             new Point2d(-10, 46)
                     }, 5000)
                     .waitMilliseconds(500)
                     //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-10, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 17)
                     }, 5000)
-                    .waitMilliseconds(1000)
                     //SHOOT FIRST SET
+                    .waitMilliseconds(1000)
 
                     //INTAKE SECOND SET
-
+                    .addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 17),
                             new Point2d(12.5,46)
                     }, 4000)
                     .waitMilliseconds(1000)
@@ -69,10 +71,17 @@ public class PurePursuitAutoPath extends BluLinearOpMode {
                     //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(12.5, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 17)
                     }, 5000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(1000)
                     //SHOOT SECOND SET
+
+                    //PICKUP THIRD SET
+                    .addTurnTo(45,1000)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(-10,17),
+                            new Point2d(37,46)
+                    }, 5000)
                     .build();
         }
     }

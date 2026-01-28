@@ -16,14 +16,14 @@ public class SixWheelPID {
     private PDController xyLineTo;
 
     // Stop linear movement when this close to goal to prevent oscillation
-    public static double STOP_DISTANCE = 2;
+    public static double STOP_DISTANCE = 1;
 
     // Heading-based speed scaling
     public static boolean ENABLE_HEADING_SPEED_SCALING = true;  // Enable/disable cosine scaling
     public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.038, dXY = 0.01;
+    public static double pXY = 0.038, dXY = 0.008, kS = 0.05;
     public static double pR = 0.0135, dR = 0.01;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.03;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
@@ -80,6 +80,11 @@ public class SixWheelPID {
         double error = dist;
 
         double linearVel = xy.calculate(error, -robotVelXY);
+
+        // Add static friction feedforward
+        if (Math.abs(linearVel) > 0.001) {
+            linearVel += Math.signum(linearVel) * kS;
+        }
 
         // Apply heading-based speed scaling (cosine scaling)
         if (ENABLE_HEADING_SPEED_SCALING) {
@@ -147,6 +152,11 @@ public class SixWheelPID {
         lastHeadingPTerm = pR * deltaAngle;
         lastHeadingDTerm = dR * (-angleVel);
         double headingVel = r.calculate(deltaAngle, -angleVel);
+
+        // Add static friction feedforward for rotation
+        if (Math.abs(headingVel) > 0.001) {
+            headingVel += Math.signum(headingVel) * ffTurnTo;
+        }
         lastHeadingOutput = headingVel;
 
         Globals.telemetry.addData("Robot Heading", robotHeading);
@@ -213,7 +223,14 @@ public class SixWheelPID {
         Globals.telemetry.addData("Target Heading Control", targetHeadingDegrees);
         Globals.telemetry.addData("Delta Angle to Target", deltaAngle);
 
-        return rTurnTo.calculate(deltaAngle, -angleVel);
+        double headingVel = rTurnTo.calculate(deltaAngle, -angleVel);
+
+        // Add feedforward to overcome static friction
+        if (Math.abs(headingVel) > 0.001) {
+            headingVel += Math.signum(headingVel) * ffTurnTo;
+        }
+
+        return headingVel;
     }
     public void updatePID(){
         xy.setPD(pXY, dXY);
