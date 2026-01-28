@@ -18,19 +18,20 @@ public class PPFarRedAutoPath extends BluLinearOpMode {
             super();
             this.addPurePursuitPath(new Point2d[]{
                             new Point2d(56, 22),
+                            new Point2d(45,30),
                             //INTAKE FIRST SET
-                            new Point2d(55, 57)
+                            new Point2d(35, 38)//35,36 when measured with loco test
                     }, 5000)
                     .waitMilliseconds(500)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(55, 57),
+                            new Point2d(35, 38),
                             //SHOOT FIRST SET
-                            new Point2d(54, 22)
+                            new Point2d(53, 22)
                     }, 5000)
+                    .addTurnTo(90,1000)
                     .waitMilliseconds(1000)
-
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(54,22),
+                            new Point2d(53,22),
                             //INTAKE SECOND SET
                             new Point2d(55,57)
                     },5000)
