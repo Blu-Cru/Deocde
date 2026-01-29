@@ -42,7 +42,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
                     new WaitCommand(400),
-                    new TurnTurretToPosFieldCentricCommand(turretAngle)
+                    new TurnTurretToPosCommand(turretAngle)
 
             ).schedule();
         });
