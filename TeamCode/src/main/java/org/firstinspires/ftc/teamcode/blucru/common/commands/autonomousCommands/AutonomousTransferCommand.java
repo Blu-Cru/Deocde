@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 
 @Config
 public class AutonomousTransferCommand extends InstantCommand {
@@ -41,7 +42,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
                     new WaitCommand(400),
-                    new TurnTurretToPosCommand(turretAngle)
+                    new TurnTurretToPosFieldCentricCommand(turretAngle)
 
             ).schedule();
         });

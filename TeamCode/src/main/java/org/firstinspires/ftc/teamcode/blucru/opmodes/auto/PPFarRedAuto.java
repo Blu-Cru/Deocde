@@ -4,20 +4,19 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousAntiJamTransferCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFarAntiJamCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFarCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootAntiJamCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPFarRedAuto extends BluLinearOpMode {
-    double turretAngle = 102; //ROBOT CENTRIC: 103.2
+    double turretAngle = 168; //ROBOT CENTRIC: 103.2
     double shootVeloLeft = 1500; //TODO:tune
     double shootVeloMiddle = 1480;
     double shootVeloRight = 1500;
@@ -39,7 +38,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000) //TODO: TUNE
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarCommand()
+                                new AutonomousShootCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -66,7 +65,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarAntiJamCommand()
+                                new AutonomousShootAntiJamCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(700)
@@ -92,7 +91,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarAntiJamCommand()
+                                new AutonomousShootAntiJamCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(700)
@@ -118,7 +117,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarAntiJamCommand()
+                                new AutonomousShootAntiJamCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(700)
@@ -144,7 +143,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarAntiJamCommand()
+                                new AutonomousShootAntiJamCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(1500)
