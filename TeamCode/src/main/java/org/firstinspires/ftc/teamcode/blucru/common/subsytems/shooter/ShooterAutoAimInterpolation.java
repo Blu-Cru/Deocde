@@ -8,7 +8,7 @@ public class ShooterAutoAimInterpolation {
             12.5, 22, 34.5, 42, 48, 59, 73.5, 76, 83.5, 98, 109.5, 118.5, 130, 142.5
     };
     private static final double[] leftAngles = {
-            26, 26, 26, 28, 36, 36, 38, 42, 46, 46, 46, 47, 48, 46
+            26, 26, 26, 28, 36, 37, 38, 42, 44, 45, 45, 47, 47, 45
     };
     private static final double[] leftVelocities = {
             1000, 1000, 1050, 1050, 1150, 1200, 1250, 1300, 1380, 1440, 1500, 1560, 1660
@@ -18,7 +18,7 @@ public class ShooterAutoAimInterpolation {
             12.5, 22, 34.5, 42, 48, 59, 73.5, 76, 83.5, 98, 109.5, 118.5, 130, 142.5
     };
     private static final double[] middleAngles = {
-            26, 26, 26, 26, 35, 35, 37, 40, 44, 44, 44, 45, 47, 43
+            26, 26, 26, 26, 35, 35, 36, 39, 43, 43, 43, 45, 46, 42
     };
     private static final double[] middleVelocities = {
             1000, 1000, 1050, 1050, 1150, 1200, 1250, 1300, 1380, 1420, 1480, 1560, 1640
@@ -28,7 +28,7 @@ public class ShooterAutoAimInterpolation {
             12.5, 22, 34.5, 42, 48, 54, 73.5, 76, 83.5, 98, 109.5, 118.5, 130, 142.5
     };
     private static final double[] rightAngles = {
-            26, 26, 26, 28, 36, 36, 39, 42, 47, 47, 47, 49, 50, 48
+            26, 26, 26, 28, 36, 37, 39, 42, 45, 46, 46, 49, 49, 47
     };
     private static final double[] rightVelocities = {
             1000, 1000, 1050, 1050, 1150, 1200, 1250, 1300, 1380, 1440, 1500, 1560, 1640
