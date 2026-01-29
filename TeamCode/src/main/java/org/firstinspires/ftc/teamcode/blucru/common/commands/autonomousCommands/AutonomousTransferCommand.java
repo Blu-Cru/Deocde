@@ -28,9 +28,11 @@ public class AutonomousTransferCommand extends InstantCommand {
             new SequentialCommandGroup(
 
                     new IntakeSpitCommand(),
+                    new WaitCommand(300),
                     new ElevatorUpCommand(),
                     new WaitCommand(300),
                     new ElevatorMiddleCommand(),
+                    new WaitCommand(400),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),

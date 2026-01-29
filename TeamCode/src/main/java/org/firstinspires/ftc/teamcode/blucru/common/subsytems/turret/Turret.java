@@ -34,8 +34,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double acceptableError = 0.5;
     public static double powerClip = 0.95;
 
-    public static double MAX_ANGLE = 90;
-    public static double MIN_ANGLE = -90;
+    public static double MAX_ANGLE = 130;
+    public static double MIN_ANGLE = -130;
 
     public static double distFromCenter = 72.35 / 25.4;
 

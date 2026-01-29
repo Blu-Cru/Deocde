@@ -66,7 +66,7 @@ public class PIDPath implements Path{
         PathSegment currSegment = segments.get(segmentIndex);
         currSegment.runSegment();
 
-        if (currSegment.isDone()){
+        if (currSegment.isDone() || currSegment.failed()){
             //increase segment index
             segmentIndex++;
             if (isDone()){
