@@ -30,11 +30,11 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPFarRedAuto extends BluLinearOpMode {
-    double turretAngle = 105; //TODO: tune
+    double turretAngle = 103.2; //TODO: tune
     double shootVeloLeft = 1500; //TODO:tune
     double shootVeloMiddle = 1480;
     double shootVeloRight = 1500;
-    double leftHood = 47;
+    double leftHood = 49;
     double middleHood = 45;
     double rightHood = 49;
     double pickupWallY = 57;
@@ -47,7 +47,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             new Point2d(56, 22),
                             new Point2d(56, 23)
                     }, 100)
-                    .waitMilliseconds(1000) //TODO: TUNE
+                    .waitMilliseconds(2000) //TODO: TUNE
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
@@ -56,9 +56,9 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(56, 23),
-                            new Point2d(45,34),
+                            new Point2d(45,37),
                             //INTAKE FIRST SET
-                            new Point2d(33, 38)//35,36 when measured with loco test
+                            new Point2d(33, 41)//35,36 when measured with loco test
                     }, 5000)
                     .callback(()->{
                         new SequentialCommandGroup(
@@ -66,20 +66,20 @@ public class PPFarRedAuto extends BluLinearOpMode {
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(35, 38),
                             //SHOOT FIRST SET
                             new Point2d(53, 22)
                     }, 5000)
                     .addTurnTo(90,1000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(53,22),
@@ -98,13 +98,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT SECOND SET
                             new Point2d(54, 22)
                     }, 3000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(54,22),
@@ -123,13 +123,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT THIRD SET
                             new Point2d(54, 22)
                     }, 5000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(54,22),
@@ -147,13 +147,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT FOURTH SET
                             new Point2d(54, 22)
                     }, 5000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
                     .build();
         }
     }
@@ -188,7 +188,9 @@ public class PPFarRedAuto extends BluLinearOpMode {
 
     public void periodic(){
         currentPath.run();
+
     }
+
 
 
 }

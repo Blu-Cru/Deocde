@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorD
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
@@ -26,18 +27,18 @@ public class AutonomousTransferCommand extends InstantCommand {
     public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle){
         super(() -> {
             new SequentialCommandGroup(
-
                     new IntakeSpitCommand(),
                     new WaitCommand(300),
                     new ElevatorUpCommand(),
-                    new WaitCommand(300),
-                    new ElevatorMiddleCommand(),
                     new WaitCommand(400),
+                    new ElevatorMiddleCommand(),
+                    new WaitCommand(150),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle),
-                    new WaitCommand(400), //TODO: TUNE WAIT
+                    new WaitCommand(100), //TODO: TUNE WAIT
+                    new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
                     new WaitCommand(200),
                     new TurnTurretToPosCommand(turretAngle)
