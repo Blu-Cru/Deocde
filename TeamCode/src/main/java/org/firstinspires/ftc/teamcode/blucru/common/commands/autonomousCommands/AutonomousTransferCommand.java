@@ -7,6 +7,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
@@ -18,24 +19,27 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCom
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 
 @Config
 public class AutonomousTransferCommand extends InstantCommand {
-    public AutonomousTransferCommand(double vel, double leftAngle, double middleAngle, double rightAngle){
+    public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle){
         super(() -> {
             new SequentialCommandGroup(
+
                     new IntakeSpitCommand(),
-                    new WaitCommand(300),
                     new ElevatorUpCommand(),
-                    new ParallelizeIntakeCommand(),
-                    new ShootWithVelocityCommand(vel),
-                    new WaitCommand(500),
-                    new ElevatorDownCommand(),
+                    new WaitCommand(300),
+                    new ElevatorMiddleCommand(),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle),
-                    new IntakeSpitCommand()
+                    new WaitCommand(400), //TODO: TUNE WAIT
+                    new ParallelizeIntakeCommand(),
+                    new WaitCommand(200),
+                    new TurnTurretToPosCommand(turretAngle)
+
             ).schedule();
         });
     }

@@ -34,7 +34,7 @@ public class CommandFactory {
             case "AutonomousShootCloseCommand":
                 return new AutonomousShootCloseCommand();
             case "AutonomousShootCommand":
-                return new AutonomousShootCommand(); // Verify constructor
+                return new AutonomousShootFarCommand(); // Verify constructor
             case "ShootWithVelocityCommand":
                 return new ShootWithVelocityCommand(args.getDouble(0));
             case "IntakeStartCommand":

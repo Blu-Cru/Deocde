@@ -29,165 +29,56 @@ public class PPCloseRedAuto extends BluLinearOpMode {
         public TestingPath(){
             super();
             this.addPurePursuitPath(new Point2d[]{
-                    new Point2d(-45, 52),
-                    new Point2d(-27, 46)
-            }, 5000)
+                            new Point2d(-45, 52),
+                            new Point2d(-10, 17)
+                    }, 5000)
                     .waitMilliseconds(500)
                     //SHOOT PRELOAD
-                    .callback(() -> {
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        ).schedule();
-                    })
-                    .waitMilliseconds(500)
                     //INTAKE FIRST SET
-
+//                    .addTurnTo(0, 1000)
+                    .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 17),
                             new Point2d(-10, 46)
                     }, 5000)
                     .waitMilliseconds(500)
-                    .callback(() -> {
-                        telemetry.addLine("Here");
-                        new SequentialCommandGroup(
-                                new ElevatorUpCommand(),
-                                new IntakeStopCommand(),
-                                new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new TurnTurretToPosCommand(closeTurretAngle)
-                        ).schedule();
-                    })
-                    .waitMilliseconds(500)
+                    //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-10, 46),
-                            new Point2d(-27, 46)
+                            new Point2d(-10, 17)
                     }, 5000)
-//                    .addTurnTo(0,1000)
-                    .waitMilliseconds(1000)
                     //SHOOT FIRST SET
-                    .callback(() -> {
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        ).schedule();
-                    })
-                    .waitMilliseconds(500)
-                    //INTAKE SECOND SET
+                    .waitMilliseconds(1000)
 
+                    //INTAKE SECOND SET
+                    .addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 46),
+                            new Point2d(-10, 17),
                             new Point2d(12.5,46)
                     }, 4000)
-                    .addTurnTo(0, 3)
                     .waitMilliseconds(1000)
-                    .callback(() -> {
-                        telemetry.addLine("Here");
-                        new SequentialCommandGroup(
-                                new ElevatorUpCommand(),
-                                new IntakeStopCommand(),
-                                new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new TurnTurretToPosCommand(closeTurretAngle)
-                        ).schedule();
-                    })
-                    .waitMilliseconds(3000)
+
+                    //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(12.5, 44),
-                            new Point2d(0,44),
-                            new Point2d(-13.5, 44),
-                            new Point2d(-27, 44)
+                            new Point2d(12.5, 46),
+                            new Point2d(-10, 17)
                     }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1000)
                     //SHOOT SECOND SET
-                    .callback(() -> {
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        ).schedule();
-                    })
-                    .waitMilliseconds(3000)
-                    .addLineToX(10,5)
+
+                    //PICKUP THIRD SET
+                    .addTurnTo(45,1000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-27, 44),
-                            new Point2d(-7, 44),
-                            new Point2d(10, 44)
-                    }, 5000)
-                    .addTurnTo(90, 3000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(10, 44),
-                            new Point2d(10, 49)
-                    }, 5000)
-                    .waitMilliseconds(3000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(10, 49),
-                            new Point2d(10, 44)
+                            new Point2d(-10,17),
+                            new Point2d(37,46)
                     }, 5000)
                     .waitMilliseconds(1000)
-//                    .addTurnTo(0, 2000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(10,44),
-                            new Point2d(37,44)
-                    }, 4000)
-                    //INTAKE THIRD SET
-                    .callback(() -> {
-                        new SequentialCommandGroup(
-                                new ElevatorUpCommand(),
-                                new IntakeStopCommand(),
-                                new WaitCommand(300),
-                                new ElevatorMiddleCommand(),
-                                new WaitCommand(100),
-                                new AllTransferMiddleCommand(),
-                                new LockOnGoalCommand()
-                        ).schedule();
-                    })
-                    .waitMilliseconds(3000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(37, 44),
-                            new Point2d(20, 44),
-                            new Point2d(0, 44),
-                            new Point2d(-15, 44),
-                            new Point2d(-27, 44)
+                            new Point2d(37,46),
+                            new Point2d(-10,17)
                     }, 5000)
-                    .waitMilliseconds(3000)
+                    .waitMilliseconds(1000)
                     //SHOOT THIRD SET
-                    .callback(() -> {
-                        new SequentialCommandGroup(
-                                new AllTransferUpCommand(),
-                                new WaitCommand(300),
-                                new CenterTurretCommand(),
-                                new WaitCommand(300),
-                                new IntakeStartCommand(),
-                                new ElevatorDownCommand(),
-                                new WaitCommand(200),
-                                new AllTransferDownCommand()
-                        ).schedule();
-                    })
-                    .callback(() -> {
-                        telemetry.addLine("Path Ended");
-                    })
                     .build();
         }
     }
