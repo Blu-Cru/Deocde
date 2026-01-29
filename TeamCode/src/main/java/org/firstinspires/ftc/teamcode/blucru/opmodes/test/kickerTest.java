@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@TeleOp(group = "test")
+@TeleOp(group = "test")
 public class kickerTest extends BluLinearOpMode {
 
     public void initialize(){

@@ -16,6 +16,7 @@ public abstract class Hood {
     public Hood(String servoName){
         servo = new BluServo(servoName);
     }
+    public void init(){servo.init();}
 
     public void read(){
         servo.read();
