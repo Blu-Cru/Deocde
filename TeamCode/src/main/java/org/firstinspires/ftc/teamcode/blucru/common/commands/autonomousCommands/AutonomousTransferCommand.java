@@ -28,7 +28,7 @@ public class AutonomousTransferCommand extends InstantCommand {
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeSpitCommand(),
-                    new WaitCommand(300),
+                    new WaitCommand(700),
                     new ElevatorUpCommand(),
                     new WaitCommand(400),
                     new ElevatorMiddleCommand(),
@@ -40,7 +40,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new WaitCommand(300), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
-                    new WaitCommand(200),
+                    new WaitCommand(500),
                     new TurnTurretToPosCommand(turretAngle)
 
             ).schedule();

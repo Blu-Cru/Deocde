@@ -1,30 +1,16 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousAntiJamTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFarAntiJamCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFarCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
@@ -38,15 +24,17 @@ public class PPFarRedAuto extends BluLinearOpMode {
     double leftHood = 49;
     double middleHood = 45;
     double rightHood = 49;
-    double pickupWallY = 57;
 
-    public class TestingPath extends SixWheelPIDPathBuilder{
+    // shifted +3 in Y to keep the same path relative to new start pose
+    double pickupWallY = 60;
 
-        public TestingPath(){
+    public class TestingPath extends SixWheelPIDPathBuilder {
+
+        public TestingPath() {
             super();
             this.addPurePursuitPath(new Point2d[]{
-                            new Point2d(56, 22),
-                            new Point2d(56, 23)
+                            new Point2d(63, 25),
+                            new Point2d(63, 26)
                     }, 100)
                     .waitMilliseconds(2000) //TODO: TUNE
                     .callback(() -> {
@@ -56,12 +44,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(56, 23),
-                            new Point2d(45,37),
-                            //INTAKE FIRST SET
-                            new Point2d(33, 41)//35,36 when measured with loco test
+                            new Point2d(63, 26),
+                            new Point2d(52, 40),
+                            // INTAKE FIRST SET
+                            new Point2d(40, 44) // 35,36 when measured with loco test
                     }, 5000)
-                    .callback(()->{
+                    .waitMilliseconds(400)
+                    .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
@@ -69,99 +58,103 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(35, 38),
-                            //SHOOT FIRST SET
-                            new Point2d(53, 22)
+                            new Point2d(42, 41),
+                            // SHOOT FIRST SET
+                            new Point2d(60, 23)
                     }, 2000)
-                    .addTurnTo(90,1000)
+                    .addTurnTo(90, 1000)
                     .waitMilliseconds(800)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarCommand()
+                                new AutonomousShootFarAntiJamCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(700)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(53,22),
-                            //INTAKE SECOND SET
-                            new Point2d(55,pickupWallY)
-                    },1200)
-                    .callback(()->{
-                        new SequentialCommandGroup(
-                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
-                        ).schedule();
-                    })
+                            new Point2d(60, 23),
+                            // INTAKE SECOND SET
+                            new Point2d(62, pickupWallY)
+                    }, 1200)
                     .waitMilliseconds(500)
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                        ).schedule();
+                    })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(55, pickupWallY),
-                            //SHOOT SECOND SET
-                            new Point2d(54, 22)
+                            new Point2d(62, pickupWallY),
+                            // SHOOT SECOND SET
+                            new Point2d(61, 23)
                     }, 3000)
-                    .waitMilliseconds(1500)
+
+                    .waitMilliseconds(2000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarCommand()
+                                new AutonomousShootFarAntiJamCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1200)
+                    .waitMilliseconds(700)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(54,22),
-                            //INTAKE THIRD SET
-                            new Point2d(55,pickupWallY)
-                    },1200)
-                    .callback(()->{
-                        new SequentialCommandGroup(
-                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
-                        ).schedule();
-                    })
-                    .waitMilliseconds(1000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(55, pickupWallY),
-                            //SHOOT THIRD SET
-                            new Point2d(54, 22)
-                    }, 5000)
-                    .waitMilliseconds(1500)
+                            new Point2d(61, 23),
+                            // INTAKE THIRD SET
+                            new Point2d(62, pickupWallY)
+                    }, 1200)
+                    .waitMilliseconds(500)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarCommand()
+                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
-                    .waitMilliseconds(1200)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(62, pickupWallY),
+                            // SHOOT THIRD SET
+                            new Point2d(61, 23)
+                    }, 3000)
+
+                    .waitMilliseconds(2000)
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new AutonomousShootFarAntiJamCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(700)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(54,22),
-                            //INTAKE FOURTH SET
-                            new Point2d(55,pickupWallY)
-                    },1200)
-                    .callback(()->{
-                        new SequentialCommandGroup(
-                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
-                        ).schedule();
-                    })
-                    .waitMilliseconds(1000)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(55, pickupWallY),
-                            //SHOOT FOURTH SET
-                            new Point2d(54, 22)
-                    }, 5000)
-                    .waitMilliseconds(1500)
+                            new Point2d(61, 23),
+                            // INTAKE FOURTH SET
+                            new Point2d(62, pickupWallY)
+                    }, 1200)
+                    .waitMilliseconds(500)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootFarCommand()
+                                new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                        ).schedule();
+                    })
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(62, pickupWallY),
+                            // SHOOT FOURTH SET
+                            new Point2d(61, 23)
+                    }, 5000)
+
+                    .waitMilliseconds(2000)
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new AutonomousShootFarAntiJamCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(1500)
                     .build();
         }
     }
+
     Path currentPath;
 
-    public void initialize(){
+    public void initialize() {
         robot.clear();
         addSixWheel();
         addIntake();
@@ -169,7 +162,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
         addShooter();
         addTurret();
         addTransfer();
-        shooter.setHoodAngleIndependent(47,45,49);
+        shooter.setHoodAngleIndependent(47, 45, 49);
         elevator.setMiddle();
         elevator.write();
         transfer.setAllMiddle();
@@ -181,18 +174,14 @@ public class PPFarRedAuto extends BluLinearOpMode {
         intake.resetEncoder();
     }
 
-    public void onStart(){
-        shooter.shootWithVelocityIndependent(1500, 1480,1500);
+    public void onStart() {
+        shooter.shootWithVelocityIndependent(1500, 1480, 1500);
         turret.setAngle(turretAngle);
-        sixWheel.setPosition(new Pose2d(56, 22, Math.toRadians(90)));
+        sixWheel.setPosition(new Pose2d(63, 25, Math.toRadians(90)));
         currentPath = new TestingPath().build().start();
     }
 
-    public void periodic(){
+    public void periodic() {
         currentPath.run();
-
     }
-
-
-
 }

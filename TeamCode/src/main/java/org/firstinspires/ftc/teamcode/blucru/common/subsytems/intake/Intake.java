@@ -151,6 +151,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public void telemetry(Telemetry telemetry) {
         motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
+        telemetry.addData("Power", motor.getPower());
         telemetry.addData("State", state);
     }
 
