@@ -16,11 +16,12 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCom
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 
 @Config
 public class AutonomousAntiJamTransferCommand extends InstantCommand {
     //used so that it only lowers elevator down fully once the bot leaves intaking zone, prevents jams
-    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle){
+    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle, double FieldCentricTurretAngle){
         super(() -> {
             new SequentialCommandGroup(
                     new ElevatorDownCommand(),
@@ -39,7 +40,7 @@ public class AutonomousAntiJamTransferCommand extends InstantCommand {
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
                     new WaitCommand(400),
-                    new TurnTurretToPosCommand(turretAngle)
+                    new TurnTurretToPosFieldCentricCommand(FieldCentricTurretAngle)
 
             ).schedule();
         });
