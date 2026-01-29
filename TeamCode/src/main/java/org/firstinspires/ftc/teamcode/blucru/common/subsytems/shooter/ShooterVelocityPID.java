@@ -5,9 +5,6 @@ import com.arcrobotics.ftclib.controller.PIDController;
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 public class ShooterVelocityPID{
-    double p;
-    double i;
-    double d;
     double f;
     PIDController controller;
 

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStart
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@TeleOp(group = "test")
+@TeleOp(group = "test")
 public class intakeTest extends BluLinearOpMode {
 
     public enum State{
@@ -27,32 +27,31 @@ public class intakeTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
         addIntake();
-        addElevator();
+        /*addElevator();
         elevator.setUp();
         elevator.write();
         elevator.setDown();
         elevator.write();
         state = State.IDLE;
-        channel = hardwareMap.digitalChannel.get("aligner");
+        channel = hardwareMap.digitalChannel.get("aligner");*/
     }
 
     public void periodic(){
         if (driver1.pressedA()){
             new SequentialCommandGroup(
-                    new IntakeStartCommand(),
-                    new ElevatorDownCommand()
+                    new IntakeStartCommand()
             ).schedule();
             state = State.IDLE;
         }
 
-        if (driver1.pressedB()){
+        if (gamepad1.b){
+            telemetry.addLine("here");
             new ParallelizeIntakeCommand().schedule();
         }
 
         if (driver1.pressedY()){
             new SequentialCommandGroup(
-                    new IntakeStopCommand(),
-                    new ElevatorUpCommand()
+                    new IntakeStopCommand()
             ).schedule();
             state = State.IDLE;
         }
