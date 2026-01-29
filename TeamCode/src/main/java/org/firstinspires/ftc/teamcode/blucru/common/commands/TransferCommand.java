@@ -32,10 +32,8 @@ public class TransferCommand extends SequentialCommandGroup { // 1. Extend Seque
                 new ElevatorUpCommand(),
                 new WaitCommand(400),
                 new ElevatorMiddleCommand(),
-                new WaitCommand(150),
+                new WaitCommand(250),
                 new AllTransferMiddleCommand(),
-                new WaitCommand(300),
-
                 new ConditionalCommand(
                         new LockOnGoalCommand(),
                         new CenterTurretCommand(),
