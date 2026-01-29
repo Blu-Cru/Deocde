@@ -37,7 +37,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle),
-                    new WaitCommand(100), //TODO: TUNE WAIT
+                    new WaitCommand(300), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
                     new WaitCommand(200),

@@ -27,7 +27,7 @@ public class AutonomousShootFarCommand extends InstantCommand {
                         new CenterTurretCommand(),
                         new WaitCommand(400),
                         new IntakeStartCommand(),
-                        new ElevatorMiddleCommand(),
+                        new ElevatorDownCommand(),
                         new AllTransferDownCommand()
                 ).schedule();}
         );

@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPFarRedAuto extends BluLinearOpMode {
-    double turretAngle = 103.2; //TODO: tune
+    double turretAngle = 103.2; //ROBOT CENTRIC: 103.2
     double shootVeloLeft = 1500; //TODO:tune
     double shootVeloMiddle = 1480;
     double shootVeloRight = 1500;
@@ -86,11 +86,11 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             new Point2d(53,22),
                             //INTAKE SECOND SET
                             new Point2d(55,pickupWallY)
-                    },1500)
+                    },1200)
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(500)
@@ -111,11 +111,11 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             new Point2d(54,22),
                             //INTAKE THIRD SET
                             new Point2d(55,pickupWallY)
-                    },1500)
+                    },1200)
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -136,11 +136,11 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             new Point2d(54,22),
                             //INTAKE FOURTH SET
                             new Point2d(55,pickupWallY)
-                    },1500)
+                    },1200)
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
