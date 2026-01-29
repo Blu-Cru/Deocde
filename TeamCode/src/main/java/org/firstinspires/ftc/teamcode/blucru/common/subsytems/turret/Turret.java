@@ -82,7 +82,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
-                setFieldCentricPosition(
+                setFieldCentricPositionAutoAim(
                         turretTargetDeg,
                         Math.toDegrees(
                                 Robot.getInstance().sixWheelDrivetrain.getPos().getH()
@@ -125,9 +125,15 @@ public class Turret implements BluSubsystem, Subsystem {
         state = State.MANUAL;
     }
 
-    public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
+    public void setFieldCentricPositionAutoAim(double targetHeading, double robotHeading, boolean switchState) {
         setAngle(180 - targetHeading - robotHeading, switchState);
     }
+
+    public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
+        setAngle(180 - targetHeading + robotHeading, switchState);
+    }
+
+
 
     public void lockOnGoal() {
         state = State.LOCK_ON_GOAL;

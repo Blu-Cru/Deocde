@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPFarRedAuto extends BluLinearOpMode {
-    double turretAngle = 103.2; //ROBOT CENTRIC: 103.2
+    double turretAngle = 102; //ROBOT CENTRIC: 103.2
     double shootVeloLeft = 1500; //TODO:tune
     double shootVeloMiddle = 1480;
     double shootVeloRight = 1500;
