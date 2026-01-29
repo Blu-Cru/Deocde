@@ -64,7 +64,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(300)
@@ -99,13 +99,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT SECOND SET
                             new Point2d(54, 22)
                     }, 3000)
-                    .waitMilliseconds(800)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1200)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(54,22),
@@ -124,13 +124,13 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT THIRD SET
                             new Point2d(54, 22)
                     }, 5000)
-                    .waitMilliseconds(800)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1200)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(54,22),
@@ -149,7 +149,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             //SHOOT FOURTH SET
                             new Point2d(54, 22)
                     }, 5000)
-                    .waitMilliseconds(800)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootFarCommand()
