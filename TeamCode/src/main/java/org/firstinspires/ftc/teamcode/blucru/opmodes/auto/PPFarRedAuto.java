@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousAntiJamTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFarCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
@@ -63,7 +64,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(300)
@@ -71,7 +72,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                             new Point2d(35, 38),
                             //SHOOT FIRST SET
                             new Point2d(53, 22)
-                    }, 5000)
+                    }, 2000)
                     .addTurnTo(90,1000)
                     .waitMilliseconds(800)
                     .callback(() -> {
@@ -89,7 +90,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(500)
@@ -114,7 +115,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -139,7 +140,8 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood, turretAngle)                        ).schedule();
+                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngle)
+                        ).schedule();
                     })
                     .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{

@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.IdleShooterCommand;
@@ -26,7 +27,7 @@ public class AutonomousShootFarCommand extends InstantCommand {
                         new CenterTurretCommand(),
                         new WaitCommand(400),
                         new IntakeStartCommand(),
-                        new ElevatorDownCommand(),
+                        new ElevatorMiddleCommand(),
                         new AllTransferDownCommand()
                 ).schedule();}
         );
