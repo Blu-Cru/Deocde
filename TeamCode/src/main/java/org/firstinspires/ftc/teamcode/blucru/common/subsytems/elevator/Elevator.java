@@ -12,12 +12,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServoRight;
     private BluBrushlandLabsColorSensor leftSensor, middleSensor, rightSensor;
     private static final double DOWN_POSITION_LEFT = 0.47;//TODO: find positions
-    private static final double UP_POSITION_LEFT = 0.52;
-    private static final double MIDDLE_POSITION_LEFT = 0.65;
+    private static final double UP_POSITION_LEFT = 0.65;
+    private static final double MIDDLE_POSITION_LEFT = 0.51;
 
     private static final double DOWN_POSITION_RIGHT = 0.47;//TODO: find positions
-    private static final double UP_POSITION_RIGHT = 0.52;
-    private static final double MIDDLE_POSITION_RIGHT = 0.65;
+    private static final double UP_POSITION_RIGHT = 0.65;
+    private static final double MIDDLE_POSITION_RIGHT = 0.52;
 
     public Elevator(){
         elevatorServoLeft = new BluServo("elevatorLeft");
