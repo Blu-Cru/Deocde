@@ -227,7 +227,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_x*0.5);
+            turret.setPower(gamepad2.right_stick_x*0.2);
         }
 
 
