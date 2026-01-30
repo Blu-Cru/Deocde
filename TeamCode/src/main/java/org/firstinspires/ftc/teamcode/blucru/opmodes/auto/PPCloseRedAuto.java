@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousAntiJamTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootAntiJamCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
@@ -46,7 +47,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     //SHOOT PRELOAD
                     .callback(()->{
                         new SequentialCommandGroup(
-                                new AutonomousShootAntiJamCommand()
+                                new AutonomousShootCommand()
                         ).schedule();
                     })
                     //INTAKE FIRST SET
@@ -60,7 +61,9 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(1250, 1250, 1250),
-                            new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngleFirst)
+                            new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                            new WaitCommand(300),
+                            new TurnTurretToPosCommand(turretAngleSecond)
                         ).schedule();
                     })
                     .waitMilliseconds(500)
@@ -74,7 +77,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(1000)
                     .callback(()->{
                         new SequentialCommandGroup(
-                                new AutonomousShootAntiJamCommand()
+                                new AutonomousShootCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -89,7 +92,10 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(1250, 1250, 1250),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngleSecond)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(300),
+                                new TurnTurretToPosCommand(turretAngleSecond)
+
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -102,7 +108,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     //SHOOT SECOND SET
                     .callback(()->{
                         new SequentialCommandGroup(
-                                new AutonomousShootAntiJamCommand()
+                                new AutonomousShootCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -117,7 +123,9 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .callback(()->{
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(1250, 1250, 1250),
-                                new AutonomousAntiJamTransferCommand(leftHood, middleHood, rightHood, turretAngleSecond)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(300),
+                                new TurnTurretToPosCommand(turretAngleSecond)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)

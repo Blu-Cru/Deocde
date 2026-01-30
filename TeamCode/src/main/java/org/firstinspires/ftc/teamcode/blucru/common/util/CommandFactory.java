@@ -39,14 +39,7 @@ public class CommandFactory {
                 return new IntakeStartCommand();
             case "ElevatorDownCommand":
                 return new ElevatorDownCommand();
-            case "AutonomousTransferCommand":
-                // 850, 26, 28, 26
-                return new AutonomousTransferCommand(
-                        args.getDouble(0),
-                        args.getDouble(1),
-                        args.getDouble(2),
-                        args.getDouble(3));
-            // Add other commands here
+            
             default:
                 throw new IllegalArgumentException("Unknown command: " + commandName);
         }

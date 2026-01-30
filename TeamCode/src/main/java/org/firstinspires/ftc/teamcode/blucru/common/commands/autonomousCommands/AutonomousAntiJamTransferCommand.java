@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 @Config
 public class AutonomousAntiJamTransferCommand extends InstantCommand {
     //used so that it only lowers elevator down fully once the bot leaves intaking zone, prevents jams
-    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle, double FieldCentricTurretAngle){
+    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
                     new ElevatorDownCommand(),
@@ -38,9 +38,7 @@ public class AutonomousAntiJamTransferCommand extends InstantCommand {
                     new SetMiddleHoodAngleCommand(rightAngle),
                     new WaitCommand(700), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
-                    new ParallelizeIntakeCommand(),
-                    new WaitCommand(400),
-                    new TurnTurretToPosCommand(FieldCentricTurretAngle)
+                    new ParallelizeIntakeCommand()
 
             ).schedule();
         });

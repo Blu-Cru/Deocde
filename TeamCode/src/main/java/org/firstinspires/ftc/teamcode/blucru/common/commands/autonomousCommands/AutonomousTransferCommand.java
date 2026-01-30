@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretComma
 
 @Config
 public class AutonomousTransferCommand extends InstantCommand {
-    public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle){
+    public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeSpitCommand(),
@@ -40,9 +40,8 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new SetMiddleHoodAngleCommand(rightAngle),
                     new WaitCommand(300), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
-                    new ParallelizeIntakeCommand(),
-                    new WaitCommand(400),
-                    new TurnTurretToPosCommand(turretAngle)
+                    new ParallelizeIntakeCommand()
+
 
             ).schedule();
         });

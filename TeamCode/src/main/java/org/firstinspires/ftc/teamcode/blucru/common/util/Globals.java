@@ -27,8 +27,8 @@ public class Globals {
     public static Pose2d startPose = new Pose2d(0, 0, Math.PI / 2);
 
     // FIX IS HERE: Changed these back to Custom "Vector2d" so Shooter.java works
-    public static Vector2d shootingGoalLPose = new Vector2d(rightGoalX, rightGoalY);
-    public static Vector2d shootingGoalRPose = new Vector2d(leftGoalX, leftGoalY);
+    public static Vector2d shootingGoalLPose = new Vector2d(leftGoalX, leftGoalY);
+    public static Vector2d shootingGoalRPose = new Vector2d(rightGoalX, rightGoalY);
 
     public static ElapsedTime matchTime;
     public static double defaultXYTol;
