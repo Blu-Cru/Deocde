@@ -138,6 +138,23 @@ public class ShooterMotifCoordinator {
     public static void setRightColor(BallColor color){
         rightColor = color;
     }
+    public static void clear(){
+        leftColor = BallColor.UNKNOWN;
+        middleColor = BallColor.UNKNOWN;
+        rightColor = BallColor.UNKNOWN;
+    }
+
+    public static BallColor getLeftColor(){
+        return leftColor;
+    }
+    public static BallColor getMiddleColor(){
+        return middleColor;
+    }
+    public static BallColor getRightColor(){
+        return rightColor;
+    }
+
+
     public static void setMotif(MotifPattern motif){ShooterMotifCoordinator.motif = motif;}
     public static MotifPattern getMotif(){
         return motif;
