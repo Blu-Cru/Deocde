@@ -37,7 +37,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         limelight = Globals.hwMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
-        limelight.pipelineSwitch(POSITION_PIPELINE);
+        limelight.pipelineSwitch(PATTERN_PIPELINE);
         botpose = null;
         timer = new ElapsedTime();
     }
