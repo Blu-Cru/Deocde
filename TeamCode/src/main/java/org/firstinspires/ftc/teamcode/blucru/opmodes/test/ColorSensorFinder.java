@@ -16,22 +16,22 @@ public class ColorSensorFinder extends LinearOpMode {
     RevColorSensorV3 sensor6;
 
     public void runOpMode() {
-        sensor1 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor1"); //middle left
-        sensor2 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor2"); //left top
-        sensor3 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor3"); //left bottom
-        sensor4 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor4"); //middle right
-        sensor5 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor5"); //right bottom
-        sensor6 = hardwareMap.tryGet(RevColorSensorV3.class, "sensor6"); //right top
+        sensor1 = hardwareMap.tryGet(RevColorSensorV3.class, "middleColorSensorRight"); //middle left
+        sensor2 = hardwareMap.tryGet(RevColorSensorV3.class, "middleColorSensorLeft"); //left top
+        sensor3 = hardwareMap.tryGet(RevColorSensorV3.class, "rightColorSensorTop"); //left bottom
+        sensor4 = hardwareMap.tryGet(RevColorSensorV3.class, "rightColorSensorBottom"); //middle right
+        sensor5 = hardwareMap.tryGet(RevColorSensorV3.class, "leftColorSensorTop"); //right bottom
+        sensor6 = hardwareMap.tryGet(RevColorSensorV3.class, "leftColorSensorBottom"); //right top
 
         waitForStart();
 
         while (opModeIsActive()) {
-            displaySensorData("Sensor 1", sensor1);
-            displaySensorData("Sensor 2", sensor2);
-            displaySensorData("Sensor 3", sensor3);
-            displaySensorData("Sensor 4", sensor4);
-            displaySensorData("Sensor 5", sensor5);
-            displaySensorData("Sensor 6", sensor6);
+            displaySensorData("mR", sensor1);
+            displaySensorData("mL", sensor2);
+            displaySensorData("rT", sensor3);
+            displaySensorData("rB", sensor4);
+            displaySensorData("lT", sensor5);
+            displaySensorData("lB", sensor6);
             telemetry.update();
         }
     }

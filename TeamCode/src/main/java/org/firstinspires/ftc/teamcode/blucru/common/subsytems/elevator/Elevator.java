@@ -21,12 +21,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom, rightSensorTop;
     public Elevator(){
         elevatorServo = new BluServo("elevator");
-        leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
-        leftSensorTop = new BluColorSensor("leftColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
-        middleSensorRight = new BluColorSensor("middleColorSensorRight", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
-        middleSensorLeft = new BluColorSensor("middleColorSensorLeft", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
-        rightSensorBottom = new BluColorSensor("rightColorSensorBottom", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
-        rightSensorTop = new BluColorSensor("rightColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}});
+        leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0.020,0.030,0.025}, {0.030,0.040,0.037}, {0.010,0.045,0.040}, {0.019,0.065,0.050}});
+        leftSensorTop = new BluColorSensor("leftColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
+        middleSensorRight = new BluColorSensor("middleColorSensorRight", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
+        middleSensorLeft = new BluColorSensor("middleColorSensorLeft", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
+        rightSensorBottom = new BluColorSensor("rightColorSensorBottom", new double[][]{{0.025,0.045,0.070}, {0.035,0.057,0.085}, {0.010,0.060,0.050}, {0.022,0.075,0.068}});
+        rightSensorTop = new BluColorSensor("rightColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
         setDown();
         write();
     }
