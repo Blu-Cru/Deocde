@@ -112,9 +112,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public void teleDrive(Gamepad g1, double tol) {
         double x = cubicScaling(-g1.left_stick_y);
-        double r = Math.min(cubicScaling(g1.right_stick_x), 1) * 0.5;
+        double r = Math.min(cubicScaling(g1.right_stick_x), 1) * 0.6;
 
-        double multiplier = Math.min(1,Globals.voltage / 12);
+        double multiplier = Math.min(1, Math.pow((Globals.voltage / 12.5), 2));
 
         if (Math.abs(x) <= tol) {
             x = 0;

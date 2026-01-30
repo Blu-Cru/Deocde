@@ -140,6 +140,7 @@ public class Tele extends BluLinearOpMode{
                             new RightTransferUpCommand()
                     ).schedule();
                 })
+
                 .state(State.INTAKING_FROM_ABOVE)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
@@ -226,7 +227,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_x*0.5);
+            turret.setPower(gamepad2.right_stick_x*0.2);
         }
 
 
