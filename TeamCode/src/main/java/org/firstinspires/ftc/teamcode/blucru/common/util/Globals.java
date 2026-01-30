@@ -20,15 +20,14 @@ public class Globals {
     public static double voltage = 13.0;
     public static Alliance alliance = RED;
     public static double leftGoalX = -58;
-    public static double leftGoalY= -55;
-    public static double rightGoalX = -52;
-    public static double rightGoalY= 58;
+    public static double leftGoalY= -58;
     // "Pose2d" here refers to YOUR CUSTOM class (org.firstinspires...Pose2d)
     public static Pose2d startPose = new Pose2d(0, 0, Math.PI / 2);
 
     // FIX IS HERE: Changed these back to Custom "Vector2d" so Shooter.java works
     public static Vector2d shootingGoalLPose = new Vector2d(leftGoalX, leftGoalY);
-    public static Vector2d shootingGoalRPose = new Vector2d(rightGoalX, rightGoalY);
+    public static Vector2d shootingGoalRPose = new Vector2d(-58, 58);
+    public static Vector2d turretTargetRPose = new Vector2d(-66, 53);
 
     public static ElapsedTime matchTime;
     public static double defaultXYTol;

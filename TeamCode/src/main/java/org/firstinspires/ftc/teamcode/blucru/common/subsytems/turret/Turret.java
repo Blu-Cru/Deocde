@@ -206,8 +206,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public double getFieldCentricTargetGoalAngle(Pose2d robotPose) {
         Vector2d target = Globals.mapVector(
-                Globals.shootingGoalRPose.getX(),
-                Globals.shootingGoalRPose.getY()
+                Globals.turretTargetRPose.getX(),
+                Globals.turretTargetRPose.getY()
         );
 
         Vector2d robotVec = robotPose.vec();
