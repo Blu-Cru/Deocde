@@ -3,16 +3,13 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootAntiJamCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -23,11 +20,10 @@ public class PPCloseRedAuto extends BluLinearOpMode {
     double turretAngleFirst = 30;
     double turretAngleSecond = 30;
     double turretAngleThird = 30;
-    double velo =1160;
+    double velo =1000;
     double leftHood;
     double middleHood;
     double rightHood;
-    boolean alreadySignalledPattern;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
@@ -53,7 +49,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),
-                            new Point2d(-16,33),
+                            new Point2d(-16,35),
                             new Point2d(-8,45),
                             new Point2d(-5, 54)
                     }, 2000)
@@ -86,9 +82,8 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     // INTAKE SECOND SET
                     .addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-16, 19),
-                            new Point2d(0,30),
-                            new Point2d(6.5, 54)
+                            new Point2d(-16, 19),   // was (-10, 17)
+                            new Point2d(6.5, 48)
                     }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -103,7 +98,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(6.5, 54),   // was (12.5, 46)
+                            new Point2d(6.5, 48),   // was (12.5, 46)
                             new Point2d(-16, 19)    // was (-10, 17)
                     }, 2000)
                     .addTurnTo(45,1000)
@@ -123,7 +118,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),   // was (-10, 17)
                             new Point2d(36, 48)     // was (37, 46)
-                    }, 1100)
+                    }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -135,25 +130,16 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(36, 48),
-//                            new Point2d(0,25),
+                            new Point2d(36, 48),    // was (37, 46)
                             new Point2d(-16, 19)    // was (-10, 17)
-                    }, 2000)
-                    .waitMilliseconds(1000)
+                    }, 5000)
                     .addTurnTo(45,1000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootAntiJamCommand(),
-                                new WaitCommand(300),
-                                new IntakeSpitCommand()
+                                new AutonomousShootAntiJamCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(300)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-16, 19),    // was (37, 46)
-                            new Point2d(0, 30)    // was (-10, 17)
-                    }, 1300)
                     // SHOOT THIRD SET
                     .build();
         }
@@ -169,9 +155,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
         addShooter();
         addTurret();
         addTransfer();
-        addLLTagDetector();
-        shooter.setHoodAngleIndependent(30, 30, 30);
-        shooter.write();
+        shooter.setHoodAngleIndependent(38, 36, 38);
         elevator.setMiddle();
         elevator.write();
         transfer.setAllMiddle();
@@ -181,26 +165,17 @@ public class PPCloseRedAuto extends BluLinearOpMode {
         sixWheel.reset();
         sixWheel.write();
         intake.resetEncoder();
-        intake.write();
-        alreadySignalledPattern = false;
     }
 
     public void onStart() {
-        shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        new LockOnGoalCommand().schedule();
-        llTagDetector.switchToMotif();
+        shooter.shootWithVelocity(1100); // orig 850 before switching to triple shot
+        turret.setAngle(-10);
+
         sixWheel.setPosition(new Pose2d(-51, 54, Math.toRadians(-51.529)));
         currentPath = new TestingPath().build().start();
     }
 
     public void periodic() {
         currentPath.run();
-        if (!alreadySignalledPattern){
-            llTagDetector.read();
-            if (llTagDetector.detectedPattern()){
-                gamepad1.setLedColor(100,255,100, 1000);
-                alreadySignalledPattern = true;
-            }
-        }
     }
 }
