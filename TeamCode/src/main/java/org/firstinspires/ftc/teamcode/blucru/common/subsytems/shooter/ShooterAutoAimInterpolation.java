@@ -11,7 +11,7 @@ public class ShooterAutoAimInterpolation {
             26, 26, 26, 28, 36, 39, 40, 44, 46, 47, 47, 49, 49, 47
     };
     private static final double[] leftVelocities = {
-            1000, 1000, 1050, 1050, 1150, 1200, 1250, 1250, 1300, 1380, 1440, 1500, 1560, 1660
+            1000, 1015, 1040, 1060, 1120, 1170, 1200, 1250, 1300, 1380, 1440, 1500, 1540, 1640
     };
 
     private static final double[] middleDists = {
@@ -21,7 +21,7 @@ public class ShooterAutoAimInterpolation {
             26, 26, 26, 26, 35, 37, 38, 41, 45, 45, 45, 47, 48, 44
     };
     private static final double[] middleVelocities = {
-            1000, 1000, 1050, 1050, 1150, 1200, 1250, 1250, 1300, 1380, 1420, 1480, 1560, 1640
+            1000, 1015, 1040, 1060, 1120, 1170, 1200, 1250, 1300, 1380, 1420, 1480, 1540, 1630
     };
 
     private static final double[] rightDists = {
@@ -31,7 +31,7 @@ public class ShooterAutoAimInterpolation {
             26, 26, 26, 28, 36, 39, 41, 44, 47, 48, 48, 50, 50, 49
     };
     private static final double[] rightVelocities = {
-            1000, 1000, 1050, 1050, 1150, 1200, 1250, 1250, 1300, 1380, 1440, 1500, 1560, 1640
+            1000, 1015, 1040, 1060, 1120, 1170, 1200, 1250, 1300, 1380, 1440, 1500, 1540, 1630
     };
 
     public static double[] interpolateLeft(double dist){

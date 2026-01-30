@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -20,6 +21,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
     private BluEncoder encoder;
     private PIDController controller;
+    Vector2d target;
 
     private double position;
     private Double lastSetpoint = null;
@@ -205,10 +207,11 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public double getFieldCentricTargetGoalAngle(Pose2d robotPose) {
-        Vector2d target = Globals.mapVector(
-                Globals.turretTargetRPose.getX(),
-                Globals.turretTargetRPose.getY()
-        );
+        if(Globals.alliance == Alliance.RED){
+            target = Globals.turretTargetRPose;
+        }else{
+            target = Globals.turretTargetLPose;
+        }
 
         Vector2d robotVec = robotPose.vec();
         double robotHeadingDeg = Math.toDegrees(robotPose.getH());

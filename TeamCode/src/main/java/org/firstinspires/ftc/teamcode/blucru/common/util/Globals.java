@@ -28,6 +28,7 @@ public class Globals {
     public static Vector2d shootingGoalLPose = new Vector2d(leftGoalX, leftGoalY);
     public static Vector2d shootingGoalRPose = new Vector2d(-58, 58);
     public static Vector2d turretTargetRPose = new Vector2d(-66, 53);
+    public static Vector2d turretTargetLPose = new Vector2d(-66, -66);
 
     public static ElapsedTime matchTime;
     public static double defaultXYTol;
