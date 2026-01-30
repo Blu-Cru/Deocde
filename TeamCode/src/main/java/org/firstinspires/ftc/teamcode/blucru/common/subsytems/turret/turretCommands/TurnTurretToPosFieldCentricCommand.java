@@ -6,8 +6,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 public class TurnTurretToPosFieldCentricCommand extends InstantCommand {
 
-    public TurnTurretToPosFieldCentricCommand(double angle){
-        super(() -> {Robot.getInstance().turret.setFieldCentricPosition(angle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);}
+    public TurnTurretToPosFieldCentricCommand(double angle, double desiredRobotHeading){
+        super(() -> {Robot.getInstance().turret.setFieldCentricPosition(angle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), desiredRobotHeading,true);}
         );
 
         addRequirements(Robot.getInstance().turret);

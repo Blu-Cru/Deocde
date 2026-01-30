@@ -129,8 +129,8 @@ public class Turret implements BluSubsystem, Subsystem {
         setAngle(180 - targetHeading - robotHeading, switchState);
     }
 
-    public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
-        setAngle(180 - targetHeading + robotHeading, switchState);
+    public void setFieldCentricPosition(double targetHeading, double robotHeading, double desiredHeading, boolean switchState) {
+        setAngle(270-targetHeading+robotHeading-desiredHeading, switchState);
     }
 
 
