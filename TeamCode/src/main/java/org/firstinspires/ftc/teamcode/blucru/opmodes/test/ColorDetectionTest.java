@@ -10,6 +10,7 @@ public class ColorDetectionTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
         addElevator();
+        addIntake();
     }
 
     public void periodic(){

@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 /**
  * Pure Pursuit PID Tuning OpMode
  *
- * This opmode guides you through tuning your pure pursuit controller step by step.
+ * This opmode guides you through tuning your pure pursuit controller step by
+ * step.
  *
  * CONTROLS:
  * - A: Run test path
@@ -39,84 +40,77 @@ public class PurePursuitTuner extends BluLinearOpMode {
     // Tuning stages
     private enum TuningStage {
         STAGE_0_INTRO(
-            "STAGE 0: Introduction",
-            "Welcome to Pure Pursuit Tuner!\n" +
-            "This will guide you through tuning:\n" +
-            "1. P gains (response speed)\n" +
-            "2. D gains (damping/smoothing)\n" +
-            "3. Look-ahead distance\n" +
-            "4. Final validation\n\n" +
-            "Press B to start tuning →"
-        ),
+                "STAGE 0: Introduction",
+                "Welcome to Pure Pursuit Tuner!\n" +
+                        "This will guide you through tuning:\n" +
+                        "1. P gains (response speed)\n" +
+                        "2. D gains (damping/smoothing)\n" +
+                        "3. Look-ahead distance\n" +
+                        "4. Final validation\n\n" +
+                        "Press B to start tuning →"),
 
         STAGE_1_P_LINEAR(
-            "STAGE 1: Tune Linear P Gain",
-            "Tune: SixWheelPID.pXY\n" +
-            "Set: SixWheelPID.dXY = 0.0 (disable D)\n\n" +
-            "Goal: Robot follows path at good speed\n\n" +
-            "TOO SLOW: Increase pXY (try 0.15-0.2)\n" +
-            "TOO AGGRESSIVE/OVERSHOOTS: Decrease pXY (try 0.05-0.07)\n\n" +
-            "Watch: 'Linear Vel' should be smooth\n" +
-            "A = Run Path | B = Next Stage →"
-        ),
+                "STAGE 1: Tune Linear P Gain",
+                "Tune: SixWheelPID.pXY\n" +
+                        "Set: SixWheelPID.dXY = 0.0 (disable D)\n\n" +
+                        "Goal: Robot follows path at good speed\n\n" +
+                        "TOO SLOW: Increase pXY (try 0.15-0.2)\n" +
+                        "TOO AGGRESSIVE/OVERSHOOTS: Decrease pXY (try 0.05-0.07)\n\n" +
+                        "Watch: 'Linear Vel' should be smooth\n" +
+                        "A = Run Path | B = Next Stage →"),
 
         STAGE_2_P_ROTATION(
-            "STAGE 2: Tune Rotation P Gain",
-            "Tune: SixWheelPID.pR\n" +
-            "Set: SixWheelPID.dR = 0.0 (disable D)\n\n" +
-            "Goal: Robot turns smoothly without spinning\n\n" +
-            "TOO SLOW TO TURN: Increase pR (try 0.04-0.05)\n" +
-            "SPINS/OVERSHOOTS: Decrease pR (try 0.015-0.02)\n\n" +
-            "Watch: 'Rot Vel' should be smooth\n" +
-            "A = Run Path | B = Next Stage →"
-        ),
+                "STAGE 2: Tune Rotation P Gain",
+                "Tune: SixWheelPID.pR\n" +
+                        "Set: SixWheelPID.dR = 0.0 (disable D)\n\n" +
+                        "Goal: Robot turns smoothly without spinning\n\n" +
+                        "TOO SLOW TO TURN: Increase pR (try 0.04-0.05)\n" +
+                        "SPINS/OVERSHOOTS: Decrease pR (try 0.015-0.02)\n\n" +
+                        "Watch: 'Rot Vel' should be smooth\n" +
+                        "A = Run Path | B = Next Stage →"),
 
         STAGE_3_D_LINEAR(
-            "STAGE 3: Tune Linear D Gain",
-            "Tune: SixWheelPID.dXY\n" +
-            "Start: dXY = pXY * 0.5 (as starting point)\n\n" +
-            "Goal: Reduce oscillations without jitter\n\n" +
-            "OSCILLATES: Increase dXY (+0.02 at a time)\n" +
-            "JERKY/JITTERY: Decrease dXY (-0.01 at a time)\n" +
-            "SLUGGISH: Decrease dXY\n\n" +
-            "Watch: Motion should be smooth, no vibration\n" +
-            "A = Run Path | B = Next Stage →"
-        ),
+                "STAGE 3: Tune Linear D Gain",
+                "Tune: SixWheelPID.dXY\n" +
+                        "Start: dXY = pXY * 0.5 (as starting point)\n\n" +
+                        "Goal: Reduce oscillations without jitter\n\n" +
+                        "OSCILLATES: Increase dXY (+0.02 at a time)\n" +
+                        "JERKY/JITTERY: Decrease dXY (-0.01 at a time)\n" +
+                        "SLUGGISH: Decrease dXY\n\n" +
+                        "Watch: Motion should be smooth, no vibration\n" +
+                        "A = Run Path | B = Next Stage →"),
 
         STAGE_4_D_ROTATION(
-            "STAGE 4: Tune Rotation D Gain",
-            "Tune: SixWheelPID.dR\n" +
-            "Start: dR = pR * 0.5 (as starting point)\n\n" +
-            "Goal: Smooth rotation without oscillation\n\n" +
-            "WOBBLES SIDE-TO-SIDE: Increase dR\n" +
-            "JERKY ROTATION: Decrease dR\n\n" +
-            "Watch: Rotation should be smooth\n" +
-            "A = Run Path | B = Next Stage →"
-        ),
+                "STAGE 4: Tune Rotation D Gain",
+                "Tune: SixWheelPID.dR\n" +
+                        "Start: dR = pR * 0.5 (as starting point)\n\n" +
+                        "Goal: Smooth rotation without oscillation\n\n" +
+                        "WOBBLES SIDE-TO-SIDE: Increase dR\n" +
+                        "JERKY ROTATION: Decrease dR\n\n" +
+                        "Watch: Rotation should be smooth\n" +
+                        "A = Run Path | B = Next Stage →"),
 
         STAGE_5_LOOKAHEAD(
-            "STAGE 5: Tune Look-Ahead Distance",
-            "Tune: SixWheelDrive.LOOK_AHEAD_DIST\n" +
-            "Current: 5.0 inches (likely too small)\n\n" +
-            "Goal: Smooth path following, especially at waypoints\n\n" +
-            "JERKY AT WAYPOINTS: Increase (try 10-15)\n" +
-            "CUTS CORNERS TOO MUCH: Decrease (try 6-8)\n\n" +
-            "Typical range: 8-15 inches\n" +
-            "A = Run Path | B = Next Stage →"
-        ),
+                "STAGE 5: Tune Look-Ahead Distance",
+                "Tune: SixWheelDrive.LOOK_AHEAD_DIST\n" +
+                        "Current: 5.0 inches (likely too small)\n\n" +
+                        "Goal: Smooth path following, especially at waypoints\n\n" +
+                        "JERKY AT WAYPOINTS: Increase (try 10-15)\n" +
+                        "CUTS CORNERS TOO MUCH: Decrease (try 6-8)\n\n" +
+                        "Typical range: 8-15 inches\n" +
+                        "A = Run Path | B = Next Stage →"),
 
         STAGE_6_FINAL_TEST(
-            "STAGE 6: Final Validation",
-            "All gains should now be tuned!\n\n" +
-            "Run multiple test paths and verify:\n" +
-            "✓ Smooth motion (no jerking)\n" +
-            "✓ No oscillations\n" +
-            "✓ Reaches target accurately\n" +
-            "✓ Good speed throughout\n\n" +
-            "If issues remain, go back:\n" +
-            "X = Previous Stage | A = Run Path\n\n" +
-            "When satisfied, RECORD YOUR GAINS!"
-        );
+                "STAGE 6: Final Validation",
+                "All gains should now be tuned!\n\n" +
+                        "Run multiple test paths and verify:\n" +
+                        "✓ Smooth motion (no jerking)\n" +
+                        "✓ No oscillations\n" +
+                        "✓ Reaches target accurately\n" +
+                        "✓ Good speed throughout\n\n" +
+                        "If issues remain, go back:\n" +
+                        "X = Previous Stage | A = Run Path\n\n" +
+                        "When satisfied, RECORD YOUR GAINS!");
 
         private final String title;
         private final String instructions;
@@ -126,13 +120,19 @@ public class PurePursuitTuner extends BluLinearOpMode {
             this.instructions = instructions;
         }
 
-        public String getTitle() { return title; }
-        public String getInstructions() { return instructions; }
+        public String getTitle() {
+            return title;
+        }
+
+        public String getInstructions() {
+            return instructions;
+        }
     }
 
     private TuningStage currentStage;
     private Path currentPath;
     private boolean pathRunning;
+    private boolean manualDriveEnabled = false;
 
     // Test paths
     private Point2d[][] testPaths;
@@ -148,30 +148,30 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
         // Create multiple test paths for comprehensive tuning
         testPaths = new Point2d[][] {
-            // Path 1: Simple straight line
-            {
-                new Point2d(0, 0),
-                new Point2d(TestPath.straightDistance, 0)
-            },
-            // Path 2: Gentle curve
-            {
-                new Point2d(0, 0),
-                new Point2d(20, 10),
-                new Point2d(20, 30)
-            },
-            // Path 3: Sharp turn
-            {
-                new Point2d(0, 0),
-                new Point2d(30, 0),
-                new Point2d(30, 30)
-            },
-            // Path 4: S-curve
-            {
-                new Point2d(0, 0),
-                new Point2d(15, 15),
-                new Point2d(0, 30),
-                new Point2d(-15, 45)
-            }
+                // Path 1: Simple straight line
+                {
+                        new Point2d(0, 0),
+                        new Point2d(TestPath.straightDistance, 0)
+                },
+                // Path 2: Gentle curve
+                {
+                        new Point2d(0, 0),
+                        new Point2d(20, 10),
+                        new Point2d(20, 30)
+                },
+                // Path 3: Sharp turn
+                {
+                        new Point2d(0, 0),
+                        new Point2d(30, 0),
+                        new Point2d(30, 30)
+                },
+                // Path 4: S-curve
+                {
+                        new Point2d(0, 0),
+                        new Point2d(15, 15),
+                        new Point2d(0, 30),
+                        new Point2d(-15, 45)
+                }
         };
     }
 
@@ -182,23 +182,44 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
     @Override
     public void periodic() {
-        // Stage navigation
-        if (driver1.pressedB()) {
-            nextStage();
+        // CRITICAL: Sync Dashboard PID values with actual controllers
+        sixWheel.updatePID();
+
+        // Manual drive toggle
+        if (driver1.pressedDpadUp()) {
+            manualDriveEnabled = !manualDriveEnabled;
+            if (manualDriveEnabled) {
+                // Cancel any running path when entering manual drive
+                currentPath = null;
+                pathRunning = false;
+                telemetry.speak("Manual drive on");
+            } else {
+                sixWheel.switchToIdle();
+                telemetry.speak("Manual drive off");
+            }
         }
-        if (driver1.pressedX()) {
-            previousStage();
+
+        if (manualDriveEnabled) {
+            sixWheel.teleDrive(gamepad1, 0.05);
+        } else {
+            // Stage navigation
+            if (driver1.pressedB()) {
+                nextStage();
+            }
+            if (driver1.pressedX()) {
+                previousStage();
+            }
+
+            // Run test path
+            if (driver1.pressedA()) {
+                runTestPath();
+            }
         }
 
         // Reset position
         if (driver1.pressedY()) {
             sixWheel.setPosition(new Pose2d(0, 0, 0));
             telemetry.addLine("✓ Position reset to (0, 0, 0)");
-        }
-
-        // Run test path
-        if (driver1.pressedA()) {
-            runTestPath();
         }
 
         // Path execution
@@ -287,9 +308,9 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
         // Build and start path
         currentPath = new org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder()
-            .addMappedPurePursuitPath(selectedPath, TestPath.maxTime)
-            .build()
-            .start();
+                .addMappedPurePursuitPath(selectedPath, TestPath.maxTime)
+                .build()
+                .start();
 
         pathRunning = true;
         telemetry.addLine("✓ Running: " + pathDescription);
@@ -297,11 +318,16 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
     private String getPathName(int index) {
         switch (index) {
-            case 0: return "Straight Line";
-            case 1: return "Gentle Curve";
-            case 2: return "Sharp Turn";
-            case 3: return "S-Curve";
-            default: return "Test Path " + index;
+            case 0:
+                return "Straight Line";
+            case 1:
+                return "Gentle Curve";
+            case 2:
+                return "Sharp Turn";
+            case 3:
+                return "S-Curve";
+            default:
+                return "Test Path " + index;
         }
     }
 
@@ -340,7 +366,8 @@ public class PurePursuitTuner extends BluLinearOpMode {
         telemetry.addLine("─── Current Gains (FTC Dashboard) ───");
 
         // Get current PID instance
-        org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID pid = sixWheel.getPID();
+        org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID pid = sixWheel
+                .getPID();
 
         telemetry.addData("pXY (Linear P)", "%.3f", pid.pXY);
         telemetry.addData("dXY (Linear D)", "%.3f", pid.dXY);
@@ -356,9 +383,16 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
         Pose2d robotPose = sixWheel.getPos();
         telemetry.addData("Robot Pos", "X=%.1f, Y=%.1f, H=%.1f°",
-            robotPose.getX(), robotPose.getY(), Math.toDegrees(robotPose.getH()));
+                robotPose.getX(), robotPose.getY(), Math.toDegrees(robotPose.getH()));
 
-        if (pathRunning && currentPath != null) {
+        if (manualDriveEnabled) {
+            telemetry.addLine("═══════════════════════════════");
+            telemetry.addLine("⚠ MANUAL DRIVE ACTIVE ⚠");
+            telemetry.addLine("═══════════════════════════════");
+            telemetry.addLine("L Stick: Move | R Stick: Turn");
+            telemetry.addLine("Y: Reset Pos | Dpad Up: EXIT");
+            telemetry.addLine();
+        } else if (pathRunning && currentPath != null) {
             telemetry.addData("Path Status", "RUNNING");
 
             // Stage-specific telemetry
@@ -400,14 +434,14 @@ public class PurePursuitTuner extends BluLinearOpMode {
 
         // Always show if D gains are disabled (important reminder)
         if (currentStage == TuningStage.STAGE_1_P_LINEAR ||
-            currentStage == TuningStage.STAGE_2_P_ROTATION) {
+                currentStage == TuningStage.STAGE_2_P_ROTATION) {
             telemetry.addLine();
             telemetry.addLine("⚠ REMINDER: Set D gains to 0.0 in Dashboard!");
         }
 
         telemetry.addLine();
         telemetry.addLine("─── Controls ───");
-        telemetry.addLine("A = Run Path | B = Next | X = Prev | Y = Reset Pos");
+        telemetry.addLine("A: Run Path | B: Next | X: Prev | Y: Reset Pos | Dpad Up: MANUAL");
     }
 
 }

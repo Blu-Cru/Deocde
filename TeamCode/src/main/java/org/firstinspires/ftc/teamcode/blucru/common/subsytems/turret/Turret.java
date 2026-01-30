@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -20,6 +21,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
     private BluEncoder encoder;
     private PIDController controller;
+    Vector2d target;
 
     private double position;
     private Double lastSetpoint = null;
@@ -34,8 +36,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double acceptableError = 0.5;
     public static double powerClip = 0.95;
 
-    public static double MAX_ANGLE = 90;
-    public static double MIN_ANGLE = -90;
+    public static double MAX_ANGLE = 150;
+    public static double MIN_ANGLE = -150;
 
     public static double distFromCenter = 72.35 / 25.4;
 
@@ -82,7 +84,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
-                setFieldCentricPosition(
+                setFieldCentricPositionAutoAim(
                         turretTargetDeg,
                         Math.toDegrees(
                                 Robot.getInstance().sixWheelDrivetrain.getPos().getH()
@@ -125,9 +127,15 @@ public class Turret implements BluSubsystem, Subsystem {
         state = State.MANUAL;
     }
 
-    public void setFieldCentricPosition(double targetHeading, double robotHeading, boolean switchState) {
+    public void setFieldCentricPositionAutoAim(double targetHeading, double robotHeading, boolean switchState) {
         setAngle(180 - targetHeading - robotHeading, switchState);
     }
+
+    public void setFieldCentricPosition(double targetHeading, double robotHeading, double desiredHeading, boolean switchState) {
+        setAngle(270-targetHeading+robotHeading-desiredHeading, switchState);
+    }
+
+
 
     public void lockOnGoal() {
         state = State.LOCK_ON_GOAL;
@@ -199,10 +207,11 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public double getFieldCentricTargetGoalAngle(Pose2d robotPose) {
-        Vector2d target = Globals.mapVector(
-                Globals.shootingGoalLPose.getX(),
-                Globals.shootingGoalLPose.getY()
-        );
+        if(Globals.alliance == Alliance.RED){
+            target = Globals.turretTargetRPose;
+        }else{
+            target = Globals.turretTargetLPose;
+        }
 
         Vector2d robotVec = robotPose.vec();
         double robotHeadingDeg = Math.toDegrees(robotPose.getH());

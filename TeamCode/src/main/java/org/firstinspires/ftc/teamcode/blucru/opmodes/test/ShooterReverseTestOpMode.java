@@ -70,8 +70,8 @@ public class ShooterReverseTestOpMode extends BluLinearOpMode {
         telemetry.addData("revVelActive", revVelActive);
         telemetry.addData("slowPowerActive", slowPowerActive);
         telemetry.addData("reverseVel", reverseVel);
-        telemetry.addData("shooterVel", shooter.getVel());
-        telemetry.addData("shooterPower", shooter.getPower());
+        telemetry.addData("shooterVel", shooter.getLeftVel());
+        telemetry.addData("shooterPower", shooter.getLeftPower());
         telemetry.update();
     }
 }

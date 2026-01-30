@@ -22,7 +22,7 @@ public class RetransferCommand extends InstantCommand {
         super(() -> {
             new SequentialCommandGroup(
                     new ElevatorDownCommand(),
-                    new IntakeSpitCommand(),
+//                    new IntakeSpitCommand(),
                     new CenterTurretCommand(),
                     //TODO: conditional wait based on turret
                     new WaitCommand(300),

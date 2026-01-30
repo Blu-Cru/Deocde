@@ -52,12 +52,16 @@ public class BluColorSensor implements BluHardwareDevice{
     }
 
     public boolean isPurple(){
-        return (red < purpleTopThreshold[0]
-                && red > purpleBottomThreshold[0]
-                && green < purpleTopThreshold[1]
-                && green > purpleBottomThreshold[1]
-                && blue < purpleTopThreshold[2]
-                && blue > purpleBottomThreshold[2]);
+        boolean inRed = red < purpleTopThreshold[0]
+                && red > purpleBottomThreshold[0];
+        boolean inBlue = blue < purpleTopThreshold[2]
+                && blue > purpleBottomThreshold[2];
+        boolean inGreen = green < purpleTopThreshold[1]
+                && green > purpleBottomThreshold[1];
+        Globals.telemetry.addData("in red", inRed);
+        Globals.telemetry.addData("in blue", inBlue);
+        Globals.telemetry.addData("in green", inGreen);
+        return (inRed && inBlue && inGreen);
     }
     public boolean isGreen(){
         return (red < greenTopThreshold[0]

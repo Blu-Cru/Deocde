@@ -52,7 +52,7 @@ public class Tele extends BluLinearOpMode{
 
     @Override
     public void initialize(){
-        reportTelemetry = false;
+        reportTelemetry = true;
         robot.clear();
         addLLTagDetector();
         addSixWheel();
@@ -121,25 +121,35 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedDpadLeft(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
-                    shot+=1;
-                    new SequentialCommandGroup(
-                            new LeftTransferUpCommand()
+                    new ConditionalCommand(
+                            new ShootBallsCommand(),
+                            new LeftTransferUpCommand(),
+                            () -> (shot == 2)
                     ).schedule();
+                    shot+=1;
                 })
                 .transition(() -> driver1.pressedDpadUp(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
-                    shot+=1;
-                    new SequentialCommandGroup(
-                            new MiddleTransferUpCommand()
+                    new ConditionalCommand(
+                            new ShootBallsCommand(),
+                            new MiddleTransferUpCommand(),
+                            () -> (shot == 2)
                     ).schedule();
+                    shot+=1;
                 })
                 .transition(() -> driver1.pressedDpadRight(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
-                    shot+=1;
-                    new SequentialCommandGroup(
-                            new RightTransferUpCommand()
+                    new ConditionalCommand(
+                            new ShootBallsCommand(),
+                            new RightTransferUpCommand(),
+                            () -> (shot == 2)
                     ).schedule();
+                    shot+=1;
                 })
+                .transition(() -> shot >= 3, State.INTAKING, () -> {
+                    shot = 0;
+                })
+
                 .state(State.INTAKING_FROM_ABOVE)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
@@ -226,7 +236,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_x*0.5);
+            turret.setPower(gamepad2.right_stick_x*0.2);
         }
 
 

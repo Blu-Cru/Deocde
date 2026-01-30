@@ -2,34 +2,27 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
-
-import java.util.Arrays;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
 
-    public static double p = 0.01,i = 0, d = 0, f = 0.00058;
+    public static double leftP = 0.0015,leftI = 0, leftD = 0, leftF =
+            0.000485
+            ;
+    public static double middleP = 0.0015,middleI = 0, middleD = 0, middleF = 0.00044;
+    public static double rightP = 0.0015,rightI = 0, rightD = 0, rightF = 0.00045;
     public static double limit = 20;
-    public static final double ZERO_ANGLE = 26;
-    public static final double TOP_ANGLE = 50;
-    public static final double SERVO_ROT_TO_HOOD_ROT = 260/28;
-    public static final double SERVO_ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
-    public static final double SERVO_POS = SERVO_ROT_TO_HOOD_ROT * SERVO_ANGLE_DELTA / 255.0;
-    public static double idleSpeed = 0.4;
     public static boolean redAlliance = true; //false  for blueAlliance
 
-    private BluMotorWithEncoder shooter1;
-    private BluMotorWithEncoder shooter2;
+    public ShooterPod leftShooter, middleShooter, rightShooter;
     public HoodLeft hoodLeft;
     public HoodMiddle hoodMiddle;
     public HoodRight hoodRight;
@@ -43,28 +36,36 @@ public class Shooter implements BluSubsystem, Subsystem {
     double targetVel = 0;
     ShooterVelocityPID pid;
     public Shooter(){
-        shooter1 = new BluMotorWithEncoder("shooter1", DcMotorSimple.Direction.REVERSE);
-        shooter2 = new BluMotorWithEncoder("shooter2", DcMotorSimple.Direction.REVERSE);
-        hoodLeft = new HoodLeft();
-        hoodMiddle = new HoodMiddle();
-        hoodRight = new HoodRight();
+        ShooterVelocityPID leftPID = new ShooterVelocityPID(leftP, leftI, leftD, leftF);
+        BluMotorWithEncoder leftShooterMotor = new BluMotorWithEncoder("leftShooter");
+        leftShooterMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        leftShooter = new ShooterPod(leftShooterMotor, new HoodLeft(), leftPID);
+
+        ShooterVelocityPID middlePID = new ShooterVelocityPID(middleP, middleI, middleD, middleF);
+        BluMotorWithEncoder middleShooterMotor = new BluMotorWithEncoder("middleShooter");
+        middleShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        middleShooter = new ShooterPod(middleShooterMotor, new HoodMiddle(), middlePID);
+
+        ShooterVelocityPID rightPID = new ShooterVelocityPID(rightP, rightI, rightD, rightF);
+        BluMotorWithEncoder rightShooterMotor = new BluMotorWithEncoder("rightShooter");
+        rightShooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightShooter = new ShooterPod(rightShooterMotor, new HoodRight(), rightPID);
+
         state = State.IDLE;
-        pid = new ShooterVelocityPID(p,i,d,f);
-    }
-    public double shooterAngleToPos(double angle){
-        return (SERVO_POS)/SERVO_ANGLE_DELTA * angle - (ZERO_ANGLE * SERVO_POS)/SERVO_ANGLE_DELTA ;
     }
 
     @Override
     public void init() {
-        shooter1.init();
-        shooter2.init();
+        leftShooter.init();
+        middleShooter.init();
+        rightShooter.init();
     }
 
     @Override
     public void read() {
-        shooter1.read();
-        shooter2.read();
+        leftShooter.read();
+        middleShooter.read();
+        rightShooter.read();
     }
 
     @Override
@@ -74,70 +75,98 @@ public class Shooter implements BluSubsystem, Subsystem {
                 targetVel = 0;
                 break;
             case VELOCITY:
-                shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), targetVel));
-                shooter2.setPower(shooter1.getPower());
-                Globals.telemetry.addData("delta", pid.calculateDeltaPower(shooter1.getVel(), targetVel));
+                leftShooter.setPower(leftShooter.getPowerToGoToVel());
+                middleShooter.setPower(middleShooter.getPowerToGoToVel());
+                rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
             case AUTO_AIM:
-                double dist = 40;
-                if (redAlliance) {
-                    dist = Math.sqrt(Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
-                }else{
-                    dist = Math.sqrt(Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec()).getDist());
-                }
-                dist -= 6;
-                Globals.telemetry.addData("distance", dist);
-                double[] interpolations = ShooterAutoAimInterpolation.interpolate(dist);
-                double leftHoodAngle = interpolations[0];
-                double middleHoodAngle = interpolations[1];
-                double rightHoodAngle = interpolations[2];
-                double vel = interpolations[3];
-                hoodLeft.setShooterAngle(leftHoodAngle);
-                hoodMiddle.setShooterAngle(middleHoodAngle);
-                hoodRight.setShooterAngle(rightHoodAngle);
-                shooter1.setPower(pid.calculateDeltaPower(shooter1.getVel(), vel));
-                shooter2.setPower(shooter1.getPower());
+                Vector2d robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+                Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                double dist = Math.sqrt(turretToRobot.addNotInPlace(robotToGoal).getDist());
+                Globals.telemetry.addData("dist", dist);
+                double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(dist);
+                double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
+                double[] rightLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
+
+                leftShooter.setVel(leftLerps[0]);
+                leftShooter.setHoodAngle(leftLerps[1]);
+
+                middleShooter.setVel(middleLerps[0]);
+                middleShooter.setHoodAngle(middleLerps[1]);
+
+                rightShooter.setVel(rightLerps[0]);
+                rightShooter.setHoodAngle(rightLerps[1]);
+
+                leftShooter.setPower(leftShooter.getPowerToGoToVel());
+                middleShooter.setPower(middleShooter.getPowerToGoToVel());
+                rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
         }
 
-        shooter1.write();
-        shooter2.write();
-        hoodLeft.write();
-        hoodMiddle.write();
-        hoodRight.write();
+        leftShooter.write();
+        middleShooter.write();
+        rightShooter.write();
     }
 
     public void shoot(double power){
-        shooter1.setPower(power);
-        shooter2.setPower(power);
+        leftShooter.setPower(power);
+        middleShooter.setPower(power);
+        rightShooter.setPower(power);
         state = State.IDLE;
     }
     public void idle(){
-        shooter1.setPower(idleSpeed);
-        shooter2.setPower(idleSpeed);
+        leftShooter.idle();
+        middleShooter.idle();
+        rightShooter.idle();
         state = State.IDLE;
     }
     public void shootWithVelocity(double vel){
         targetVel = vel;
+        leftShooter.setVel(vel);
+        middleShooter.setVel(vel);
+        rightShooter.setVel(vel);
+        state = State.VELOCITY;
+    }
+
+    public void shootWithVelocityIndependent(double leftVel, double middleVel, double rightVel){
+        leftShooter.setVel(leftVel);
+        middleShooter.setVel(middleVel);
+        rightShooter.setVel(rightVel);
         state = State.VELOCITY;
     }
 
     public void shootReverseWithVelocity(double vel){
         targetVel = -Math.abs(vel);
+        leftShooter.setVel(targetVel);
+        middleShooter.setVel(targetVel);
+        rightShooter.setVel(targetVel);
         state = State.VELOCITY;
     }
 
     public void spinReverseSlowPower(){
-        shooter1.setPower(-Math.abs(idleSpeed));
-        shooter2.setPower(shooter1.getPower());
+        leftShooter.reverseIdle();
+        middleShooter.reverseIdle();
+        rightShooter.reverseIdle();
         state = State.IDLE; // direct power mode
     }
 
-    public double getVel(){
-        return shooter1.getVel();
+    public double getLeftVel(){
+        return leftShooter.getVel();
     }
-    public double getPower(){
-        return shooter1.getPower();
+    public double getMiddleVel(){
+        return middleShooter.getVel();
+    }
+    public double getRightVel(){
+        return rightShooter.getVel();
+    }
+    public double getLeftPower(){
+        return leftShooter.getMotorPower();
+    }
+    public double getMiddlePower(){
+        return middleShooter.getMotorPower();
+    }
+    public double getRightPower(){
+        return rightShooter.getMotorPower();
     }
 
     public void autoAim(){
@@ -145,8 +174,9 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
     public void rampDownShooter(){
         this.state = State.IDLE;
-        shooter1.setPower(0);
-        shooter2.setPower(0);
+        leftShooter.setPower(0);
+        middleShooter.setPower(0);
+        rightShooter.setPower(0);
     }
     public void setHoodAngle(double angle){
         hoodLeft.setShooterAngle(angle);
@@ -154,45 +184,35 @@ public class Shooter implements BluSubsystem, Subsystem {
         hoodRight.setShooterAngle(angle);
     }
     public void setHoodAngleIndependent(double langle, double mangle, double rangle){
-        hoodLeft.setShooterAngle(langle);
-        hoodMiddle.setShooterAngle(mangle);
-        hoodRight.setShooterAngle(rangle);
+        setLeftHoodAngle(langle);
+        setMiddleHoodAngle(mangle);
+        setRightHoodAngle(rangle);
     }
     public void setLeftHoodAngle(double angle){
-        hoodLeft.setShooterAngle(angle);
+        leftShooter.setHoodAngle(angle);
     }
 
     public void setMiddleHoodAngle(double angle){
-        hoodMiddle.setShooterAngle(angle);
+        middleShooter.setHoodAngle(angle);
     }
 
     public void setRightHoodAngle(double angle){
-        hoodRight.setShooterAngle(angle);
+        rightShooter.setHoodAngle(angle);
     }
 
     public double getHoodAngle(){
-        return hoodLeft.getHoodAngle();
+        return leftShooter.getAngle();
     }
 
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Shooter power", shooter1.getPower());
-        hoodLeft.telemetry();
-        hoodMiddle.telemetry();
-        hoodRight.telemetry();
     }
 
     @Override
     public void reset() {
-        shooter1.reset();
-        shooter2.reset();
-        hoodLeft.reset();
-        hoodMiddle.reset();
-        hoodRight.reset();
-    }
-
-    public void updatePID(){
-        pid.setPIDF(p,i,d,f);
+        leftShooter.reset();
+        middleShooter.reset();
+        rightShooter.reset();
     }
 }

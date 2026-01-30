@@ -10,40 +10,35 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorD
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 
 @Config
-public class AutonomousTransferCommand extends InstantCommand {
-    public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle){
+public class AutonomousAntiJamTransferCommand extends InstantCommand {
+    //used so that it only lowers elevator down fully once the bot leaves intaking zone, prevents jams
+    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
-                    new IntakeStopCommand(),
-                    new WaitCommand(100),
-                    new IntakeSpitCommand(),
-                    new WaitCommand(700),
+                    new ElevatorDownCommand(),
+                    new WaitCommand(1600),
                     new ElevatorUpCommand(),
-                    new WaitCommand(400),
+                    new IntakeStopCommand(),
+                    new IntakeSpitCommand(),
+                    new WaitCommand(200),
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle),
-                    new WaitCommand(400), //TODO: TUNE WAIT
+                    new WaitCommand(700), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand()
-
 
             ).schedule();
         });

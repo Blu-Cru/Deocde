@@ -79,3 +79,8 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
+
+
+#misc
+Misc/PurePursuitDebug/*.csv
+Misc/PurePursuitDebug/*.png
