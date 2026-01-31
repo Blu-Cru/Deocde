@@ -23,13 +23,13 @@ public class SixWheelPID {
     public static double MIN_SPEED_MULTIPLIER = 0.1;  // Minimum speed when heading error is 90°
 
     // PID gains - adjust these via FTC Dashboard for tuning
-    public static double pXY = 0.038, dXY = 0.008, kS = 0.05;
-    public static double pR = 0.0135, dR = 0.01;
+    public static double pXY = 0.038, dXY = 0.0082, kS = 0.05;
+    public static double pR = 0.02, dR = 0.015;
     public static double pRTurnTo = 0.02, dRTurnTo = 0.1, ffTurnTo = 0.05;
     public static double pXYLineTo = 0.09, dXYLineTo = 0.015;
 
     // Path following improvements
-    public static double Kp_CTE = 0.02; // Cross-track error gain (higher = more aggressive correction)
+    public static double Kp_CTE = 0.015; // Cross-track error gain (higher = more aggressive correction)
     public static double TANGENT_BLEND_DISTANCE = 10.0; // Distance from end to start blending tangent
 
     // Track previous backwards driving state for hysteresis

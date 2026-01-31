@@ -22,12 +22,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     private static final double MIDDLE_POSITION_RIGHT = 0.52;
     private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom, rightSensorTop;
     public Elevator(){
-        leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0.023,0.033,0.035}, {0.031,0.045,0.052}, {0,0.042,0.055}, {0.019,0.065,0.070}});
+        leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0.023,0.033,0.035}, {0.031,0.045,0.052}, {0,0.047,0.03}, {0.019,0.070,0.04}});
         //leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0,0,0}, {1,1,1}, {0,0,0}, {1,1,1}});
         leftSensorTop = new BluColorSensor("leftColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
         middleSensorRight = new BluColorSensor("middleColorSensorRight", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
         middleSensorLeft = new BluColorSensor("middleColorSensorLeft", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
-        rightSensorBottom = new BluColorSensor("rightColorSensorBottom", new double[][]{{0.025,0.045,0.070}, {0.035,0.057,0.085}, {0.010,0.060,0.050}, {0.022,0.075,0.068}});
+        rightSensorBottom = new BluColorSensor("rightColorSensorBottom", new double[][]{{0.025,0.035,0.045}, {0.035,0.045,0.065}, {0.008,0.043,0.033}, {0.024,0.062,0.052}});
         rightSensorTop = new BluColorSensor("rightColorSensorTop", new double[][]{{0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}});
         elevatorServoLeft = new BluServo("elevatorLeft");
         elevatorServoRight = new BluServo("elevatorRight");
@@ -48,9 +48,6 @@ public class Elevator implements BluSubsystem, Subsystem {
     public void updateLeftBallColor(){
         BallColor targetColor = BallColor.UNKNOWN;
         leftSensorBottom.read();
-        Globals.telemetry.addData("left red", leftSensorBottom.getRed());
-        Globals.telemetry.addData("left blue", leftSensorBottom.getBlue());
-        Globals.telemetry.addData("left green", leftSensorBottom.getGreen());
         if (leftSensorBottom.isPurple()){
             targetColor = BallColor.PURPLE;
         } else if (leftSensorBottom.isGreen()){
@@ -99,6 +96,9 @@ public class Elevator implements BluSubsystem, Subsystem {
     public void updateRightBallColor(){
         BallColor targetColor = BallColor.UNKNOWN;
         rightSensorBottom.read();
+        Globals.telemetry.addData("right red", rightSensorBottom.getRed());
+        Globals.telemetry.addData("right blue", rightSensorBottom.getBlue());
+        Globals.telemetry.addData("right green", rightSensorBottom.getGreen());
         if (rightSensorBottom.isPurple()){
             targetColor = BallColor.PURPLE;
         } else if (rightSensorBottom.isGreen()){

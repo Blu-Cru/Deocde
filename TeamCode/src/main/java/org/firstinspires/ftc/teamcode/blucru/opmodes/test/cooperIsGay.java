@@ -20,6 +20,8 @@ public class cooperIsGay extends BluLinearOpMode {
 
     public void initialize(){
         robot.clear();
+        addIntake();
+        addTurret();
         turret.resetEncoder();
         intake.resetEncoder();
 

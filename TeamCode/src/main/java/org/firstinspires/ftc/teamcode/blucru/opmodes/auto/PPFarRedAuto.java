@@ -174,7 +174,8 @@ public class PPFarRedAuto extends BluLinearOpMode {
         addShooter();
         addTurret();
         addTransfer();
-        shooter.setHoodAngleIndependent(47, 45, 49);
+        shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
+        shooter.write();
         elevator.setMiddle();
         elevator.write();
         transfer.setAllMiddle();
