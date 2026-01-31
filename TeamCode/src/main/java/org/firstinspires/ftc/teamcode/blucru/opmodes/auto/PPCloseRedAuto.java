@@ -23,7 +23,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
     double turretAngleFirst = 30;
     double turretAngleSecond = 30;
     double turretAngleThird = 30;
-    double velo =1160;
+    double velo =1180;
     double leftHood;
     double middleHood;
     double rightHood;
@@ -55,7 +55,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                             new Point2d(-16, 19),
                             new Point2d(-16,33),
                             new Point2d(-8,45),
-                            new Point2d(-5, 54)
+                            new Point2d(-5, 56)
                     }, 2000)
 
                     .callback(() -> {
@@ -88,7 +88,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),
                             new Point2d(0,30),
-                            new Point2d(6.5, 52)
+                            new Point2d(6.5, 48)
                     }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {

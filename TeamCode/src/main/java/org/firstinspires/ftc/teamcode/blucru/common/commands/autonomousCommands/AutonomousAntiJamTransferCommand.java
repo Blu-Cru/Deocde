@@ -25,7 +25,7 @@ public class AutonomousAntiJamTransferCommand extends InstantCommand {
         super(() -> {
             new SequentialCommandGroup(
                     new ElevatorDownCommand(),
-                    new WaitCommand(1600),
+                    new WaitCommand(1000),
                     new ElevatorUpCommand(),
                     new IntakeStopCommand(),
                     new IntakeSpitCommand(),
@@ -36,7 +36,7 @@ public class AutonomousAntiJamTransferCommand extends InstantCommand {
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle),
-                    new WaitCommand(700), //TODO: TUNE WAIT
+                    new WaitCommand(200), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand()
 
