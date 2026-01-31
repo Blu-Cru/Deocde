@@ -30,15 +30,15 @@ public class PPFarRedAuto extends BluLinearOpMode {
     double rightHood = 49;
 
     // shifted +3 in Y to keep the same path relative to new start pose
-    double pickupWallY = 60;
+    double pickupWallY = 59;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
         public TestingPath() {
             super();
             this.addPurePursuitPath(new Point2d[]{
-                            new Point2d(63, 25),
-                            new Point2d(63, 26)
+                            new Point2d(63, 24),
+                            new Point2d(63, 25)
                     }, 100)
                     .waitMilliseconds(1500) //TODO: TUNE
                     .callback(() -> {
@@ -48,10 +48,10 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(63, 26),
-                            new Point2d(52, 42),
+                            new Point2d(63, 25),
+                            new Point2d(52, 41),
                             // INTAKE FIRST SET
-                            new Point2d(40, 46) // 35,36 when measured with loco test
+                            new Point2d(40, 45) // 35,36 when measured with loco test
                     }, 5000)
                     .waitMilliseconds(400)
                     .callback(() -> {
@@ -64,9 +64,9 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     })
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(42, 41),
+                            new Point2d(42, 40),
                             // SHOOT FIRST SET
-                            new Point2d(60, 23)
+                            new Point2d(60, 22)
                     }, 2000)
                     .addTurnTo(90, 1000)
                     .waitMilliseconds(2000)
@@ -83,7 +83,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(700)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(60, 23),
+                            new Point2d(60, 22),
                             // INTAKE SECOND SET
                             new Point2d(62, pickupWallY)
                     }, 1200)
@@ -99,7 +99,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(62, pickupWallY),
                             // SHOOT SECOND SET
-                            new Point2d(61, 23)
+                            new Point2d(61, 22)
                     }, 3000)
                     .waitMilliseconds(2000)
                     .callback(()->{
@@ -115,7 +115,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(300)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(61, 23),
+                            new Point2d(61, 22),
                             // INTAKE THIRD SET
                             new Point2d(62, pickupWallY)
                     }, 1200)
@@ -131,7 +131,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(62, pickupWallY),
                             // SHOOT THIRD SET
-                            new Point2d(61, 23)
+                            new Point2d(61, 22)
                     }, 3000)
                     .waitMilliseconds(2000)
                     .callback(()->{
@@ -146,7 +146,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(200)
 
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(61, 23),
+                            new Point2d(61, 22),
                             // INTAKE FOURTH SET
                             new Point2d(62, pickupWallY)
                     }, 1200)
@@ -162,7 +162,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(62, pickupWallY),
                             // SHOOT FOURTH SET
-                            new Point2d(61, 23)
+                            new Point2d(61, 22)
                     }, 5000)
                     .waitMilliseconds(2000)
 
@@ -207,7 +207,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
         shooter.shootWithVelocityIndependent(1500, 1480, 1500);
         turret.setAngle(102);
 //        turret.setFieldCentricPosition(turretAngle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);
-        sixWheel.setPosition(new Pose2d(63, 25, Math.toRadians(90)));
+        sixWheel.setPosition(new Pose2d(63, 24, Math.toRadians(90)));
         currentPath = new TestingPath().build().start();
     }
 
