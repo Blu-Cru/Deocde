@@ -180,7 +180,7 @@ public class Robot {
 
     public LimelightObeliskTagDetector addLLTagDetector(){
         llTagDetector = new LimelightObeliskTagDetector();
-        subsystems.add(llTagDetector);
+        //subsystems.add(llTagDetector);
         return llTagDetector;
     }
 

@@ -195,10 +195,12 @@ public class PPCloseRedAuto extends BluLinearOpMode {
 
     public void periodic() {
         currentPath.run();
-
-        if (llTagDetector.detectedPattern() && !alreadySignalledPattern){
-            gamepad1.setLedColor(100,255,100, 1000);
-            alreadySignalledPattern = true;
+        if (!alreadySignalledPattern){
+            llTagDetector.read();
+            if (llTagDetector.detectedPattern()){
+                gamepad1.setLedColor(100,255,100, 1000);
+                alreadySignalledPattern = true;
+            }
         }
     }
 }

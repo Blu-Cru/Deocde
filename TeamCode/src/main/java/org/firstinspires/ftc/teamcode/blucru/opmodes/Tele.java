@@ -244,6 +244,7 @@ public class Tele extends BluLinearOpMode{
 
         //relocalization
         if (driver2.pressedDpadUp()){
+            llTagDetector.read();
             if (llTagDetector.validLLReads()){
                 gamepad1.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
