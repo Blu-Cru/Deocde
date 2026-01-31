@@ -72,7 +72,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000)
 
                     .callback(()->{
-                        new TurnTurretToPosFieldCentricCommand(turretAngleRest,90).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -103,7 +103,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     }, 3000)
                     .waitMilliseconds(2000)
                     .callback(()->{
-                        new TurnTurretToPosFieldCentricCommand(turretAngleRest,90).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
 
                     .waitMilliseconds(3100)
@@ -135,7 +135,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     }, 3000)
                     .waitMilliseconds(2000)
                     .callback(()->{
-                        new TurnTurretToPosFieldCentricCommand(turretAngleRest,90).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
                     .waitMilliseconds(3100)
                     .callback(() -> {
@@ -167,7 +167,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(2000)
 
                     .callback(()->{
-                        new TurnTurretToPosFieldCentricCommand(turretAngleRest,90).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
                     .waitMilliseconds(3100)
                     .callback(() -> {
