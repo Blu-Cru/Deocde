@@ -88,7 +88,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),
                             new Point2d(0,30),
-                            new Point2d(6.5, 54)
+                            new Point2d(6.5, 52)
                     }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
