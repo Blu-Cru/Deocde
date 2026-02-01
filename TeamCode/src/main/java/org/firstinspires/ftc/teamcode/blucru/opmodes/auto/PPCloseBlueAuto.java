@@ -12,13 +12,15 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseBlueAuto extends BluLinearOpMode {
-    double turretAngle = 137; //field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
     double velo =1150;
     double leftHood;
     double middleHood ;
@@ -193,6 +195,8 @@ public class PPCloseBlueAuto extends BluLinearOpMode {
         llTagDetector.switchToMotif();
         sixWheel.setPosition(new Pose2d(-49, -54, Math.toRadians(51.529)));
         currentPath = new TestingPath().build().start();
+        Globals.setAlliance(Alliance.BLUE);
+
     }
 
     public void periodic() {
