@@ -23,7 +23,7 @@ public class AutoLongSpitTransferCommand extends InstantCommand {
                     new IntakeStopCommand(),
                     new WaitCommand(200),
                     new IntakeSpitCommand(),
-                    new WaitCommand(1600),
+                    new WaitCommand(1000),
                     new ElevatorUpCommand(),
                     new WaitCommand(400),
                     new ElevatorMiddleCommand(),
