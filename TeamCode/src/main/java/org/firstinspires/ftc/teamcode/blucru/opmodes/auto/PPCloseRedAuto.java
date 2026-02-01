@@ -219,5 +219,6 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                 alreadySignalledPattern = true;
             }
         }
+        telemetry.addData("Turret Target Pos", turret.getTargetPosition());
     }
 }

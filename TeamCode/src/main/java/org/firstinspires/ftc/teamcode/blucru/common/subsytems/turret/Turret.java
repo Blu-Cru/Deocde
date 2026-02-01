@@ -241,4 +241,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void reset() {
         // encoder.reset();
     }
+    public double getTargetPosition(){
+        return position;
+    }
 }
