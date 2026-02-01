@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 @TeleOp (group = "a")
 
@@ -251,13 +252,45 @@ public class Tele extends BluLinearOpMode{
             turret.setPower(gamepad2.right_stick_x*0.2);
         }
 
+        //modify targets
+        if (driver2.pressedDpadLeft()){
+            gamepad2.rumble(10);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.turretTargetRedY -= 0.5;
+            }else {
+                Globals.turretTargetBlueY -= 0.5;
+            }
+        }
+        if (driver2.pressedDpadRight()){
+            gamepad2.rumble(10);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.turretTargetRedY += 0.5;
+            }else {
+                Globals.turretTargetBlueY += 0.5;
+            }
+        }
 
-
+        if (driver2.pressedX()){
+            gamepad2.rumble(10);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()+2, Globals.shootingGoalRPose.getY()-2);
+            }else {
+                Globals.shootingGoalLPose = new Vector2d(Globals.shootingGoalLPose.getX()+2, Globals.shootingGoalLPose.getY()+2);
+            }
+        }
+        if (driver2.pressedB()){
+            gamepad2.rumble(10);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()-2, Globals.shootingGoalRPose.getY()+2);
+            }else {
+                Globals.shootingGoalLPose = new Vector2d(Globals.shootingGoalLPose.getX()-2, Globals.shootingGoalLPose.getY()-2);
+            }
+        }
 
         //relocalization
         if (driver2.pressedDpadUp()){
             if (llTagDetector.validLLReads()){
-                gamepad1.rumble(200);
+                gamepad2.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
             }
         }
@@ -276,9 +309,9 @@ public class Tele extends BluLinearOpMode{
         if (driver2.pressedDpadDown()){
             sixWheel.setHeading(0);
         }
-        if (driver2.pressedDpadLeft()){
-            llTagDetector.switchToPosition();
-        }
+//        if (driver2.pressedDpadLeft()){
+//            llTagDetector.switchToPosition();
+//        }
     }
 
     public void telemetry(){
