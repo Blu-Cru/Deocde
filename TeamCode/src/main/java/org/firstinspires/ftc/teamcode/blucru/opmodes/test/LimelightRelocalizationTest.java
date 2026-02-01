@@ -35,10 +35,12 @@ public class LimelightRelocalizationTest extends BluLinearOpMode {
         sixWheel.setPosition(new Pose2d(0,0,0));
     }
     public void periodic(){
+        llTagDetector.read();
         if (gamepad1.x){
             Pose2d llPose = llTagDetector.getLLBotPosePoseHistory();
             if (llPose != null){
                 telemetry.addData("Unoffseted pose", llTagDetector.getLLBotPose());
+                gamepad1.rumble(1000);
                 sixWheel.setPosition(llPose);
             }
         }

@@ -185,6 +185,7 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void periodic(){
+        llTagDetector.read();
         sm.update();
 
         //Shooter
@@ -244,7 +245,6 @@ public class Tele extends BluLinearOpMode{
 
         //relocalization
         if (driver2.pressedDpadUp()){
-            llTagDetector.read();
             if (llTagDetector.validLLReads()){
                 gamepad1.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
@@ -264,6 +264,9 @@ public class Tele extends BluLinearOpMode{
         //manual heading update
         if (driver2.pressedDpadDown()){
             sixWheel.setHeading(0);
+        }
+        if (driver2.pressedDpadLeft()){
+            llTagDetector.switchToPosition();
         }
     }
 

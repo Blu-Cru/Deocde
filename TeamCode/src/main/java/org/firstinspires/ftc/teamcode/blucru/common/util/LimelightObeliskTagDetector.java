@@ -57,7 +57,8 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
             patternPipelineInterpretation();
 
             //need to check for pipeline switch
-            if (detectedPattern()){
+            if (detectedPattern() || timer == null || timer.milliseconds() > 15000){
+                detectedMotif = true;
                 limelight.pipelineSwitch(POSITION_PIPELINE);
             }
         }
@@ -75,6 +76,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
             botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
             validReadsThisLoop = true;
         } else {
+            Globals.telemetry.addData("Valid Reads", result.isValid());
             Globals.telemetry.addLine("NO POSITION TAGS");
             validReadsThisLoop = false;
         }
@@ -164,6 +166,12 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         timer.reset();
         limelight.pipelineSwitch(PATTERN_PIPELINE);
         detectedMotif = false;
+    }
+
+    public void switchToPosition(){
+        timer = null;
+        limelight.pipelineSwitch(POSITION_PIPELINE);
+        detectedMotif = true;
     }
 
     @Override
