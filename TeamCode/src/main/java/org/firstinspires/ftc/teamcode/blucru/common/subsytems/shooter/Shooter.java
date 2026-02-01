@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
@@ -26,6 +27,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public HoodLeft hoodLeft;
     public HoodMiddle hoodMiddle;
     public HoodRight hoodRight;
+    public Vector2d robotToGoal;
 
     enum State{
         IDLE,
@@ -80,13 +82,17 @@ public class Shooter implements BluSubsystem, Subsystem {
                 rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
             case AUTO_AIM:
-                Vector2d robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+                if (Globals.alliance == Alliance.RED) {
+                    robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+                }else {
+                    robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+                }
                 Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 double dist = Math.sqrt(turretToRobot.addNotInPlace(robotToGoal).getDist());
                 Globals.telemetry.addData("dist", dist);
                 double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(dist);
                 double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
-                double[] rightLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
+                double[] rightLerps = ShooterAutoAimInterpolation.interpolateRight(dist);
 
                 leftShooter.setVel(leftLerps[0]);
                 leftShooter.setHoodAngle(leftLerps[1]);
