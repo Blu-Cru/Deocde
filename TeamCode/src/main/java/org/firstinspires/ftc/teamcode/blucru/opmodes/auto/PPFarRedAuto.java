@@ -190,6 +190,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
         addShooter();
         addTurret();
         addTransfer();
+        addLLTagDetector();
         shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
         shooter.write();
         elevator.setMiddle();
@@ -212,6 +213,7 @@ public class PPFarRedAuto extends BluLinearOpMode {
     }
 
     public void periodic() {
+        llTagDetector.read();
         currentPath.run();
     }
 }
