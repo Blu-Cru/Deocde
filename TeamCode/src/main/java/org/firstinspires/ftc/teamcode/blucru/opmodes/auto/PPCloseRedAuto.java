@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
@@ -22,7 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseRedAuto extends BluLinearOpMode {
-    double turretAngle =230; //field centric, robot centric is 85
+    double turretAngle = 117; //field centric, robot centric is 85
     double velo =1180;
     double leftHood;
     double middleHood;
@@ -60,12 +59,8 @@ public class PPCloseRedAuto extends BluLinearOpMode {
 
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new IntakeStopCommand(),
-                                new WaitCommand(100),
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
-                                new WaitCommand(2500),
-                                new TurnTurretToPosCommand(85)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
                         ).schedule();
                     })
                     .waitMilliseconds(500)
@@ -76,9 +71,10 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                             new Point2d(-16, 19)    // was (-10, 17)
                     }, 2000)
                     .addTurnTo(45,1000)
-//                    .callback(()->{
-//                        new LockOnGoalCommand().schedule();
-//                    })
+                    .waitMilliseconds(500)
+                    .callback(()->{
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+                    })
                     // SHOOT FIRST SET
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -89,21 +85,18 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .waitMilliseconds(1000)
 
                     // INTAKE SECOND SET
+                    //.addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),
-//                            new Point2d(0,30), use for gate open
-//                            new Point2d(10, 48) use for gate open
-                            new Point2d(10,46)
+                            //new Point2d(0,30),
+                            //new Point2d(6.5, 48)
+                            new Point2d(10, 46)
                     }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new IntakeStopCommand(),
-                                new WaitCommand(100),
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
-                                new WaitCommand(2000),
-                                new TurnTurretToPosCommand(85)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -114,9 +107,10 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                             new Point2d(-16, 19)    // was (-10, 17)
                     }, 2000)
                     .addTurnTo(45,1000)
-//                    .callback(()->{
-//                        new LockOnGoalCommand().schedule();
-//                    })
+                    .waitMilliseconds(500)
+                    .callback(()->{
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+                    })
                     .waitMilliseconds(1000)
 
                     // SHOOT SECOND SET
@@ -132,17 +126,13 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addTurnTo(45, 1000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),   // was (-10, 17)
-                            new Point2d(33, 48)     // was (37, 46)
+                            new Point2d(36, 51)     // was (37, 46)
                     }, 1100)
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new IntakeStopCommand(),
-                                new WaitCommand(100),
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
-                                new WaitCommand(2500),
-                                new TurnTurretToPosCommand(85)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -153,9 +143,10 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     }, 2000)
 //                    .waitMilliseconds(1000)
                     .addTurnTo(45,1000)
-//                    .callback(()->{
-//                        new LockOnGoalCommand().schedule();
-//                    })
+                    .waitMilliseconds(500)
+                    .callback(()->{
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+                    })
                     .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -193,8 +184,6 @@ public class PPCloseRedAuto extends BluLinearOpMode {
         transfer.write();
         turret.resetEncoder();
         turret.write();
-        turret.setAngle(10);
-        turret.write();
         sixWheel.reset();
         sixWheel.write();
         intake.resetEncoder();
@@ -204,7 +193,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(90);
+        turret.setAngle(-5);
         llTagDetector.switchToMotif();
         sixWheel.setPosition(new Pose2d(-51, 54, Math.toRadians(-51.529)));
         currentPath = new TestingPath().build().start();
@@ -219,6 +208,5 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                 alreadySignalledPattern = true;
             }
         }
-        telemetry.addData("Turret Target Pos", turret.getTargetPosition());
     }
 }
