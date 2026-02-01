@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
@@ -18,6 +19,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
@@ -77,11 +79,13 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedA(), State.INTAKING_FROM_ABOVE, () ->{
                     gamepad1.rumble(rumbleDur);
                     new SequentialCommandGroup(
+                        new ElevatorMiddleCommand(),
+                        new WaitCommand(200),
                         new AllTransferMiddleCommand(),
                         new SetLeftHoodAngleCommand(26),
                         new SetMiddleHoodAngleCommand(26),
                         new SetRightHoodAngleCommand(26),
-                        new ShootReverseWithVelocityCommand(200)
+                        new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
 
@@ -156,6 +160,11 @@ public class Tele extends BluLinearOpMode{
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
+                .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    robot.idleRobot();
+                    new IdleCommand().schedule();
+                })
                 .build();
 
         sm.setState(State.IDLE);
@@ -178,6 +187,8 @@ public class Tele extends BluLinearOpMode{
         telemetry.addLine( "EJECT: HOLD RIGHT TRIGGER");
         telemetry.addLine("TRANSFER: LEFT BUMPER");
         telemetry.addLine("SHOOT: RIGHT BUMPER");
+        telemetry.addLine("INTAKE FROM ABOVE: X");
+
     }
 
     public void onStart(){
