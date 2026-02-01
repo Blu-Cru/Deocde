@@ -21,11 +21,11 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseRedAuto extends BluLinearOpMode {
-    double turretAngle = 117; //field centric, robot centric is 85
+    double turretAngle = 217; //field centric, robot centric is 85
     double velo =1180;
-    double leftHood;
-    double middleHood;
-    double rightHood;
+    double leftHood = 32;
+    double middleHood = 32;
+    double rightHood =32;
     boolean alreadySignalledPattern;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
@@ -63,7 +63,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)
                         ).schedule();
                     })
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(1000)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
@@ -90,7 +90,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                             new Point2d(-16, 19),
                             //new Point2d(0,30),
                             //new Point2d(6.5, 48)
-                            new Point2d(10, 46)
+                            new Point2d(13, 49)
                     }, 2000)
                     .waitMilliseconds(1000)
                     .callback(() -> {
