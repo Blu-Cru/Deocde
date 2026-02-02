@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.auto.old;
 
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;

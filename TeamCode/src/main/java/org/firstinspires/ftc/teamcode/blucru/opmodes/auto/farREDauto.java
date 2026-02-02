@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
-public class PPFarRedAutoPath extends BluLinearOpMode {
+public class farREDauto extends BluLinearOpMode {
     double closeTurretAngle = 30;
 
     public class TestingPath extends SixWheelPIDPathBuilder{

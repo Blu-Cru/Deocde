@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.auto.old;
 
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.PoseVelocity2d;
