@@ -24,17 +24,18 @@ public class AutoLongSpitTransferCommand extends InstantCommand {
                     new WaitCommand(200),
                     new IntakeSpitCommand(),
                     new WaitCommand(1000),
+                    new IntakeStopCommand(),
+                    new ParallelizeIntakeCommand(),
                     new ElevatorUpCommand(),
-                    new WaitCommand(400),
+                    new WaitCommand(500),
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
-                    new SetMiddleHoodAngleCommand(rightAngle),
+                    new SetMiddleHoodAngleCommand(rightAngle)
 //                    new WaitCommand(200), //TODO: TUNE WAIT
-                    new IntakeStopCommand(),
-                    new ParallelizeIntakeCommand()
+
 
 
             ).schedule();

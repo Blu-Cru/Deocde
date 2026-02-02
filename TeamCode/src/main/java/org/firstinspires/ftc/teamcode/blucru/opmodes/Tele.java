@@ -249,24 +249,24 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_x*0.2);
+            turret.setPower(gamepad2.right_stick_y * 0.2);
         }
 
         //modify targets
         if (driver2.pressedDpadLeft()){
             gamepad2.rumble(10);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY -= 0.5;
+                Globals.turretTargetRedY -= 1;
             }else {
-                Globals.turretTargetBlueY -= 0.5;
+                Globals.turretTargetBlueY -= 1;
             }
         }
         if (driver2.pressedDpadRight()){
             gamepad2.rumble(10);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY += 0.5;
+                Globals.turretTargetRedY += 1;
             }else {
-                Globals.turretTargetBlueY += 0.5;
+                Globals.turretTargetBlueY += 1;
             }
         }
 
@@ -308,6 +308,12 @@ public class Tele extends BluLinearOpMode{
         //manual heading update
         if (driver2.pressedDpadDown()){
             sixWheel.setHeading(0);
+        }
+        if (driver2.pressedY()){
+            transfer.setAllUp();
+        }
+        if (driver2.pressedTouchpad()){
+            transfer.setAllDown();
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();

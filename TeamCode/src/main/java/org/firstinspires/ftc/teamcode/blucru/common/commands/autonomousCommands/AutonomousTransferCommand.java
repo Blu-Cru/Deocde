@@ -33,16 +33,17 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new IntakeSpitCommand(),
                     new WaitCommand(1000),
                     new ElevatorUpCommand(),
+                    new IntakeStopCommand(),
+                    new ParallelizeIntakeCommand(),
                     new WaitCommand(400),
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
-                    new SetMiddleHoodAngleCommand(rightAngle),
+                    new SetMiddleHoodAngleCommand(rightAngle)
 //                    new WaitCommand(200), //TODO: TUNE WAIT
-                    new IntakeStopCommand(),
-                    new ParallelizeIntakeCommand()
+
 
 
             ).schedule();

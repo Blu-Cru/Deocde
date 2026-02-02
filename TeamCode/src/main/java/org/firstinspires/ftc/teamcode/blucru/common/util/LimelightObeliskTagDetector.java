@@ -37,7 +37,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         limelight = Globals.hwMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
-        limelight.pipelineSwitch(PATTERN_PIPELINE);
+        limelight.pipelineSwitch(POSITION_PIPELINE);
         botpose = null;
         timer = new ElapsedTime();
     }
@@ -50,18 +50,18 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     @Override
     public void read() {
         //15 sec cooldown
-        if (detectedPattern() || timer == null || timer.milliseconds() > 15000){
-            timer = null;
+        /*if (detectedPattern() || timer == null || timer.milliseconds() > 15000){
+            timer = null;*/
             positionPipelineInterpretation();
-        } else {
-            patternPipelineInterpretation();
-
+        //} else {
+            //patternPipelineInterpretation();
+/*
             //need to check for pipeline switch
             if (detectedPattern() || timer == null || timer.milliseconds() > 15000){
                 detectedMotif = true;
                 limelight.pipelineSwitch(POSITION_PIPELINE);
             }
-        }
+        }*/
     }
 
     public void positionPipelineInterpretation(){

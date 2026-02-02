@@ -9,15 +9,22 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetLeftHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetMiddleHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -28,10 +35,10 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 158; //Field centric angle increase = towards obelisk decrease = towards gate
-    double shootVeloLeft = 1480; //TODO:tune
-    double shootVeloMiddle = 1460;
-    double shootVeloRight = 1480;
+    double turretAngleRest = 161.5; //Field centric angle increase = towards obelisk decrease = towards gate
+    double shootVeloLeft = 1460; //TODO:tune
+    double shootVeloMiddle = 1490;
+    double shootVeloRight = 1470;
     double leftHood = 49;
     double middleHood = 45;
     double rightHood = 49;
@@ -94,7 +101,7 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1300)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
@@ -105,7 +112,7 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(60, -22),
                             // INTAKE SECOND SET
-                            new Point2d(62, pickupWallY)
+                            new Point2d(63, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(600)
                     .callback(() -> {
@@ -118,11 +125,11 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(62, pickupWallY),
+                            new Point2d(63, pickupWallY),
                             // SHOOT SECOND SET
                             new Point2d(61, -22)
                     }, 3000)
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1600)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
@@ -143,8 +150,6 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                     .waitMilliseconds(600)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new WaitCommand(300),
-
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                                 new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)
 //                                new WaitCommand(4000),
@@ -156,7 +161,7 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                             // SHOOT THIRD SET
                             new Point2d(61, -22)
                     }, 3000)
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1600)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
@@ -166,7 +171,7 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                                 new AutonomousShootCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(200)
+                    .waitMilliseconds(2500)
 
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(61, -22),
@@ -176,7 +181,6 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                     .waitMilliseconds(600)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                                 new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)
 //                                new WaitCommand(2000),
@@ -188,7 +192,7 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                             // SHOOT FOURTH SET
                             new Point2d(61, -22)
                     }, 5000)
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1000)
 
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
@@ -196,7 +200,14 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
                     .waitMilliseconds(1300)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootCommand()
+                                new AllTransferUpCommand(),
+                                new WaitCommand(300),
+                                new IdleShooterCommand(),
+                                new CenterTurretCommand(),
+                                new WaitCommand(400),
+                                new ParallelizeIntakeCommand(),
+                                new ElevatorMiddleCommand(),
+                                new AllTransferDownCommand()
                         ).schedule();
                     })
                     .waitMilliseconds(300)
@@ -233,8 +244,8 @@ public class PPFarBlueNOANTIJAMAuto extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocityIndependent(1500, 1480, 1500);
-        turret.setAngle(-105);
+        shooter.shootWithVelocityIndependent(1490, 1480, 1500);
+        turret.setAngle(-107);
 //        turret.setFieldCentricPosition(turretAngle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);
         sixWheel.setPosition(new Pose2d(63, -24, Math.toRadians(-90)));
         currentPath = new TestingPath().build().start();

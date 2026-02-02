@@ -15,7 +15,7 @@ public class MiddleTransferServo extends TransferServo{
 
     @Override
     double getBottomPos() {
-        return 0.3;
+        return 0.23;
     }
 
     @Override

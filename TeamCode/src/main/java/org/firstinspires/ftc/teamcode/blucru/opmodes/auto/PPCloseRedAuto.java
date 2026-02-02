@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseRedAuto extends BluLinearOpMode {
-    double turretAngle = 217; //field centric, decrease = towards obelisk increase = towards gate
-    double velo =1120;
+    double turretAngle = 223; //field centric, decrease = towards obelisk increase = towards gate
+    double velo =1150;
     double leftHood;
     double middleHood ;
     double rightHood ;
@@ -52,7 +52,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, 19),
-                            new Point2d(-16,33),
+                            new Point2d(-10,35),
                             new Point2d(-6,45),
                             new Point2d(-5, 57)
                     }, 2000)
@@ -92,14 +92,14 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                             //new Point2d(6.5, 48)
                             new Point2d(13, 49)
                     }, 2000)
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(300)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(300)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
@@ -143,7 +143,7 @@ public class PPCloseRedAuto extends BluLinearOpMode {
                     }, 2000)
 //                    .waitMilliseconds(1000)
                     .addTurnTo(45,1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(3000)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
