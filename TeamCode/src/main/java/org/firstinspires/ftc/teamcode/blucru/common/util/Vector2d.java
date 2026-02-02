@@ -118,6 +118,19 @@ public class Vector2d {
     public double dotProduct(Vector2d vec){
         return x * vec.getX() + y * vec.getY();
     }
+    public Vector2d scalarMultiplication(double scalar){
+        return new Vector2d(scalar * x, scalar * y);
+    }
+
+    public void scalarMultiplicationInPlace(double scalar){
+        x = x * scalar;
+        y = y * scalar;
+    }
+
+    public static double getCosineOfAngleBetween2Vectors(Vector2d v1, Vector2d v2){
+        return v1.dotProduct(v2) / (v1.getMag() * v2.getMag());
+    }
+
     public double getDist(){return x * x + y * y;}
 
     public String toString(){

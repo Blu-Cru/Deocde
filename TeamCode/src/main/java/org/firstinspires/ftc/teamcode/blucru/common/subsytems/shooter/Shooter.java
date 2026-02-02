@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
+import android.service.vr.VrListenerService;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -28,6 +30,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public HoodMiddle hoodMiddle;
     public HoodRight hoodRight;
     public Vector2d robotToGoal;
+    private double shooterDist = 145;
 
     enum State{
         IDLE,
@@ -82,17 +85,47 @@ public class Shooter implements BluSubsystem, Subsystem {
                 rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
             case AUTO_AIM:
+
+                //getting the shooter poses
                 if (Globals.alliance == Alliance.RED) {
                     robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
                 }else {
                     robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
                 }
                 Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                double dist = Math.sqrt(turretToRobot.addNotInPlace(robotToGoal).getDist());
-                Globals.telemetry.addData("dist", dist);
-                double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(dist);
-                double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(dist);
-                double[] rightLerps = ShooterAutoAimInterpolation.interpolateRight(dist);
+                Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
+                double k = shooterDist / midToGoal.getMag();
+                Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);
+                Vector2d midToRight = midToGoal.rotate(-Math.PI/2).scalarMultiplication(k);
+                Vector2d leftToGoal = midToGoal.addNotInPlace(midToLeft);
+                Vector2d rightToGoal = midToRight.addNotInPlace(midToRight);
+                Globals.telemetry.addData("left vector to goal", leftToGoal);
+                Globals.telemetry.addData("middle vector to goal", midToGoal);
+                Globals.telemetry.addData("right vector to goal", rightToGoal);
+
+                //find the extra dists
+                double cosine = Vector2d.getCosineOfAngleBetween2Vectors(midToGoal, Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY()));
+                double sine = Math.sqrt(1-cosine * cosine);
+                double tan;
+                try {
+                    tan = sine/cosine;
+                } catch (Exception e){
+                    Globals.telemetry.addLine("ETHAN WHAT THE HELLIANTE ARE U DOING");
+                    tan = 0;
+                }
+                double shooterOffset = shooterDist * tan;
+                double leftDist = leftToGoal.getMag() - shooterOffset;
+                double middleDist = midToGoal.getMag();
+                double rightDist = rightToGoal.getMag() + shooterOffset;
+
+                Globals.telemetry.addData("left dist", leftDist);
+                Globals.telemetry.addData("middle dist", middleDist);
+                Globals.telemetry.addData("right dist", rightDist);
+
+
+                double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(leftDist);
+                double[] middleLerps = ShooterAutoAimInterpolation.interpolateMiddle(middleDist);
+                double[] rightLerps = ShooterAutoAimInterpolation.interpolateRight(rightDist);
 
                 leftShooter.setVel(leftLerps[0]);
                 leftShooter.setHoodAngle(leftLerps[1]);
