@@ -16,6 +16,7 @@ public class ControlHubIMUvsPinpointTest extends BluLinearOpMode {
 
     public void initialize(){
         pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint.resetPosAndIMU();
         controlHubImu = hardwareMap.get(IMU.class, "imu");
         controlHubImu.initialize(new IMU.Parameters(
                 new RevHubOrientationOnRobot(
