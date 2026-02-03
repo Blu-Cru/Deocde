@@ -28,25 +28,26 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class testfarred extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 214; //Field centric angle decrease = towards obelisk increase = towards gate
-    double shootVeloLeft = 1480; //TODO:tune
-    double shootVeloMiddle = 1460;
+    double turretAngleRest = 203; //Field centric angle decrease = towards obelisk increase = towards gate
+    double shootVeloLeft = 1440;
+    double shootVeloMiddle = 1440;
+    double shootVeloRight = 1440;
     Point2d shootingPoint = new Point2d(43, 7);
-    double shootVeloRight = 1480;
+
     double leftHood = 49;
     double middleHood = 45;
     double rightHood = 49;
 
     // shifted +3 in Y to keep the same path relative to new start pose
-    double pickupWallY = 59;
+    double pickupWallY = 60;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
         public TestingPath() {
             super();
             this.addPurePursuitPath(new Point2d[]{
-                            new Point2d(63, 24),
-                            new Point2d(63, 25)
+                            new Point2d(63, 7),
+                            new Point2d(63, 8)
                     }, 100)
                     .waitMilliseconds(1500) //TODO: TUNE
                     .callback(() -> {
@@ -56,11 +57,10 @@ public class testfarred extends BluLinearOpMode {
                     })
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(63, 25),
-                            new Point2d(52, 41),
+                            new Point2d(63, 8),
                             // INTAKE FIRST SET
                             new Point2d(40, 45)
-                    }, 5000)
+                    }, 2000)
                     .waitMilliseconds(200)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -84,13 +84,11 @@ public class testfarred extends BluLinearOpMode {
 //                                new TurnTurretToPosCommand(102)
                         ).schedule();
                     })
-                    .waitMilliseconds(200)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(42, 40),
+                            new Point2d(40, 40),
                             // SHOOT FIRST SET
                             shootingPoint
                     }, 2000)
-                    .addTurnTo(90, 1000)
                     .waitMilliseconds(300)
 
                     .callback(()->{
@@ -107,9 +105,10 @@ public class testfarred extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE SECOND SET
+                            new Point2d(59, 40),
                             new Point2d(62, pickupWallY)
                     }, 1200)
-                    .waitMilliseconds(600)
+                    .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
 
@@ -124,12 +123,12 @@ public class testfarred extends BluLinearOpMode {
                             // SHOOT SECOND SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1400)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
 
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(700)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
@@ -140,9 +139,11 @@ public class testfarred extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE THIRD SET
+                            new Point2d(59, 40),
+
                             new Point2d(62, pickupWallY)
                     }, 1200)
-                    .waitMilliseconds(600)
+                    .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
 //                                new WaitCommand(300),
@@ -158,24 +159,25 @@ public class testfarred extends BluLinearOpMode {
                             // SHOOT THIRD SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1400)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(700)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(3800)
+                    .waitMilliseconds(300)
 
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE FOURTH SET
+                            new Point2d(59, 40),
                             new Point2d(62, pickupWallY)
                     }, 1200)
-                    .waitMilliseconds(600)
+                    .waitMilliseconds(1000)
                     .callback(() -> {
                         new SequentialCommandGroup(
 //                                new WaitCommand(300),
@@ -189,12 +191,12 @@ public class testfarred extends BluLinearOpMode {
                             new Point2d(62, pickupWallY),
                             // SHOOT FOURTH SET
                             shootingPoint
-                    }, 5000)
-                    .waitMilliseconds(1700)
+                    }, 3000)
+                    .waitMilliseconds(1400)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(700)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
@@ -235,8 +237,8 @@ public class testfarred extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocityIndependent(1480, 1480, 1500);
-        turret.setAngle(114);
+        shooter.shootWithVelocityIndependent(1490, 1500, 1500);
+        turret.setAngle(109);
 //        turret.setFieldCentricPosition(turretAngle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);
         sixWheel.setPosition(new Pose2d(63, 7, Math.toRadians(90)));
         currentPath = new TestingPath().build().start();
