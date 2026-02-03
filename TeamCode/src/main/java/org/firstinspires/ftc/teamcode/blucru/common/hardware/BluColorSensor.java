@@ -10,13 +10,8 @@ public class BluColorSensor implements BluHardwareDevice{
     double red;
     double blue;
     double green;
-    double[] purpleBottomThreshold, purpleTopThreshold, greenBottomThreshold, greenTopThreshold;
-    public BluColorSensor(String name, double[][] thresholds){
+    public BluColorSensor(String name){
         colorSensor = Globals.hwMap.get(RevColorSensorV3.class, name);
-        purpleBottomThreshold = thresholds[0];
-        purpleTopThreshold = thresholds[1];
-        greenBottomThreshold = thresholds[2];
-        greenTopThreshold = thresholds[3];
     }
     @Override
     public void init() {
@@ -49,37 +44,5 @@ public class BluColorSensor implements BluHardwareDevice{
     }
     public double getGreen(){
         return green;
-    }
-
-    public boolean isPurple(){
-        boolean inRed = red < purpleTopThreshold[0]
-                && red > purpleBottomThreshold[0];
-        boolean inBlue = blue < purpleTopThreshold[2]
-                && blue > purpleBottomThreshold[2];
-        boolean inGreen = green < purpleTopThreshold[1]
-                && green > purpleBottomThreshold[1];
-        Globals.telemetry.addData("Sensor Name", colorSensor.getDeviceName());
-        Globals.telemetry.addData("in red purple", inRed);
-        Globals.telemetry.addData("in blue purple", inBlue);
-        Globals.telemetry.addData("in green purple", inGreen);
-        Globals.telemetry.addLine("");
-        return (inRed && inBlue && inGreen);
-    }
-    public boolean isGreen(){
-        boolean inRed = red < greenTopThreshold[0]
-                && red > greenBottomThreshold[0];
-        boolean inBlue = blue < greenTopThreshold[2]
-                && blue > greenBottomThreshold[2];
-        boolean inGreen = green < greenTopThreshold[1]
-                && green > greenBottomThreshold[1];
-        Globals.telemetry.addData("in red green", inRed);
-        Globals.telemetry.addData("in blue green", inBlue);
-        Globals.telemetry.addData("in green green", inGreen);
-        return (red < greenTopThreshold[0]
-                && red > greenBottomThreshold[0]
-                && green < greenTopThreshold[1]
-                && green > greenBottomThreshold[1]
-                && blue < greenTopThreshold[2]
-                && blue > greenBottomThreshold[2]);
     }
 }

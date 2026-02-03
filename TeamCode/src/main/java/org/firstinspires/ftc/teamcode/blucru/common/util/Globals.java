@@ -30,11 +30,11 @@ public class Globals {
     public static Vector2d lineVector = new Vector2d(3,4);
 
     public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
-    public static double turretTargetRedX = -59;
-    public static double turretTargetRedY = 57;
+    public static double turretTargetRedX = -65;
+    public static double turretTargetRedY = 65;
 
-    public static double turretTargetBlueX = -59;
-    public static double turretTargetBlueY = -57;
+    public static double turretTargetBlueX = -65;
+    public static double turretTargetBlueY = -65;
     public static Vector2d turretTargetBluePose = new Vector2d(-66, -66);
 
     public static ElapsedTime matchTime;

@@ -217,7 +217,7 @@ public class Tele extends BluLinearOpMode{
 //            sixWheel.setPosition(llTagDetector.getLLBotPose());
 //        }
 
-        if (driver2.pressedA()) {
+        if (driver2.pressedA() && !driver2.pressedOptions()) {
             gamepad2.rumble(1000);
             sixWheel.setPosition(new Pose2d(0, 0, 0));
         }
@@ -278,7 +278,7 @@ public class Tele extends BluLinearOpMode{
                 Globals.shootingGoalLPose = new Vector2d(Globals.shootingGoalLPose.getX()+2, Globals.shootingGoalLPose.getY()+2);
             }
         }
-        if (driver2.pressedB()){
+        if (driver2.pressedB() && !driver2.pressedOptions()){
             gamepad2.rumble(10);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()-2, Globals.shootingGoalRPose.getY()+2);

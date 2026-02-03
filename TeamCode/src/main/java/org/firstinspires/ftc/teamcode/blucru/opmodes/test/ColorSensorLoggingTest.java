@@ -25,6 +25,8 @@ public class ColorSensorLoggingTest extends LinearOpMode {
 
     private BufferedWriter writer;
     private String logFilePath;
+    private boolean isLogging = true;
+    private boolean prevAButtonState = false;
 
     @Override
     public void runOpMode() {
@@ -37,12 +39,12 @@ public class ColorSensorLoggingTest extends LinearOpMode {
         // Each threshold is [Red, Green, Blue]
         double[][] defaultThresholds = {{0, 0, 0}, {1, 1, 1}, {0, 0, 0}, {1, 1, 1}};
 
-        sensor1 = new BluColorSensor("middleColorSensorRight", defaultThresholds);
-        sensor2 = new BluColorSensor("middleColorSensorLeft", defaultThresholds);
-        sensor3 = new BluColorSensor("rightColorSensorTop", defaultThresholds);
-        sensor4 = new BluColorSensor("rightColorSensorBottom", defaultThresholds);
-        sensor5 = new BluColorSensor("leftColorSensorTop", defaultThresholds);
-        sensor6 = new BluColorSensor("leftColorSensorBottom", defaultThresholds);
+        sensor1 = new BluColorSensor("middleColorSensorRight");
+        sensor2 = new BluColorSensor("middleColorSensorLeft");
+        sensor3 = new BluColorSensor("rightColorSensorTop");
+        sensor4 = new BluColorSensor("rightColorSensorBottom");
+        sensor5 = new BluColorSensor("leftColorSensorTop");
+        sensor6 = new BluColorSensor("leftColorSensorBottom");
 
         // Initialize file logging
         try {
@@ -57,8 +59,30 @@ public class ColorSensorLoggingTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             try {
-                // Read all sensors and log data
-                logColorSensorData();
+                // Check for pause/resume button press (A button)
+                if (gamepad1.a && !prevAButtonState) {
+                    isLogging = !isLogging;
+                    try {
+                        // Write marker to CSV
+                        writeMarker(isLogging ? "RESUME" : "PAUSE");
+                    } catch (IOException e) {
+                        telemetry.addData("Error", "Failed to write marker: " + e.getMessage());
+                    }
+                }
+                prevAButtonState = gamepad1.a;
+
+                // Read all sensors
+                sensor1.read();
+                sensor2.read();
+                sensor3.read();
+                sensor4.read();
+                sensor5.read();
+                sensor6.read();
+
+                // Log data only if logging is active
+                if (isLogging) {
+                    logColorSensorData();
+                }
 
                 // Display current readings on driver station
                 displaySensorData("sensor1", sensor1);
@@ -68,7 +92,9 @@ public class ColorSensorLoggingTest extends LinearOpMode {
                 displaySensorData("sensor5", sensor5);
                 displaySensorData("sensor6", sensor6);
 
-                telemetry.addData("Logging", "Active to: " + logFilePath);
+                telemetry.addData("Status", isLogging ? "LOGGING" : "PAUSED");
+                telemetry.addData("File", logFilePath);
+                telemetry.addData("Control", "Press A to pause/resume");
                 telemetry.update();
             } catch (IOException e) {
                 telemetry.addData("Error", "Logging failed: " + e.getMessage());
@@ -110,14 +136,6 @@ public class ColorSensorLoggingTest extends LinearOpMode {
     private void logColorSensorData() throws IOException {
         if (writer == null) return;
 
-        // Read all sensors first
-        sensor1.read();
-        sensor2.read();
-        sensor3.read();
-        sensor4.read();
-        sensor5.read();
-        sensor6.read();
-
         // Get current timestamp
         String timestamp = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
 
@@ -134,6 +152,16 @@ public class ColorSensorLoggingTest extends LinearOpMode {
 
         // Write to file
         writer.write(row.toString());
+        writer.newLine();
+        writer.flush();
+    }
+
+    private void writeMarker(String markerType) throws IOException {
+        if (writer == null) return;
+
+        String timestamp = new SimpleDateFormat("HH:mm:ss.SSS").format(new Date());
+        String marker = timestamp + "," + markerType + ",,,,,,,,,,,,,,,,,,";
+        writer.write(marker);
         writer.newLine();
         writer.flush();
     }
