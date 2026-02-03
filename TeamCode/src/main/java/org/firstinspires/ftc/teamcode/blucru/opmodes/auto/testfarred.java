@@ -28,11 +28,11 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class testfarred extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 203; //Field centric angle decrease = towards obelisk increase = towards gate
+    double turretAngleRest = 199; //Field centric angle decrease = towards obelisk increase = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1440;
-    Point2d shootingPoint = new Point2d(43, 7);
+    Point2d shootingPoint = new Point2d(45, 9);
 
     double leftHood = 49;
     double middleHood = 45;
@@ -100,13 +100,13 @@ public class testfarred extends BluLinearOpMode {
                                 new AutonomousShootCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(700)
+                    .waitMilliseconds(300)
 
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE SECOND SET
-                            new Point2d(59, 40),
-                            new Point2d(62, pickupWallY)
+                            new Point2d(57, 40),
+                            new Point2d(63, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -119,11 +119,11 @@ public class testfarred extends BluLinearOpMode {
                         ).schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(62, pickupWallY),
+                            new Point2d(63, pickupWallY),
                             // SHOOT SECOND SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1400)
+                    .waitMilliseconds(1100)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
@@ -139,7 +139,7 @@ public class testfarred extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE THIRD SET
-                            new Point2d(59, 40),
+                            new Point2d(57, 40),
 
                             new Point2d(62, pickupWallY)
                     }, 1200)
@@ -159,7 +159,7 @@ public class testfarred extends BluLinearOpMode {
                             // SHOOT THIRD SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1400)
+                    .waitMilliseconds(1100)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
@@ -174,7 +174,7 @@ public class testfarred extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE FOURTH SET
-                            new Point2d(59, 40),
+                            new Point2d(57, 40),
                             new Point2d(62, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
@@ -192,7 +192,7 @@ public class testfarred extends BluLinearOpMode {
                             // SHOOT FOURTH SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1400)
+                    .waitMilliseconds(1100)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
@@ -237,7 +237,7 @@ public class testfarred extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocityIndependent(1490, 1500, 1500);
+        shooter.shootWithVelocityIndependent(1490, 1520, 1500);
         turret.setAngle(109);
 //        turret.setFieldCentricPosition(turretAngle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);
         sixWheel.setPosition(new Pose2d(63, 7, Math.toRadians(90)));
