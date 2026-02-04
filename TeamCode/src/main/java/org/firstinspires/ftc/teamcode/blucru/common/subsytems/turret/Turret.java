@@ -29,13 +29,12 @@ public class Turret implements BluSubsystem, Subsystem {
     private final double TICKS_PER_REV = 8192 * 212.0 / 35;
 
 
-    public static double kP = 0.0397;
+    public static double kP = 0.02;
     public static double kI = 0.06;
-    public static double kD = 0.003676;
-    public static double kFF = 0;
+    public static double kD = 0.0014;
 
     public static double acceptableError = 0.5;
-    public static double powerClip = 1;
+    public static double powerClip = 0.95;
 
     public static double MAX_ANGLE = 150;
     public static double MIN_ANGLE = -150;
@@ -170,7 +169,7 @@ public class Turret implements BluSubsystem, Subsystem {
         double currentAngle = getAngle();
         double error = position - currentAngle;
 
-        double power = controller.calculate(currentAngle, position) + Math.signum(error) * kFF;
+        double power = controller.calculate(currentAngle, position);
         power = Range.clip(power, -powerClip, powerClip);
 
         // software safety limits
