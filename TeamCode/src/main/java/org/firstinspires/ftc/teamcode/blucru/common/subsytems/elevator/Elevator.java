@@ -49,12 +49,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     }
 
     public void updateLeftBallColor(){
-        final double greenRed = 0;
-        final double greenBlue = 0;
-        final double greenGreen = 0;
-        final double purpleRed = 0;
-        final double purpleBlue = 0;
-        final double purpleGreen = 0;
+        final double greenRed = 0.01716;
+        final double greenBlue = 0.03354;
+        final double greenGreen = 0.0519;
+        final double purpleRed = 0.03426;
+        final double purpleBlue = 0.03934;
+        final double purpleGreen = 0.03086;
         BallColor targetColor;
         leftSensorBottom.read();
         leftSensorTop.read();
@@ -65,14 +65,15 @@ public class Elevator implements BluSubsystem, Subsystem {
         Globals.telemetry.addData("Red Left", red);
         Globals.telemetry.addData("Blue Left", blue);
         Globals.telemetry.addData("Green Left",green);
-        if (mag > 0.1){
+        if (mag > 0.01){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
             double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
             double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen > angleBetweenPurple){
+            if (angleBetweenGreen < angleBetweenPurple){
+                //farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
@@ -86,11 +87,11 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public void updateMiddleBallColor(){
         final double greenRed = 0.00172;
-        final double greenBlue = 0;
-        final double greenGreen = 0;
-        final double purpleRed = 0;
-        final double purpleBlue = 0;
-        final double purpleGreen = 0;
+        final double greenBlue = 0.0041;
+        final double greenGreen = 0.00462;
+        final double purpleRed = 0.0022;
+        final double purpleBlue = 0.00428;
+        final double purpleGreen = 0.00344;
         BallColor targetColor;
         middleSensorLeft.read();
         middleSensorRight.read();
@@ -101,14 +102,15 @@ public class Elevator implements BluSubsystem, Subsystem {
         Globals.telemetry.addData("Blue Middle", blue);
         Globals.telemetry.addData("Green Middle",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.1){
+        if (mag > 0.003){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
             double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
             double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen > angleBetweenPurple){
+            if (angleBetweenGreen < angleBetweenPurple){
+                //farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
@@ -137,14 +139,15 @@ public class Elevator implements BluSubsystem, Subsystem {
         Globals.telemetry.addData("Blue Right", blue);
         Globals.telemetry.addData("Green Right",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.1){
+        if (mag > 0.01){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
             double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
             double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen > angleBetweenPurple){
+            if (angleBetweenGreen < angleBetweenPurple){
+                //farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
