@@ -25,6 +25,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
+    public static double ENCODER_PPR_INTAKE = ((1+(46/11)) * 28);
     boolean armsParallel;
     private PDController pid;
     public enum State{
@@ -132,13 +133,13 @@ public class Intake implements BluSubsystem, Subsystem {
                     encoder.read();
                     Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
                     if (!parallelSensor.getState()) {
-                        double curr = encoder.getCurrentPos() % (145.1 / 2);
-                        if (curr > 145.1 / 4) {
-                            curr -= 145.1 / 2;
+                        double curr = encoder.getCurrentPos() % (ENCODER_PPR_INTAKE / 2);
+                        if (curr > ENCODER_PPR_INTAKE / 4) {
+                            curr -= ENCODER_PPR_INTAKE / 2;
                         }
 
-                        if (curr < -145.1 / 4) {
-                            curr += 145.1 / 2;
+                        if (curr < -ENCODER_PPR_INTAKE / 4) {
+                            curr += ENCODER_PPR_INTAKE / 2;
                         }
                         armsParallel = curr < 3;
                         double power = pid.calculate(curr, -motor.getPower());
