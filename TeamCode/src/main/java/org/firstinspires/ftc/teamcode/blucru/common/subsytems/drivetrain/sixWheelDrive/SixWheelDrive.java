@@ -97,9 +97,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                         localizer.getVel().getH());
                 drive(0, -rotVel); // No linear movement, only rotation
 
-                Globals.telemetry.addData("Turn Target", targetHeading);
-                Globals.telemetry.addData("Current Heading", robotHeadingDeg);
-                Globals.telemetry.addData("Heading Error", headingError);
+//                Globals.telemetry.addData("Turn Target", targetHeading);
+//                Globals.telemetry.addData("Current Heading", robotHeadingDeg);
+//                Globals.telemetry.addData("Heading Error", headingError);
                 break;
             case TELE_DRIVE:
                 break;

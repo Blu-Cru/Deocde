@@ -82,7 +82,7 @@ public class Turret implements BluSubsystem, Subsystem {
                                 Robot.getInstance().sixWheelDrivetrain.getPos()
                         );
 
-                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
+//                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
                 setFieldCentricPositionAutoAim(
                         turretTargetDeg,
@@ -176,16 +176,16 @@ public class Turret implements BluSubsystem, Subsystem {
         if (currentAngle > MAX_ANGLE + 3 && power > 0) power = 0;
         if (currentAngle < MIN_ANGLE - 3 && power < 0) power = 0;
 
-        Globals.telemetry.addData("Turret Angle", currentAngle);
-        Globals.telemetry.addData("Turret Target", position);
-        Globals.telemetry.addData("PID Error", error);
-        Globals.telemetry.addData("PID Output", power);
+//        Globals.telemetry.addData("Turret Angle", currentAngle);
+//        Globals.telemetry.addData("Turret Target", position);
+//        Globals.telemetry.addData("PID Error", error);
+//        Globals.telemetry.addData("PID Output", power);
 
         if (Math.abs(error) > acceptableError) {
             servos.setPower(power);
         } else {
             servos.setPower(0);
-            Globals.telemetry.addLine("Turret At Setpoint");
+//            Globals.telemetry.addLine("Turret At Setpoint");
         }
     }
 
@@ -232,9 +232,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        servos.telemetry();
-        encoder.telemetry();
-        telemetry.addData("Turret State", state);
+//        servos.telemetry();
+//        encoder.telemetry();
+//        telemetry.addData("Turret State", state);
     }
 
     @Override

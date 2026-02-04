@@ -70,14 +70,14 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         if (result != null && result.isValid()){
             captureTime = result.getControlHubTimeStampNanos();
             Pose3D bot = result.getBotpose_MT2();
-            Globals.telemetry.addData("Limelight Heading", bot.getOrientation().getYaw(AngleUnit.RADIANS));
+//            Globals.telemetry.addData("Limelight Heading", bot.getOrientation().getYaw(AngleUnit.RADIANS));
             //using same heading because tags are not for heading correction
             //multiplying by 1000/25.4 to account for unit change
             botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
             validReadsThisLoop = true;
         } else {
-            Globals.telemetry.addData("Valid Reads", result.isValid());
-            Globals.telemetry.addLine("NO POSITION TAGS");
+//            Globals.telemetry.addData("Valid Reads", result.isValid());
+//            Globals.telemetry.addLine("NO POSITION TAGS");
             validReadsThisLoop = false;
         }
     }
@@ -111,7 +111,7 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
                 detectedMotif = true;
             }
         } else {
-            Globals.telemetry.addLine("NO PATTERN TAGS");
+//            Globals.telemetry.addLine("NO PATTERN TAGS");
         }
     }
 

@@ -99,30 +99,30 @@ public class Shooter implements BluSubsystem, Subsystem {
                 Vector2d midToRight = midToGoal.rotate(-Math.PI/2).scalarMultiplication(k);
                 Vector2d leftToGoal = midToGoal.addNotInPlace(midToLeft);
                 Vector2d rightToGoal = midToGoal.addNotInPlace(midToRight);
-                Globals.telemetry.addData("left vector to goal", leftToGoal);
-                Globals.telemetry.addData("middle vector to goal", midToGoal);
-                Globals.telemetry.addData("right vector to goal", rightToGoal);
+//                Globals.telemetry.addData("left vector to goal", leftToGoal);
+//                Globals.telemetry.addData("middle vector to goal", midToGoal);
+//                Globals.telemetry.addData("right vector to goal", rightToGoal);
 
                 //find the extra dists
                 double cosine = Vector2d.getCosineOfAngleBetween2Vectors(midToGoal, Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY()));
-                Globals.telemetry.addData("Cosine", cosine);
+//                Globals.telemetry.addData("Cosine", cosine);
                 double sine = Math.sqrt(1-cosine * cosine);
                 double tan;
                 try {
                     tan = cosine/sine;
                 } catch (Exception e){
-                    Globals.telemetry.addLine("ETHAN WHAT THE HELLIANTE ARE U DOING");
+//                    Globals.telemetry.addLine("ETHAN WHAT THE HELLIANTE ARE U DOING");
                     tan = 0;
                 }
                 double shooterOffset = shooterDist * tan;
-                Globals.telemetry.addData("Tan", tan);
+//                Globals.telemetry.addData("Tan", tan);
                 double leftDist = leftToGoal.getMag() + shooterOffset;
                 double middleDist = midToGoal.getMag();
                 double rightDist = rightToGoal.getMag() - shooterOffset;
 
-                Globals.telemetry.addData("left dist", leftDist);
-                Globals.telemetry.addData("middle dist", middleDist);
-                Globals.telemetry.addData("right dist", rightDist);
+//                Globals.telemetry.addData("left dist", leftDist);
+//                Globals.telemetry.addData("middle dist", middleDist);
+//                Globals.telemetry.addData("right dist", rightDist);
 
 
                 double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(leftDist);

@@ -131,7 +131,7 @@ public class Intake implements BluSubsystem, Subsystem {
                 case PID:
                     parallelSensor.read();
                     encoder.read();
-                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
+//                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
                     if (!parallelSensor.getState()) {
                         double curr = encoder.getCurrentPos() % (ENCODER_PPR_INTAKE / 2);
                         if (curr > ENCODER_PPR_INTAKE / 4) {
@@ -143,8 +143,8 @@ public class Intake implements BluSubsystem, Subsystem {
                         }
                         armsParallel = curr < 3;
                         double power = pid.calculate(curr, -motor.getPower());
-                        Globals.telemetry.addData("Power", power);
-                        Globals.telemetry.addData("Curr", curr);
+//                        Globals.telemetry.addData("Power", power);
+//                        Globals.telemetry.addData("Curr", curr);
                         motor.setPower(power);
                     } else {
                         armsParallel = true;
@@ -158,10 +158,10 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        motor.telemetry();
-        telemetry.addData("Pos", encoder.getCurrentPos());
-        telemetry.addData("Power", motor.getPower());
-        telemetry.addData("State", state);
+//        motor.telemetry();
+//        telemetry.addData("Pos", encoder.getCurrentPos());
+//        telemetry.addData("Power", motor.getPower());
+//        telemetry.addData("State", state);
     }
 
     @Override

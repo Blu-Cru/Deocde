@@ -62,9 +62,9 @@ public class Elevator implements BluSubsystem, Subsystem {
         double green = Math.max(leftSensorBottom.getGreen(), leftSensorTop.getGreen());
         double blue = Math.max(leftSensorBottom.getBlue(), leftSensorTop.getBlue());
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        Globals.telemetry.addData("Red Left", red);
-        Globals.telemetry.addData("Blue Left", blue);
-        Globals.telemetry.addData("Green Left",green);
+//        Globals.telemetry.addData("Red Left", red);
+//        Globals.telemetry.addData("Blue Left", blue);
+//        Globals.telemetry.addData("Green Left",green);
         if (mag > 0.01){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
@@ -98,9 +98,9 @@ public class Elevator implements BluSubsystem, Subsystem {
         double red = Math.max(middleSensorLeft.getRed(), middleSensorRight.getRed());
         double green = Math.max(middleSensorLeft.getGreen(), middleSensorRight.getGreen());
         double blue = Math.max(middleSensorLeft.getBlue(), middleSensorRight.getBlue());
-        Globals.telemetry.addData("Red Middle", red);
-        Globals.telemetry.addData("Blue Middle", blue);
-        Globals.telemetry.addData("Green Middle",green);
+//        Globals.telemetry.addData("Red Middle", red);
+//        Globals.telemetry.addData("Blue Middle", blue);
+//        Globals.telemetry.addData("Green Middle",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
         if (mag > 0.003){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
@@ -135,9 +135,9 @@ public class Elevator implements BluSubsystem, Subsystem {
         double red = Math.max(rightSensorTop.getRed(), rightSensorBottom.getRed());
         double green = Math.max(rightSensorTop.getGreen(), rightSensorBottom.getGreen());
         double blue = Math.max(rightSensorTop.getBlue(), rightSensorBottom.getBlue());
-        Globals.telemetry.addData("Red Right", red);
-        Globals.telemetry.addData("Blue Right", blue);
-        Globals.telemetry.addData("Green Right",green);
+//        Globals.telemetry.addData("Red Right", red);
+//        Globals.telemetry.addData("Blue Right", blue);
+//        Globals.telemetry.addData("Green Right",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
         if (mag > 0.01){
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
@@ -191,8 +191,8 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        elevatorServoLeft.telemetry();
-        elevatorServoRight.telemetry();
+//        elevatorServoLeft.telemetry();
+//        elevatorServoRight.telemetry();
     }
 
     @Override
