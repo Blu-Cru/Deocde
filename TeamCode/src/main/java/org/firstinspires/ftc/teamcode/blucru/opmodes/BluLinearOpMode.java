@@ -166,7 +166,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void initialize() {}
     public void initializePeriodic() {}
     public void onStart() {}
-    public void periodic() {}
+    public void periodic() throws InterruptedException {}
     public void telemetry() {}
     public void end() {}
 
