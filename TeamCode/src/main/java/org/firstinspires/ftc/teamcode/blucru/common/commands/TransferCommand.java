@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.WaitUntilCommand;
 
 // IMPORTS... (Keep your existing subsystem imports)
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.DisableElevatorCommand;
@@ -32,7 +33,7 @@ public class TransferCommand extends SequentialCommandGroup { // 1. Extend Seque
                 new ElevatorUpCommand(),
                 new WaitCommand(400),
                 new ElevatorMiddleCommand(),
-                new WaitCommand(250),
+                new WaitUntilCommand(new ParallelArmsBooleanSupplier()),
                 new AllTransferMiddleCommand(),
                 new ConditionalCommand(
                         new LockOnGoalCommand(),

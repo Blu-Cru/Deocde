@@ -97,7 +97,7 @@ public class Tele extends BluLinearOpMode{
                     } else if (gamepad1.right_trigger > 0.2){
                         intake.setOut();
                     } else {
-                        intake.stop();
+                        intake.setPID();
                     }
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {

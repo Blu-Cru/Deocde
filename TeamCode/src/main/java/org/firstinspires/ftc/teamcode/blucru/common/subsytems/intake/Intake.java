@@ -25,6 +25,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
+    boolean armsParallel;
     private PDController pid;
     public enum State{
         IN,
@@ -96,7 +97,7 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public boolean armsParallel(){
-        return parallelSensor.getState();
+        return armsParallel;
     }
 
     @Override
@@ -106,12 +107,15 @@ public class Intake implements BluSubsystem, Subsystem {
         } else {
             switch(state){
                 case IN:
+                    armsParallel = false;
                     motor.setPower(1);
                     break;
                 case OUT:
+                    armsParallel = false;
                     motor.setPower(-1);
                     break;
                 case IDlE:
+                    armsParallel = false;
                     if (motor.getPower() > 0.05){
                         motor.setPower(-0.01);
                     } else if (motor.getPower() < -0.05){
@@ -121,6 +125,7 @@ public class Intake implements BluSubsystem, Subsystem {
                     }
                     break;
                 case CUSTOM_POWER:
+                    armsParallel = false;
                     motor.setPower(power);
                 case PID:
                     parallelSensor.read();
@@ -135,10 +140,13 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (curr < -145.1 / 4) {
                             curr += 145.1 / 2;
                         }
+                        armsParallel = curr < 3;
                         double power = pid.calculate(curr, -motor.getPower());
                         Globals.telemetry.addData("Power", power);
                         Globals.telemetry.addData("Curr", curr);
                         motor.setPower(power);
+                    } else {
+                        armsParallel = true;
                     }
             }
         }
