@@ -34,7 +34,7 @@ public class Globals {
 
     public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
     public static double turretTargetRedX = -65;
-    public static double turretTargetRedY = 66;
+    public static double turretTargetRedY = 65;
 
     public static double turretTargetBlueX = -65;
     public static double turretTargetBlueY = -66;

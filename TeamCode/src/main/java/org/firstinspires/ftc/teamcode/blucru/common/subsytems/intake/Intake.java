@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 @Config
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
+    private double encoderIteration = 0;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
@@ -152,6 +153,7 @@ public class Intake implements BluSubsystem, Subsystem {
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
                     } else {
+                        //resetEncoder();
                         armsParallel = true;
                     }
             }
@@ -163,10 +165,10 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-//        motor.telemetry();
-//        telemetry.addData("Pos", encoder.getCurrentPos());
-//        telemetry.addData("Power", motor.getPower());
-//        telemetry.addData("State", state);
+        motor.telemetry();
+        telemetry.addData("Pos", encoder.getCurrentPos());
+        telemetry.addData("Power", motor.getPower());
+        telemetry.addData("State", state);
     }
 
     @Override
