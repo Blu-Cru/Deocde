@@ -15,18 +15,21 @@ import javax.microedition.khronos.opengles.GL;
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServoLeft;
     private BluServo elevatorServoRight;
-    private static final double DOWN_POSITION_LEFT = 0.47;//TODO: find positions
+    private static final double DOWN_POSITION_LEFT = 0.47;// TODO: find positions
     private static final double UP_POSITION_LEFT = 0.65;
     private static final double MIDDLE_POSITION_LEFT = 0.51;
 
-    private static final double DOWN_POSITION_RIGHT = 0.47;//TODO: find positions
+    private static final double DOWN_POSITION_RIGHT = 0.47;// TODO: find positions
     private static final double UP_POSITION_RIGHT = 0.65;
     private static final double MIDDLE_POSITION_RIGHT = 0.52;
 
-    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom, rightSensorTop;
-    public Elevator(){
+    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
+            rightSensorTop;
+
+    public Elevator() {
         leftSensorBottom = new BluColorSensor("leftColorSensorBottom");
-        //leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new double[][]{{0,0,0}, {1,1,1}, {0,0,0}, {1,1,1}});
+        // leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new
+        // double[][]{{0,0,0}, {1,1,1}, {0,0,0}, {1,1,1}});
         leftSensorTop = new BluColorSensor("leftColorSensorTop");
         middleSensorRight = new BluColorSensor("middleColorSensorRight");
         middleSensorLeft = new BluColorSensor("middleColorSensorLeft");
@@ -38,17 +41,17 @@ public class Elevator implements BluSubsystem, Subsystem {
         write();
     }
 
-    public void setUp(){
+    public void setUp() {
         elevatorServoLeft.setPos(UP_POSITION_LEFT);
         elevatorServoRight.setPos(UP_POSITION_RIGHT);
     }
 
-    public void setDown(){
+    public void setDown() {
         elevatorServoLeft.setPos(DOWN_POSITION_LEFT);
         elevatorServoRight.setPos(DOWN_POSITION_RIGHT);
     }
 
-    public void updateLeftBallColor(){
+    public void updateLeftBallColor() {
         final double greenRed = 0.01716;
         final double greenBlue = 0.03354;
         final double greenGreen = 0.0519;
@@ -62,18 +65,18 @@ public class Elevator implements BluSubsystem, Subsystem {
         double green = Math.max(leftSensorBottom.getGreen(), leftSensorTop.getGreen());
         double blue = Math.max(leftSensorBottom.getBlue(), leftSensorTop.getBlue());
         double mag = Math.hypot(red, Math.hypot(green, blue));
-//        Globals.telemetry.addData("Red Left", red);
-//        Globals.telemetry.addData("Blue Left", blue);
-//        Globals.telemetry.addData("Green Left",green);
-        if (mag > 0.01){
+        // Globals.telemetry.addData("Red Left", red);
+        // Globals.telemetry.addData("Blue Left", blue);
+        // Globals.telemetry.addData("Green Left",green);
+        if (mag > 0.01) {
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
+            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
+            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple){
-                //farther away from purple than green
+            if (angleBetweenGreen < angleBetweenPurple) {
+                // farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
@@ -85,7 +88,7 @@ public class Elevator implements BluSubsystem, Subsystem {
         ShooterMotifCoordinator.setLeftColor(targetColor);
     }
 
-    public void updateMiddleBallColor(){
+    public void updateMiddleBallColor() {
         final double greenRed = 0.00172;
         final double greenBlue = 0.0041;
         final double greenGreen = 0.00462;
@@ -98,19 +101,19 @@ public class Elevator implements BluSubsystem, Subsystem {
         double red = Math.max(middleSensorLeft.getRed(), middleSensorRight.getRed());
         double green = Math.max(middleSensorLeft.getGreen(), middleSensorRight.getGreen());
         double blue = Math.max(middleSensorLeft.getBlue(), middleSensorRight.getBlue());
-//        Globals.telemetry.addData("Red Middle", red);
-//        Globals.telemetry.addData("Blue Middle", blue);
-//        Globals.telemetry.addData("Green Middle",green);
+        // Globals.telemetry.addData("Red Middle", red);
+        // Globals.telemetry.addData("Blue Middle", blue);
+        // Globals.telemetry.addData("Green Middle",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.003){
+        if (mag > 0.003) {
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
+            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
+            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple){
-                //farther away from purple than green
+            if (angleBetweenGreen < angleBetweenPurple) {
+                // farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
@@ -122,7 +125,7 @@ public class Elevator implements BluSubsystem, Subsystem {
         ShooterMotifCoordinator.setMiddleColor(targetColor);
     }
 
-    public void updateRightBallColor(){
+    public void updateRightBallColor() {
         final double greenRed = 0.01398;
         final double greenBlue = 0.03342;
         final double greenGreen = 0.04712;
@@ -135,19 +138,19 @@ public class Elevator implements BluSubsystem, Subsystem {
         double red = Math.max(rightSensorTop.getRed(), rightSensorBottom.getRed());
         double green = Math.max(rightSensorTop.getGreen(), rightSensorBottom.getGreen());
         double blue = Math.max(rightSensorTop.getBlue(), rightSensorBottom.getBlue());
-//        Globals.telemetry.addData("Red Right", red);
-//        Globals.telemetry.addData("Blue Right", blue);
-//        Globals.telemetry.addData("Green Right",green);
+        // Globals.telemetry.addData("Red Right", red);
+        // Globals.telemetry.addData("Blue Right", blue);
+        // Globals.telemetry.addData("Green Right",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.01){
+        if (mag > 0.01) {
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple/(mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen/(mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
+            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
+            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
             double angleBetweenGreen = Math.acos(cosGreen);
             double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple){
-                //farther away from purple than green
+            if (angleBetweenGreen < angleBetweenPurple) {
+                // farther away from purple than green
                 targetColor = BallColor.GREEN;
             } else {
                 targetColor = BallColor.PURPLE;
@@ -159,14 +162,15 @@ public class Elevator implements BluSubsystem, Subsystem {
         ShooterMotifCoordinator.setRightColor(targetColor);
     }
 
-    public void turnOffElevatorServo(){
+    public void turnOffElevatorServo() {
         elevatorServoLeft.disable();
         elevatorServoRight.disable();
-        //always want to write after a disable
+        // always want to write after a disable
         elevatorServoLeft.write();
         elevatorServoRight.write();
     }
-    public void setMiddle(){
+
+    public void setMiddle() {
         elevatorServoLeft.setPos(MIDDLE_POSITION_LEFT);
         elevatorServoRight.setPos(MIDDLE_POSITION_RIGHT);
     }
@@ -191,8 +195,8 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-//        elevatorServoLeft.telemetry();
-//        elevatorServoRight.telemetry();
+        // elevatorServoLeft.telemetry();
+        // elevatorServoRight.telemetry();
     }
 
     @Override
