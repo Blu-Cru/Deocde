@@ -217,7 +217,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if(shooter.targetHit() == true && targetHit == false){
-            gamepad1.rumble(rumbleDur);
+            gamepad1.rumble(500);
             targetHit = true;
         }
 
@@ -303,6 +303,11 @@ public class Tele extends BluLinearOpMode{
                 gamepad2.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
             }
+            if(Globals.alliance == Alliance.RED) {
+                Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
+            }else {
+                Globals.shootingGoalLPose = new Vector2d(Globals.OGshootingGoalLPose.getX(), Globals.OGshootingGoalLPose.getY());
+            }
         }
         /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
             if (llTagDetector.validLLReads()){
@@ -318,6 +323,11 @@ public class Tele extends BluLinearOpMode{
         //manual heading update
         if (driver2.pressedDpadDown()){
             sixWheel.setHeading(0);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
+            }else {
+                Globals.shootingGoalLPose = new Vector2d(Globals.OGshootingGoalLPose.getX(), Globals.OGshootingGoalLPose.getY());
+            }
         }
         if (driver2.pressedY()){
             transfer.setAllUp();

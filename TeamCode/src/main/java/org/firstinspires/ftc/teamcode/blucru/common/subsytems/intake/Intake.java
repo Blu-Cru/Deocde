@@ -96,7 +96,7 @@ public class Intake implements BluSubsystem, Subsystem {
         motor.read();
         //double currentVoltage = Robot.getInstance().getVoltage();
 
-        jammed = (state == State.IN && encoder.getVelocity() > 100); // Jam detected, spit out the ball
+//        jammed = (state == State.IN && encoder.getVelocity() > 100); // Jam detected, spit out the ball
     }
 
     public boolean armsParallel(){

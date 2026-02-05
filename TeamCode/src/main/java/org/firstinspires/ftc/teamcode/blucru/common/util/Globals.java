@@ -27,6 +27,9 @@ public class Globals {
     // FIX IS HERE: Changed these back to Custom "Vector2d" so Shooter.java works
     public static Vector2d shootingGoalLPose = new Vector2d(-56.75, -59.25);
     public static Vector2d shootingGoalRPose = new Vector2d(-56.75, 59.25);
+    public static final Vector2d OGshootingGoalLPose = new Vector2d(-56.75, -59.25);
+    public static final Vector2d OGshootingGoalRPose = new Vector2d(-56.75, 59.25);
+
     public static Vector2d lineVector = new Vector2d(3,4);
 
     public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
