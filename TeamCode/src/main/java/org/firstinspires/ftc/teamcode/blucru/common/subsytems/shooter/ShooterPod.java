@@ -11,7 +11,7 @@ public class ShooterPod implements BluSubsystem {
     private ShooterVelocityPID pid;
     private double power;
     private double targetVel;
-    private final double idlePower = 0.2;
+    private final double idlePower = 0.3;
     public ShooterPod(BluMotorWithEncoder shooter, Hood hood, ShooterVelocityPID pid){
         this.shooter = shooter;
         this.hood = hood;
@@ -67,6 +67,10 @@ public class ShooterPod implements BluSubsystem {
 
     public double getVel(){
         return shooter.getVel();
+    }
+
+    public double getError(){
+        return getVel()-getTargetVel();
     }
 
     public double getMotorPower(){

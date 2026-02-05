@@ -23,6 +23,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public static double middleP = 0.0015,middleI = 0, middleD = 0, middleF = 0.00044;
     public static double rightP = 0.0015,rightI = 0, rightD = 0, rightF = 0.00045;
     public static double limit = 20;
+    public static double triggerError = 10;
     public static boolean redAlliance = true; //false  for blueAlliance
 
     public ShooterPod leftShooter, middleShooter, rightShooter;
@@ -103,26 +104,43 @@ public class Shooter implements BluSubsystem, Subsystem {
 //                Globals.telemetry.addData("middle vector to goal", midToGoal);
 //                Globals.telemetry.addData("right vector to goal", rightToGoal);
 
-                //find the extra dists
-                double cosine = Vector2d.getCosineOfAngleBetween2Vectors(midToGoal, Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY()));
-//                Globals.telemetry.addData("Cosine", cosine);
-                double sine = Math.sqrt(1-cosine * cosine);
-                double tan;
-                try {
-                    tan = cosine/sine;
-                } catch (Exception e){
-//                    Globals.telemetry.addLine("ETHAN WHAT THE HELLIANTE ARE U DOING");
-                    tan = 0;
+                // find the extra dists (SIGNED)
+                Vector2d line = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());
+
+                Vector2d a = midToGoal; // vector from mid shooter to goal
+                Vector2d b = line;      // reference direction
+
+                double amag = a.getMag();
+                double bmag = b.getMag();
+
+// avoid divide-by-zero
+                double cosine = 0;
+                double sine = 0;
+                if (amag > 1e-6 && bmag > 1e-6) {
+                    double dot = a.getX() * b.getX() + a.getY() * b.getY();
+                    double cross = a.getX() * b.getY() - a.getY() * b.getX(); // SIGNED
+
+                    cosine = dot / (amag * bmag);
+                    sine   = cross / (amag * bmag); // SIGNED
                 }
+
+                double tan = 0;
+                if (Math.abs(sine) > 1e-6) {
+                    tan = cosine / sine; // your same formula, but now with correct sign
+                }
+
+// optional safety clamp (prevents blow-ups near sine ~ 0)
+                tan = Math.max(-3.0, Math.min(3.0, tan));
+
                 double shooterOffset = shooterDist * tan;
 //                Globals.telemetry.addData("Tan", tan);
                 double leftDist = leftToGoal.getMag() + shooterOffset;
                 double middleDist = midToGoal.getMag();
                 double rightDist = rightToGoal.getMag() - shooterOffset;
 
-//                Globals.telemetry.addData("left dist", leftDist);
-//                Globals.telemetry.addData("middle dist", middleDist);
-//                Globals.telemetry.addData("right dist", rightDist);
+                Globals.telemetry.addData("left dist", leftDist);
+                Globals.telemetry.addData("middle dist", middleDist);
+                Globals.telemetry.addData("right dist", rightDist);
 
 
                 double[] leftLerps = ShooterAutoAimInterpolation.interpolateLeft(leftDist);
@@ -167,6 +185,12 @@ public class Shooter implements BluSubsystem, Subsystem {
         middleShooter.setVel(vel);
         rightShooter.setVel(vel);
         state = State.VELOCITY;
+    }
+    public boolean targetHit(){
+        if (Math.abs(leftShooter.getError()) < triggerError && Math.abs(rightShooter.getError()) < triggerError && Math.abs(middleShooter.getError()) < triggerError){
+            return true;
+        }
+        return false;
     }
 
     public void shootWithVelocityIndependent(double leftVel, double middleVel, double rightVel){

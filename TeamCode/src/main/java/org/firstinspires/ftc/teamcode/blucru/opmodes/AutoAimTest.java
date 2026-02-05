@@ -1,3 +1,4 @@
+
 package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -14,13 +15,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeComma
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ReturnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferNoAutoAim;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
@@ -39,14 +40,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 @TeleOp (group = "a")
 
-public class Tele extends BluLinearOpMode{
+public class AutoAimTest extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = true;
     public boolean autoTagUpdating = true;
     public int rumbleDur = 200;
     public int shot = 0;
-    public boolean targetHit = false;
 
     public enum State{
         IDLE,
@@ -82,13 +82,13 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedA(), State.INTAKING_FROM_ABOVE, () ->{
                     gamepad1.rumble(rumbleDur);
                     new SequentialCommandGroup(
-                        new ElevatorMiddleCommand(),
-                        new WaitCommand(200),
-                        new AllTransferMiddleCommand(),
-                        new SetLeftHoodAngleCommand(26),
-                        new SetMiddleHoodAngleCommand(26),
-                        new SetRightHoodAngleCommand(26),
-                        new ShootReverseWithVelocityCommand(350)
+                            new ElevatorMiddleCommand(),
+                            new WaitCommand(200),
+                            new AllTransferMiddleCommand(),
+                            new SetLeftHoodAngleCommand(26),
+                            new SetMiddleHoodAngleCommand(26),
+                            new SetRightHoodAngleCommand(26),
+                            new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
 
@@ -110,54 +110,24 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
-                    new TransferCommand(turreting).schedule();
+                    new TransferNoAutoAim(turreting).schedule();
                 })
 
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
-                    targetHit = false;
                     new RetransferCommand(turreting).schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);
-                    targetHit = false;
                     new ConditionalCommand(
                             new ShootBallsCommand(),
                             new ReturnCommand(),
                             () -> (shot == 0)
                     ).schedule();
                 })
-                .transition(() -> driver1.pressedDpadLeft(), State.DRIVING_TO_SHOOT, () -> {
-                    gamepad1.rumble(rumbleDur);
-                    new ConditionalCommand(
-                            new ShootBallsCommand(),
-                            new LeftTransferUpCommand(),
-                            () -> (shot == 2)
-                    ).schedule();
-                    shot+=1;
-                })
-                .transition(() -> driver1.pressedDpadUp(), State.DRIVING_TO_SHOOT, () -> {
-                    gamepad1.rumble(rumbleDur);
-                    new ConditionalCommand(
-                            new ShootBallsCommand(),
-                            new MiddleTransferUpCommand(),
-                            () -> (shot == 2)
-                    ).schedule();
-                    shot+=1;
-                })
-                .transition(() -> driver1.pressedDpadRight(), State.DRIVING_TO_SHOOT, () -> {
-                    gamepad1.rumble(rumbleDur);
-                    new ConditionalCommand(
-                            new ShootBallsCommand(),
-                            new RightTransferUpCommand(),
-                            () -> (shot == 2)
-                    ).schedule();
-                    shot+=1;
-                })
                 .transition(() -> shot >= 3, State.INTAKING, () -> {
                     shot = 0;
-                    targetHit = false;
                 })
 
                 .state(State.INTAKING_FROM_ABOVE)
@@ -198,7 +168,7 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void onStart(){
-         new ElevatorDownCommand().schedule();
+        new ElevatorDownCommand().schedule();
     }
 
     public void periodic(){
@@ -216,11 +186,6 @@ public class Tele extends BluLinearOpMode{
             Globals.setAlliance(Alliance.BLUE);
         }
 
-        if(shooter.targetHit() == true && targetHit == false){
-            gamepad1.rumble(rumbleDur);
-            targetHit = true;
-        }
-
         //Drivetrain
         sixWheel.teleDrive(gamepad1, 0.0001);
 //        if (driver2.pressedB() && !driver2.pressedOptions()){
@@ -233,12 +198,12 @@ public class Tele extends BluLinearOpMode{
         }
 
         /**if (driver1.pressedRightTrigger()){
-            if (sixWheel.getDrivePower() == 0.5){
-                sixWheel.setDrivePower(1);
-            } else {
-                sixWheel.setDrivePower(0.5);
-            }
-        }*/
+         if (sixWheel.getDrivePower() == 0.5){
+         sixWheel.setDrivePower(1);
+         } else {
+         sixWheel.setDrivePower(0.5);
+         }
+         }*/
 
         //Turret
 
@@ -266,17 +231,17 @@ public class Tele extends BluLinearOpMode{
         if (driver2.pressedDpadLeft()){
             gamepad2.rumble(10);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY += 2;
+                Globals.turretTargetRedY -= 1;
             }else {
-                Globals.turretTargetBlueY += 2;
+                Globals.turretTargetBlueY -= 1;
             }
         }
         if (driver2.pressedDpadRight()){
             gamepad2.rumble(10);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY -= 2;
+                Globals.turretTargetRedY += 1;
             }else {
-                Globals.turretTargetBlueY -= 2;
+                Globals.turretTargetBlueY += 1;
             }
         }
 
@@ -324,10 +289,6 @@ public class Tele extends BluLinearOpMode{
         }
         if (driver2.pressedTouchpad()){
             transfer.setAllDown();
-        }
-        if (driver2.pressedLeftTrigger()){
-            Intake.offset += 5;
-            Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();

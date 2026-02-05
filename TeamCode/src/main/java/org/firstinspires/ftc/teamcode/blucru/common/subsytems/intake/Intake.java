@@ -25,7 +25,9 @@ public class Intake implements BluSubsystem, Subsystem {
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
-    public static double ENCODER_PPR_INTAKE = ((1+(46/11)) * 28);
+    public static double ENCODER_PPR_INTAKE = 145.090909091;
+    public static double curr = 0;
+    public static double offset = 0;
     boolean armsParallel;
     private PDController pid;
     public enum State{
@@ -133,18 +135,21 @@ public class Intake implements BluSubsystem, Subsystem {
                     encoder.read();
 //                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
                     if (!parallelSensor.getState()) {
-                        double curr = encoder.getCurrentPos() % (ENCODER_PPR_INTAKE / 2);
-                        if (curr > ENCODER_PPR_INTAKE / 4) {
-                            curr -= ENCODER_PPR_INTAKE / 2;
-                        }
+                        double half = ENCODER_PPR_INTAKE / 2.0;
+                        double quarter = ENCODER_PPR_INTAKE / 4.0;
 
-                        if (curr < -ENCODER_PPR_INTAKE / 4) {
-                            curr += ENCODER_PPR_INTAKE / 2;
-                        }
-                        armsParallel = curr < 3;
-                        double power = pid.calculate(curr, -motor.getPower());
-//                        Globals.telemetry.addData("Power", power);
-//                        Globals.telemetry.addData("Curr", curr);
+                        double curr = encoder.getCurrentPos() % half;
+                        if (curr >  quarter) curr -= half;
+                        if (curr < -quarter) curr += half;
+
+                        double error = curr - offset;
+                        error %= half;
+                        if (error >  quarter) error -= half;
+                        if (error < -quarter) error += half;
+
+                        armsParallel = Math.abs(error) < 3;
+
+                        double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
                     } else {
                         armsParallel = true;
