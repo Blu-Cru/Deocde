@@ -20,12 +20,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 @Config
 public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
+    private double encoderIteration = 0;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
-    public static double ENCODER_PPR_INTAKE = ((1+(46/11)) * 28);
+    public static double ENCODER_PPR_INTAKE = 145.090909091;
     boolean armsParallel;
     private PDController pid;
     public enum State{
@@ -141,12 +142,13 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (curr < -ENCODER_PPR_INTAKE / 4) {
                             curr += ENCODER_PPR_INTAKE / 2;
                         }
-                        armsParallel = curr < 3;
+                        armsParallel = Math.abs(curr) < 5;
                         double power = pid.calculate(curr, -motor.getPower());
-//                        Globals.telemetry.addData("Power", power);
-//                        Globals.telemetry.addData("Curr", curr);
+                        Globals.telemetry.addData("Power", power);
+                        Globals.telemetry.addData("Curr", curr);
                         motor.setPower(power);
                     } else {
+                        //resetEncoder();
                         armsParallel = true;
                     }
             }
@@ -158,10 +160,10 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-//        motor.telemetry();
-//        telemetry.addData("Pos", encoder.getCurrentPos());
-//        telemetry.addData("Power", motor.getPower());
-//        telemetry.addData("State", state);
+        motor.telemetry();
+        telemetry.addData("Pos", encoder.getCurrentPos());
+        telemetry.addData("Power", motor.getPower());
+        telemetry.addData("State", state);
     }
 
     @Override

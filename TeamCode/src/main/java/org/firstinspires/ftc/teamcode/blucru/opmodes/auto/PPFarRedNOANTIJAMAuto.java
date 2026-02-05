@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class PPFarRedNOANTIJAMAuto extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 194; //Field centric angle decrease = towards obelisk increase = towards gate
+    double turretAngleRest = 192; //Field centric angle decrease = towards obelisk increase = towards gate
     double shootVeloLeft = 1480; //TODO:tune
     double shootVeloMiddle = 1460;
     double shootVeloRight = 1480;

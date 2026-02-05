@@ -39,7 +39,7 @@ public class testfarred extends BluLinearOpMode {
     double rightHood = 49;
 
     // shifted +3 in Y to keep the same path relative to new start pose
-    double pickupWallY = 60;
+    double pickupWallY = 62;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
@@ -86,6 +86,7 @@ public class testfarred extends BluLinearOpMode {
                     })
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(40, 40),
+                            new Point2d(45, 25),
                             // SHOOT FIRST SET
                             shootingPoint
                     }, 2000)
@@ -106,6 +107,8 @@ public class testfarred extends BluLinearOpMode {
                             shootingPoint,
                             // INTAKE SECOND SET
                             new Point2d(57, 40),
+                            new Point2d(60,55),
+
                             new Point2d(63, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
@@ -140,6 +143,7 @@ public class testfarred extends BluLinearOpMode {
                             shootingPoint,
                             // INTAKE THIRD SET
                             new Point2d(57, 40),
+                            new Point2d(60,55),
 
                             new Point2d(62, pickupWallY)
                     }, 1200)
@@ -175,6 +179,7 @@ public class testfarred extends BluLinearOpMode {
                             shootingPoint,
                             // INTAKE FOURTH SET
                             new Point2d(57, 40),
+                            new Point2d(60,55),
                             new Point2d(62, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
@@ -237,7 +242,7 @@ public class testfarred extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocityIndependent(1490, 1520, 1500);
+        shooter.shootWithVelocityIndependent(1490, 1520, 1510);
         turret.setAngle(109);
 //        turret.setFieldCentricPosition(turretAngle, Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()), true);
         sixWheel.setPosition(new Pose2d(63, 7, Math.toRadians(90)));
