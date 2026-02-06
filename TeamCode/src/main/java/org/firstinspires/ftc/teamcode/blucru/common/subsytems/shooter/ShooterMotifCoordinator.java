@@ -21,104 +21,105 @@ public class ShooterMotifCoordinator {
         private static HashMap<String, Command> mapper;
         private static BallColor leftColor, middleColor, rightColor;
         private static MotifPattern motif;
+        private static int waits = 500;
         static {
                 mapper = new HashMap<>();
                 mapper.put("RED_PURPLE_PURPLE_GREEN_PPG", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()));
                 mapper.put("RED_PURPLE_PURPLE_GREEN_PGP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand()));
                 mapper.put("RED_PURPLE_PURPLE_GREEN_GPP", new SequentialCommandGroup(
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
                                 new MiddleTransferUpCommand()));
                 mapper.put("RED_PURPLE_GREEN_PURPLE_PPG", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand()));
                 mapper.put("RED_PURPLE_GREEN_PURPLE_PGP", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()));
                 mapper.put("RED_PURPLE_GREEN_PURPLE_GPP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
                                 new RightTransferUpCommand()));
                 mapper.put("RED_GREEN_PURPLE_PURPLE_PPG", new SequentialCommandGroup(
                                 new RightTransferUpCommand(),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand()));
                 mapper.put("RED_GREEN_PURPLE_PURPLE_PGP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()));
                 mapper.put("RED_GREEN_PURPLE_PURPLE_GPP", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand(),
                                 new RightTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_PURPLE_GREEN_PPG", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()
 
                 ));
                 mapper.put("BLUE_PURPLE_PURPLE_GREEN_PGP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_PURPLE_GREEN_GPP", new SequentialCommandGroup(
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
                                 new MiddleTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_GREEN_PURPLE_PPG", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_GREEN_PURPLE_PGP", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_GREEN_PURPLE_GPP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
                                 new RightTransferUpCommand()));
                 mapper.put("BLUE_GREEN_PURPLE_PURPLE_PPG", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
                                 new RightTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand()));
                 mapper.put("BLUE_GREEN_PURPLE_PURPLE_PGP", new SequentialCommandGroup(
                                 new MiddleTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand()));
                 mapper.put("BLUE_GREEN_PURPLE_PURPLE_GPP", new SequentialCommandGroup(
                                 new LeftTransferUpCommand(),
-                                new WaitCommand(700),
+                                new WaitCommand(waits),
                                 new RightTransferUpCommand(),
                                 new MiddleTransferUpCommand()));
         }

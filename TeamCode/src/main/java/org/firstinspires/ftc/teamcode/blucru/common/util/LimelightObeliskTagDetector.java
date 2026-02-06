@@ -93,8 +93,8 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
             List<LLResultTypes.FiducialResult> res = result.getFiducialResults();
+            if (res.size() > 1) {
                 Log.e("Limelight", "Detected multiple pattern tags");
-                //dont want to do anything with the data because its not good data
                 // dont want to do anything with the data because its not good data
                 return;
             }
