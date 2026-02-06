@@ -232,9 +232,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-//        servos.telemetry();
-//        encoder.telemetry();
-//        telemetry.addData("Turret State", state);
+        servos.telemetry();
+        encoder.telemetry();
+        telemetry.addData("Turret State", state);
     }
 
     @Override
