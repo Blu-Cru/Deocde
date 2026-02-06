@@ -221,10 +221,10 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(57);
+        turret.setAngle(-57);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
-        sixWheel.setPosition(new Pose2d(-51, 54, Math.toRadians(-51.529)));
+        sixWheel.setPosition(new Pose2d(-51, -54, Math.toRadians(51.529)));
         Globals.setAlliance(Alliance.RED);
     }
 
