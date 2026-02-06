@@ -225,7 +225,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(-51, -54, Math.toRadians(51.529)));
-        Globals.setAlliance(Alliance.RED);
+        Globals.setAlliance(Alliance.BLUE);
     }
 
     public void periodic() {

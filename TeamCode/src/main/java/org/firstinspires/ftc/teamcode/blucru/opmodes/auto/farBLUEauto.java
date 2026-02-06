@@ -244,11 +244,11 @@ public class farBLUEauto extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocityIndependent(1490, 1520, 1510);
-        turret.setAngle(109);
+        shooter.shootWithVelocityIndependent(1510, 1520, 1490);
+        turret.setAngle(-109);
         currentPath = new TestingPath().build().start();
-        sixWheel.setPosition(new Pose2d(63, 7, Math.toRadians(90)));
-        Globals.setAlliance(Alliance.RED);
+        sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
+        Globals.setAlliance(Alliance.BLUE);
     }
 
     public void periodic() {
