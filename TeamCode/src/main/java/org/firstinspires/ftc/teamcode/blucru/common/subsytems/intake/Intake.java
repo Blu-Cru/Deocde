@@ -30,6 +30,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public static double curr = 0;
     public static double offset = 0;
     boolean armsParallel;
+    boolean withinRange;
     private PDController pid;
     public enum State{
         IN,
@@ -101,7 +102,7 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public boolean armsParallel(){
-        return armsParallel;
+        return withinRange;
     }
 
     @Override
@@ -132,10 +133,10 @@ public class Intake implements BluSubsystem, Subsystem {
                     armsParallel = false;
                     motor.setPower(power);
                 case PID:
-                    parallelSensor.read();
+//                    parallelSensor.read();
                     encoder.read();
 //                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
-                    if (!parallelSensor.getState()) {
+                    if (!armsParallel) {
                         double half = ENCODER_PPR_INTAKE / 2.0;
                         double quarter = ENCODER_PPR_INTAKE / 4.0;
 
@@ -148,7 +149,8 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (error >  quarter) error -= half;
                         if (error < -quarter) error += half;
 
-                        armsParallel = Math.abs(error) < 3;
+                        armsParallel = Math.abs(error) < 2;
+                        withinRange = Math.abs(error) < 5;
 
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
