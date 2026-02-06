@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class farBLUEauto extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 162; //Field centric angle decrease = towards obelisk increase = towards gate
+    double turretAngleRest = 165; //Field centric angle decrease = towards obelisk increase = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1440;
@@ -211,7 +211,7 @@ public class farBLUEauto extends BluLinearOpMode {
 //                    .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
-                            new Point2d(58, 50)
+                            new Point2d(58, -50)
                     },5000)
                     .build();
         }

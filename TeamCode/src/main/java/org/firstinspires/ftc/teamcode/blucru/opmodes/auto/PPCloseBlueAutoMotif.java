@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BluLinearOpMode {
-    double turretAngle = 144; // field centric, decrease = towards obelisk increase = towards gate
+    double turretAngle = 147; // field centric, decrease = towards obelisk increase = towards gate
     double velo = 1120;
     double veloMiddle = 1140;
     double leftHood=34;
@@ -65,7 +65,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(-14, -35),
+                            new Point2d(-14, -37),
                             new Point2d(-6, -47),
 //                            new Point2d(-6, 57)
                     }, 2000)
