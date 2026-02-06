@@ -29,7 +29,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  * readings without
  * impacting loop times during movement.
  */
-@Autonomous(name = "PP Close Red Auto (Motif)")
+@Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BluLinearOpMode {
     double turretAngle = 144; // field centric, decrease = towards obelisk increase = towards gate
     double velo = 1120;
