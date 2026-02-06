@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
@@ -32,11 +33,12 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Red Auto (Motif)")
 public class PPCloseRedAutoMotif extends BluLinearOpMode {
-    double turretAngle = 215; // field centric, decrease = towards obelisk increase = towards gate
+    double turretAngle = 216; // field centric, decrease = towards obelisk increase = towards gate
     double velo = 1150;
-    double leftHood;
-    double middleHood;
-    double rightHood;
+    double veloMiddle = 1170;
+    double leftHood=34;
+    double middleHood=34;
+    double rightHood=34;
     boolean alreadySignalledPattern;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
@@ -49,14 +51,11 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
             this.addPurePursuitPath(new Point2d[] {
                     new Point2d(-51, 54), // was (-45, 52)
                     new Point2d(-16, 19) // was (-10, 17)
-            }, 2000)
-                    .addTurnTo(10,500)
-                    .callback(()->{
-                        new SequentialCommandGroup(
-                                new TurnTurretToPosFieldCentricCommand(turretAngle)
-                        ).schedule();
-                    })
-                    .waitMilliseconds(500)
+            }, 4000)
+                    .waitMilliseconds(100)
+                    .addTurnTo(10,1000)
+
+                    .waitMilliseconds(300)
                     // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -64,7 +63,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     })
 
                     // INTAKE FIRST SET
-                    .waitMilliseconds(200)
+                    .waitMilliseconds(400)
                     .addTurnTo(90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, 19),
@@ -78,13 +77,13 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new ReadBallColorsCommand(), // Read all color sensors at once
-                                new WaitCommand(1000),
-                                new SetShooterVelocityIndependentCommand(velo, velo, velo),
+                                new WaitCommand(300),
+                                new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
-                    .waitMilliseconds(1500) // Ensure enough time for the sequence above to complete
+                    .waitMilliseconds(500) // Ensure enough time for the sequence above to complete
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -92,7 +91,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, 19) // was (-10, 17)
                     }, 2000)
 //                    .addTurnTo(45, 1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(400)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -102,7 +101,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1750)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
@@ -114,12 +113,12 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new ReadBallColorsCommand(), // Read all color sensors at once
-                                new WaitCommand(1000),
-                                new SetShooterVelocityIndependentCommand(velo, velo, velo),
+                                new WaitCommand(300),
+                                new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
 
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(700)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -127,7 +126,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, 19) // was (-10, 17)
                     }, 2000)
 //                    .addTurnTo(45, 1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(400)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -138,31 +137,32 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1750)
 
                     // PICKUP THIRD SET
-                    .addTurnTo(45, 500)
+//                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, 19), // was (-10, 17)
                             new Point2d(36, 51) // was (37, 46)
                     }, 1100)
-                    .waitMilliseconds(1000)
+                    .addTurnTo(10, 500)
+                    .waitMilliseconds(300)
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new ReadBallColorsCommand(), // Read all color sensors at once
-                                new WaitCommand(1000),
-                                new SetShooterVelocityIndependentCommand(velo, velo, velo),
+                                new WaitCommand(300),
+                                new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
 
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(700)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(36, 48),
                             new Point2d(-16, 19) // was (-10, 17)
                     }, 2000)
 //                    .addTurnTo(45, 1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(400)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -172,9 +172,9 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand(),
                                 new WaitCommand(300),
-                                new IntakeSpitCommand()).schedule();
+                                new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1760)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, 19),
                             new Point2d(0, 30)
@@ -194,7 +194,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
         addTurret();
         addTransfer();
         addLLTagDetector();
-        shooter.setHoodAngleIndependent(30, 30, 30);
+        shooter.setHoodAngleIndependent(32, 32, 32);
         shooter.write();
         elevator.setMiddle();
         elevator.write();
@@ -207,6 +207,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
         intake.resetEncoder();
         intake.write();
         alreadySignalledPattern = false;
+        sixWheel.reset();
 
         // Clear any previous ball color readings
         ShooterMotifCoordinator.clear();
@@ -217,7 +218,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(-5);
+        turret.setAngle(56);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(-51, 54, Math.toRadians(-51.529)));

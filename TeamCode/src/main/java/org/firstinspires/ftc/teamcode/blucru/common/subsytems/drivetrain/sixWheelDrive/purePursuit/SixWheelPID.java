@@ -35,7 +35,7 @@ public class SixWheelPID {
     // Track previous backwards driving state for hysteresis
     private boolean wasDriverBackwards = false;
     // Hysteresis thresholds to prevent rapid toggling
-    public static double BACKWARDS_THRESHOLD = 120.0; // Switch to backwards //prev 100
+    public static double BACKWARDS_THRESHOLD = 130.0; // Switch to backwards //prev 100
     public static double FORWARDS_THRESHOLD = 80.0;   // Switch back to forwards
 
     // Debug tracking - stores last calculation values
