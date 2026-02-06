@@ -21,9 +21,10 @@ public class AutonomousShootCommand extends InstantCommand {
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
                         new WaitCommand(400),
-                        new IntakeStartCommand(),
                         new ElevatorDownCommand(),
-                        new AllTransferDownCommand()
+                        new AllTransferDownCommand(),
+                        new WaitCommand(300),
+                        new IntakeStartCommand()
                 ).schedule();}
         );
     }

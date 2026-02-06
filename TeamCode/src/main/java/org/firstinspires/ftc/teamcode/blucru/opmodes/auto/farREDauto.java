@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class farREDauto extends BluLinearOpMode {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
-    double turretAngleRest = 199; //Field centric angle decrease = towards obelisk increase = towards gate
+    double turretAngleRest = 198; //Field centric angle decrease = towards obelisk increase = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1440;
@@ -66,11 +66,11 @@ public class farREDauto extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                                 new IntakeStopCommand(),
-                                new WaitCommand(200),
+                                new WaitCommand(100),
                                 new IntakeSpitCommand(),
-                                new WaitCommand(500),
+                                new WaitCommand(300),
                                 new ElevatorUpCommand(),
-                                new WaitCommand(400),
+                                new WaitCommand(300),
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(150),
                                 new AllTransferMiddleCommand(),
