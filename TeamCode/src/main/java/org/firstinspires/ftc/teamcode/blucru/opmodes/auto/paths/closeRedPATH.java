@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.auto.paths;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
-public class PPCloseRedAutoPath extends BluLinearOpMode {
+public class closeRedPATH extends BluLinearOpMode {
     double closeTurretAngle = 30;
 
     public class TestingPath extends SixWheelPIDPathBuilder{

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.auto.paths;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 

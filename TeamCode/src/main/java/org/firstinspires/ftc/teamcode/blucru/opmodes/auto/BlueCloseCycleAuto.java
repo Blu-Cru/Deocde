@@ -329,7 +329,7 @@ public class BlueCloseCycleAuto extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocity(1100); // orig 850 before switching to triple shot
+        shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
         turret.setAngle(5);
         llTagDetector.switchToMotif();
         sixWheel.setPosition(new Pose2d(-49, -54, Math.toRadians(51.529)));
