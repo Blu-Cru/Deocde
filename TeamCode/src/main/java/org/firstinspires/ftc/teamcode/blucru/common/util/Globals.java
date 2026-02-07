@@ -38,6 +38,13 @@ public class Globals {
 
     public static double turretTargetBlueX = -65;
     public static double turretTargetBlueY = -66;
+
+    public static double OGturretTargetRedX = -65;
+    public static double OGturretTargetRedY = 65;
+
+    public static double OGturretTargetBlueX = -65;
+    public static double OGturretTargetBlueY = -65;
+
     public static Vector2d turretTargetBluePose = new Vector2d(-66, -66);
 
     public static ElapsedTime matchTime;

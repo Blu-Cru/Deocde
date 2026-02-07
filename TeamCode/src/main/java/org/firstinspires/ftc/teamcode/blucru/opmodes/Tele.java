@@ -259,24 +259,24 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_y * 0.2);
+            turret.setPower(gamepad2.right_stick_y * gamepad2.right_stick_y * gamepad2.right_stick_y);
         }
 
         //modify targets
         if (driver2.pressedDpadLeft()){
             gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY -= 2;
+                Globals.turretTargetRedY -= 5;
             }else {
-                Globals.turretTargetBlueY -= 2;
+                Globals.turretTargetBlueY -= 5;
             }
         }
         if (driver2.pressedDpadRight()){
             gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY += 2;
+                Globals.turretTargetRedY += 5;
             }else {
-                Globals.turretTargetBlueY += 2;
+                Globals.turretTargetBlueY += 5;
             }
         }
 
@@ -305,8 +305,12 @@ public class Tele extends BluLinearOpMode{
             }
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
+                Globals.turretTargetRedY = Globals.OGturretTargetRedY;
+                Globals.turretTargetRedX = Globals.OGturretTargetRedX;
             }else {
                 Globals.shootingGoalLPose = new Vector2d(Globals.OGshootingGoalLPose.getX(), Globals.OGshootingGoalLPose.getY());
+                Globals.turretTargetBlueY = Globals.OGturretTargetBlueY;
+                Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
             }
         }
         /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
@@ -326,8 +330,12 @@ public class Tele extends BluLinearOpMode{
             sixWheel.setHeading(0);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
+                Globals.turretTargetRedY = Globals.OGturretTargetRedY;
+                Globals.turretTargetRedX = Globals.OGturretTargetRedX;
             }else {
                 Globals.shootingGoalLPose = new Vector2d(Globals.OGshootingGoalLPose.getX(), Globals.OGshootingGoalLPose.getY());
+                Globals.turretTargetBlueY = Globals.OGturretTargetBlueY;
+                Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
             }
         }
         if (driver2.pressedY()){

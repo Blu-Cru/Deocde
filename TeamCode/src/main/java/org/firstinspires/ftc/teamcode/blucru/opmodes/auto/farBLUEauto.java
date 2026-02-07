@@ -145,7 +145,7 @@ public class farBLUEauto extends BluLinearOpMode {
                             new Point2d(61, -45),
                             new Point2d(62.5,-55),
 
-                            new Point2d(62, pickupWallY)
+                            new Point2d(63, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -179,7 +179,7 @@ public class farBLUEauto extends BluLinearOpMode {
                             shootingPoint,
                             // INTAKE FOURTH SET
                             new Point2d(61, -45),
-                            new Point2d(62.5,-55),
+                            new Point2d(62,-55),
                             new Point2d(62, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
@@ -245,7 +245,7 @@ public class farBLUEauto extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
-        turret.setAngle(-117);
+        turret.setAngle(-116);
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);

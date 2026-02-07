@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BluLinearOpMode {
-    double turretAngle = 139; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 137; ////field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1110;
     double veloMiddle = 1130;
     double leftHood=34;
@@ -51,17 +51,19 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     new Point2d(-16, -19) // was (-10, 17)
             }, 4000)
                     .waitMilliseconds(100)
-                    .addTurnTo(-10,1000)
-
-                    .waitMilliseconds(300)
-                    // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
+                    .waitMilliseconds(300)
+                    .addTurnTo(-10,1000)
+
+
+                    .waitMilliseconds(300)
+                    // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
+
 
                     // INTAKE FIRST SET
-                    .waitMilliseconds(400)
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
@@ -109,7 +111,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(15, -49)
+                            new Point2d(17, -51)
                     }, 2000)
                     .waitMilliseconds(300)
                     // Transfer - Wait for stillness, read colors, then transfer
@@ -146,8 +148,8 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 //                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
-                            new Point2d(20,-50),
-                            new Point2d(36, -51) // was (37, 46)
+//                            new Point2d(20,-50),
+                            new Point2d(36, -46) // was (37, 46)
                     }, 1100)
                     .addTurnTo(-31, 500)
                     .waitMilliseconds(1000)
@@ -177,7 +179,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(1760)
+                    .waitMilliseconds(400)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
@@ -221,7 +223,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(-60);
+        turret.setAngle(7);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(-51, -54, Math.toRadians(51.529)));
