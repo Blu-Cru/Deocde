@@ -179,7 +179,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(1500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
@@ -222,7 +222,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
+        shooter.shootWithVelocity(1100); // orig 850 before switching to triple shot
         turret.setAngle(7);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();

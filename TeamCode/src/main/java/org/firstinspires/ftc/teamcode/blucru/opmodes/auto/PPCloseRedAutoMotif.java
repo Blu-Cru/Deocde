@@ -33,9 +33,9 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Red Auto (Motif)")
 public class PPCloseRedAutoMotif extends BluLinearOpMode {
-    double turretAngle = 216; // field centric, decrease = towards obelisk increase = towards gate
-    double velo = 1120;
-    double veloMiddle = 1140;
+    double turretAngle = 217; // field centric, decrease = towards obelisk increase = towards gate
+    double velo = 1110;
+    double veloMiddle = 1120;
     double leftHood=34;
     double middleHood=34;
     double rightHood=34;
@@ -52,15 +52,16 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     new Point2d(-51, 54), // was (-45, 52)
                     new Point2d(-16, 19) // was (-10, 17)
             }, 4000)
-                    .waitMilliseconds(100)
-                    .addTurnTo(10,1000)
-
-                    .waitMilliseconds(300)
-                    // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
+                    .waitMilliseconds(500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
+                    .waitMilliseconds(200)
+                    .addTurnTo(10,1000)
+
+                    // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
+
 
                     // INTAKE FIRST SET
                     .waitMilliseconds(400)
@@ -165,7 +166,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(36, 49),
                             new Point2d(-16, 19) // was (-10, 17)
-                    }, 2000)
+                    }, 1500)
                     .addTurnTo(0, 1000)
                     .waitMilliseconds(400)
                     .callback(() -> {
@@ -223,7 +224,7 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(57);
+        turret.setAngle(-5);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(-51, 54, Math.toRadians(-51.529)));
