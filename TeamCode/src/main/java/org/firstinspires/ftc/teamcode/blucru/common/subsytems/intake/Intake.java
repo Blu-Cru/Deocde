@@ -136,7 +136,7 @@ public class Intake implements BluSubsystem, Subsystem {
 //                    parallelSensor.read();
                     encoder.read();
 //                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
-                    if (!armsParallel) {
+//                    if (!armsParallel) {
                         double half = ENCODER_PPR_INTAKE / 2.0;
                         double quarter = ENCODER_PPR_INTAKE / 4.0;
 
@@ -154,10 +154,10 @@ public class Intake implements BluSubsystem, Subsystem {
 
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
-                    } else {
-                        //resetEncoder();
-                        armsParallel = true;
-                    }
+//                    } else {
+//                        //resetEncoder();
+//                        armsParallel = true;
+//                    }
             }
         }
 

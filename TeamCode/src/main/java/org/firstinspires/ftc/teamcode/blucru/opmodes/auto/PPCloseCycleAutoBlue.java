@@ -1,13 +1,17 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -17,8 +21,9 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseCycleAutoBlue extends BluLinearOpMode {
-    double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 140; //field centric, decrease = more towards gate, increase = towards obelisk
     double velo =1120;
+    double preAimTurretAngle = -90; //robot centric
     double veloMiddle = 1140;
     double leftHood=34;
     double middleHood=34;
@@ -35,7 +40,7 @@ public class PPCloseCycleAutoBlue extends BluLinearOpMode {
                             new Point2d(-49, -54),   // was (-45, 52)
                             new Point2d(-16, -19)    // was (-10, 17)
                     }, 5000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(200)
                     // SHOOT PRELOAD
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -45,102 +50,150 @@ public class PPCloseCycleAutoBlue extends BluLinearOpMode {
 
                     // INTAKE MIDDLE SET
                     .waitMilliseconds(200)
-                    .addTurnTo(-90, 5000)
+
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
-                            new Point2d(-16,-25),
-                            new Point2d(-4,-35),
-                            new Point2d(6, -57)
-                    }, 2000)
+                            new Point2d(12, -19)
+                    }, 3000)
+                    .waitMilliseconds(200)
+                    .addTurnTo(-90, 2000)
+                    .waitMilliseconds(100)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(12, -19),
+                            new Point2d(12, -57)
+                    }, 1500)
+                    .waitMilliseconds(500)
 
+                    //PICKUP AND TRANSFER
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(1900),
+                                new TurnTurretToPosCommand(preAimTurretAngle)
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    //.waitMilliseconds(1000)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(6, -57),   // was (-10, 50)
+                            new Point2d(12, -57),   // was (-10, 50)
+                            new Point2d(8, -40),
                             new Point2d(-16, -19)    // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45,1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(200)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     // SHOOT FIRST SET
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(900)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(300)
                     //GATE STEAL
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
-                            new Point2d(8, -45),
-                            new Point2d(5, -57)
-                    }, 5000)
-                    .waitMilliseconds(3000)
+                            new Point2d(19, -45),
+                            new Point2d(14, -57)
+                    }, 3000)
+                    .waitMilliseconds(1500)
+                    //TRANSFER
+                    .callback( () -> {
+                        new SequentialCommandGroup(
+                                new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(1900),
+                                new TurnTurretToPosCommand(preAimTurretAngle)
+                        ).schedule();
+                    })
+                    .waitMilliseconds(700)
                     //HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(5, -57),
-                            new Point2d(0, -50),
+                            new Point2d(14, -57),
+                            new Point2d(19, -45),
                             new Point2d(-16, -19)
-                    }, 5000)
+                    }, 2000)
+                    .waitMilliseconds(100)
+                    .callback(()->{
+                        new SequentialCommandGroup(
+                                new TurnTurretToPosFieldCentricCommand(turretAngle)
+                        ).schedule();
+                    })
+                    .waitMilliseconds(900)
                     //SHOOT
                     .callback(() -> {
                         new AutonomousShootCommand().schedule();
                     })
+                    .waitMilliseconds(300)
                     //GATE STEAL
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
-                            new Point2d(8, -45),
-                            new Point2d(5, -57)
-                    }, 5000)
-                    .waitMilliseconds(3000)
+                            new Point2d(19, -45),
+                            new Point2d(14, -57)
+                    }, 3000)
+                    .waitMilliseconds(1500)
                     //HEAD BACK
+                    .callback( () -> {
+                        new SequentialCommandGroup(
+                                new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(1900),
+                                new TurnTurretToPosCommand(preAimTurretAngle)
+                        ).schedule();
+                    })
+                    .waitMilliseconds(200)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(5, -57),
-                            new Point2d(0, -50),
+                            new Point2d(14, -57),
+                            new Point2d(19, -45),
                             new Point2d(-16, -19)
-                    }, 5000)
+                    }, 3000)
+                    .waitMilliseconds(100)
+                    .callback(() -> {
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+                    })
+                    .waitMilliseconds(900)
                     //SHOOT
                     .callback(() -> {
-                        new AutonomousShootCommand().schedule();
+                        new SequentialCommandGroup(
+                                new AutonomousShootCommand(),
+                                new WaitCommand(400),
+                                new IntakeStartCommand())
+                        .schedule();
                     })
+                    .waitMilliseconds(200)
                     // INTAKE CLOSE SET
                     //.addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
                             //new Point2d(0,30),
                             //new Point2d(6.5, 48)
-                            new Point2d(13, -49)
+                            new Point2d(-8, -49)
                     }, 2000)
-                    .waitMilliseconds(1000)
+                    /*.waitMilliseconds(200)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
-                        ).schedule();
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(1900),
+                                new TurnTurretToPosCommand(preAimTurretAngle)).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(500)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(6.5, -54),   // was (12.5, 46)
+                            new Point2d(-8, -54),   // was (12.5, 46)
                             new Point2d(-16, -19)    // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45,1000)
-                    .waitMilliseconds(500)
+                    .waitMilliseconds(200)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(800)
 
                     // SHOOT SECOND SET
                     .callback(() -> {
@@ -151,7 +204,7 @@ public class PPCloseCycleAutoBlue extends BluLinearOpMode {
                     .waitMilliseconds(200)
                     .addTurnTo(-35,500)
 
-                    /*// PICKUP THIRD SET
+                    // PICKUP THIRD SET
                     .addTurnTo(45, 1000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),   // was (-10, 17)
@@ -183,14 +236,14 @@ public class PPCloseCycleAutoBlue extends BluLinearOpMode {
                                 new WaitCommand(300),
                                 new IntakeSpitCommand()
                         ).schedule();
-                    })*/
-                    .waitMilliseconds(1000)
+                    })
+                    .waitMilliseconds(500)
                     //LEAVE
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),    // was (37, 46)
                             new Point2d(0, -30)    // was (-10, 17)
                     }, 1300)
-                    // SHOOT THIRD SET
+                    // SHOOT THIRD SET*/
                     .build();
         }
     }
@@ -233,12 +286,12 @@ public class PPCloseCycleAutoBlue extends BluLinearOpMode {
 
     public void periodic() {
         currentPath.run();
-        if (!alreadySignalledPattern){
-            llTagDetector.read();
-            if (llTagDetector.detectedPattern()){
-                gamepad1.setLedColor(100,255,100, 1000);
-                alreadySignalledPattern = true;
-            }
-        }
+//        if (!alreadySignalledPattern){
+//            llTagDetector.read();
+//            if (llTagDetector.detectedPattern()){
+//                gamepad1.setLedColor(100,255,100, 1000);
+//                alreadySignalledPattern = true;
+//            }
+//        }
     }
 }

@@ -31,9 +31,9 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BluLinearOpMode {
-    double turretAngle = 147; // field centric, decrease = towards obelisk increase = towards gate
-    double velo = 1120;
-    double veloMiddle = 1140;
+    double turretAngle = 139; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double velo = 1110;
+    double veloMiddle = 1130;
     double leftHood=34;
     double middleHood=34;
     double rightHood=34;
@@ -65,15 +65,15 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(-14, -37),
-                            new Point2d(-6, -47),
+                            new Point2d(-16, -37),
+                            new Point2d(-5, -47),
 //                            new Point2d(-6, 57)
                     }, 2000)
                     .addTurnTo(-90, 500)
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-6,-47),
-                            new Point2d(-6,-57)
+                            new Point2d(-5,-47),
+                            new Point2d(-5,-60)
                     }, 1000)
 
                     // Transfer - Wait for stillness, read colors, then transfer
@@ -93,7 +93,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-6, -57), // was (-10, 50)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
-//                    .addTurnTo(45, 1000)
+                    .addTurnTo(-45, 1000)
                     .waitMilliseconds(400)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
@@ -146,9 +146,10 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 //                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
-                            new Point2d(36, -50) // was (37, 46)
+                            new Point2d(20,-50),
+                            new Point2d(36, -51) // was (37, 46)
                     }, 1100)
-                    .addTurnTo(-10, 500)
+                    .addTurnTo(-31, 500)
                     .waitMilliseconds(1000)
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
@@ -161,11 +162,10 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     })
                     .waitMilliseconds(700)
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(36, -49),
+                            new Point2d(36, -51),
                             new Point2d(-16, -19) // was (-10, 17)
-                    }, 2000)
-                    .addTurnTo(0, 1000)
-                    .waitMilliseconds(400)
+                    }, 1200)
+                    .waitMilliseconds(800)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -221,7 +221,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(-57);
+        turret.setAngle(-60);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
         sixWheel.setPosition(new Pose2d(-51, -54, Math.toRadians(51.529)));

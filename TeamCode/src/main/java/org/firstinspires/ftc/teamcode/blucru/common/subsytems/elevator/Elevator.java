@@ -68,7 +68,7 @@ public class Elevator implements BluSubsystem, Subsystem {
         // Globals.telemetry.addData("Red Left", red);
         // Globals.telemetry.addData("Blue Left", blue);
         // Globals.telemetry.addData("Green Left",green);
-        if (mag > 0.01) {
+        if (mag > 0.0075) {
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
             double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
@@ -142,7 +142,7 @@ public class Elevator implements BluSubsystem, Subsystem {
         // Globals.telemetry.addData("Blue Right", blue);
         // Globals.telemetry.addData("Green Right",green);
         double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.01) {
+        if (mag > 0.0075) {
             double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
             double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
             double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
