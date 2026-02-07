@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class PPCloseCycleAutoRed extends BluLinearOpMode {
-    double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 218; //field centric, decrease = more towards gate, increase = towards obelisk
     double preAimTurretAngle = 90; //robot centric
     double velo =1120;
     double veloMiddle = 1140;
@@ -55,7 +55,7 @@ public class PPCloseCycleAutoRed extends BluLinearOpMode {
                             new Point2d(12, 19)
                     }, 3000)
                     .waitMilliseconds(200)
-                    .addTurnTo(-90, 2000)
+                    .addTurnTo(90, 2000)
                     .waitMilliseconds(100)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(12, 19),
@@ -80,7 +80,7 @@ public class PPCloseCycleAutoRed extends BluLinearOpMode {
                             new Point2d(8, 40),
                             new Point2d(-16, 19)    // was (-10, 17)
                     }, 2000)
-                    .addTurnTo(-45,1000)
+                    .addTurnTo(45,1000)
                     .waitMilliseconds(200)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
