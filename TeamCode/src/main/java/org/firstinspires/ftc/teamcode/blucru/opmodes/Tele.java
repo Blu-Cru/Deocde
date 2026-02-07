@@ -264,24 +264,24 @@ public class Tele extends BluLinearOpMode{
 
         //modify targets
         if (driver2.pressedDpadLeft()){
-            gamepad2.rumble(10);
-            if(Globals.alliance == Alliance.RED) {
-                Globals.turretTargetRedY += 2;
-            }else {
-                Globals.turretTargetBlueY += 2;
-            }
-        }
-        if (driver2.pressedDpadRight()){
-            gamepad2.rumble(10);
+            gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
                 Globals.turretTargetRedY -= 2;
             }else {
                 Globals.turretTargetBlueY -= 2;
             }
         }
+        if (driver2.pressedDpadRight()){
+            gamepad2.rumble(200);
+            if(Globals.alliance == Alliance.RED) {
+                Globals.turretTargetRedY += 2;
+            }else {
+                Globals.turretTargetBlueY += 2;
+            }
+        }
 
         if (driver2.pressedX()){
-            gamepad2.rumble(10);
+            gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()+2, Globals.shootingGoalRPose.getY()-2);
             }else {
@@ -289,7 +289,7 @@ public class Tele extends BluLinearOpMode{
             }
         }
         if (driver2.pressedB() && !driver2.pressedOptions()){
-            gamepad2.rumble(10);
+            gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()-2, Globals.shootingGoalRPose.getY()+2);
             }else {
@@ -322,6 +322,7 @@ public class Tele extends BluLinearOpMode{
 
         //manual heading update
         if (driver2.pressedDpadDown()){
+            gamepad2.rumble(200);
             sixWheel.setHeading(0);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());

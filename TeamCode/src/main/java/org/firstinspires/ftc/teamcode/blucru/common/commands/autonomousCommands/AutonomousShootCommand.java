@@ -24,6 +24,7 @@ public class AutonomousShootCommand extends InstantCommand {
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand(),
                         new WaitCommand(300),
+//                        new WaitCommand(300),
                         new IntakeStartCommand()
                 ).schedule();}
         );
