@@ -102,11 +102,11 @@ public class Tele extends BluLinearOpMode{
                         intake.setPID();
                     }
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
+                /*.transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
                     gamepad1.rumble(rumbleDur);
                     robot.idleRobot();
                     new IdleCommand().schedule();
-                })
+                })*/
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
@@ -166,14 +166,14 @@ public class Tele extends BluLinearOpMode{
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
+                /*.transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
                     gamepad1.rumble(rumbleDur);
                     robot.idleRobot();
                     new IdleCommand().schedule();
-                })
+                })*/
                 .build();
 
-        sm.setState(State.IDLE);
+        sm.setState(State.INTAKING);
 
         elevator.setUp();
         elevator.write();
@@ -259,7 +259,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_y * gamepad2.right_stick_y * gamepad2.right_stick_y);
+            turret.setPower(gamepad2.right_stick_y * gamepad2.right_stick_y * gamepad2.right_stick_y * 0.5);
         }
 
         //modify targets

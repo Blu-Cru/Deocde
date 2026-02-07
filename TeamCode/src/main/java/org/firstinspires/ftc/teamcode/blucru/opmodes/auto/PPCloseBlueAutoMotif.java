@@ -179,7 +179,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1700)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
