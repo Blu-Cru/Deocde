@@ -259,7 +259,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (turret.isManual()){
-            turret.setPower(gamepad2.right_stick_y * gamepad2.right_stick_y * gamepad2.right_stick_y * 0.5);
+            turret.setPower(gamepad2.right_stick_x * 0.3);
         }
 
         //modify targets
@@ -288,7 +288,7 @@ public class Tele extends BluLinearOpMode{
                 Globals.shootingGoalLPose = new Vector2d(Globals.shootingGoalLPose.getX()+2, Globals.shootingGoalLPose.getY()+2);
             }
         }
-        if (driver2.pressedB() && !driver2.pressedOptions()){
+        if (driver2.pressedB() && !gamepad2.options){
             gamepad2.rumble(200);
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.shootingGoalRPose.getX()-2, Globals.shootingGoalRPose.getY()+2);
@@ -298,7 +298,7 @@ public class Tele extends BluLinearOpMode{
         }
 
         //relocalization
-        if (driver2.pressedDpadUp()){
+        if (driver1.pressedY()){
             if (llTagDetector.validLLReads()){
                 gamepad2.rumble(200);
                 sixWheel.setPosition(llTagDetector.getLLBotPose());
@@ -316,16 +316,16 @@ public class Tele extends BluLinearOpMode{
         /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
             if (llTagDetector.validLLReads()){
                 sixWheel.setPosition(llTagDetector.getLLBotPosePoseHistory());
-            }
+
         }*/
 
-        if (driver2.pressedDpadUp()){
+        if (driver1.pressedY()){
             gamepad2.rumble(200);
             autoTagUpdating = !autoTagUpdating;
         }
 
         //manual heading update
-        if (driver2.pressedDpadDown()){
+        if (driver1.pressedA()){
             gamepad2.rumble(200);
             sixWheel.setHeading(0);
             if(Globals.alliance == Alliance.RED) {

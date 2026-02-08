@@ -148,7 +148,8 @@ public class PPCloseRedAutoMotif extends BluLinearOpMode {
                     // PICKUP THIRD SET
 //                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(-16, 19), // was (-10, 17)
+                            new Point2d(-16, 19),
+//                            new Point2d(10,50),// was (-10, 17)
                             new Point2d(36, 50) // was (37, 46)
                     }, 1100)
                     .addTurnTo(10, 500)

@@ -101,7 +101,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     // SHOOT FIRST SET - Use motif-aware shooting
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
@@ -135,7 +135,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
 
                     // SHOOT SECOND SET - Use motif-aware shooting
                     .callback(() -> {
@@ -171,7 +171,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle+2).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting
                     .callback(() -> {
                         new SequentialCommandGroup(

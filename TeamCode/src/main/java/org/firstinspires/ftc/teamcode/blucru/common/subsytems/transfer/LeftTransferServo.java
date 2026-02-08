@@ -11,7 +11,7 @@ public class LeftTransferServo extends TransferServo{
 
     @Override
     double getVerticalPos() {
-        return 0.72;
+        return 0.75;
     }
 
     @Override

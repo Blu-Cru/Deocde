@@ -84,7 +84,7 @@ public class ShooterMotifCoordinator {
                                 new WaitCommand(waits),
                                 new RightTransferUpCommand(),
                                 new WaitCommand(waits),
-                                new MiddleTransferUpCommand()));
+                                new LeftTransferUpCommand()));
                 mapper.put("BLUE_PURPLE_PURPLE_GREEN_GPP", new SequentialCommandGroup(
                                 new RightTransferUpCommand(),
                                 new WaitCommand(waits),
