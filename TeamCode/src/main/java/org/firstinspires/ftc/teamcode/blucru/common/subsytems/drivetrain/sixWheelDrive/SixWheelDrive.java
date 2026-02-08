@@ -115,7 +115,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         double r = Math.min(cubicScaling(g1.right_stick_x), 1) * 0.75;
 
 //        double multiplier = Math.min(1, Math.pow((Globals.voltage / 12.5), 2));
-        double multiplier = 1;
+//        double multiplier = 1;
+          double multiplier = Math.min(1, (Globals.voltage / 12.5));
+
 
         if (Math.abs(x) <= tol) {
             x = 0;

@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  */
 @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BluLinearOpMode {
-    double turretAngle = 137; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 138; ////field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1110;
     double veloMiddle = 1130;
     double leftHood=34;
@@ -71,7 +71,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-5, -47),
 //                            new Point2d(-6, 57)
                     }, 2000)
-                    .addTurnTo(-90, 500)
+                    .addTurnTo(-80, 500)
                     .waitMilliseconds(300)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-5,-47),
@@ -167,9 +167,9 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(36, -51),
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 1200)
-                    .waitMilliseconds(800)
+                    .waitMilliseconds(1200)
                     .callback(() -> {
-                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngle+2).schedule();
                     })
                     .waitMilliseconds(1000)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting

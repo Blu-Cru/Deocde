@@ -59,7 +59,7 @@ public class farREDauto extends BluLinearOpMode {
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(63, 8),
                             // INTAKE FIRST SET
-                            new Point2d(40, 45)
+                            new Point2d(40, 48)
                     }, 2000)
                     .waitMilliseconds(200)
                     .callback(() -> {
@@ -85,7 +85,7 @@ public class farREDauto extends BluLinearOpMode {
                         ).schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(40, 40),
+                            new Point2d(40, 48),
                             new Point2d(45, 25),
                             // SHOOT FIRST SET
                             shootingPoint
@@ -95,7 +95,7 @@ public class farREDauto extends BluLinearOpMode {
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
@@ -126,12 +126,12 @@ public class farREDauto extends BluLinearOpMode {
                             // SHOOT SECOND SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1100)
+                    .waitMilliseconds(700)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
 
-                    .waitMilliseconds(700)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()
@@ -163,11 +163,11 @@ public class farREDauto extends BluLinearOpMode {
                             // SHOOT THIRD SET
                             shootingPoint
                     }, 3000)
-                    .waitMilliseconds(1100)
+                    .waitMilliseconds(700)
                     .callback(()->{
                         new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
                     })
-                    .waitMilliseconds(700)
+                    .waitMilliseconds(1500)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()

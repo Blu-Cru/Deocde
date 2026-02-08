@@ -46,7 +46,7 @@ public class AutonomousShootWithMotifCommand extends InstantCommand {
                             new AllTransferUpCommand().schedule();
                         }
                     }),
-                    new WaitCommand(1200),
+                    new WaitCommand(1300),
                     new IdleShooterCommand(),
                     new CenterTurretCommand(),
                     new WaitCommand(400),
