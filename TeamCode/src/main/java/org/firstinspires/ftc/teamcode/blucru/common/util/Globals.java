@@ -32,6 +32,9 @@ public class Globals {
 
     public static Vector2d lineVector = new Vector2d(3,4);
 
+    public static Vector2d goalTagPoseBlue = new Vector2d(-58.3928021693, -55.628136098);
+    public static Vector2d goalTagPoseRed = new Vector2d(-58.3928021693, 55.628136098);
+
     public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
     public static double turretTargetRedX = -65;
     public static double turretTargetRedY = 65;
