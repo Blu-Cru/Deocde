@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;

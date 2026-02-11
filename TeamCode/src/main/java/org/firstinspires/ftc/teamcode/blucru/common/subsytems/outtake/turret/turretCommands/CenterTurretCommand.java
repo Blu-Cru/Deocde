@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.turretCommands;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands;
 
 import com.arcrobotics.ftclib.command.InstantCommand;
 
