@@ -1,9 +1,8 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
-import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 public class ShooterPod implements BluSubsystem {
     private BluMotorWithEncoder shooter;

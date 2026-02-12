@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
 public class HoodLeft extends Hood{
 
