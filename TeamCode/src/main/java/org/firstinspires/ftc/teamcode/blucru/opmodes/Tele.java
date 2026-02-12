@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 import com.arcrobotics.ftclib.command.ConditionalCommand;
@@ -52,6 +53,7 @@ public class Tele extends BluLinearOpMode{
         IDLE,
         INTAKING,
         DRIVING_TO_SHOOT,
+        WAITING_FOR_TURRET_TO_CENTER,
         INTAKING_FROM_ABOVE
     }
 
@@ -119,7 +121,7 @@ public class Tele extends BluLinearOpMode{
                     targetHit = false;
                     new RetransferCommand(turreting).schedule();
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
+                .transition(() -> driver1.pressedRightBumper(), State.WAITING_FOR_TURRET_TO_CENTER, () -> {
                     gamepad1.rumble(rumbleDur);
                     targetHit = false;
                     new ConditionalCommand(
@@ -155,10 +157,13 @@ public class Tele extends BluLinearOpMode{
                     ).schedule();
                     shot+=1;
                 })
-                .transition(() -> shot >= 3, State.INTAKING, () -> {
+                .transition(() -> shot >= 3, State.WAITING_FOR_TURRET_TO_CENTER, () -> {
                     shot = 0;
                     targetHit = false;
                 })
+
+                .state(State.WAITING_FOR_TURRET_TO_CENTER)
+                .transitionTimed(1, State.INTAKING)
 
                 .state(State.INTAKING_FROM_ABOVE)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {

@@ -21,7 +21,7 @@ public class ShootBallsCommand extends InstantCommand {
                         new WaitCommand(400),
                         new CenterTurretCommand(),
                         new IdleShooterCommand(),
-                        new WaitCommand(500),
+                        new WaitCommand(800),
                         new AllTransferDownCommand(),
                         new ResetForIntakeCommand()
                 ).schedule();}
