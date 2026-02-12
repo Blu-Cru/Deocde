@@ -9,6 +9,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
@@ -23,6 +24,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     boolean currentlySeeingGoodTags;
     boolean streaming;
     final double tagDistToMiddleShooter = 8;
+    MotifPattern motifPattern;
     public TagCamera(){
         int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
         tags = new AprilTagProcessor.Builder()
@@ -39,6 +41,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .setCameraResolution(new Size(1280, 720))
                 .setStreamFormat(VisionPortal.StreamFormat.YUY2)
                 .build();
+        motifPattern = MotifPattern.UNKNOWN;
     }
 
     @Override
@@ -57,6 +60,18 @@ public class TagCamera implements BluSubsystem, Subsystem {
                         || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
                     currentlySeeingGoodTags = true;
                     detection = detect;
+                    break;
+                }
+                if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.GPP;
+                    break;
+                }
+                if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.PGP;
+                    break;
+                }
+                if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.PPG;
                     break;
                 }
             }
@@ -93,6 +108,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
     public double getTagDistToMiddleShooter(){
         return tagDistToMiddleShooter;
+    }
+    public MotifPattern getMotif(){
+        return motifPattern;
     }
 
     @Override
