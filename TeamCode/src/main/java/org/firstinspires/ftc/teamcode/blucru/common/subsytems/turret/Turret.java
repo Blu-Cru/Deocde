@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -14,9 +14,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
-import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
 public class Turret implements BluSubsystem, Subsystem {
@@ -24,10 +21,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
     private BluEncoder encoder;
     private PIDController controller;
-
-    private PIDController tagController;
     Vector2d target;
-    AprilTagProcessor tags;
 
     private double position;
     private Double lastSetpoint = null;
@@ -39,10 +33,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kI = 0.06;
     public static double kD = 0.0014;
 
-    public static double kPTags = 0.02;
-    public static double kITags = 0.06;
-    public static double kDTags = 0.0014;
-
     public static double acceptableError = 0.5;
     public static double powerClip = 0.95;
 
@@ -50,8 +40,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double MIN_ANGLE = -150;
 
     public static double distFromCenter = 72.35 / 25.4;
-
-    private double targetXTags = 0;
 
 
     private enum State {
@@ -67,11 +55,7 @@ public class Turret implements BluSubsystem, Subsystem {
         servos = new TurretServos(servoLeft, servoRight);
         this.encoder = encoder;
         controller = new PIDController(kP, kI, kD);
-        tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
-
-        //dealing with camera
-
     }
 
     @Override
@@ -93,9 +77,6 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-
-                if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-                    else localizationBasedAutoAim();
                 double turretTargetDeg =
                         getFieldCentricTargetGoalAngle(
                                 Robot.getInstance().sixWheelDrivetrain.getPos()
@@ -246,31 +227,6 @@ public class Turret implements BluSubsystem, Subsystem {
         double dy = target.getY() - turretCenterY;
 
         return Math.toDegrees(Math.atan2(dx, dy)) - 90;
-    }
-
-    public void localizationBasedAutoAim(){
-        double turretTargetDeg =
-                getFieldCentricTargetGoalAngle(
-                        Robot.getInstance().sixWheelDrivetrain.getPos()
-                );
-
-//                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
-
-        setFieldCentricPositionAutoAim(
-                turretTargetDeg,
-                Math.toDegrees(
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH()
-                ),
-                false
-        );
-
-        updateControlLoop();
-    }
-
-    public void tagBasedAutoAim(AprilTagDetection detection){
-        AprilTagPoseFtc cameraPose = detection.ftcPose;
-        double currX = cameraPose.x;
-        servos.setPower(tagController.calculate(currX, targetXTags));
     }
 
 

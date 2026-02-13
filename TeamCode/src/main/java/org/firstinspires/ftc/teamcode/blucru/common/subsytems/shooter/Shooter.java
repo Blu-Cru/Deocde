@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
+
+import android.service.vr.VrListenerService;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
@@ -11,7 +13,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
-import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
@@ -85,15 +86,57 @@ public class Shooter implements BluSubsystem, Subsystem {
                 rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
             case AUTO_AIM:
-                double[] dists = new double[3];
-                if (Robot.getInstance().turretCam.detectedThisLoop()){
-                    dists = tagBasedShooterAutoAim(Robot.getInstance().turretCam.getDetection());
-                } else {
-                    dists = localizationBasedAutoAim();
+
+                //getting the shooter poses
+                if (Globals.alliance == Alliance.RED) {
+                    robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+                }else {
+                    robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
                 }
-                double leftDist = dists[0];
-                double middleDist = dists[1];
-                double rightDist = dists[2];
+                Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
+                double k = shooterDist / midToGoal.getMag();
+                Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);
+                Vector2d midToRight = midToGoal.rotate(-Math.PI/2).scalarMultiplication(k);
+                Vector2d leftToGoal = midToGoal.addNotInPlace(midToLeft);
+                Vector2d rightToGoal = midToGoal.addNotInPlace(midToRight);
+//                Globals.telemetry.addData("left vector to goal", leftToGoal);
+//                Globals.telemetry.addData("middle vector to goal", midToGoal);
+//                Globals.telemetry.addData("right vector to goal", rightToGoal);
+
+                // find the extra dists (SIGNED)
+                Vector2d line = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());
+
+                Vector2d a = midToGoal; // vector from mid shooter to goal
+                Vector2d b = line;      // reference direction
+
+                double amag = a.getMag();
+                double bmag = b.getMag();
+
+// avoid divide-by-zero
+                double cosine = 0;
+                double sine = 0;
+                if (amag > 1e-6 && bmag > 1e-6) {
+                    double dot = a.getX() * b.getX() + a.getY() * b.getY();
+                    double cross = a.getX() * b.getY() - a.getY() * b.getX(); // SIGNED
+
+                    cosine = dot / (amag * bmag);
+                    sine   = cross / (amag * bmag); // SIGNED
+                }
+
+                double tan = 0;
+                if (Math.abs(sine) > 1e-6) {
+                    tan = cosine / sine; // your same formula, but now with correct sign
+                }
+
+// optional safety clamp (prevents blow-ups near sine ~ 0)
+                tan = Math.max(-3.0, Math.min(3.0, tan));
+
+                double shooterOffset = shooterDist * tan;
+//                Globals.telemetry.addData("Tan", tan);
+                double leftDist = leftToGoal.getMag() + shooterOffset;
+                double middleDist = midToGoal.getMag();
+                double rightDist = rightToGoal.getMag() - shooterOffset;
 
                 Globals.telemetry.addData("left dist", leftDist);
                 Globals.telemetry.addData("middle dist", middleDist);
@@ -224,97 +267,6 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     public double getHoodAngle(){
         return leftShooter.getAngle();
-    }
-    public double[] localizationBasedAutoAim(){
-
-        //getting the shooter poses
-        if (Globals.alliance == Alliance.RED) {
-            robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
-        }else {
-            robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
-        }
-        Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-        Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
-        double k = shooterDist / midToGoal.getMag();
-        Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);
-        Vector2d midToRight = midToGoal.rotate(-Math.PI/2).scalarMultiplication(k);
-        Vector2d leftToGoal = midToGoal.addNotInPlace(midToLeft);
-        Vector2d rightToGoal = midToGoal.addNotInPlace(midToRight);
-//                Globals.telemetry.addData("left vector to goal", leftToGoal);
-//                Globals.telemetry.addData("middle vector to goal", midToGoal);
-//                Globals.telemetry.addData("right vector to goal", rightToGoal);
-
-        // find the extra dists (SIGNED)
-        Vector2d line = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());
-
-        Vector2d a = midToGoal; // vector from mid shooter to goal
-        Vector2d b = line;      // reference direction
-
-        double amag = a.getMag();
-        double bmag = b.getMag();
-
-// avoid divide-by-zero
-        double cosine = 0;
-        double sine = 0;
-        if (amag > 1e-6 && bmag > 1e-6) {
-            double dot = a.getX() * b.getX() + a.getY() * b.getY();
-            double cross = a.getX() * b.getY() - a.getY() * b.getX(); // SIGNED
-
-            cosine = dot / (amag * bmag);
-            sine   = cross / (amag * bmag); // SIGNED
-        }
-
-        double tan = 0;
-        if (Math.abs(sine) > 1e-6) {
-            tan = cosine / sine; // your same formula, but now with correct sign
-        }
-
-// optional safety clamp (prevents blow-ups near sine ~ 0)
-        tan = Math.max(-3.0, Math.min(3.0, tan));
-
-        double shooterOffset = shooterDist * tan;
-//                Globals.telemetry.addData("Tan", tan);
-        double leftDist = leftToGoal.getMag() + shooterOffset;
-        double middleDist = midToGoal.getMag();
-        double rightDist = rightToGoal.getMag() - shooterOffset;
-        return new double[]{leftDist, middleDist, rightDist};
-    }
-
-    public double[] tagBasedShooterAutoAim(AprilTagDetection detection){
-        double camDistToTag = detection.ftcPose.z;
-        double middleShooterDistToTag = camDistToTag + Robot.getInstance().turretCam.getTagDistToMiddleShooter();
-        Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
-        Vector2d a = middleShooterToTag; // vector from mid shooter to goal
-        Vector2d b = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());;      // reference direction
-
-        double amag = a.getMag();
-        double bmag = b.getMag();
-
-// avoid divide-by-zero
-        double cosine = 0;
-        double sine = 0;
-        if (amag > 1e-6 && bmag > 1e-6) {
-            double dot = a.getX() * b.getX() + a.getY() * b.getY();
-            double cross = a.getX() * b.getY() - a.getY() * b.getX(); // SIGNED
-
-            cosine = dot / (amag * bmag);
-            sine   = cross / (amag * bmag); // SIGNED
-        }
-
-        double tan = 0;
-        if (Math.abs(sine) > 1e-6) {
-            tan = cosine / sine; // your same formula, but now with correct sign
-        }
-
-// optional safety clamp (prevents blow-ups near sine ~ 0)
-        tan = Math.max(-3.0, Math.min(3.0, tan));
-
-        double shooterOffset = shooterDist * tan;
-//                Globals.telemetry.addData("Tan", tan);
-        double leftDist = middleShooterDistToTag + shooterOffset;
-        double middleDist = middleShooterDistToTag;
-        double rightDist = middleShooterDistToTag - shooterOffset;
-        return new double[]{leftDist, middleDist, rightDist};
     }
 
 

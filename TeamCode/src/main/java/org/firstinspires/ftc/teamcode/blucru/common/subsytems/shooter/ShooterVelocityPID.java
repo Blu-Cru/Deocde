@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter;
 
 import com.arcrobotics.ftclib.controller.PIDController;
 

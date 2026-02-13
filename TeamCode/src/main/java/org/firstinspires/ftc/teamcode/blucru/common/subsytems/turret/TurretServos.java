@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret;
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluHardwareDevice;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;

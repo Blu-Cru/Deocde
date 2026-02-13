@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
