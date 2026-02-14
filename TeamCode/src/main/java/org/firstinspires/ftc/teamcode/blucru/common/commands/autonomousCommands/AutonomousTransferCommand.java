@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
@@ -15,7 +14,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
-@Config
 public class AutonomousTransferCommand extends InstantCommand {
     public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
