@@ -243,6 +243,7 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                     // new TurnTurretToPosCommand(102)
                     ).schedule();
                 })
+                .waitMilliseconds(1500)
                 .build();
     }
 
@@ -279,8 +280,9 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                            new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
                 })
+                .waitMilliseconds(1500)
                 .build();
     }
 
