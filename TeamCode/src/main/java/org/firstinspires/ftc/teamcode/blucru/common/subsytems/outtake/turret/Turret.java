@@ -96,21 +96,6 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                     else localizationBasedAutoAim();
-                double turretTargetDeg =
-                        getFieldCentricTargetGoalAngle(
-                                Robot.getInstance().sixWheelDrivetrain.getPos()
-                        );
-                double correctedAngle = applyTurretOffset(turretTargetDeg);
-//                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
-
-                setFieldCentricPositionAutoAim(
-                        correctedAngle,
-                        Math.toDegrees(
-                                Robot.getInstance().sixWheelDrivetrain.getPos().getH()
-                        ),
-                        false
-                );
-
                 updateControlLoop();
                 break;
 
@@ -254,16 +239,14 @@ public class Turret implements BluSubsystem, Subsystem {
                         Robot.getInstance().sixWheelDrivetrain.getPos()
                 );
 
-//                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
-
+        double correctedAngle = applyTurretOffset(turretTargetDeg);
         setFieldCentricPositionAutoAim(
-                turretTargetDeg,
+                correctedAngle,
                 Math.toDegrees(
                         Robot.getInstance().sixWheelDrivetrain.getPos().getH()
                 ),
                 false
         );
-
         updateControlLoop();
     }
 
