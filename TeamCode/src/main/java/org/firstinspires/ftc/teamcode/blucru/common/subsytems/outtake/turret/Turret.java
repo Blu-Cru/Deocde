@@ -28,7 +28,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private PIDController tagController;
     Vector2d target;
     AprilTagProcessor tags;
-
+    public double headingOffset = 0;
     private double position;
     private Double lastSetpoint = null;
 
@@ -100,11 +100,11 @@ public class Turret implements BluSubsystem, Subsystem {
                         getFieldCentricTargetGoalAngle(
                                 Robot.getInstance().sixWheelDrivetrain.getPos()
                         );
-
+                double correctedAngle = applyTurretOffset(turretTargetDeg);
 //                Globals.telemetry.addData("Turret Target (Field)", turretTargetDeg);
 
                 setFieldCentricPositionAutoAim(
-                        turretTargetDeg,
+                        correctedAngle,
                         Math.toDegrees(
                                 Robot.getInstance().sixWheelDrivetrain.getPos().getH()
                         ),
@@ -271,6 +271,20 @@ public class Turret implements BluSubsystem, Subsystem {
         AprilTagPoseFtc cameraPose = detection.ftcPose;
         double currX = cameraPose.x;
         servos.setPower(tagController.calculate(currX, targetXTags));
+        saveTurretOffset(currX);
+    }
+
+    public void saveTurretOffset(double detectedAngle) {
+        // Get's the turret angle that localizer thinks it should be
+        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
+        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        double theoreticalTurretAngle = 180 - targetHeading - robotHeading;
+        // With the given camera detected angle we're able to set an offset to use for localizer based turret tracking
+        headingOffset = theoreticalTurretAngle-detectedAngle;
+    }
+    
+    public double applyTurretOffset(double localizerangle) {
+        return localizerangle + headingOffset;
     }
 
 
