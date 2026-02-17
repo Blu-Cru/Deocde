@@ -93,12 +93,10 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-
                 if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                     else localizationBasedAutoAim();
                 updateControlLoop();
                 break;
-
             case PID:
                 updateControlLoop();
                 break;
@@ -238,10 +236,8 @@ public class Turret implements BluSubsystem, Subsystem {
                 getFieldCentricTargetGoalAngle(
                         Robot.getInstance().sixWheelDrivetrain.getPos()
                 );
-
-        double correctedAngle = applyTurretOffset(turretTargetDeg);
         setFieldCentricPositionAutoAim(
-                correctedAngle,
+                applyTurretOffset(turretTargetDeg),
                 Math.toDegrees(
                         Robot.getInstance().sixWheelDrivetrain.getPos().getH()
                 ),
