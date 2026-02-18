@@ -63,7 +63,7 @@ public class BluMotorWithEncoder extends DcMotorImplEx implements BluHardwareDev
     public void read() {
         encoderTicks = super.getCurrentPosition();
         vel = super.getVelocity();
-        current = super.getCurrent(CurrentUnit.MILLIAMPS);
+        //current = super.getCurrent(CurrentUnit.MILLIAMPS);
     }
 
     @Override

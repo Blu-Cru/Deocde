@@ -203,7 +203,7 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void onStart(){
-         new ElevatorDownCommand().schedule();
+        new ElevatorDownCommand().schedule();
     }
 
     public void periodic(){
@@ -324,10 +324,10 @@ public class Tele extends BluLinearOpMode{
 
         }*/
 
-        if (driver1.pressedY()){
+       if (driver1.pressedY()){
             gamepad2.rumble(200);
             autoTagUpdating = !autoTagUpdating;
-        }
+       }
 
         //manual heading update
         if (driver1.pressedA()){
@@ -355,11 +355,11 @@ public class Tele extends BluLinearOpMode{
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
-//        }
+//        }*/
     }
 
     public void telemetry(){
-        telemetry.addData("State", sm.getState());
+        //telemetry.addData("State", sm.getState());
     }
 
 }

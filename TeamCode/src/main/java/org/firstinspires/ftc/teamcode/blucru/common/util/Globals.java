@@ -37,7 +37,7 @@ public class Globals {
     public static double turretTargetRedY = 65;
 
     public static double turretTargetBlueX = -65;
-    public static double turretTargetBlueY = -66;
+    public static double turretTargetBlueY = -65;
 
     public static double OGturretTargetRedX = -65;
     public static double OGturretTargetRedY = 65;

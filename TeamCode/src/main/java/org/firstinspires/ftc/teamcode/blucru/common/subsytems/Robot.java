@@ -75,9 +75,9 @@ public class Robot {
         //store the hubs in an array
         hubs = hwMap.getAll(LynxModule.class);
 
-        //set the hubs to auto bulk reads
+        //set the hubs to manual bulk reads
         for (LynxModule hub : hubs){
-            hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
 
         //init all subsystems
