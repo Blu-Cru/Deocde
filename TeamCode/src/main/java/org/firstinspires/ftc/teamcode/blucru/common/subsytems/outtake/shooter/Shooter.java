@@ -32,6 +32,10 @@ public class Shooter implements BluSubsystem, Subsystem {
     public Vector2d robotToGoal;
     private double shooterDist = 145/25.4;
 
+    public double getBallExitVel(double vel) {
+        return ShooterAutoAimInterpolation.getBallExitVel(vel);
+    }
+
     enum State{
         IDLE,
         VELOCITY,
