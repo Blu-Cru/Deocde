@@ -229,11 +229,11 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         //getting the shooter poses
         if (Globals.alliance == Alliance.RED) {
-            robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+            robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getVelPose().vec());
         }else {
-            robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+            robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getVelPose().vec());
         }
-        Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getVelPose().getH());
         Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
         double k = shooterDist / midToGoal.getMag();
         Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);

@@ -243,4 +243,14 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     public State getState() {
         return dtState;
     }
+
+    public Pose2d getVelPose() {
+        double x = localizer.getPose().getX() + (getTimeInAir() * localizer.getVel().getX());
+        double y = localizer.getPose().getY() + (getTimeInAir() * localizer.getVel().getY());
+        double h = localizer.getHeading() + (getTimeInAir() * localizer.getVel().getH());
+        return new Pose2d(x, y, h);
+    }
+    public double getTimeInAir() {
+        return 1;
+    }
 }

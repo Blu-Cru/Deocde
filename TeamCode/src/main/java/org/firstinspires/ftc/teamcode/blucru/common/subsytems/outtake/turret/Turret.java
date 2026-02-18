@@ -234,12 +234,12 @@ public class Turret implements BluSubsystem, Subsystem {
     public void localizationBasedAutoAim(){
         double turretTargetDeg =
                 getFieldCentricTargetGoalAngle(
-                        Robot.getInstance().sixWheelDrivetrain.getPos()
+                        Robot.getInstance().sixWheelDrivetrain.getVelPose()
                 );
         setFieldCentricPositionAutoAim(
                 applyTurretOffset(turretTargetDeg),
                 Math.toDegrees(
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH()
+                        Robot.getInstance().sixWheelDrivetrain.getVelPose().getH()
                 ),
                 false
         );
@@ -255,8 +255,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void saveTurretOffset(double detectedAngle) {
         // Get's the turret angle that localizer thinks it should be
-        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
-        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getVelPose());
+        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getVelPose().getH());
         double theoreticalTurretAngle = 180 - targetHeading - robotHeading;
         // With the given camera detected angle we're able to set an offset to use for localizer based turret tracking
         headingOffset = theoreticalTurretAngle-detectedAngle;
