@@ -148,8 +148,9 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 //                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
+                            new Point2d(10, -30),
 //                            new Point2d(20,-50),
-                            new Point2d(36, -47) // was (37, 46)
+                            new Point2d(36, -45) // was (37, 46)
                     }, 1100)
                     .addTurnTo(-31, 500)
                     .waitMilliseconds(500)
@@ -159,17 +160,20 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new WaitCommand(1000),
+                                new TurnTurretToPosFieldCentricCommand(turretAngle+2)).schedule();
 
                     })
                     .waitMilliseconds(400)
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(36, -47),
+                            new Point2d(36, -45),
+                            new Point2d(10, -30),
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 1200)
                     .waitMilliseconds(1000)
                     .callback(() -> {
-                        new TurnTurretToPosFieldCentricCommand(turretAngle+2).schedule();
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     .waitMilliseconds(1000)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting
@@ -222,7 +226,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
     }
 
     public void onStart() {
-        shooter.shootWithVelocity(1100); // orig 850 before switching to triple shot
+        shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
         turret.setAngle(7);
         llTagDetector.switchToMotif();
         currentPath = new TestingPath().build().start();
