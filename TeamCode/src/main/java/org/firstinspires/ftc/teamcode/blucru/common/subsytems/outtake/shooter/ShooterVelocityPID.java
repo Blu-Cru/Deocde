@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.seattlesolvers.solverslib.controller.PIDController;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 import android.util.Log;
 
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;

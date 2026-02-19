@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;

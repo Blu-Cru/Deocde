@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;

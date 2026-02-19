@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
 
 import android.util.Size;
 
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
