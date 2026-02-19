@@ -58,6 +58,14 @@ public class ShooterAutoAimInterpolation {
             1560, 1580, 1580
     };
 
+
+    private static final double[] middleShooterVels = {
+    };
+
+    private static final double[] middleShooterExitVels = {
+    };
+
+
     public static double[] interpolateLeft(double dist){
         // clamp to range to prevent hardware damage or crashes
         dist = Range.clip(dist, leftDists[0], leftDists[leftDists.length - 1]);
@@ -123,5 +131,25 @@ public class ShooterAutoAimInterpolation {
 
     private static double lerp(double start, double end, double t) {
         return start + (end - start) * t;
+    }
+
+    public static double getBallExitVel(double vel) {
+        // clamp to range to prevent hardware damage or crashes
+        vel = Range.clip(vel, rightDists[0], rightDists[rightDists.length - 1]);
+
+        int i;
+        for (i = 0; i < rightDists.length - 2; i++){
+            if (rightDists[i+1] > vel){
+                break;
+            }
+        }
+
+        // calculate interpolation fraction
+        double t = (vel - middleShooterVels[i]) / (middleShooterVels[i+1] - middleShooterVels[i]);
+
+        // linear interpolation
+        double exitVel = lerp(middleShooterVels[i], middleShooterVels[i+1], t);
+
+        return exitVel;
     }
 }

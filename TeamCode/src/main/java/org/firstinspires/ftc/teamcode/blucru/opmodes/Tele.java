@@ -52,6 +52,7 @@ public class Tele extends BluLinearOpMode{
     public void initialize(){
         reportTelemetry = true;
         robot.clear();
+        robot.addTurretCam();
         addLLTagDetector();
         addSixWheel();
         addIntake();

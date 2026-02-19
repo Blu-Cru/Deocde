@@ -55,11 +55,11 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
-                    .waitMilliseconds(300)
+                    .waitMilliseconds(200)
                     .addTurnTo(-10,1000)
 
 
-                    .waitMilliseconds(300)
+                    .waitMilliseconds(200)
                     // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
 
 
@@ -72,7 +72,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 //                            new Point2d(-6, 57)
                     }, 2000)
                     .addTurnTo(-80, 500)
-                    .waitMilliseconds(300)
+                    .waitMilliseconds(200)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-5,-47),
                             new Point2d(-5,-60)
@@ -88,7 +88,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
-                    .waitMilliseconds(500) // Ensure enough time for the sequence above to complete
+                    .waitMilliseconds(300) // Ensure enough time for the sequence above to complete
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -96,12 +96,12 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45, 1000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(200)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     // SHOOT FIRST SET - Use motif-aware shooting
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1200)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
@@ -113,7 +113,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, -19),
                             new Point2d(17, -51)
                     }, 2000)
-                    .waitMilliseconds(300)
+                    .waitMilliseconds(100)
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -123,7 +123,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
 
                     })
-                    .waitMilliseconds(700)
+                    .waitMilliseconds(300)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -131,28 +131,28 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
 //                    .addTurnTo(45, 1000)
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(200)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1000)
 
                     // SHOOT SECOND SET - Use motif-aware shooting
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1750)
+                    .waitMilliseconds(1850)
 
                     // PICKUP THIRD SET
 //                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
 //                            new Point2d(20,-50),
-                            new Point2d(36, -46) // was (37, 46)
+                            new Point2d(36, -47) // was (37, 46)
                     }, 1100)
                     .addTurnTo(-31, 500)
-                    .waitMilliseconds(1000)
+                    .waitMilliseconds(500)
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -162,16 +162,16 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
 
                     })
-                    .waitMilliseconds(700)
+                    .waitMilliseconds(400)
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(36, -51),
+                            new Point2d(36, -47),
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 1200)
-                    .waitMilliseconds(1200)
+                    .waitMilliseconds(1000)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle+2).schedule();
                     })
-                    .waitMilliseconds(1500)
+                    .waitMilliseconds(1000)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting
                     .callback(() -> {
                         new SequentialCommandGroup(

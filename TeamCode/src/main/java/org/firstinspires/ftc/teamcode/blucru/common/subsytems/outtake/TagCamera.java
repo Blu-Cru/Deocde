@@ -26,20 +26,20 @@ public class TagCamera implements BluSubsystem, Subsystem {
     final double tagDistToMiddleShooter = 8;
     MotifPattern motifPattern;
     public TagCamera(){
-        int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+        //int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
         tags = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setDrawAxes(false)
                 .setDrawTagID(false)
                 .setDrawTagOutline(false)
-                .setLensIntrinsics(0,0,0,0)
+                .setLensIntrinsics(549.641,549.651,317.108,236.644)
                 .build();
         portal = new VisionPortal.Builder()
                 .setCamera(Globals.hwMap.get(WebcamName.class, "autoaim cam"))
                 .enableLiveView(false)
                 .addProcessor(tags)
-                .setCameraResolution(new Size(1280, 720))
-                .setStreamFormat(VisionPortal.StreamFormat.YUY2)
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
         motifPattern = MotifPattern.UNKNOWN;
     }
@@ -104,7 +104,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         return detection;
     }
     public boolean detectedThisLoop(){
-        return detectedThisLoop();
+        return currentlySeeingGoodTags;
     }
     public double getTagDistToMiddleShooter(){
         return tagDistToMiddleShooter;

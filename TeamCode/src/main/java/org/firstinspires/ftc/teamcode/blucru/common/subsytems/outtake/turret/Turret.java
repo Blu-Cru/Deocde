@@ -39,7 +39,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kI = 0.06;
     public static double kD = 0.0014;
 
-    public static double kPTags = 0.02;
+    public static double kPTags = 0.015;
     public static double kITags = 0.06;
     public static double kDTags = 0.0014;
 
@@ -234,12 +234,12 @@ public class Turret implements BluSubsystem, Subsystem {
     public void localizationBasedAutoAim(){
         double turretTargetDeg =
                 getFieldCentricTargetGoalAngle(
-                        Robot.getInstance().sixWheelDrivetrain.getPos()
+                        Robot.getInstance().sixWheelDrivetrain.getVelPose()
                 );
         setFieldCentricPositionAutoAim(
                 applyTurretOffset(turretTargetDeg),
                 Math.toDegrees(
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH()
+                        Robot.getInstance().sixWheelDrivetrain.getVelPose().getH()
                 ),
                 false
         );
@@ -248,15 +248,15 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void tagBasedAutoAim(AprilTagDetection detection){
         AprilTagPoseFtc cameraPose = detection.ftcPose;
-        double currX = cameraPose.x;
-        servos.setPower(tagController.calculate(currX, targetXTags));
-        saveTurretOffset(currX);
+        double yawDelta = cameraPose.yaw;
+        servos.setPower(tagController.calculate(yawDelta, servos.getPower()));
+        saveTurretOffset(yawDelta);
     }
 
     public void saveTurretOffset(double detectedAngle) {
         // Get's the turret angle that localizer thinks it should be
-        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
-        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getVelPose());
+        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getVelPose().getH());
         double theoreticalTurretAngle = 180 - targetHeading - robotHeading;
         // With the given camera detected angle we're able to set an offset to use for localizer based turret tracking
         headingOffset = theoreticalTurretAngle-detectedAngle;

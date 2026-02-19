@@ -5,8 +5,11 @@ import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitComputer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.SixWheelPID;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -242,5 +245,21 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     public State getState() {
         return dtState;
+    }
+
+    public Pose2d getVelPose() {
+        //double[] interpolationData = ShooterAutoAimInterpolation.interpolateMiddle(Robot.getInstance().turretCam.getTagDistToMiddleShooter());
+        double time = 1;
+        double x = localizer.getPose().getX() + (time * localizer.getVel().getX());
+        double y = localizer.getPose().getY() + (time * localizer.getVel().getY());
+        double h = localizer.getHeading();
+        return new Pose2d(x, y, h);
+    }
+    public double getTimeInAir(double[] interpolation) {
+        double dist = localizer.getPose().getDistTo(new Pose2d(Globals.shootingGoalLPose,0));
+        if (Globals.alliance == Alliance.RED){
+            dist = localizer.getPose().getDistTo(new Pose2d(Globals.shootingGoalRPose,0));
+        }
+        return dist / (Robot.getInstance().shooter.getBallExitVel(interpolation[0]) * Math.cos(Math.toRadians(interpolation[1]))) ;
     }
 }
