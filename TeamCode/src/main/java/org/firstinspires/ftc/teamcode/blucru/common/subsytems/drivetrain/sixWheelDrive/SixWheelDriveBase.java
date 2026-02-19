@@ -17,41 +17,45 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 import java.util.Arrays;
 
-public class SixWheelDriveBase implements BluSubsystem{
+public class SixWheelDriveBase implements BluSubsystem {
 
     private BluMotor[] dtMotors;
 
     RobotLocalizer localizer;
-    public enum State{
+
+    public enum State {
         IDLE,
         PID,
-        TELE_DRIVE
+        TELE_DRIVE,
+        TURN,
+        LINE_TO_X
     }
 
     State dtState;
 
-    public SixWheelDriveBase(){
+    public SixWheelDriveBase() {
         this(new BluMotor(Globals.flMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
                 new BluMotor(Globals.frMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT),
                 new BluMotor(Globals.blMotorName, DcMotorSimple.Direction.FORWARD, DcMotor.ZeroPowerBehavior.FLOAT),
                 new BluMotor(Globals.brMotorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.FLOAT));
     }
-    private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br){
-        dtMotors = new BluMotor[]{fl, fr, bl, br};
+
+    private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br) {
+        dtMotors = new BluMotor[] { fl, fr, bl, br };
         localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
     }
 
     @Override
     public void init() {
-        for (BluMotor motors: dtMotors){
+        for (BluMotor motors : dtMotors) {
             motors.init();
         }
     }
 
     @Override
     public void read() {
-        for (BluMotor motors: dtMotors){
+        for (BluMotor motors : dtMotors) {
             motors.read();
         }
         localizer.read();
@@ -59,13 +63,13 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     @Override
     public void write() {
-        for (BluMotor motors: dtMotors){
+        for (BluMotor motors : dtMotors) {
             motors.write();
         }
     }
 
-    public void drive(double x, double r){
-        double[] powers = SixWheelKinematics.getPowers(x,r);
+    public void drive(double x, double r) {
+        double[] powers = SixWheelKinematics.getPowers(x, r);
         dtMotors[0].setPower(powers[0]);
         dtMotors[2].setPower(powers[0]);
         dtMotors[1].setPower(powers[1]);
@@ -73,27 +77,35 @@ public class SixWheelDriveBase implements BluSubsystem{
         Globals.telemetry.addData("Powers", Arrays.toString(powers));
     }
 
-    public void makeMotorsBeInBrake(){
-        for (BluMotor motors: dtMotors){
+    public void makeMotorsBeInBrake() {
+        for (BluMotor motors : dtMotors) {
             motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
     }
 
-    public void makeMotorsBeInFloat(){
-        /**for (BluMotor motors: dtMotors){
-            motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        }*/
+    public void makeMotorsBeInFloat() {
+        /**
+         * for (BluMotor motors: dtMotors){
+         * motors.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+         * }
+         */
     }
 
-    public Pose2d getPos(){
+    public Pose2d getPos() {
         return localizer.getPose();
+    }
+
+    public Pose2d getVel() {
+        return localizer.getVel();
     }
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        /**for (BluMotor motor:dtMotors){
-            motor.telemetry();
-        }*/
+        /**
+         * for (BluMotor motor:dtMotors){
+         * motor.telemetry();
+         * }
+         */
         localizer.telemetry(telemetry);
         telemetry.addData("pos", localizer.getPose());
         telemetry.addData("Brake Mode", dtMotors[0].getZeroPowerBehavior());
@@ -101,6 +113,6 @@ public class SixWheelDriveBase implements BluSubsystem{
 
     @Override
     public void reset() {
-        localizer.setPosition(new Pose2d(0,0,0));
+        localizer.reset();
     }
 }

@@ -5,23 +5,18 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.PoseHistory;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluPIDServo;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
-import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDriveBase;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
@@ -46,6 +41,8 @@ public class Robot {
     public SixWheelDrive sixWheelDrivetrain;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public TagCamera turretCam;
+    public PoseHistory positionHistory;
     private static Robot instance;
     HardwareMap hwMap;
     List<LynxModule> hubs;
@@ -61,6 +58,7 @@ public class Robot {
 
     private Robot(){
         subsystems = new ArrayList<>();
+        positionHistory = new PoseHistory();
     }
 
     public void setHwMap(HardwareMap hwMap){
@@ -158,12 +156,12 @@ public class Robot {
         return transfer;
     }
     public Intake addIntake(){
-        intake = new Intake("intakeLeft", "intakeRight", "aligner");
+        intake = new Intake("intake", "aligner");
         subsystems.add(intake);
         return intake;
     }
     public Turret addTurret(){
-        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.blMotorName));
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.frMotorName));
         subsystems.add(turret);
         return turret;
     }
@@ -176,8 +174,14 @@ public class Robot {
 
     public LimelightObeliskTagDetector addLLTagDetector(){
         llTagDetector = new LimelightObeliskTagDetector();
-        subsystems.add(llTagDetector);
+        //subsystems.add(llTagDetector);
         return llTagDetector;
+    }
+
+    public TagCamera addTurretCam(){
+        turretCam = new TagCamera();
+        subsystems.add(turretCam);
+        return turretCam;
     }
 
 

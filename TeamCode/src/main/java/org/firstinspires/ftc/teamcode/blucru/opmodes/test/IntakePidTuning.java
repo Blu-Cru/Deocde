@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-//@TeleOp
+@TeleOp
 public class IntakePidTuning extends BluLinearOpMode {
 
     public void initialize(){
@@ -20,6 +20,9 @@ public class IntakePidTuning extends BluLinearOpMode {
         }
         if (gamepad1.x){
             intake.setPID();
+        }
+        if (driver1.pressedDpadDown()){
+            intake.resetEncoder();
         }
 
     }

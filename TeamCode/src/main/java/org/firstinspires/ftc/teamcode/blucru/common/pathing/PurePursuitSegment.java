@@ -2,28 +2,36 @@ package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-public class PurePursuitSegment implements PathSegment{
+public class PurePursuitSegment implements PathSegment {
 
     Point2d[] path;
-
     double startTime;
     double maxTime;
-    public PurePursuitSegment(Point2d[] path, double maxTime){
+
+    public PurePursuitSegment(Point2d[] path, double maxTime) {
         this.path = path;
         this.maxTime = maxTime;
     }
+
     @Override
     public boolean isDone() {
-        return (Robot.getInstance().sixWheelDrivetrain.getPos().
-                getDistTo(new Pose2d(path[path.length-1].getX(), path[path.length-1].getY(), 0))) < 1;
+        Globals.telemetry.addData("Last Point", path[path.length - 1]);
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double dist = robotPose.getDistTo(new Pose2d(path[path.length - 1].getX(), path[path.length - 1].getY(), 0));
+        Globals.telemetry.addData("Dist", dist);
+
+        return dist < SixWheelDrive.END_TOLERANCE;
     }
 
     @Override
     public void startSegment() {
         startTime = System.currentTimeMillis();
+        Robot.getInstance().sixWheelDrivetrain.followPath(path);
     }
 
     @Override
@@ -38,6 +46,6 @@ public class PurePursuitSegment implements PathSegment{
 
     @Override
     public void runSegment() {
-        Robot.getInstance().sixWheelDrivetrain.followPath(path);
+        // Path following continues automatically in the drivetrain's periodic update
     }
 }

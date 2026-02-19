@@ -7,6 +7,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
+import org.firstinspires.ftc.teamcode.R;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 @Config
@@ -16,7 +18,7 @@ public class Pinpoint implements RobotLocalizer{
     private GoBildaPinpointDriver pinpoint;
     private double headingOffset;
 
-    private Pose2D pinpointPose;
+    private Pose2d pinpointPose;
 
     public Pinpoint(String name){
         this(Globals.hwMap.get(GoBildaPinpointDriver.class, name));
@@ -31,15 +33,18 @@ public class Pinpoint implements RobotLocalizer{
                 GoBildaPinpointDriver.EncoderDirection.REVERSED);
         pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
         pinpoint.setOffsets(parallelYOffset, perpXOffset, DistanceUnit.MM);
+        pinpointPose = new Pose2d(pinpoint.getPosition().getX(DistanceUnit.INCH), pinpoint.getPosition().getY(DistanceUnit.INCH), pinpoint.getPosition().getHeading(AngleUnit.RADIANS));
 
-        pinpoint.resetPosAndIMU();
-        pinpointPose = pinpoint.getPosition();
     }
 
     @Override
     public void read() {
         pinpoint.update();
-        pinpointPose = pinpoint.getPosition();
+        Pose2D pinpointPose2D = pinpoint.getPosition();
+        pinpointPose = new Pose2d(pinpointPose2D.getX(DistanceUnit.INCH), pinpointPose2D.getY(DistanceUnit.INCH), pinpointPose2D.getHeading(AngleUnit.RADIANS));
+
+        Pose2D vel = pinpoint.getVelocity();
+        Robot.getInstance().positionHistory.add(pinpointPose, new Pose2d(vel.getX(DistanceUnit.INCH), vel.getY(DistanceUnit.INCH), vel.getHeading(AngleUnit.RADIANS)));
     }
 
     /**
@@ -47,9 +52,7 @@ public class Pinpoint implements RobotLocalizer{
      * */
     @Override
     public Pose2d getPose() {
-
-        //Pose2D is different from Pose2d, Pose2D is ftc's Pose where Pose2d is the custom pose
-        return new Pose2d(pinpointPose.getX(DistanceUnit.INCH), pinpointPose.getY(DistanceUnit.INCH), pinpointPose.getHeading(AngleUnit.RADIANS));
+        return pinpointPose;
     }
 
     /**
@@ -57,7 +60,7 @@ public class Pinpoint implements RobotLocalizer{
      * */
     @Override
     public double getX() {
-        return pinpointPose.getX(DistanceUnit.INCH);
+        return pinpointPose.getX();
     }
 
     /**
@@ -65,7 +68,7 @@ public class Pinpoint implements RobotLocalizer{
      * */
     @Override
     public double getY() {
-        return pinpointPose.getY(DistanceUnit.INCH);
+        return pinpointPose.getY();
     }
 
     /**
@@ -73,7 +76,7 @@ public class Pinpoint implements RobotLocalizer{
      * */
     @Override
     public double getHeading() {
-        return pinpointPose.getHeading(AngleUnit.RADIANS) - headingOffset;
+        return pinpointPose.getH() - headingOffset;
     }
 
     /**
@@ -122,5 +125,9 @@ public class Pinpoint implements RobotLocalizer{
 
         telemetry.addData("Pinpoint heading", pinpoint.getHeading(AngleUnit.RADIANS));
 
+    }
+
+    public void reset(){
+        pinpoint.resetPosAndIMU();
     }
 }

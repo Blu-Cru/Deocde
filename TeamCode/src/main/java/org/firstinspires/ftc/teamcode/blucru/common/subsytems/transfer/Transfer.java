@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,8 +21,10 @@ public class Transfer implements BluSubsystem, Subsystem {
     private State leftState;
     private State middleState;
     private State rightState;
+    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorBottom, middleSensorTop, rightSensorBottom, rightSensorTop;
     public Transfer(HardwareMap hardwareMap) {
         transferServos =  new TransferServo[]{new LeftTransferServo(), new MiddleTransferServo(), new RightTransferServo()};
+
         setAllDown();
         write();
     }
@@ -106,12 +109,12 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Left transfer state: ", leftState);
-        telemetry.addData("Middle transfer state: ", middleState);
-        telemetry.addData("Right transfer state: ", rightState);
+//        telemetry.addData("Left transfer state: ", leftState);
+//        telemetry.addData("Middle transfer state: ", middleState);
+//        telemetry.addData("Right transfer state: ", rightState);
 
         for(TransferServo servo : transferServos){
-            servo.telemetry();
+//            servo.telemetry();
         }
     }
 

@@ -1,0 +1,120 @@
+package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
+
+import android.util.Size;
+
+import com.arcrobotics.ftclib.command.Subsystem;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.ArrayList;
+
+public class TagCamera implements BluSubsystem, Subsystem {
+
+    AprilTagProcessor tags;
+    VisionPortal portal;
+    AprilTagDetection detection;
+    boolean currentlySeeingGoodTags;
+    boolean streaming;
+    final double tagDistToMiddleShooter = 8;
+    MotifPattern motifPattern;
+    public TagCamera(){
+        //int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+        tags = new AprilTagProcessor.Builder()
+                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+                .setDrawAxes(false)
+                .setDrawTagID(false)
+                .setDrawTagOutline(false)
+                .setLensIntrinsics(549.641,549.651,317.108,236.644)
+                .build();
+        portal = new VisionPortal.Builder()
+                .setCamera(Globals.hwMap.get(WebcamName.class, "autoaim cam"))
+                .enableLiveView(false)
+                .addProcessor(tags)
+                .setCameraResolution(new Size(640, 480))
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .build();
+        motifPattern = MotifPattern.UNKNOWN;
+    }
+
+    @Override
+    public void init() {
+        read();
+    }
+
+    @Override
+    public void read() {
+        currentlySeeingGoodTags = false;
+        //using streaming first because it is a lot easier to get
+        if (streaming && portal.getProcessorEnabled(tags)) {
+            ArrayList<AprilTagDetection> detections = tags.getDetections();
+            for (AprilTagDetection detect : detections) {
+                if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
+                        || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
+                    currentlySeeingGoodTags = true;
+                    detection = detect;
+                    break;
+                }
+                if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.GPP;
+                    break;
+                }
+                if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.PGP;
+                    break;
+                }
+                if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
+                    motifPattern = MotifPattern.PPG;
+                    break;
+                }
+            }
+        }
+    }
+
+    public void disable(){
+        if (streaming){
+            portal.stopStreaming();
+            streaming = false;
+        }
+    }
+    public void enable(){
+        if (!streaming){
+            portal.resumeStreaming();
+            streaming = true;
+        }
+    }
+
+    @Override
+    public void write() {
+
+    }
+
+    @Override
+    public void telemetry(Telemetry telemetry) {
+
+    }
+    public AprilTagDetection getDetection(){
+        return detection;
+    }
+    public boolean detectedThisLoop(){
+        return currentlySeeingGoodTags;
+    }
+    public double getTagDistToMiddleShooter(){
+        return tagDistToMiddleShooter;
+    }
+    public MotifPattern getMotif(){
+        return motifPattern;
+    }
+
+    @Override
+    public void reset() {
+        disable();
+    }
+}

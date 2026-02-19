@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.arcrobotics.ftclib.command.Subsystem;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
@@ -18,13 +19,18 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.PDController;
 
 @Config
 public class Intake implements BluSubsystem, Subsystem {
-    private BluMotorWithEncoder leftMotor;
-    private BluMotorWithEncoder rightMotor;
+    private BluMotor motor;
+    private double encoderIteration = 0;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
+    public static double ENCODER_PPR_INTAKE = 145.090909091;
+    public static double curr = 0;
+    public static double offset = 0;
+    boolean armsParallel;
+    boolean withinRange;
     private PDController pid;
     public enum State{
         IN,
@@ -68,12 +74,11 @@ public class Intake implements BluSubsystem, Subsystem {
         return state;
     }
 
-    public Intake(String leftMotorName, String rightMotorName, String sensorName) {
-        leftMotor = new BluMotorWithEncoder(leftMotorName, DcMotorSimple.Direction.FORWARD);
-        rightMotor = new BluMotorWithEncoder(rightMotorName, DcMotorSimple.Direction.REVERSE);
+    public Intake(String motorName, String sensorName) {
+        motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
         parallelSensor = new BluDigitalChannel(sensorName);
-        encoder = new BluEncoder(Globals.frMotorName);
-        pid = new PDController(0.003, 0.001);
+        encoder = new BluEncoder(motorName);
+        pid = new PDController(0.01, 0.002);
         state = State.IDlE;
         jammed = false;
     }
@@ -84,84 +89,97 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void init() {
-        leftMotor.init();
-        rightMotor.init();
+        motor.init();
         encoder.init();
     }
 
     @Override
     public void read() {
-        leftMotor.read();
-        rightMotor.read();
-        double currentVoltage = Robot.getInstance().getVoltage();
+        motor.read();
+        //double currentVoltage = Robot.getInstance().getVoltage();
 
-        jammed = (state == State.IN && leftMotor.getVelocity() > 100); // Jam detected, spit out the ball
+//        jammed = (state == State.IN && encoder.getVelocity() > 100); // Jam detected, spit out the ball
     }
 
     public boolean armsParallel(){
-        return parallelSensor.getState();
+        return withinRange;
     }
 
     @Override
     public void write() {
         if (jammed){
-            leftMotor.setPower(-1);
-            rightMotor.setPower(-1);
+            motor.setPower(-1);
         } else {
             switch(state){
                 case IN:
-                    leftMotor.setPower(1);
-                    rightMotor.setPower(1);
+                    armsParallel = false;
+                    motor.setPower(1);
                     break;
                 case OUT:
-                    leftMotor.setPower(-1);
-                    rightMotor.setPower(-1);
+                    armsParallel = false;
+                    motor.setPower(-1);
                     break;
                 case IDlE:
-                    leftMotor.setPower(0);
-                    rightMotor.setPower(0);
+                    armsParallel = false;
+                    if (motor.getPower() > 0.05){
+                        motor.setPower(-0.01);
+                    } else if (motor.getPower() < -0.05){
+                        motor.setPower(0.01);
+                    } {
+                        motor.setPower(0);
+                    }
                     break;
                 case CUSTOM_POWER:
-                    leftMotor.setPower(power);
-                    rightMotor.setPower(power);
+                    armsParallel = false;
+                    motor.setPower(power);
                 case PID:
-                    parallelSensor.read();
+//                    parallelSensor.read();
                     encoder.read();
-                    if (!parallelSensor.getState()) {
-                        double curr = encoder.getCurrentPos() % (145.1 / 2);
-                        if (curr > 145.1 / 4) {
-                            curr -= 145.1 / 2;
-                        }
+//                    Globals.telemetry.addData("parallel sensor state", parallelSensor.getState());
+//                    if (!armsParallel) {
+                        double half = ENCODER_PPR_INTAKE / 2.0;
+                        double quarter = ENCODER_PPR_INTAKE / 4.0;
 
-                        if (curr < -145.1 / 4) {
-                            curr += 145.1 / 2;
-                        }
-                        double power = pid.calculate(-curr, -leftMotor.getPower());
-                        Globals.telemetry.addData("Curr", curr);
-                        leftMotor.setPower(power);
-                        rightMotor.setPower(power);
-                    }
+                        double curr = encoder.getCurrentPos() % half;
+                        if (curr >  quarter) curr -= half;
+                        if (curr < -quarter) curr += half;
+
+                        double error = curr - offset;
+                        error %= half;
+                        if (error >  quarter) error -= half;
+                        if (error < -quarter) error += half;
+
+                        armsParallel = Math.abs(error) < 2;
+                        withinRange = Math.abs(error) < 5;
+
+                        double power = pid.calculate(error, -motor.getPower());
+                        motor.setPower(power);
+//                    } else {
+//                        //resetEncoder();
+//                        armsParallel = true;
+//                    }
             }
         }
 
-        leftMotor.write();
-        rightMotor.write();
+        motor.write();
     }
 
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        leftMotor.telemetry();
-        rightMotor.telemetry();
-        telemetry.addData("Current", leftMotor.getCurrent());
+        motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
+        telemetry.addData("Power", motor.getPower());
+        telemetry.addData("State", state);
     }
 
     @Override
     public void reset() {
-        leftMotor.setPower(0);
-        rightMotor.setPower(0);
-        leftMotor.write();
-        rightMotor.write();
+        motor.setPower(0);
+        motor.write();
+    }
+
+    public void resetEncoder(){
+        encoder.reset();
     }
 }

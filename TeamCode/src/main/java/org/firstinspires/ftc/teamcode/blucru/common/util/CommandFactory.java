@@ -7,7 +7,7 @@ import com.arcrobotics.ftclib.command.WaitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.*;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.shooterCommands.ShootWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 
@@ -31,8 +31,6 @@ public class CommandFactory {
                 return new ResetForIntakeCommand(); // Check constructor args if any
             case "TransferCommand":
                 return new TransferCommand(args.getBoolean(0));
-            case "AutonomousShootCloseCommand":
-                return new AutonomousShootCloseCommand();
             case "AutonomousShootCommand":
                 return new AutonomousShootCommand(); // Verify constructor
             case "ShootWithVelocityCommand":
@@ -41,14 +39,7 @@ public class CommandFactory {
                 return new IntakeStartCommand();
             case "ElevatorDownCommand":
                 return new ElevatorDownCommand();
-            case "AutonomousTransferCommand":
-                // 850, 26, 28, 26
-                return new AutonomousTransferCommand(
-                        args.getDouble(0),
-                        args.getDouble(1),
-                        args.getDouble(2),
-                        args.getDouble(3));
-            // Add other commands here
+            
             default:
                 throw new IllegalArgumentException("Unknown command: " + commandName);
         }

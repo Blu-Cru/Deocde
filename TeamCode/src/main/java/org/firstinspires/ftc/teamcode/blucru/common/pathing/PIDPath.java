@@ -66,11 +66,12 @@ public class PIDPath implements Path{
         PathSegment currSegment = segments.get(segmentIndex);
         currSegment.runSegment();
 
-        if (currSegment.isDone()){
+        if (currSegment.isDone() || currSegment.failed()){
             //increase segment index
             segmentIndex++;
             if (isDone()){
                 //exit if done
+                endSixWheel();
                 return;
             }
 
@@ -79,17 +80,26 @@ public class PIDPath implements Path{
                 for (Command c: commands.get(segmentIndex)){
                     c.schedule();
                 }
-            } catch (NullPointerException e){
+            } catch (Exception e){
                 //comes here if the command is null
-                Log.e("PID Path", "error scheduling command, null pointer");
+                Log.e("PID Path", "error scheduling command, " + e.getMessage());
             }
 
             try{
                 //run callbacks
                 callbacks.get(segmentIndex).run();
-            } catch (NullPointerException e){
-                Log.e("PID Path", "error running callback, was a null pointer");
+            } catch (Exception e){
+                Log.e("PID Path", "error running callback, " + e.getMessage());
             }
+
+            try{
+                //start path
+                segments.get(segmentIndex).startSegment();
+            } catch (Exception e){
+                Log.e("PID Path", "error running next segment, " + e.getMessage());
+            }
+
+
         }
     }
 

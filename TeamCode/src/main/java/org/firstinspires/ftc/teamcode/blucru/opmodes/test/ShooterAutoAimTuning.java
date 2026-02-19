@@ -11,16 +11,28 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
     public static double rightAngle = 0;
     public static double middleAngle = 0;
 
-    public static double vel = 0;
+    public static double turretAngle = 20;
+
+    public static double leftVel = 0;
+    public static double middleVel = 0;
+    public static double rightVel = 0;
 
     public void initialize(){
         addShooter();
         addSixWheel();
-        addLLTagDetector();
+        //addLLTagDetector();
         addTransfer();
+        addTurret();
+        turret.resetEncoder();
     }
 
     public void periodic(){
+        if (gamepad1.b){
+            turret.setAngle(0);
+        } else {
+            turret.setAngle(turretAngle);
+        }
+
         if (driver1.pressedA()){
             shooter.setLeftHoodAngle(leftAngle);
             shooter.setMiddleHoodAngle(middleAngle);
@@ -28,7 +40,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         }
 
         if (driver1.pressedY()){
-            shooter.shootWithVelocity(vel);
+            shooter.shootWithVelocityIndependent(leftVel, middleVel, rightVel);
         }
 
         if (gamepad1.x){
@@ -36,10 +48,6 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
             shooter.shoot(0);
         }
 
-
-        if (driver1.pressedB()){
-            sixWheel.setPosition(llTagDetector.getLLBotPose());
-        }
 
         if (driver1.pressedDpadDown()){
             transfer.middleSetUp();
@@ -50,6 +58,10 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         if (gamepad1.dpad_right){
             transfer.rightSetUp();
         }
+        if (driver1.pressedLeftBumper()){
+            transfer.setAllUp();
+        }
+
         if (driver1.pressedDpadUp()){
             transfer.setAllMiddle();
         }

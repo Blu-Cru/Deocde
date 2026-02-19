@@ -4,6 +4,7 @@ import static org.firstinspires.ftc.teamcode.blucru.common.util.Alliance.RED;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -11,19 +12,43 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+@Config
 public class Globals {
     public static HardwareMap hwMap;
     public static Telemetry telemetry;
     public static MultipleTelemetry multiTelemetry;
     public static double voltage = 13.0;
     public static Alliance alliance = RED;
-
+    public static double leftGoalX = -58;
+    public static double leftGoalY= -58;
     // "Pose2d" here refers to YOUR CUSTOM class (org.firstinspires...Pose2d)
     public static Pose2d startPose = new Pose2d(0, 0, Math.PI / 2);
 
     // FIX IS HERE: Changed these back to Custom "Vector2d" so Shooter.java works
-    public static Vector2d shootingGoalLPose = new Vector2d(-58, 58);
-    public static Vector2d shootingGoalRPose = new Vector2d(-58, -58);
+    public static Vector2d shootingGoalLPose = new Vector2d(-56.75, -59.25);
+    public static Vector2d shootingGoalRPose = new Vector2d(-56.75, 59.25);
+    public static final Vector2d OGshootingGoalLPose = new Vector2d(-56.75, -59.25);
+    public static final Vector2d OGshootingGoalRPose = new Vector2d(-56.75, 59.25);
+
+    public static Vector2d lineVector = new Vector2d(3,4);
+
+    public static Vector2d goalTagPoseBlue = new Vector2d(-58.3928021693, -55.628136098);
+    public static Vector2d goalTagPoseRed = new Vector2d(-58.3928021693, 55.628136098);
+
+    public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
+    public static double turretTargetRedX = -65;
+    public static double turretTargetRedY = 65;
+
+    public static double turretTargetBlueX = -65;
+    public static double turretTargetBlueY = -66;
+
+    public static double OGturretTargetRedX = -65;
+    public static double OGturretTargetRedY = 65;
+
+    public static double OGturretTargetBlueX = -65;
+    public static double OGturretTargetBlueY = -65;
+
+    public static Vector2d turretTargetBluePose = new Vector2d(-66, -66);
 
     public static ElapsedTime matchTime;
     public static double defaultXYTol;

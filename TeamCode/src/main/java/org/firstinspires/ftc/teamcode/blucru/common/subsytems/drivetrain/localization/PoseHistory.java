@@ -1,12 +1,15 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
+import android.os.SystemClock;
+
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 import java.util.LinkedList;
 
 public class PoseHistory {
 
-    private static double STORAGE_NANOSECONDS = Math.pow(10,9);
+    private static double STORAGE_NANOSECONDS = 2 * Math.pow(10,9);
 
     private LinkedList<PoseMarker> poseList;
 
@@ -19,7 +22,7 @@ public class PoseHistory {
         poseList.addFirst(new PoseMarker(pose, vel));
 
         //remove old poses
-        long currentTime = System.nanoTime();
+        long currentTime = (long) (System.currentTimeMillis() * Math.pow(10, 6));
         while (!poseList.isEmpty() && currentTime - poseList.getLast().nanoTime > STORAGE_NANOSECONDS){
             poseList.removeLast();
         }
@@ -28,7 +31,10 @@ public class PoseHistory {
     public PoseMarker getPoseAtTime(long nanoTime){
         PoseMarker poseMarkerAfterTime = poseList.get(0);
         PoseMarker poseMarkerBeforeTime = poseList.get(0);
-
+        Globals.telemetry.addData("list size", poseList.size());
+        Globals.telemetry.addData("nanoTime", nanoTime);
+        Globals.telemetry.addData("oth index time", poseList.get(0).nanoTime);
+        Globals.telemetry.addData("last index time", poseList.getLast().nanoTime);
         for(PoseMarker poseMarker: poseList){
             if (poseMarker.nanoTime < nanoTime){
                 poseMarkerBeforeTime = poseMarker;
@@ -61,5 +67,9 @@ public class PoseHistory {
         for (PoseMarker marker: poseList){
             marker.setPose(new Pose2d(marker.getPose().vec().addNotInPlace(poseDelta.vec()), marker.getPose().getH()));
         }
+    }
+
+    public String toString() {
+        return poseList.toString();
     }
 }

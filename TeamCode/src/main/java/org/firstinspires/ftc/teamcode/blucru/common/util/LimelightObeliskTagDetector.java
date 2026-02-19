@@ -1,67 +1,121 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
+import android.util.Log;
+
 import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
     Limelight3A limelight;
-    String[] pattern;
     int greenIndex;
     Pose2d botpose;
-    double turretCenterToLimelightDist = 225.8324 / 25.4;
-    double robotPosToTurretCenter = 72.35/25.4;
-    public LimelightObeliskTagDetector(){
+    long captureTime;
+    private final int POSITION_PIPELINE = 0;
+    private final int PATTERN_PIPELINE = 1;
+    private boolean validReadsThisLoop = false;
+    private static boolean detectedMotif = false;
+    private ElapsedTime timer;
+
+    public LimelightObeliskTagDetector() {
         limelight = Globals.hwMap.get(Limelight3A.class, "limelight");
         limelight.setPollRateHz(100);
         limelight.start();
-        limelight.pipelineSwitch(0);
-        pattern = new String[]{"p","p","p"};
-        botpose = new Pose2d(0,0,0);
+        limelight.pipelineSwitch(POSITION_PIPELINE);
+        botpose = null;
+        timer = new ElapsedTime();
     }
 
     @Override
     public void init() {
-
+        timer.reset();
     }
 
     @Override
     public void read() {
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()){
-            List<LLResultTypes.FiducialResult> tags = result.getFiducialResults();
-            if (tags.size() == 0){
-                botpose = null;
-                Globals.telemetry.addLine("NO TAGS DETECTED");
-            }
-            for (LLResultTypes.FiducialResult res: tags){
-                int id = res.getFiducialId();
-                if (id >= 21 && id <= 23){
-                    //pattern id
-                    greenIndex = id-21;
-                    pattern[greenIndex] = "g";
-                } else {
-                    //location tag
-                    Pose3D bot = res.getRobotPoseFieldSpace();
-                    botpose = new Pose2d(bot.getPosition().x * 1000/25.4, bot.getPosition().y * 1000/25.4, bot.getOrientation().getYaw(AngleUnit.RADIANS));
-                }
+        // Use timer to determine pipeline mode:
+        // - timer != null means we're in pattern detection mode (switchToMotif was
+        // called)
+        // - timer == null or already detected means we're in position mode
+        if (!detectedMotif && timer != null && timer.milliseconds() < 15000) {
+            // In pattern detection mode, try to detect the motif
+            patternPipelineInterpretation();
+
+            // If we detected the pattern, switch back to position pipeline
+            if (detectedMotif) {
+                limelight.pipelineSwitch(POSITION_PIPELINE);
             }
         } else {
-            Globals.telemetry.addLine("NO TAGS");
-            botpose = null;
+            // In position mode or already detected, use position pipeline
+            positionPipelineInterpretation();
         }
+    }
+
+    public void positionPipelineInterpretation() {
+        limelight.updateRobotOrientation(Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            captureTime = result.getControlHubTimeStampNanos();
+            Pose3D bot = result.getBotpose_MT2();
+            // Globals.telemetry.addData("Limelight Heading",
+            // bot.getOrientation().getYaw(AngleUnit.RADIANS));
+            // using same heading because tags are not for heading correction
+            // multiplying by 1000/25.4 to account for unit change
+            botpose = new Pose2d(bot.getPosition().x * 1000 / 25.4, bot.getPosition().y * 1000 / 25.4,
+                    Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+            validReadsThisLoop = true;
+        } else {
+            // Globals.telemetry.addData("Valid Reads", result.isValid());
+            // Globals.telemetry.addLine("NO POSITION TAGS");
+            validReadsThisLoop = false;
+        }
+    }
+
+    public void patternPipelineInterpretation() {
+        limelight.updateRobotOrientation(Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            List<LLResultTypes.FiducialResult> res = result.getFiducialResults();
+            if (res.size() > 1) {
+                Log.e("Limelight", "Detected multiple pattern tags");
+                // dont want to do anything with the data because its not good data
+                return;
+            }
+            if (res.isEmpty()) {
+                // nothing in it, so just exit
+                return;
+            }
+            // this loop should only run once, but preferring to use a loop here in case
+            // having multiple pattern tags in view is fine
+            for (LLResultTypes.FiducialResult tag : res) {
+                if (tag.getFiducialId() == 21) {
+                    ShooterMotifCoordinator.setMotif(MotifPattern.GPP);
+                }
+                if (tag.getFiducialId() == 22) {
+                    ShooterMotifCoordinator.setMotif(MotifPattern.PGP);
+                }
+                if (tag.getFiducialId() == 23) {
+                    ShooterMotifCoordinator.setMotif(MotifPattern.PPG);
+                }
+                detectedMotif = true;
+            }
+        } else {
+            // Globals.telemetry.addLine("NO PATTERN TAGS");
+        }
+    }
+
+    public long getTimeOfPhoto() {
+        return captureTime;
     }
 
     @Override
@@ -74,26 +128,60 @@ public class LimelightObeliskTagDetector implements BluSubsystem, Subsystem {
 
     }
 
-    public String[] getPattern(){
-        return pattern;
+    public boolean detectedPattern() {
+        return detectedMotif;
     }
 
-    public Pose2d getLLBotPose(){return botpose;}
-    public Vector2d getLLXY(){return botpose.vec();}
-    public boolean validLLReads(){
+    public Pose2d getLLBotPosePoseHistory() {
+        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Vector2d offset = getLLXY().subtractNotInPlace(oldVec);
+        // now that we know offsets we can assume we havent changed off that much
+        return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
+                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
+
+    public Pose2d getLLBotPose() {
+        return botpose;
+    }
+
+    public Vector2d getLLXY() {
+        return botpose.vec();
+    }
+
+    public boolean validLLReads() {
         return botpose != null;
     }
 
-    public double wrapAngle(double angle){
-        while (angle <= -Math.PI){
+    public double getPipeline() {
+        return limelight.getStatus().getPipelineIndex();
+    }
+
+    public double wrapAngle(double angle) {
+        while (angle <= -Math.PI) {
             angle += 2.0 * Math.PI;
         }
-        while (angle > Math.PI){
+        while (angle > Math.PI) {
             angle -= 2.0 * Math.PI;
         }
         return angle;
     }
 
+    public boolean hasUpdatedPosition() {
+        return validReadsThisLoop;
+    }
+
+    public void switchToMotif() {
+        timer = new ElapsedTime();
+        timer.reset();
+        limelight.pipelineSwitch(PATTERN_PIPELINE);
+        detectedMotif = false;
+    }
+
+    public void switchToPosition() {
+        timer = null;
+        limelight.pipelineSwitch(POSITION_PIPELINE);
+        detectedMotif = true;
+    }
 
     @Override
     public void reset() {

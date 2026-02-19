@@ -12,9 +12,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWhee
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.turret.Turret;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
@@ -145,11 +146,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             if (reportTelemetry) {
                 telemetry();
                 robot.telemetry(telemetry);
-                double[] loopTimes = getLoopTimes();
-                telemetry.addData("Loop (ms)", loopTimes[0]);
-                telemetry.addData("Hz", loopTimes[1]);
-                telemetry.update();
             }
+            double[] loopTimes = getLoopTimes();
+            telemetry.addData("Loop (ms)", loopTimes[0]);
+            telemetry.addData("Hz", loopTimes[1]);
+            telemetry.update();
         }
 
         // ===============================
@@ -166,7 +167,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void initialize() {}
     public void initializePeriodic() {}
     public void onStart() {}
-    public void periodic() {}
+    public void periodic() throws InterruptedException {}
     public void telemetry() {}
     public void end() {}
 

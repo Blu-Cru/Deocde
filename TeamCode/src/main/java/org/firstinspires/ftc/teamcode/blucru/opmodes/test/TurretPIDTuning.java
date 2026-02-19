@@ -25,7 +25,9 @@ public class TurretPIDTuning extends BluLinearOpMode {
         Globals.multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
-    public void periodic(){
+    public void periodic() throws InterruptedException {
+        Thread.sleep(34);
+
         if (state == 0) {
             turret.setAngle(angle);
 
@@ -34,11 +36,11 @@ public class TurretPIDTuning extends BluLinearOpMode {
             turret.setPower(power);
         }
 
-        //Globals.multiTelemetry.addData("Turret Pos", turret.getAngle());
-        //Globals.multiTelemetry.addData("Target Pos", angle);
-        //Globals.multiTelemetry.addData("Target Power", turret.getPower());
+        Globals.multiTelemetry.addData("Turret Pos", -turret.getAngle());
+        Globals.multiTelemetry.addData("Target Pos", angle);
+        Globals.multiTelemetry.addData("Target Power", turret.getPower());
         //Globals.multiTelemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
         turret.telemetry(telemetry);
-        //Globals.multiTelemetry.update();
+        Globals.multiTelemetry.update();
     }
 }
