@@ -39,7 +39,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kI = 0.06;
     public static double kD = 0.0014;
 
-    public static double kPTags = 0.02;
+    public static double kPTags = 0.015;
     public static double kITags = 0.06;
     public static double kDTags = 0.0014;
 
@@ -249,7 +249,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void tagBasedAutoAim(AprilTagDetection detection){
         AprilTagPoseFtc cameraPose = detection.ftcPose;
         double yawDelta = cameraPose.yaw;
-        servos.setPower(controller.calculate(yawDelta, servos.getPower()));
+        servos.setPower(tagController.calculate(yawDelta, servos.getPower()));
         saveTurretOffset(yawDelta);
     }
 
