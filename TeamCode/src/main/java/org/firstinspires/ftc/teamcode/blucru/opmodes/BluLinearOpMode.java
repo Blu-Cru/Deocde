@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWhee
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.Elevator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;

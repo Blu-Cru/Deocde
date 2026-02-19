@@ -248,11 +248,11 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public Pose2d getVelPose() {
-        double[] interpolationData = ShooterAutoAimInterpolation.interpolateMiddle(Robot.getInstance().turretCam.getTagDistToMiddleShooter());
-        double time = getTimeInAir(interpolationData);
+        //double[] interpolationData = ShooterAutoAimInterpolation.interpolateMiddle(Robot.getInstance().turretCam.getTagDistToMiddleShooter());
+        double time = 1;
         double x = localizer.getPose().getX() + (time * localizer.getVel().getX());
         double y = localizer.getPose().getY() + (time * localizer.getVel().getY());
-        double h = localizer.getHeading() + (time * localizer.getVel().getH());
+        double h = localizer.getHeading();
         return new Pose2d(x, y, h);
     }
     public double getTimeInAir(double[] interpolation) {

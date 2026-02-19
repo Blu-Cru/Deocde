@@ -248,9 +248,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void tagBasedAutoAim(AprilTagDetection detection){
         AprilTagPoseFtc cameraPose = detection.ftcPose;
-        double currX = cameraPose.x;
-        servos.setPower(tagController.calculate(currX, targetXTags));
-        saveTurretOffset(currX);
+        double yawDelta = cameraPose.yaw;
+        servos.setPower(controller.calculate(yawDelta, servos.getPower()));
+        saveTurretOffset(yawDelta);
     }
 
     public void saveTurretOffset(double detectedAngle) {

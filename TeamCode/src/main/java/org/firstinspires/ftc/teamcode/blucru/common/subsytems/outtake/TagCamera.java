@@ -26,7 +26,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     final double tagDistToMiddleShooter = 8;
     MotifPattern motifPattern;
     public TagCamera(){
-        int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+        //int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
         tags = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setDrawAxes(false)

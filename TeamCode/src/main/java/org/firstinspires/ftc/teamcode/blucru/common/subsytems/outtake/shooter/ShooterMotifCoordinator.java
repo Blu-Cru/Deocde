@@ -18,7 +18,7 @@ public class ShooterMotifCoordinator {
         private static HashMap<String, Command> mapper;
         private static BallColor leftColor, middleColor, rightColor;
         private static MotifPattern motif;
-        private static int waits = 500;
+        private static int waits = 600;
         static {
                 mapper = new HashMap<>();
                 mapper.put("RED_PURPLE_PURPLE_GREEN_PPG", new SequentialCommandGroup(
