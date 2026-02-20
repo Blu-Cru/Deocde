@@ -135,11 +135,11 @@ public class ShooterAutoAimInterpolation {
 
     public static double getBallExitVel(double vel) {
         // clamp to range to prevent hardware damage or crashes
-        vel = Range.clip(vel, rightDists[0], rightDists[rightDists.length - 1]);
+        vel = Range.clip(vel, middleShooterVels[0], middleShooterVels[middleShooterVels.length - 1]);
 
         int i;
-        for (i = 0; i < rightDists.length - 2; i++){
-            if (rightDists[i+1] > vel){
+        for (i = 0; i < middleShooterVels.length - 2; i++){
+            if (middleShooterVels[i+1] > vel){
                 break;
             }
         }
@@ -148,7 +148,7 @@ public class ShooterAutoAimInterpolation {
         double t = (vel - middleShooterVels[i]) / (middleShooterVels[i+1] - middleShooterVels[i]);
 
         // linear interpolation
-        double exitVel = lerp(middleShooterVels[i], middleShooterVels[i+1], t);
+        double exitVel = lerp(middleShooterExitVels[i], middleShooterExitVels[i+1], t);
 
         return exitVel;
     }
