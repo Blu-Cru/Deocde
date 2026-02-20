@@ -243,7 +243,6 @@ public class Turret implements BluSubsystem, Subsystem {
                 ),
                 false
         );
-        updateControlLoop();
     }
 
     public void tagBasedAutoAim(AprilTagDetection detection){
