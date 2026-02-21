@@ -65,7 +65,7 @@ public class Tele extends BluLinearOpMode{
         sm = new StateMachineBuilder()
 
                 .state(State.IDLE)
-                .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
+                    .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
                     gamepad1.rumble(rumbleDur);
                     new ResetForIntakeCommand().schedule();
                 })
@@ -88,9 +88,9 @@ public class Tele extends BluLinearOpMode{
 
                 .state(State.INTAKING)
                 .loop(() -> {
-                    if (gamepad1.left_trigger > 0.2){
+                    if (gamepad1.left_trigger_pressed){
                         intake.setIn();
-                    } else if (gamepad1.right_trigger > 0.2){
+                    } else if (gamepad1.right_trigger_pressed){
                         intake.setOut();
                     } else {
                         intake.setPID();
