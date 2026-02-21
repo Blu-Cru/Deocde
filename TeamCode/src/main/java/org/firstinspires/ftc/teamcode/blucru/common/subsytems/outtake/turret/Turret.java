@@ -27,7 +27,6 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private PIDController tagController;
     Vector2d target;
-    AprilTagProcessor tags;
     public double headingOffset = 0;
     private double position;
     private Double lastSetpoint = null;
@@ -136,8 +135,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void setFieldCentricPosition(double targetHeading, double robotHeading, double desiredHeading, boolean switchState) {
         setAngle(270-targetHeading+robotHeading-desiredHeading, switchState);
     }
-
-
+    
 
     public void lockOnGoal() {
         state = State.LOCK_ON_GOAL;

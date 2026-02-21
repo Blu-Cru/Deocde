@@ -1,5 +1,5 @@
 
-package org.firstinspires.ftc.teamcode.blucru.opmodes;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
@@ -28,10 +28,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @TeleOp (group = "a")
 
-public class AutoAimTest extends BluLinearOpMode{
+public class AutoAimTest extends BluLinearOpMode {
 
     StateMachine sm;
     public boolean turreting = true;
