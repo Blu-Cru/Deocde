@@ -288,7 +288,7 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim).schedule();
+                            new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim)).schedule();
                 })
                 .build();
     }
