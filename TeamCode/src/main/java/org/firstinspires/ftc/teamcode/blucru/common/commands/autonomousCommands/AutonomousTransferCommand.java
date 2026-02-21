@@ -18,10 +18,8 @@ public class AutonomousTransferCommand extends InstantCommand {
     public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle){
         super(() -> {
             new SequentialCommandGroup(
-                    new IntakeStopCommand(),
-                    new WaitCommand(200),
                     new IntakeSpitCommand(),
-                    new WaitCommand(500),
+                    new WaitCommand(300),
                     new ElevatorUpCommand(),
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
@@ -32,7 +30,6 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new SetLeftHoodAngleCommand(leftAngle),
                     new SetRightHoodAngleCommand(middleAngle),
                     new SetMiddleHoodAngleCommand(rightAngle)
-//                    new WaitCommand(200), //TODO: TUNE WAIT
 
 
 

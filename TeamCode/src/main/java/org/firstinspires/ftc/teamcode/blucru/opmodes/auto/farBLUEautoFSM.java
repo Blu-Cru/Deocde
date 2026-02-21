@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutoLongSpitTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
@@ -33,8 +33,12 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 
 @Autonomous
 public class farBLUEautoFSM extends BluLinearOpMode {
+    //Turret angle to be set while the robot is driving to shooting position
+    double turretAnglePreaim = -116;
 
-    double turretAngleRest = 156; // Field centric angle increase = towards obelisk decrease = towards gate
+
+    //Turret angle to be set to once the bot reaches the shooting position
+    double turretAngleFinal = 156; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
@@ -79,10 +83,15 @@ public class farBLUEautoFSM extends BluLinearOpMode {
         transfer.setAllMiddle();
         transfer.write();
         turret.resetEncoder();
+        turret.setAngle(-116);
         turret.write();
         sixWheel.reset();
         sixWheel.write();
         intake.resetEncoder();
+        if (driver1.pressedA()) {
+            turret.setAngle(-116);
+            turret.write();
+        }
 
         matchTimer = new ElapsedTime();
 
@@ -153,7 +162,6 @@ public class farBLUEautoFSM extends BluLinearOpMode {
     public void onStart() {
         matchTimer.reset();
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
-        turret.setAngle(-116);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 
@@ -180,7 +188,8 @@ public class farBLUEautoFSM extends BluLinearOpMode {
         if (currentPath != null) {
             currentPath.endSixWheel();
         }
-        new AutonomousTransferCommand(leftHood, middleHood, rightHood).schedule();
+        new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight).schedule();
+        new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim).schedule();
     }
 
     private boolean isTransferFull() {
@@ -243,7 +252,6 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                     // new TurnTurretToPosCommand(102)
                     ).schedule();
                 })
-                .waitMilliseconds(1500)
                 .build();
     }
 
@@ -257,7 +265,7 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                 }, 2000)
                 .waitMilliseconds(300)
                 .callback(() -> {
-                    new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
+                    new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
                 .waitMilliseconds(1000)
                 .callback(() -> {
@@ -280,9 +288,8 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                            new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim).schedule();
                 })
-                .waitMilliseconds(1500)
                 .build();
     }
 
@@ -292,9 +299,9 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .waitMilliseconds(500)
+                .waitMilliseconds(300)
                 .callback(() -> {
-                    new TurnTurretToPosFieldCentricCommand(turretAngleRest).schedule();
+                    new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
                 .waitMilliseconds(1100)
                 .callback(() -> {
