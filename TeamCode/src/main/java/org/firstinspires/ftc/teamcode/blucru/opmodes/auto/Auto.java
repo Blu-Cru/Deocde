@@ -115,14 +115,6 @@ public class Auto extends BluLinearOpMode {
     @Override
     public void telemetry() {
     }
-
-//    @Override
-//    public void end() {
-//        if(Globals.alliance == Alliance.RED) DriveBase.startPose = dt.pose;
-//        else DriveBase.startPose = new Pose2d(dt.pose.vec(), Angle.norm(dt.pose.getHeading() + Math.PI));
-//        Log.i("Auto", "start pose set to" + DriveBase.startPose);
-//    }
-
     public void configTelemetry() {
     }
 }
