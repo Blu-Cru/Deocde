@@ -86,18 +86,30 @@ public class Auto extends BluLinearOpMode {
         telemetry.addLine("Congrats, do a dance!");
         telemetry.update();
     }
-    
+
 
     @Override
     public void initialize() {
         sm.setState(State.ALLIANCE_PICK);
         sm.start();
     }
+    public void onStart() {
+        if(selectedauto) {
+            sm.setState(State.RUNNING);
+        } else {
+            throw new RuntimeException("Auto not selected! You silly billy!");
+        }
+    }
 
     public void initLoop() {
     }
 
     public void periodic() {
+        AutoConfig.Periodic();
+    }
+
+    public void runOpMode() {
+        AutoConfig.runOpMode();
     }
 
     @Override
