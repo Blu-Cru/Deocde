@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
+//@Autonomous
 public class farBLUEauto extends BaseAuto {
     private boolean intakeTowardsGate = false; //Decides whether the bot intakes from human player zone or closer to the gate
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168

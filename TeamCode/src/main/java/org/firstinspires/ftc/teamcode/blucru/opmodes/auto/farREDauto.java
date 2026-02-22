@@ -26,7 +26,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
+// @Autonomous
 public class farREDauto extends BaseAuto {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
     double turretAngleRest = 201; //Field centric angle decrease = towards obelisk increase = towards gate

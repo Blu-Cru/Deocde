@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-@Autonomous(name = "TankDrive Forward 2s Test", group = "test")
+// @Autonomous(name = "TankDrive Forward 2s Test", group = "test")
 public class TankDriveForward2sTest extends BluLinearOpMode {
 
     private TankDrive drive;

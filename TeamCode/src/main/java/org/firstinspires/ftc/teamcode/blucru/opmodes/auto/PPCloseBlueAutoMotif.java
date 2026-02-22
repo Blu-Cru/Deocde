@@ -24,7 +24,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 /**
  * Close Blue Auto with Motif Scoring Support.
  */
-@Autonomous(name = "PP Close Blue Auto (Motif)")
+// @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BaseAuto {
     double turretAngle = 138; ////field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1110;

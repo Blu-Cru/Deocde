@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
+//@Autonomous
 public class farBLUEautoFSM extends BaseAuto {
     //Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -116;

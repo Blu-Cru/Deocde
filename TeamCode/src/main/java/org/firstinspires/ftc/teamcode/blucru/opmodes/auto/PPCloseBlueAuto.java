@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
+// @Autonomous
 public class PPCloseBlueAuto extends BaseAuto {
     double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1150;

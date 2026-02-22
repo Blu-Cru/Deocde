@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-@Autonomous(name = "12 Ball Turret Close Auto Blue", group = "auto")
+// @Autonomous(name = "12 Ball Turret Close Auto Blue", group = "auto")
 public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;

@@ -23,10 +23,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import com.sfdev.assembly.state.StateMachine;
+import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
-public class farBLUEautoIntakeNearGate extends BluLinearOpMode {
+// @Autonomous
+public class farBLUEautoIntakeNearGate extends BaseAuto {
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
     double turretAngleRest = 156; //Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
@@ -40,6 +41,10 @@ public class farBLUEautoIntakeNearGate extends BluLinearOpMode {
 
     // shifted +3 in Y to keep the same path relative to new start pose
     double pickupWallY = -62;
+
+    enum State {
+        RUNNING
+    }
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
@@ -219,15 +224,25 @@ public class farBLUEautoIntakeNearGate extends BluLinearOpMode {
 
     Path currentPath;
 
+    @Override
+    public Pose2d getStartPose() {
+        return new Pose2d(63, -7, Math.toRadians(-90));
+    }
+
+    @Override
+    public StateMachine buildStateMachine() {
+        return new StateMachineBuilder()
+                .state(State.RUNNING)
+                .loop(() -> {
+                    if (currentPath != null) {
+                        currentPath.run();
+                    }
+                })
+                .build();
+    }
+
+    @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
-        addLLTagDetector();
         shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
         shooter.write();
         elevator.setMiddle();
@@ -240,19 +255,23 @@ public class farBLUEautoIntakeNearGate extends BluLinearOpMode {
         sixWheel.write();
         intake.resetEncoder();
 
-
+        super.initialize();
     }
 
+    @Override
     public void onStart() {
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
         turret.setAngle(-116);
+        sixWheel.setPosition(startPose);
         currentPath = new TestingPath().build().start();
-        sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
+
+        sm.setState(State.RUNNING);
+        sm.start();
     }
 
+    @Override
     public void periodic() {
-//        llTagDetector.read();
-        currentPath.run();
+        sm.update();
     }
 }
