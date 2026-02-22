@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous(name = "Auto", group = "1")
 public class Auto extends BluLinearOpMode {
+    public boolean selectedauto = false;
     enum State {
         ALLIANCE_PICK,
         AUTO_PICK,
@@ -76,11 +77,11 @@ public class Auto extends BluLinearOpMode {
                     }
         .transition(() -> driver1.pressedRightBumper()),
     State.INITAlIZE, () -> {
-
+        selectedauto = true;
         telemetry.addLine("Building Paths . . .");
         telemetry.update();
     }
-    .transition(() -> (!AutoConfig.InitBusy)
+    .transition(() -> (!AutoConfig.InitBusy())),
     State.INITIALIZED, () -> {
         telemetry.addLine("Paths Built!");
         telemetry.addLine("Congrats, do a dance!");
