@@ -13,7 +13,7 @@ public abstract class BaseAuto extends BluLinearOpMode {
     public abstract Pose2d getStartPose();
 
     public abstract StateMachine buildStateMachine();
-
+    public void periodic() {}
     @Override
     public void initialize() {
         sm = buildStateMachine();

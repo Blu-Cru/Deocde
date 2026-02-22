@@ -28,7 +28,7 @@ public class Auto extends BluLinearOpMode {
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
     AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
-    StateMachine sm;
+    public StateMachine sm;
 
     @Override
     public void initialize() {
@@ -97,8 +97,6 @@ public class Auto extends BluLinearOpMode {
                     selectedauto = true;
                     telemetry.addLine("Building Paths . . .");
                     telemetry.update();
-
-                    // Map selection to AutoConfig Enum
                     AutoConfig.AUTOS autoEnum = null;
                     if (CurrentSelectedAlliance == Alliance.BLUE) {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE;
@@ -169,9 +167,5 @@ public class Auto extends BluLinearOpMode {
         } else {
             throw new RuntimeException("Auto not selected! You silly billy!");
         }
-    }
-
-    public void periodic() {
-        if (sm != null) sm.update();
     }
 }
