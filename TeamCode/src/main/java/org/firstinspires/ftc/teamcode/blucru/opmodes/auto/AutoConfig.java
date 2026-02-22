@@ -14,4 +14,8 @@ public abstract class AutoConfig {
             PPFarAUTO.init();
         }
     }
+    public boolean InitBusy() {
+
+    }
+
 }
