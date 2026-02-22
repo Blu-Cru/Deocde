@@ -10,19 +10,13 @@ public abstract class BaseAuto extends BluLinearOpMode {
     public StateMachine sm;
     public Pose2d startPose;
 
-    /**
-     * Override this to define the auto's starting pose.
-     */
     public abstract Pose2d getStartPose();
 
-    /**
-     * Override this to build the state machine for the auto.
-     */
     public abstract StateMachine buildStateMachine();
 
     @Override
     public void initialize() {
-        startPose = getStartPose();
         sm = buildStateMachine();
+        startPose = getStartPose();
     }
 }

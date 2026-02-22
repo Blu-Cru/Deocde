@@ -7,15 +7,15 @@ public abstract class AutoConfig {
         BLUE_CLOSE,
         BLUE_FAR
     }
-    public void initialize(AUTOS givenauto) {
-        if (givenauto == AUTOS.RED_CLOSE) {
-            PPCloseAUTO.init();
-        } else if (givenauto == AUTOS.RED_FAR) {
-            PPFarAUTO.init();
+
+    public static BaseAuto getAutoInstance(AUTOS givenauto) {
+        if (givenauto == AUTOS.BLUE_FAR) {
+            return new farBLUEautoFSM();
         }
-    }
-    public boolean InitBusy() {
-
+        return null;
     }
 
+    public static boolean InitBusy() {
+        return false;
+    }
 }
