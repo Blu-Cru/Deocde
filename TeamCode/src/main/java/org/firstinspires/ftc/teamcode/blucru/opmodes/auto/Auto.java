@@ -24,11 +24,12 @@ public class Auto extends BluLinearOpMode {
 
     enum AUTOSTARTINGPOS {
         FAR,
-        CLOSE
+        CLOSE,
+        CLOSE_MOTIF
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
     AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
-    public StateMachine sm;
+    StateMachine sm;
 
     @Override
     public void initialize() {
@@ -66,27 +67,45 @@ public class Auto extends BluLinearOpMode {
                 .loop(() -> {
                     telemetry.addData("Alliance", CurrentSelectedAlliance);
                     telemetry.addLine("Press Right Bumper to Confirm Selection! >.<");
+                    
                     if(CurrentSelectedAlliance == Alliance.BLUE) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) {
                             telemetry.addLine("Blue Close <--");
                             telemetry.addLine("Blue FAR");
+                            telemetry.addLine("Blue Close Motif");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) {
                             telemetry.addLine("Blue Close");
                             telemetry.addLine("Blue Far <--");
+                            telemetry.addLine("Blue Close Motif");
+                        } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) {
+                            telemetry.addLine("Blue Close");
+                            telemetry.addLine("Blue FAR");
+                            telemetry.addLine("Blue Close Motif <--");
                         }
                     } else if (CurrentSelectedAlliance == Alliance.RED) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) {
-                            telemetry.addLine("RedClose <--");
+                            telemetry.addLine("Red Close <--");
                             telemetry.addLine("Red FAR");
+                            telemetry.addLine("Red Close Motif");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) {
                             telemetry.addLine("Red Close");
                             telemetry.addLine("Red Far <--");
+                            telemetry.addLine("Red Close Motif");
+                        } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) {
+                            telemetry.addLine("Red Close");
+                            telemetry.addLine("Red FAR");
+                            telemetry.addLine("Red Close Motif <--");
                         }
                     }
+                    
                     if(driver1.pressedDpadDown()) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     } else if (driver1.pressedDpadUp()) {
-                        if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
+                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     }
                     telemetry.update();
                 })
@@ -97,13 +116,17 @@ public class Auto extends BluLinearOpMode {
                     selectedauto = true;
                     telemetry.addLine("Building Paths . . .");
                     telemetry.update();
+
+                    // Map selection to AutoConfig Enum
                     AutoConfig.AUTOS autoEnum = null;
                     if (CurrentSelectedAlliance == Alliance.BLUE) {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE;
-                        else autoEnum = AutoConfig.AUTOS.BLUE_FAR;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.BLUE_FAR;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE_MOTIF;
                     } else {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.RED_CLOSE;
-                        else autoEnum = AutoConfig.AUTOS.RED_FAR;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.RED_FAR;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.RED_CLOSE_MOTIF;
                     }
 
                     // Instantiate selected auto
@@ -135,6 +158,7 @@ public class Auto extends BluLinearOpMode {
                 .state(State.INITIALIZED)
                 .loop(() -> {
                     telemetry.addLine("Paths Built!");
+                    telemetry.addLine("Initalized!");
                     telemetry.addLine("Congrats, do a dance!");
                     telemetry.update();
                 })
@@ -147,7 +171,11 @@ public class Auto extends BluLinearOpMode {
                 })
                 .loop(() -> {
                     if (autoToRun != null) {
-                        autoToRun.periodic();
+                        try {
+                            autoToRun.periodic();
+                        } catch (Exception e) {
+                            telemetry.addData("Error", e.getMessage());
+                        }
                     }
                 })
                 .build();
@@ -167,5 +195,9 @@ public class Auto extends BluLinearOpMode {
         } else {
             throw new RuntimeException("Auto not selected! You silly billy!");
         }
+    }
+
+    public void periodic() {
+        if (sm != null) sm.update();
     }
 }

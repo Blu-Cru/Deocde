@@ -18,33 +18,30 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import com.sfdev.assembly.state.StateMachine;
+import com.sfdev.assembly.state.StateMachineBuilder;
 
 /**
- * Close Red Auto with Motif Scoring Support.
- * 
- * This autonomous uses the Limelight to detect the motif pattern from the
- * obelisk AprilTag.
- * It reads ball colors while stationary after intake paths to ensure accurate
- * readings without
- * impacting loop times during movement.
+ * Close Blue Auto with Motif Scoring Support.
  */
 @Autonomous(name = "PP Close Blue Auto (Motif)")
-public class PPCloseBlueAutoMotif extends BluLinearOpMode {
+public class PPCloseBlueAutoMotif extends BaseAuto {
     double turretAngle = 138; ////field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1110;
     double veloMiddle = 1130;
-    double leftHood=34;
-    double middleHood=34;
-    double rightHood=34;
+    double leftHood = 34;
+    double middleHood = 34;
+    double rightHood = 34;
     boolean alreadySignalledPattern;
+
+    enum State {
+        RUNNING
+    }
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
         public TestingPath() {
             super();
-
-            // Shift applied: dx = -6, dy = +2 (old start -45,52 -> new start -51,54)
 
             this.addPurePursuitPath(new Point2d[] {
                     new Point2d(-51, -54), // was (-45, 52)
@@ -58,10 +55,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .waitMilliseconds(200)
                     .addTurnTo(-10,1000)
 
-
                     .waitMilliseconds(200)
-                    // SHOOT PRELOAD - preload doesn't need motif (no color sensing yet)
-
 
                     // INTAKE FIRST SET
                     .addTurnTo(-90, 5000)
@@ -69,7 +63,6 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(-16, -19),
                             new Point2d(-16, -37),
                             new Point2d(-5, -47),
-//                            new Point2d(-6, 57)
                     }, 2000)
                     .addTurnTo(-80, 500)
                     .waitMilliseconds(200)
@@ -88,7 +81,7 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
-                    .waitMilliseconds(300) // Ensure enough time for the sequence above to complete
+                    .waitMilliseconds(300)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -130,7 +123,6 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                             new Point2d(13, -49), // was (12.5, 46)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
-//                    .addTurnTo(45, 1000)
                     .waitMilliseconds(200)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
@@ -145,11 +137,9 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
                     .waitMilliseconds(1850)
 
                     // PICKUP THIRD SET
-//                    .addTurnTo(45, 500)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
                             new Point2d(10, -30),
-//                            new Point2d(20,-50),
                             new Point2d(36, -45) // was (37, 46)
                     }, 1100)
                     .addTurnTo(-31, 500)
@@ -194,15 +184,38 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
 
     Path currentPath;
 
+    @Override
+    public Pose2d getStartPose() {
+        return new Pose2d(-51, -54, Math.toRadians(51.529));
+    }
+
+    @Override
+    public StateMachine buildStateMachine() {
+        return new StateMachineBuilder()
+                .state(State.RUNNING)
+                .loop(() -> {
+                    if (currentPath != null) {
+                        currentPath.run();
+                    }
+                    if (!alreadySignalledPattern) {
+                        llTagDetector.read();
+                        if (llTagDetector.detectedPattern()) {
+                            gamepad1.setLedColor(100, 255, 100, 1000);
+                            alreadySignalledPattern = true;
+                            telemetry.addData("Detected Motif", ShooterMotifCoordinator.getMotif());
+                        }
+                    }
+
+                    telemetry.addData("Left Ball", ShooterMotifCoordinator.getLeftColor());
+                    telemetry.addData("Middle Ball", ShooterMotifCoordinator.getMiddleColor());
+                    telemetry.addData("Right Ball", ShooterMotifCoordinator.getRightColor());
+                    telemetry.addData("Motif Pattern", ShooterMotifCoordinator.getMotif());
+                })
+                .build();
+    }
+
+    @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
-        addLLTagDetector();
         shooter.setHoodAngleIndependent(32, 32, 32);
         shooter.write();
         elevator.setMiddle();
@@ -218,42 +231,25 @@ public class PPCloseBlueAutoMotif extends BluLinearOpMode {
         alreadySignalledPattern = false;
         sixWheel.reset();
 
-        // Clear any previous ball color readings
         ShooterMotifCoordinator.clear();
-
-
-
+        super.initialize();
     }
 
+    @Override
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
         turret.setAngle(7);
         llTagDetector.switchToMotif();
+        sixWheel.setPosition(startPose);
         currentPath = new TestingPath().build().start();
-        sixWheel.setPosition(new Pose2d(-51, -54, Math.toRadians(51.529)));
         Globals.setAlliance(Alliance.BLUE);
+
+        sm.setState(State.RUNNING);
+        sm.start();
     }
 
+    @Override
     public void periodic() {
-        currentPath.run();
-
-        // Read limelight to detect motif pattern from obelisk
-        if (!alreadySignalledPattern) {
-            llTagDetector.read();
-            if (llTagDetector.detectedPattern()) {
-                // Signal pattern detected with LED
-                gamepad1.setLedColor(100, 255, 100, 1000);
-                alreadySignalledPattern = true;
-
-                // Add telemetry for the detected motif
-                telemetry.addData("Detected Motif", ShooterMotifCoordinator.getMotif());
-            }
-        }
-
-        // Display current ball colors for debugging
-        telemetry.addData("Left Ball", ShooterMotifCoordinator.getLeftColor());
-        telemetry.addData("Middle Ball", ShooterMotifCoordinator.getMiddleColor());
-        telemetry.addData("Right Ball", ShooterMotifCoordinator.getRightColor());
-        telemetry.addData("Motif Pattern", ShooterMotifCoordinator.getMotif());
+        sm.update();
     }
 }
