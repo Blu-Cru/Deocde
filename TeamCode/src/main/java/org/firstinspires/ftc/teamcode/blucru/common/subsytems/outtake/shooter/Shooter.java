@@ -233,11 +233,11 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         //getting the shooter poses
         if (Globals.alliance == Alliance.RED) {
-            robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+            robotToGoal = Globals.shootingGoalRPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getVelPose().vec());
         }else {
-            robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getPos().vec());
+            robotToGoal = Globals.shootingGoalLPose.subtractNotInPlace(Robot.getInstance().sixWheelDrivetrain.getVelPose().vec());
         }
-        Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        Vector2d turretToRobot = new Vector2d(-72.35/25.4, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getVelPose().getH());
         Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
         double k = shooterDist / midToGoal.getMag();
         Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);
@@ -285,8 +285,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public double[] tagBasedShooterAutoAim(AprilTagDetection detection){
-        double camDistToTag = detection.ftcPose.range;
-        Globals.telemetry.addData("Cam dist to tag", camDistToTag);
+        double camDistToTag = detection.ftcPose.z;
         double middleShooterDistToTag = camDistToTag + Robot.getInstance().turretCam.getTagDistToMiddleShooter();
         Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
         Vector2d a = middleShooterToTag; // vector from mid shooter to goal
@@ -316,9 +315,9 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         double shooterOffset = shooterDist * tan;
 //                Globals.telemetry.addData("Tan", tan);
-        double leftDist = middleShooterDistToTag/* + shooterOffset*/;
+        double leftDist = middleShooterDistToTag + shooterOffset;
         double middleDist = middleShooterDistToTag;
-        double rightDist = middleShooterDistToTag/* - shooterOffset*/;
+        double rightDist = middleShooterDistToTag - shooterOffset;
         return new double[]{leftDist, middleDist, rightDist};
     }
 

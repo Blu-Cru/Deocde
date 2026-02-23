@@ -53,7 +53,7 @@ public class Tele extends BluLinearOpMode{
         reportTelemetry = true;
         robot.clear();
         robot.addTurretCam();
-        //addLLTagDetector();
+        addLLTagDetector();
         addSixWheel();
         addIntake();
         addElevator();
@@ -196,7 +196,7 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void periodic(){
-        //llTagDetector.read();
+        llTagDetector.read();
         sm.update();
 
         //Shooter
