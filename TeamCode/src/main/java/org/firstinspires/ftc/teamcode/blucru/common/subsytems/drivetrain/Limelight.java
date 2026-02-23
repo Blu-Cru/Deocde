@@ -25,7 +25,7 @@ public class Limelight extends SixWheelDriveBase implements BluSubsystem, Subsys
 
         if (result != null && result.isValid()) {
             double targetOffsetAngle_Vertical = result.getTy();
-            double limelightMountAngleDegrees = 15;  // TODO: Tune this, how many degrees back is your limelight rotated from perfectly vertical?
+            double limelightMountAngleDegrees = -15;  // TODO: Tune this, how many degrees back is your limelight rotated from perfectly vertical?
             double limelightLensHeightInches = 20.0; // TODO: Tune this, distance from the center of the Limelight lens to the floor
             double goalHeightInches = 2.5; // distance from the target to the floor
             double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
@@ -45,14 +45,16 @@ public class Limelight extends SixWheelDriveBase implements BluSubsystem, Subsys
         return 0;
     }
 
-    public Pose2d getPoseofArtifact() {
+    public Pose2d getPoseOfArtifact() {
         double distancetoartifact = getDistance();
         double xoffset = getXOffset();
         double forwarddistance = sqrt(Math.pow(distancetoartifact, 2) - Math.pow(xoffset, 2));
         double x = localizer.getX() + (xoffset * Math.cos(localizer.getHeading()) - forwarddistance * Math.sin(localizer.getHeading()));
         double y = localizer.getY() + (xoffset * Math.sin(localizer.getHeading()) + forwarddistance * Math.cos(localizer.getHeading()));
-        double heading = localizer.getHeading();
-        return new Pose2d(x, y, heading);
+        double deltaX = x - localizer.getX();
+        double deltaY = y - localizer.getY();
+        double headingToArtifact = Math.atan2(deltaY, deltaX);
+        return new Pose2d(x, y, headingToArtifact);
     }
 
 
