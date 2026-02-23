@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.controller.PIDController;
 import com.qualcomm.robotcore.util.Range;
+import com.seattlesolvers.solverslib.controller.PIDFController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
@@ -15,7 +16,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
-import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 @Config
@@ -23,9 +23,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private TurretServos servos;
     private BluEncoder encoder;
-    private PIDController controller;
+    private PIDFController controller;
 
-    private PIDController tagController;
+    private PIDFController tagController;
     Vector2d target;
     AprilTagProcessor tags;
     public double headingOffset = 0;
@@ -38,7 +38,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kP = 0.02;
     public static double kI = 0.06;
     public static double kD = 0.0014;
-
+    public static double kF = 0;
     public static double kPTags = 0.015;
     public static double kITags = 0;
     public static double kDTags = 0.0014;
@@ -66,7 +66,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluCRServo servoCenter,BluEncoder encoder) {
         servos = new TurretServos(servoLeft, servoRight,servoCenter);
         this.encoder = encoder;
-        controller = new PIDController(kP, kI, kD);
+        controller = new PIDFController(kP, kI, kD, kF);
         tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
 
@@ -160,7 +160,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void updatePID() {
-        controller.setPID(kP, kI, kD);
+        controller.setPIDF(kP, kI, kD,kF);
     }
 
     public void updateControlLoop() {
