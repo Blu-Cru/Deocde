@@ -32,7 +32,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private double position;
     private Double lastSetpoint = null;
 
-    private final double TICKS_PER_REV = 8192 * 212.0 / 35;
+    private final double TICKS_PER_REV = 4000 * 212.0 / 35;
 
 
     public static double kP = 0.02;
@@ -40,7 +40,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kD = 0.0014;
 
     public static double kPTags = 0.015;
-    public static double kITags = 0.06;
+    public static double kITags = 0;
     public static double kDTags = 0.0014;
 
     public static double acceptableError = 0.5;
@@ -93,9 +93,12 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-                if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-                    else localizationBasedAutoAim();
-                updateControlLoop();
+                Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
+                Globals.telemetry.addData("Turret Offset", headingOffset);
+                /*if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
+                    else {*/
+                        localizationBasedAutoAim();
+                        updateControlLoop();//}
                 break;
             case PID:
                 updateControlLoop();
@@ -234,12 +237,12 @@ public class Turret implements BluSubsystem, Subsystem {
     public void localizationBasedAutoAim(){
         double turretTargetDeg =
                 getFieldCentricTargetGoalAngle(
-                        Robot.getInstance().sixWheelDrivetrain.getVelPose()
+                        Robot.getInstance().sixWheelDrivetrain.getPos()
                 );
         setFieldCentricPositionAutoAim(
                 applyTurretOffset(turretTargetDeg),
                 Math.toDegrees(
-                        Robot.getInstance().sixWheelDrivetrain.getVelPose().getH()
+                        Robot.getInstance().sixWheelDrivetrain.getPos().getH()
                 ),
                 false
         );
@@ -247,10 +250,10 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void tagBasedAutoAim(AprilTagDetection detection){
-        AprilTagPoseFtc cameraPose = detection.ftcPose;
-        double yawDelta = cameraPose.yaw;
-        servos.setPower(tagController.calculate(yawDelta, servos.getPower()));
-        saveTurretOffset(yawDelta);
+        double xDelta = detection.center.x - 320;
+        Globals.telemetry.addData("Yaw Delta", xDelta);
+        servos.setPower(tagController.calculate(xDelta, servos.getPower()));
+        //saveTurretOffset(yawDelta + getAngle());
     }
 
     public void saveTurretOffset(double detectedAngle) {
