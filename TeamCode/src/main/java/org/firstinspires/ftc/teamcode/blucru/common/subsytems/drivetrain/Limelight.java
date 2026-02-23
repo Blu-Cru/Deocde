@@ -32,7 +32,7 @@ public class Limelight extends SixWheelDriveBase implements BluSubsystem, Subsys
             double angleToGoalRadians = Math.toRadians(angleToGoalDegrees);
             return (goalHeightInches - limelightLensHeightInches) / Math.tan(angleToGoalRadians);
         }
-        return 0; // Backup incase no result
+        return 0; // Backup in case no result
     }
 
     public double getXOffset() {
