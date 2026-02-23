@@ -63,8 +63,8 @@ public class Turret implements BluSubsystem, Subsystem {
     private State state;
 
 
-    public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluEncoder encoder) {
-        servos = new TurretServos(servoLeft, servoRight);
+    public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluCRServo servoCenter,BluEncoder encoder) {
+        servos = new TurretServos(servoLeft, servoRight,servoCenter);
         this.encoder = encoder;
         controller = new PIDController(kP, kI, kD);
         tagController = new PIDController(kPTags, kITags, kDTags);
