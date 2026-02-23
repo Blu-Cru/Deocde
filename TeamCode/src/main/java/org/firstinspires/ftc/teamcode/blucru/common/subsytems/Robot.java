@@ -161,7 +161,7 @@ public class Robot {
         return intake;
     }
     public Turret addTurret(){
-        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.frMotorName));
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluCRServo("turret3"),new BluEncoder(Globals.frMotorName));
         subsystems.add(turret);
         return turret;
     }
