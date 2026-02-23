@@ -40,7 +40,7 @@ public class Limelight extends SixWheelDriveBase implements BluSubsystem, Subsys
 
         if (result != null && result.isValid()) {
             double angleRadians = Math.toRadians(result.getTx());
-            return getDistance() * Math.tan(angleRadians);
+            return getDistance() * Math.tan(angleRadians); // IN Inches!! >.<
         }
         return 0;
     }
