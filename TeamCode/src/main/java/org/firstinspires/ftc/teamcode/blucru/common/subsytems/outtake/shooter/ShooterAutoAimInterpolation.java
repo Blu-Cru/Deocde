@@ -60,9 +60,11 @@ public class ShooterAutoAimInterpolation {
 
 
     private static final double[] middleShooterVels = {
+            1000, 1200, 1250, 1400
     };
 
     private static final double[] middleShooterExitVels = {
+            6, 9, 10, 11
     };
 
 

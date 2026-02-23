@@ -119,7 +119,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
 //        double multiplier = Math.min(1, Math.pow((Globals.voltage / 12.5), 2));
 //        double multiplier = 1;
-          double multiplier = Math.min(1, (Globals.voltage / 12.5));
+        double multiplier = Math.min(1, (Globals.voltage / 12.5));
 
 
         if (Math.abs(x) <= tol) {
@@ -162,7 +162,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Turn in place to a target heading
-     * 
+     *
      * @param headingDegrees Target heading in degrees (0 = right, 90 = up, 180 =
      *                       left, -90 = down)
      */
@@ -174,7 +174,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Check if the turn is complete
-     * 
+     *
      * @return true if robot is within HEADING_TOLERANCE of target heading
      */
     public boolean isTurnComplete() {
@@ -248,8 +248,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public Pose2d getVelPose() {
-        double[] interpolationData = ShooterAutoAimInterpolation.interpolateMiddle(Robot.getInstance().turretCam.getTagDistToMiddleShooter());
-        double time = getTimeInAir(interpolationData);
+        //double[] interpolationData = ShooterAutoAimInterpolation.interpolateMiddle(Robot.getInstance().turretCam.getTagDistToMiddleShooter());
+        double time = 1;
         double x = localizer.getPose().getX() + (time * localizer.getVel().getX());
         double y = localizer.getPose().getY() + (time * localizer.getVel().getY());
         double h = localizer.getHeading();

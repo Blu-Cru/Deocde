@@ -26,7 +26,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     final double tagDistToMiddleShooter = 8;
     MotifPattern motifPattern;
     public TagCamera(){
-        //int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+
         tags = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setDrawAxes(false)
@@ -40,8 +40,10 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .addProcessor(tags)
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setAutoStartStreamOnBuild(false)
                 .build();
         motifPattern = MotifPattern.UNKNOWN;
+        enable();
     }
 
     @Override
@@ -54,6 +56,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
         currentlySeeingGoodTags = false;
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
+
+            Globals.telemetry.addLine("Looking for tags");
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             for (AprilTagDetection detect : detections) {
                 if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)

@@ -53,7 +53,7 @@ public class Tele extends BluLinearOpMode{
         reportTelemetry = true;
         robot.clear();
         robot.addTurretCam();
-        addLLTagDetector();
+        //addLLTagDetector();
         addSixWheel();
         addIntake();
         addElevator();
@@ -65,7 +65,7 @@ public class Tele extends BluLinearOpMode{
         sm = new StateMachineBuilder()
 
                 .state(State.IDLE)
-                    .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
+                .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
                     gamepad1.rumble(rumbleDur);
                     new ResetForIntakeCommand().schedule();
                 })
@@ -76,21 +76,21 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedA(), State.INTAKING_FROM_ABOVE, () ->{
                     gamepad1.rumble(rumbleDur);
                     new SequentialCommandGroup(
-                        new ElevatorMiddleCommand(),
-                        new WaitCommand(200),
-                        new AllTransferMiddleCommand(),
-                        new SetLeftHoodAngleCommand(26),
-                        new SetMiddleHoodAngleCommand(26),
-                        new SetRightHoodAngleCommand(26),
-                        new ShootReverseWithVelocityCommand(350)
+                            new ElevatorMiddleCommand(),
+                            new WaitCommand(200),
+                            new AllTransferMiddleCommand(),
+                            new SetLeftHoodAngleCommand(26),
+                            new SetMiddleHoodAngleCommand(26),
+                            new SetRightHoodAngleCommand(26),
+                            new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
 
                 .state(State.INTAKING)
                 .loop(() -> {
-                    if (gamepad1.left_trigger_pressed){
+                    if (gamepad1.left_trigger > 0.2){
                         intake.setIn();
-                    } else if (gamepad1.right_trigger_pressed){
+                    } else if (gamepad1.right_trigger > 0.2){
                         intake.setOut();
                     } else {
                         intake.setPID();
@@ -192,11 +192,11 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void onStart(){
-         new ElevatorDownCommand().schedule();
+        new ElevatorDownCommand().schedule();
     }
 
     public void periodic(){
-        llTagDetector.read();
+        //llTagDetector.read();
         sm.update();
 
         //Shooter
@@ -227,12 +227,12 @@ public class Tele extends BluLinearOpMode{
         }
 
         /**if (driver1.pressedRightTrigger()){
-            if (sixWheel.getDrivePower() == 0.5){
-                sixWheel.setDrivePower(1);
-            } else {
-                sixWheel.setDrivePower(0.5);
-            }
-        }*/
+         if (sixWheel.getDrivePower() == 0.5){
+         sixWheel.setDrivePower(1);
+         } else {
+         sixWheel.setDrivePower(0.5);
+         }
+         }*/
 
         //Turret
 
