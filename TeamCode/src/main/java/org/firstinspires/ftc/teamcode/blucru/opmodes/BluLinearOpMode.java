@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightBallDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
@@ -36,6 +37,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public Turret turret;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public LimelightBallDetector ballDetector;
 
     // ===============================
     // CONTROL FLAGS
@@ -183,6 +185,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addSixWheel()   { sixWheel = robot.addSixWheelDrivetrain(); }
     public void addObeliskTagDetector() { obeliskTagDetector = robot.addObeliskTagDetector(); }
     public void addLLTagDetector()      { llTagDetector = robot.addLLTagDetector(); }
+    public void addBallDetector() {
+        ballDetector = robot.addBallDetector();
+    }
 
     public void enableDash() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);

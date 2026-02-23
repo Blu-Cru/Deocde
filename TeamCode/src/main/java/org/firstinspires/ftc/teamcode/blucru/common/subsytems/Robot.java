@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightBallDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
@@ -41,6 +42,7 @@ public class Robot {
     public SixWheelDrive sixWheelDrivetrain;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public LimelightBallDetector ballDetector;
     public TagCamera turretCam;
     public PoseHistory positionHistory;
     private static Robot instance;
@@ -178,12 +180,17 @@ public class Robot {
         return llTagDetector;
     }
 
-    public TagCamera addTurretCam(){
+    public LimelightBallDetector addBallDetector() {
+        ballDetector = new LimelightBallDetector();
+        subsystems.add(ballDetector);
+        return ballDetector;
+    }
+
+    public TagCamera addTurretCam() {
         turretCam = new TagCamera();
         subsystems.add(turretCam);
         return turretCam;
     }
-
 
     public Elevator addElevator() {
         elevator = new Elevator();
