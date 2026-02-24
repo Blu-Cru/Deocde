@@ -44,6 +44,7 @@ public class Tele extends BluLinearOpMode{
     public enum State{
         IDLE,
         INTAKING,
+        INTAKING_ELEVATED,
         DRIVING_TO_SHOOT,
         INTAKING_FROM_ABOVE
     }
@@ -68,6 +69,10 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedLeftTrigger(), State.INTAKING, () ->{
                     gamepad1.rumble(rumbleDur);
                     new ResetForIntakeCommand().schedule();
+                })
+                .transition(() -> (driver1.pressedLeftTrigger() && driver1.pressedRightTrigger()), State.INTAKING_ELEVATED, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    new ElevatorMiddleCommand().schedule();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () ->{
                     gamepad1.rumble(rumbleDur);
@@ -96,6 +101,13 @@ public class Tele extends BluLinearOpMode{
                         intake.setPID();
                     }
                 })
+                .state(State.INTAKING_ELEVATED)
+                .loop(() -> {
+                        intake.setIn();
+                })
+                .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
+                     new ElevatorDownCommand().schedule();
+                }
                 /*.transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
                     gamepad1.rumble(rumbleDur);
                     robot.idleRobot();
