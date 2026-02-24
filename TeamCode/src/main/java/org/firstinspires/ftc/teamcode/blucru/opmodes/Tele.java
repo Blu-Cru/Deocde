@@ -107,7 +107,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                      new ElevatorDownCommand().schedule();
-                }
+                })
                 /*.transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
                     gamepad1.rumble(rumbleDur);
                     robot.idleRobot();

@@ -90,11 +90,13 @@ public class Shooter implements BluSubsystem, Subsystem {
                 break;
             case AUTO_AIM:
                 double[] dists = new double[3];
+                /*
                 if (Robot.getInstance().turretCam.detectedThisLoop()){
                     dists = tagBasedShooterAutoAim(Robot.getInstance().turretCam.getDetection());
                 } else {
+                 */
                     dists = localizationBasedAutoAim();
-                }
+                //}
                 double leftDist = dists[0];
                 double middleDist = dists[1];
                 double rightDist = dists[2];
