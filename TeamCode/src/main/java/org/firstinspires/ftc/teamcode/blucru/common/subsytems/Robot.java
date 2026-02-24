@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -161,7 +162,7 @@ public class Robot {
         return intake;
     }
     public Turret addTurret(){
-        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluCRServo("turret3"),new BluEncoder(Globals.frMotorName));
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluCRServo("turret3", DcMotorSimple.Direction.REVERSE),new BluEncoder(Globals.frMotorName));
         subsystems.add(turret);
         return turret;
     }

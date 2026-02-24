@@ -22,11 +22,12 @@ public class TurretPIDTuning extends BluLinearOpMode {
         super.reportTelemetry = true;
         robot.clear();
         addTurret();
+        turret.resetEncoder();
         Globals.multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     public void periodic() throws InterruptedException {
-        Thread.sleep(34);
+        Thread.sleep(26);
 
         if (state == 0) {
             turret.setAngle(angle);

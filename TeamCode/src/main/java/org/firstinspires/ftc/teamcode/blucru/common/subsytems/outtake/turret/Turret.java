@@ -33,9 +33,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
-
-
-    public static double kP = 0.02;
+    public static double kP = 0.0175;
     public static double kI = 0.06;
     public static double kD = 0.0014;
     public static double kF = 0;
@@ -173,7 +171,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
         double currentAngle = getAngle();
         double error = position - currentAngle;
-
+        Globals.telemetry.addData("Error", error);
         double power = controller.calculate(currentAngle, position);
         power = Range.clip(power, -powerClip, powerClip);
 
@@ -196,7 +194,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public double getAngle() {
-        return encoder.getCurrentPos() * (360.0 / TICKS_PER_REV);
+        return -encoder.getCurrentPos() * (360.0 / TICKS_PER_REV);
     }
 
     public double getEncoderPos() {
