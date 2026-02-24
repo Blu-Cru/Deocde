@@ -40,10 +40,10 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .addProcessor(tags)
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
-                .setAutoStartStreamOnBuild(false)
+                .setAutoStartStreamOnBuild(true)
                 .build();
         motifPattern = MotifPattern.UNKNOWN;
-        enable();
+        streaming = true;
     }
 
     @Override
