@@ -36,7 +36,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kP = 0.0175;
     public static double kI = 0.06;
     public static double kD = 0.0014;
-    public static double kF = 0;
+    public static double kF = 0.00175;
     public static double kPTags = 0.015;
     public static double kITags = 0;
     public static double kDTags = 0.0014;
