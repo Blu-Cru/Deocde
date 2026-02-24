@@ -18,7 +18,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@Autonomous
+// @Autonomous
 public class OldCloseCycleAutoRed extends BluLinearOpMode {
     double turretAngle = 218; //field centric, decrease = more towards gate, increase = towards obelisk
     double preAimTurretAngle = 90; //robot centric

@@ -34,7 +34,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
-@Autonomous(name = "Far auto blue (mirrored)", group = "auto")
+// @Autonomous(name = "Far auto blue (mirrored)", group = "auto")
 public class TurretFarAutoBlue extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;

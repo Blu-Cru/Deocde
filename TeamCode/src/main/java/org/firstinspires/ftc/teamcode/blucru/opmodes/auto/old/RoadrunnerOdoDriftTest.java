@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "Odo drift test", group = "auto")
+// @Autonomous(name = "Odo drift test", group = "auto")
 public class RoadrunnerOdoDriftTest extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;

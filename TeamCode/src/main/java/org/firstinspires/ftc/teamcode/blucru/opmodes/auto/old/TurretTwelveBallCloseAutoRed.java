@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "12 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
+// @Autonomous(name = "12 Ball Turret Close Auto With Preload No Partner Red", group = "auto")
 public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;

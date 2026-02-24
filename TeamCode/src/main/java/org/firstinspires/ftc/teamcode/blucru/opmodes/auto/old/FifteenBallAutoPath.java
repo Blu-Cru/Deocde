@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "15 Ball Auto Path", group = "auto")
+// @Autonomous(name = "15 Ball Auto Path", group = "auto")
 public class FifteenBallAutoPath extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;

@@ -38,7 +38,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "Far auto red", group = "auto")
+// @Autonomous(name = "Far auto red", group = "auto")
 public class TurretFarAutoRed extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;

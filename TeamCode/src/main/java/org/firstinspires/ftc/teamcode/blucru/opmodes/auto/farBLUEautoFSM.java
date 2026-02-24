@@ -27,15 +27,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
-public class farBLUEautoFSM extends BluLinearOpMode {
+//@Autonomous
+public class farBLUEautoFSM extends BaseAuto {
     //Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -116;
-
 
     //Turret angle to be set to once the bot reaches the shooting position
     double turretAngleFinal = 156; // Field centric angle increase = towards obelisk decrease = towards gate
@@ -60,42 +58,20 @@ public class farBLUEautoFSM extends BluLinearOpMode {
         IDLE
     }
 
-    StateMachine sm;
     Path currentPath;
     ElapsedTime matchTimer;
     // Time threshold to start a new cycle (30s match - ~7s per cycle)
     final double CYCLE_TIME_THRESHOLD = 23.0;
     boolean shouldReadColorSensors = false;
 
-    public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
-        addLLTagDetector();
-        shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
-        shooter.write();
-        elevator.setMiddle();
-        elevator.write();
-        transfer.setAllMiddle();
-        transfer.write();
-        turret.resetEncoder();
-        turret.setAngle(-116);
-        turret.write();
-        sixWheel.reset();
-        sixWheel.write();
-        intake.resetEncoder();
-        if (driver1.pressedA()) {
-            turret.setAngle(-116);
-            turret.write();
-        }
+    @Override
+    public Pose2d getStartPose() {
+        return new Pose2d(63, -7, Math.toRadians(-90));
+    }
 
-        matchTimer = new ElapsedTime();
-
-        sm = new StateMachineBuilder()
+    @Override
+    public StateMachine buildStateMachine() {
+        return new StateMachineBuilder()
                 .state(State.PRELOAD)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.INTAKE_1, () -> {
                     shouldReadColorSensors = true;
@@ -159,10 +135,35 @@ public class farBLUEautoFSM extends BluLinearOpMode {
                 .build();
     }
 
+    @Override
+    public void initialize() {
+        matchTimer = new ElapsedTime();
+        
+        shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
+        shooter.write();
+        elevator.setMiddle();
+        elevator.write();
+        transfer.setAllMiddle();
+        transfer.write();
+        turret.resetEncoder();
+        turret.setAngle(-116);
+        turret.write();
+        sixWheel.reset();
+        sixWheel.write();
+        intake.resetEncoder();
+        if (driver1.pressedA()) {
+            turret.setAngle(-116);
+            turret.write();
+        }
+        
+        super.initialize(); // build sm and get startPose
+    }
+
+    @Override
     public void onStart() {
         matchTimer.reset();
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
-        sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
+        sixWheel.setPosition(startPose);
         Globals.setAlliance(Alliance.BLUE);
 
         startPath(buildPreloadPath());
@@ -170,12 +171,15 @@ public class farBLUEautoFSM extends BluLinearOpMode {
         sm.start();
     }
 
+    @Override
     public void periodic() {
         if (currentPath != null) {
             currentPath.run();
         }
-        sm.update();
-        telemetry.addData("State", sm.getState());
+        if (sm != null) {
+            sm.update();
+            telemetry.addData("State", sm.getState());
+        }
         telemetry.addData("Time", matchTimer.seconds());
     }
 

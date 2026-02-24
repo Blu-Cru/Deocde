@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.roadrunner.Drawing;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "12 Ball Close Auto Red - Path Only", group = "auto")
+// @Autonomous(name = "12 Ball Close Auto Red - Path Only", group = "auto")
 public class TurretTwelveBallCloseAutoRedPathOnly extends BluLinearOpMode {
     private TankDrive drive;
     private Pose2d startPose;
