@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 import org.firstinspires.ftc.teamcode.roadrunner.TankDrive;
 
 
-@Autonomous(name = "Turret Auto Path", group = "auto")
+// @Autonomous(name = "Turret Auto Path", group = "auto")
 public class TurretAutoPath extends BluLinearOpMode {
     // TODO: Add trajectory sequence when rr package is configured
     private TankDrive drive;

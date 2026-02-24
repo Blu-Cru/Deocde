@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@Autonomous
+// @Autonomous
 public class closeRedPATH extends BluLinearOpMode {
     double closeTurretAngle = 30;
 

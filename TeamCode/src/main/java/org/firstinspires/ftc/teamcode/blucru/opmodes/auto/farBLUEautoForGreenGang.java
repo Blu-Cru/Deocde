@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@Autonomous
+// @Autonomous
 public class farBLUEautoForGreenGang extends BluLinearOpMode {
     private boolean intakeTowardsGate = false; //Decides whether the bot intakes from human player zone or closer to the gate
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168

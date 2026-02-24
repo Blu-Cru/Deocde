@@ -16,22 +16,26 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import com.sfdev.assembly.state.StateMachine;
+import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
-public class PPCloseBlueAuto extends BluLinearOpMode {
+// @Autonomous
+public class PPCloseBlueAuto extends BaseAuto {
     double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
-    double velo =1150;
+    double velo = 1150;
     double leftHood;
     double middleHood ;
     double rightHood ;
     boolean alreadySignalledPattern;
 
+    enum State {
+        RUNNING
+    }
+
     public class TestingPath extends SixWheelPIDPathBuilder {
 
         public TestingPath() {
             super();
-
 
             this.addPurePursuitPath(new Point2d[]{
                             new Point2d(-49, -54),   // was (-45, 52)
@@ -83,11 +87,8 @@ public class PPCloseBlueAuto extends BluLinearOpMode {
                     .waitMilliseconds(1000)
 
                     // INTAKE SECOND SET
-                    //.addTurnTo(70, 2000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
-                            //new Point2d(0,30),
-                            //new Point2d(6.5, 48)
                             new Point2d(13, -49)
                     }, 2000)
                     .waitMilliseconds(1000)
@@ -136,10 +137,8 @@ public class PPCloseBlueAuto extends BluLinearOpMode {
                     .waitMilliseconds(1000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(36, -48),
-//                            new Point2d(0,25),
                             new Point2d(-16, -19)    // was (-10, 17)
                     }, 2000)
-//                    .waitMilliseconds(1000)
                     .addTurnTo(-45,1000)
                     .waitMilliseconds(500)
                     .callback(()->{
@@ -165,15 +164,32 @@ public class PPCloseBlueAuto extends BluLinearOpMode {
 
     Path currentPath;
 
+    @Override
+    public Pose2d getStartPose() {
+        return new Pose2d(-49, -54, Math.toRadians(51.529));
+    }
+
+    @Override
+    public StateMachine buildStateMachine() {
+        return new StateMachineBuilder()
+                .state(State.RUNNING)
+                .loop(() -> {
+                    if (currentPath != null) {
+                        currentPath.run();
+                    }
+                    if (!alreadySignalledPattern){
+                        llTagDetector.read();
+                        if (llTagDetector.detectedPattern()){
+                            gamepad1.setLedColor(100,255,100, 1000);
+                            alreadySignalledPattern = true;
+                        }
+                    }
+                })
+                .build();
+    }
+
+    @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
-        addLLTagDetector();
         shooter.setHoodAngleIndependent(30, 30, 30);
         shooter.write();
         elevator.setMiddle();
@@ -187,26 +203,25 @@ public class PPCloseBlueAuto extends BluLinearOpMode {
         intake.resetEncoder();
         intake.write();
         alreadySignalledPattern = false;
+        
+        super.initialize();
     }
 
+    @Override
     public void onStart() {
         shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
         turret.setAngle(5);
         llTagDetector.switchToMotif();
-        sixWheel.setPosition(new Pose2d(-49, -54, Math.toRadians(51.529)));
+        sixWheel.setPosition(startPose);
         currentPath = new TestingPath().build().start();
         Globals.setAlliance(Alliance.BLUE);
-
+        
+        sm.setState(State.RUNNING);
+        sm.start();
     }
 
+    @Override
     public void periodic() {
-        currentPath.run();
-        if (!alreadySignalledPattern){
-            llTagDetector.read();
-            if (llTagDetector.detectedPattern()){
-                gamepad1.setLedColor(100,255,100, 1000);
-                alreadySignalledPattern = true;
-            }
-        }
+        sm.update();
     }
 }
