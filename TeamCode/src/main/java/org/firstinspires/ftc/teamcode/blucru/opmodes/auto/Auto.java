@@ -59,7 +59,7 @@ public class Auto extends BluLinearOpMode {
                         if (CurrentSelectedAlliance == Alliance.RED)
                             CurrentSelectedAlliance = Alliance.BLUE;
                     }
-                    telemetry.update();
+                    //telemetry.update();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.AUTO_PICK)
 
@@ -107,7 +107,7 @@ public class Auto extends BluLinearOpMode {
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     }
-                    telemetry.update();
+                    //telemetry.update();
                 })
                 .transition(() -> driver1.pressedRightBumper(), State.INITAlIZE)
 
@@ -160,23 +160,7 @@ public class Auto extends BluLinearOpMode {
                     telemetry.addLine("Paths Built!");
                     telemetry.addLine("Initalized!");
                     telemetry.addLine("Congrats, do a dance!");
-                    telemetry.update();
-                })
-
-                .state(State.RUNNING)
-                .onEnter(() -> {
-                    if (autoToRun != null) {
-                        autoToRun.onStart();
-                    }
-                })
-                .loop(() -> {
-                    if (autoToRun != null) {
-                        try {
-                            autoToRun.periodic();
-                        } catch (Exception e) {
-                            telemetry.addData("Error", e.getMessage());
-                        }
-                    }
+                    //telemetry.update();
                 })
                 .build();
 
@@ -191,13 +175,22 @@ public class Auto extends BluLinearOpMode {
 
     public void onStart() {
         if(selectedauto) {
-            sm.setState(State.RUNNING);
+            if (autoToRun != null) {
+                autoToRun.onStart();
+            }
+            sm.stop();
         } else {
             throw new RuntimeException("Auto not selected! You silly billy!");
         }
     }
 
     public void periodic() {
-        if (sm != null) sm.update();
+        if (autoToRun != null) {
+            try {
+                autoToRun.periodic();
+            } catch (Exception e) {
+                telemetry.addData("Error", e.getMessage());
+            }
+        }
     }
 }
