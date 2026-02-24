@@ -33,7 +33,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
-    public static double kP = 0.02;
+        public static double kP = 0.02;
     public static double kI = 0.06;
     public static double kD = 0.0014;
     public static double kF = 0.00175;
@@ -91,7 +91,7 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-                Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
+                //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
                 /*if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                     else {*/
@@ -256,8 +256,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void saveTurretOffset(double detectedAngle) {
         // Get's the turret angle that localizer thinks it should be
-        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getVelPose());
-        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getVelPose().getH());
+        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
+        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
         double theoreticalTurretAngle = 180 - targetHeading - robotHeading;
         // With the given camera detected angle we're able to set an offset to use for localizer based turret tracking
         headingOffset = theoreticalTurretAngle-detectedAngle;
