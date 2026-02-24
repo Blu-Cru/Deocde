@@ -32,8 +32,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .setDrawAxes(false)
                 .setDrawTagID(false)
                 .setDrawTagOutline(false)
-                // Intrinsics from assets/arducam-ov9281.cameramodel (mrcal, 320x240), scaled 2x for 640x480
+                // Intrinsics from arducam-ov9281.cameramodel (mrcal, 320x240), scaled 2x for 640x480
                 .setLensIntrinsics(563.115, 562.734, 312.667, 239.793)
+                .setSuppressCalibrationWarnings(true)
                 .build();
         portal = new VisionPortal.Builder()
                 .setCamera(Globals.hwMap.get(WebcamName.class, "autoaim cam"))
