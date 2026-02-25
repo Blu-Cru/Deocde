@@ -52,7 +52,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
-                    .waitMilliseconds(200) // TODO: Remove this check if the velocity has shot and changed
+                    .waitUntil(() -> shooter.hasShot(3), 200) // TODO: Remove this check if the velocity has shot and changed
                     .addTurnTo(-10,1000)
 
                     .waitMilliseconds(100) // TODO: Remove this check if it is turned to move on
