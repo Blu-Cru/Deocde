@@ -52,7 +52,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 200) // TODO: Remove this check if the velocity has shot and changed
+                    .waitUntil(() -> shooter.hasShot(3), 200)
                     .addTurnTo(-10,1000)
 
                     .waitMilliseconds(100) // TODO: Remove this check if it is turned to move on
@@ -88,12 +88,12 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     // SHOOT FIRST SET - Use motif-aware shooting
-                    .waitMilliseconds(1200)
+                    .waitUntil(() -> turret.atTarget(),1200)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1750) // TODO: Remove this check if the velocity has shot and changed
+                    .waitUntil(() -> shooter.hasShot(3), 200)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
@@ -120,14 +120,14 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitUntil(() -> turret.atTarget(),1200)
 
                     // SHOOT SECOND SET - Use motif-aware shooting
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1850) // TODO: Remove this check if the velocity has shot and changed
+                    .waitUntil(() -> shooter.hasShot(3), 200)
 
                     // PICKUP THIRD SET
                     .addPurePursuitPath(new Point2d[] {
@@ -158,7 +158,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitUntil(() -> turret.atTarget(),1200)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -166,7 +166,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(1700) // TODO: Remove this check if the velocity has shot and changed
+                    .waitUntil(() -> shooter.hasShot(3), 200)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)

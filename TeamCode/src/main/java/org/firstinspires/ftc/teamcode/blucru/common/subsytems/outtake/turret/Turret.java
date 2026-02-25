@@ -282,4 +282,9 @@ public class Turret implements BluSubsystem, Subsystem {
     public double getTargetPosition(){
         return position;
     }
+
+    public boolean atTarget(){
+        //1 deg tolerance
+        return Math.abs(position - getAngle()) < 1;
+    }
 }
