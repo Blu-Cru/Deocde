@@ -15,7 +15,14 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
 @Config
 public class Shooter implements BluSubsystem, Subsystem {
+    private double lastLeftVel = 0;
+    private double lastMiddleVel = 0;
+    private double lastRightVel = 0;
 
+    public int detectedShots = 0;
+    private long lastShotTime = 0;
+    private final double DROP_THRESHOLD = 50; // TODO: Test this
+    private final long DEBOUNCE_TIME_MS = 250; // Minimum time between shots
     public static double leftP = 0.0015,leftI = 0, leftD = 0, leftF =
             0.000485
             ;
@@ -75,8 +82,34 @@ public class Shooter implements BluSubsystem, Subsystem {
         leftShooter.read();
         middleShooter.read();
         rightShooter.read();
+        if(state == State.VELOCITY || state == State.AUTO_AIM){
+            double currentLeftVel = leftShooter.getVel();
+            double currentRightVel = rightShooter.getVel();
+            double currentMiddleVel = middleShooter.getVel();
+            double leftDrop = currentLeftVel - lastLeftVel;
+            double rightDrop = currentRightVel - lastRightVel;
+            double centerDrop = currentMiddleVel - lastMiddleVel;
+             if(leftDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
+                 detectedShots++;
+                 lastShotTime = System.currentTimeMillis();
+             }
+            if(rightDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
+                detectedShots++;
+                lastShotTime = System.currentTimeMillis();
+            }
+            if(centerDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
+                detectedShots++;
+                lastShotTime = System.currentTimeMillis();
+            }
+             lastLeftVel = currentLeftVel;
+            lastRightVel = currentRightVel;
+            lastMiddleVel = currentMiddleVel;
+        }
     }
 
+    public void resetShotCounter() {
+        detectedShots = 0;
+    }
     @Override
     public void write() {
         switch (state){
@@ -324,6 +357,9 @@ public class Shooter implements BluSubsystem, Subsystem {
         return new double[]{leftDist, middleDist, rightDist};
     }
 
+    public boolean hasShot(int expectedBalls) {
+        return detectedShots >= expectedBalls;
+    }
 
     @Override
     public void telemetry(Telemetry telemetry) {

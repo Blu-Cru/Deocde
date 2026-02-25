@@ -26,6 +26,10 @@ public class SixWheelPIDPathBuilder {
         return this;
     }
 
+    public SixWheelPIDPathBuilder waitUntil(java.util.function.BooleanSupplier condition, double timeoutMs) {
+        segments.add(new WaitUntilSegment(segments.get(segments.size() - 1), condition, timeoutMs));
+        return this;
+    }
     public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double maxTime){
         for (int i = 0; i<path.length; i++){
             path[i] = Globals.mapPoint(path[i]);

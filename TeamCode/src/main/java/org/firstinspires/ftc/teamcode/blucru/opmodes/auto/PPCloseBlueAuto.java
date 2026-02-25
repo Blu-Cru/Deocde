@@ -44,13 +44,12 @@ public class PPCloseBlueAuto extends BaseAuto {
                     .waitMilliseconds(500)
                     // SHOOT PRELOAD
                     .callback(() -> {
+                        shooter.resetShotCounter(); // Reset the counter to 0
                         new SequentialCommandGroup(
-                                new AutonomousShootCommand()
-                        ).schedule();
+                                new AutonomousShootCommand()).schedule();
                     })
-
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
                     // INTAKE FIRST SET
-                    .waitMilliseconds(200)
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),
@@ -80,11 +79,11 @@ public class PPCloseBlueAuto extends BaseAuto {
                     // SHOOT FIRST SET
                     .waitMilliseconds(1000)
                     .callback(() -> {
+                        shooter.resetShotCounter(); // Reset the counter to 0
                         new SequentialCommandGroup(
-                                new AutonomousShootCommand()
-                        ).schedule();
+                                new AutonomousShootCommand()).schedule();
                     })
-                    .waitMilliseconds(1000)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[]{
@@ -114,11 +113,11 @@ public class PPCloseBlueAuto extends BaseAuto {
 
                     // SHOOT SECOND SET
                     .callback(() -> {
+                        shooter.resetShotCounter(); // Reset the counter to 0
                         new SequentialCommandGroup(
-                                new AutonomousShootCommand()
-                        ).schedule();
+                                new AutonomousShootCommand()).schedule();
                     })
-                    .waitMilliseconds(200)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
                     .addTurnTo(-35,500)
 
                     // PICKUP THIRD SET
@@ -146,13 +145,14 @@ public class PPCloseBlueAuto extends BaseAuto {
                     })
                     .waitMilliseconds(1000)
                     .callback(() -> {
+                        shooter.resetShotCounter();
                         new SequentialCommandGroup(
                                 new AutonomousShootAntiJamCommand(),
                                 new WaitCommand(300),
                                 new IntakeSpitCommand()
                         ).schedule();
                     })
-                    .waitMilliseconds(300)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-16, -19),    // was (37, 46)
                             new Point2d(0, -30)    // was (-10, 17)
