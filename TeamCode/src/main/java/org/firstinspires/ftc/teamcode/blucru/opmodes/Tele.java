@@ -70,10 +70,6 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     new ResetForIntakeCommand().schedule();
                 })
-                .transition(() -> (driver1.pressedLeftTrigger() && driver1.pressedRightTrigger()), State.INTAKING_ELEVATED, () ->{
-                    gamepad1.rumble(rumbleDur);
-                    new ElevatorMiddleCommand().schedule();
-                })
                 .transition(() -> driver1.pressedRightBumper(), State.DRIVING_TO_SHOOT, () ->{
                     gamepad1.rumble(rumbleDur);
                     new UnshootCommand().schedule();
@@ -90,7 +86,10 @@ public class Tele extends BluLinearOpMode{
                             new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
-
+                .transition(() -> gamepad1.left_trigger > 0.2 && gamepad1.right_trigger > 0.2, State.INTAKING_ELEVATED, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    new ElevatorMiddleCommand().schedule();
+                })
                 .state(State.INTAKING)
                 .loop(() -> {
                     if (gamepad1.left_trigger > 0.2){
@@ -101,6 +100,16 @@ public class Tele extends BluLinearOpMode{
                         intake.setPID();
                     }
                 })
+                .transition(() -> gamepad1.left_trigger > 0.2 && gamepad1.right_trigger > 0.2, State.INTAKING_ELEVATED, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    new ElevatorMiddleCommand().schedule();
+                })
+                .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot = 0;
+                    new TransferCommand(turreting).schedule();
+                })
+
                 .state(State.INTAKING_ELEVATED)
                 .loop(() -> {
                         intake.setIn();
@@ -108,17 +117,11 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                      new ElevatorDownCommand().schedule();
                 })
-                /*.transition(() -> driver1.pressedRightBumper(), State.IDLE, () -> {
-                    gamepad1.rumble(rumbleDur);
-                    robot.idleRobot();
-                    new IdleCommand().schedule();
-                })*/
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
-                    new TransferCommand(turreting).schedule();
+                    new TransferCommand(    turreting).schedule();
                 })
-
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);

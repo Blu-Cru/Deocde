@@ -26,8 +26,8 @@ import com.sfdev.assembly.state.StateMachineBuilder;
  */
 // @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BaseAuto {
-    double turretAngle = 138; ////field centric, decrease = more towards gate, increase = towards obelisk
-    double velo = 1110;
+    double turretAngle = 139; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double velo = 1115;
     double veloMiddle = 1130;
     double leftHood = 34;
     double middleHood = 34;
@@ -52,10 +52,10 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
-                    .waitMilliseconds(200)
+                    .waitMilliseconds(200) // TODO: Remove this check if the velocity has shot and changed
                     .addTurnTo(-10,1000)
 
-                    .waitMilliseconds(200)
+                    .waitMilliseconds(100) // TODO: Remove this check if it is turned to move on
 
                     // INTAKE FIRST SET
                     .addTurnTo(-90, 5000)
@@ -63,13 +63,8 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                             new Point2d(-16, -19),
                             new Point2d(-16, -37),
                             new Point2d(-5, -47),
-                    }, 2000)
-                    .addTurnTo(-80, 500)
-                    .waitMilliseconds(200)
-                    .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-5,-47),
                             new Point2d(-5,-60)
-                    }, 1000)
+                    }, 2000)
 
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
@@ -89,7 +84,6 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45, 1000)
-                    .waitMilliseconds(200)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -99,7 +93,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1750)
+                    .waitMilliseconds(1750) // TODO: Remove this check if the velocity has shot and changed
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
@@ -123,7 +117,6 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                             new Point2d(13, -49), // was (12.5, 46)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
-                    .waitMilliseconds(200)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
@@ -134,7 +127,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitMilliseconds(1850)
+                    .waitMilliseconds(1850) // TODO: Remove this check if the velocity has shot and changed
 
                     // PICKUP THIRD SET
                     .addPurePursuitPath(new Point2d[] {
@@ -173,7 +166,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitMilliseconds(1700)
+                    .waitMilliseconds(1700) // TODO: Remove this check if the velocity has shot and changed
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
