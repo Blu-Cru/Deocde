@@ -358,6 +358,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public boolean hasShot(int expectedBalls) {
+        Globals.telemetry.addData("Expected Balls", expectedBalls);
         return detectedShots >= expectedBalls;
     }
 
