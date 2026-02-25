@@ -21,8 +21,8 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     public int detectedShots = 0;
     private long lastShotTime = 0;
-    private final double DROP_THRESHOLD = 50; // TODO: Test this
-    private final long DEBOUNCE_TIME_MS = 250; // Minimum time between shots
+    private final double DROP_THRESHOLD = 60; // TODO: Test this
+    private final long DEBOUNCE_TIME_MS = 15; // Minimum time between shots
     public static double leftP = 0.0015,leftI = 0, leftD = 0, leftF =
             0.000485
             ;
