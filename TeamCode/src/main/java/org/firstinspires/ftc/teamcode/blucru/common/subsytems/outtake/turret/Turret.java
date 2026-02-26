@@ -285,6 +285,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public boolean atTarget(){
         //1 deg tolerance
-        return Math.abs(position - getAngle()) < 1;
+        Globals.telemetry.addData("Target Position", position);
+        Globals.telemetry.addData("Angle", getAngle());
+        return Math.abs(position - getAngle()) < 2;
     }
 }

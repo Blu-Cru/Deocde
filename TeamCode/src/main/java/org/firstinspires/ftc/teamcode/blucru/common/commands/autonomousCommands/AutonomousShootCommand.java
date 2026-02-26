@@ -17,13 +17,13 @@ public class AutonomousShootCommand extends InstantCommand {
         super(() ->{
                 new SequentialCommandGroup(
                         new AllTransferUpCommand(),
-                        new WaitCommand(300),
+                        new WaitCommand(100),
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
-                        new WaitCommand(400),
+                        //new WaitCommand(200),
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand(),
-                        new WaitCommand(300),
+                        new WaitCommand(200),
 //                        new WaitCommand(300),
                         new IntakeStartCommand()
                 ).schedule();}

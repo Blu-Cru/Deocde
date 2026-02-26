@@ -8,6 +8,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotorWithEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -38,6 +39,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public HoodRight hoodRight;
     public Vector2d robotToGoal;
     private double shooterDist = 145/25.4;
+    boolean leftShooterShot = false, middleShooterShot = false, rightShooterShot = false;
 
     public double getBallExitVel(double vel) {
         return ShooterAutoAimInterpolation.getBallExitVel(vel);
@@ -91,24 +93,33 @@ public class Shooter implements BluSubsystem, Subsystem {
             double centerDrop = currentMiddleVel - lastMiddleVel;
              if(leftDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
                  detectedShots++;
+                 leftShooterShot = true;
                  lastShotTime = System.currentTimeMillis();
              }
             if(rightDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
                 detectedShots++;
+                middleShooterShot = true;
                 lastShotTime = System.currentTimeMillis();
             }
             if(centerDrop < -DROP_THRESHOLD && System.currentTimeMillis() - lastShotTime > DEBOUNCE_TIME_MS){
                 detectedShots++;
+                rightShooterShot = true;
                 lastShotTime = System.currentTimeMillis();
             }
-             lastLeftVel = currentLeftVel;
+            lastLeftVel = currentLeftVel;
             lastRightVel = currentRightVel;
             lastMiddleVel = currentMiddleVel;
+            Globals.telemetry.addData("Left Shooter Shot", leftShooterShot);
+            Globals.telemetry.addData("Middle Shooter Shot", middleShooterShot);
+            Globals.telemetry.addData("Right Shooter Shot", rightShooterShot);
         }
     }
 
     public void resetShotCounter() {
         detectedShots = 0;
+        leftShooterShot = false;
+        middleShooterShot = false;
+        rightShooterShot = false;
     }
     @Override
     public void write() {
