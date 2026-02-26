@@ -92,8 +92,11 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
     private double smoothedTyDeg = 0;
     private boolean hasSmoothedData = false;
 
-    /** Smoothed clump centroid converted to field-relative X position (inches) */
+    /** Smoothed clump centroid converted to world and robot positions */
     private double clumpFieldX = 0;
+    private double clumpFieldY = 0;
+    private double clumpRobotX = 0; // X offset from center of bot (forward)
+    private double clumpRobotY = 0; // Y offset from center of bot (lateral left)
 
     /** Number of balls in the biggest cluster */
     private int clumpBallCount = 0;
@@ -111,10 +114,10 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
     private final List<double[]> rawDetections = new ArrayList<>();
 
     /**
-     * Per-ball distances from the robot center (inches), computed each frame.
-     * Index matches rawDetections.
+     * Per-ball robot-relative X/Y coordinates (inches), computed each frame.
+     * Index matches rawDetections. format: [robotX, robotY]
      */
-    private final List<Double> ballDistances = new ArrayList<>();
+    private final List<double[]> ballRobotPositions = new ArrayList<>();
 
     // ===============================
     // CONSTRUCTOR
@@ -163,7 +166,7 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
     @Override
     public void read() {
         rawDetections.clear();
-        ballDistances.clear();
+        ballRobotPositions.clear();
         totalBallsDetected = 0;
         clumpBallCount = 0;
 
@@ -185,7 +188,7 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
 
                     ballPositions.add(new double[] { tx, ty, area });
                     rawDetections.add(new double[] { tx, ty, area });
-                    ballDistances.add(computeBallDistanceFromRobot(tx, ty));
+                    ballRobotPositions.add(calculateRobotRelativePosition(tx, ty));
                 }
             } else if (result.getTa() > 0) {
                 // Fallback: some pipelines only populate top-level tx/ty/ta
@@ -195,7 +198,7 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
 
                 ballPositions.add(new double[] { tx, ty, area });
                 rawDetections.add(new double[] { tx, ty, area });
-                ballDistances.add(computeBallDistanceFromRobot(tx, ty));
+                ballRobotPositions.add(calculateRobotRelativePosition(tx, ty));
             }
 
             totalBallsDetected = ballPositions.size();
@@ -281,72 +284,88 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
                 framesSinceLastDetection, hasValidClump));
     }
 
-    /**
-     * Computes the straight-line distance (inches) from the robot center
-     * to a single ball detected at the given camera angles.
-     */
-    private double computeBallDistanceFromRobot(double txDeg, double tyDeg) {
-        double tyRad = Math.toRadians(cameraMountAngleDeg + tyDeg);
-        double txRad = Math.toRadians(txDeg);
-
-        // Ground distance from under the camera to the ball
-        double camForward = cameraZHeightInches / Math.tan(tyRad);
-        double camLateral = camForward * Math.tan(txRad);
-
-        // Shift by camera offset to get distance from robot center
-        double robotX = cameraXOffsetInches + camForward;
-        double robotY = cameraYOffsetInches + camLateral;
-
-        return Math.sqrt(robotX * robotX + robotY * robotY);
+    @Override
+    public void reset() {
+        hasValidClump = false;
+        hasSmoothedData = false;
+        framesSinceLastDetection = 0;
+        rawDetections.clear();
+        ballRobotPositions.clear();
     }
 
     /**
-     * Converts the clump centroid (in camera degree-space) to a field-relative X
-     * coordinate, accounting for the camera's XYZ offset from the robot center.
+     * Projects the Limelight tx/ty angles onto the floor plane to find the
+     * X/Y coordinates relative to the center of the robot.
      *
-     * Steps:
-     * 1. Use ty + mount angle to compute how far forward (from the camera) the
-     * ball is on the ground. Use tx to compute lateral offset from camera axis.
-     * 2. Add the camera's XY offset on the robot to get the ball position
-     * relative to the robot center (in robot-frame coordinates).
-     * 3. Rotate by the robot's heading and add the robot's field pose to get
-     * the ball's field-relative position.
+     * Uses strictly 3D ray collision math (no cheating with simple tan!).
+     * Accounts for: camera X/Y/Z offsets, camera down pitch, and ball radius.
+     */
+    private double[] calculateRobotRelativePosition(double txDeg, double tyDeg) {
+        // 1. Ray in unpitched camera frame (Robot coords: X forward, Y left, Z up)
+        // Limelight +tx is right -> Robot -Y
+        // Limelight +ty is up -> Robot +Z
+        double ray_x = 1.0;
+        double ray_y = -Math.tan(Math.toRadians(txDeg));
+        double ray_z = Math.tan(Math.toRadians(tyDeg));
+
+        // 2. Apply camera pitch down
+        double pitch = Math.toRadians(cameraMountAngleDeg);
+        double cosPitch = Math.cos(pitch);
+        double sinPitch = Math.sin(pitch);
+
+        // Pitch down means rotating the ray DOWNwards (forward X mixes into Z)
+        double pitched_x = ray_x * cosPitch + ray_z * sinPitch;
+        double pitched_y = ray_y;
+        double pitched_z = -ray_x * sinPitch + ray_z * cosPitch;
+
+        // 3. Intersect with the floor
+        // Camera is at zHeight above ground. Ball center is 1.75" above ground.
+        double h = cameraZHeightInches - 1.75;
+
+        if (pitched_z >= 0) {
+            // Ray is pointing above the horizon, cannot calculate distance!
+            return new double[] { 500.0, 0.0 }; // return dummy far-away
+        }
+
+        // Scale the ray to reach the floor target height
+        double t = -h / pitched_z;
+
+        double camForwardDist = t * pitched_x;
+        double camLateralDist = t * pitched_y;
+
+        // 4. Add camera mounting offsets
+        double botX = cameraXOffsetInches + camForwardDist;
+        double botY = cameraYOffsetInches + camLateralDist;
+
+        return new double[] { botX, botY };
+    }
+
+    /**
+     * Uses the camera's relative coordinates to compute field location.
      */
     private void computeFieldPosition() {
+        // Step 1: get exact robot-relative X/Y of the clump
+        double[] botPos = calculateRobotRelativePosition(smoothedTxDeg, smoothedTyDeg);
+        clumpRobotX = botPos[0];
+        clumpRobotY = botPos[1];
+
+        // Step 2: Rotate to field frame and add robot position
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         if (robotPose == null) {
-            // Fallback: use tx directly as a relative offset (won't be field-accurate)
-            clumpFieldX = clumpTxDeg;
+            clumpFieldX = clumpRobotX;
+            clumpFieldY = clumpRobotY;
             return;
         }
 
-        double heading = robotPose.getH(); // Robot heading in radians
-
-        // --- Step 1: Ball position relative to the camera (using smoothed values) ---
-        double tyRad = Math.toRadians(cameraMountAngleDeg + smoothedTyDeg);
-        double txRad = Math.toRadians(smoothedTxDeg);
-
-        // Ground distance forward from directly under the camera to the ball
-        double camForwardDist = cameraZHeightInches / Math.tan(tyRad);
-
-        // Lateral offset from the camera's forward axis
-        double camLateralDist = camForwardDist * Math.tan(txRad);
-
-        // --- Step 2: Ball position relative to the robot center ---
-        // Camera is at (cameraXOffset, cameraYOffset) in robot-frame coords.
-        // Ball relative to camera is (camForwardDist, camLateralDist).
-        // Ball relative to robot center:
-        double ballRobotX = cameraXOffsetInches + camForwardDist;
-        double ballRobotY = cameraYOffsetInches + camLateralDist;
-
-        // --- Step 3: Rotate to field frame and add robot position ---
+        double heading = robotPose.getH();
         double cosH = Math.cos(heading);
         double sinH = Math.sin(heading);
 
-        double fieldDeltaX = ballRobotX * cosH - ballRobotY * sinH;
-        double fieldDeltaY = ballRobotX * sinH + ballRobotY * cosH;
+        double fieldDeltaX = clumpRobotX * cosH - clumpRobotY * sinH;
+        double fieldDeltaY = clumpRobotX * sinH + clumpRobotY * cosH;
 
         clumpFieldX = robotPose.getX() + fieldDeltaX;
+        clumpFieldY = robotPose.getY() + fieldDeltaY;
     }
 
     @Override
@@ -364,24 +383,16 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
                     String.format("%.1f / %.1f", clumpTxDeg, clumpTyDeg));
             telemetry.addData("[Ball] Smooth TX/TY",
                     String.format("%.1f / %.1f", smoothedTxDeg, smoothedTyDeg));
-            telemetry.addData("[Ball] Clump Field X", String.format("%.1f", clumpFieldX));
+            telemetry.addData("[Ball] Clump Robot X/Y", String.format("%.1f / %.1f", clumpRobotX, clumpRobotY));
+            telemetry.addData("[Ball] Clump Field X/Y", String.format("%.1f / %.1f", clumpFieldX, clumpFieldY));
         }
         for (int i = 0; i < rawDetections.size(); i++) {
             double[] d = rawDetections.get(i);
-            double dist = (i < ballDistances.size()) ? ballDistances.get(i) : -1;
+            double[] robotPos = (i < ballRobotPositions.size()) ? ballRobotPositions.get(i) : new double[] { 0, 0 };
             telemetry.addData("[Ball] Det " + i,
-                    String.format("tx=%.1f ty=%.1f area=%.2f dist=%.1fin",
-                            d[0], d[1], d[2], dist));
+                    String.format("tx=%.1f ty=%.1f area=%.2f botX=%.1fin botY=%.1fin",
+                            d[0], d[1], d[2], robotPos[0], robotPos[1]));
         }
-    }
-
-    @Override
-    public void reset() {
-        hasValidClump = false;
-        hasSmoothedData = false;
-        framesSinceLastDetection = 0;
-        rawDetections.clear();
-        ballDistances.clear();
     }
 
     // ===============================
@@ -401,6 +412,13 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
     }
 
     /**
+     * Returns the field-relative Y coordinate of the ball clump centroid (inches).
+     */
+    public double getClumpFieldY() {
+        return clumpFieldY;
+    }
+
+    /**
      * Returns the smoothed clump centroid horizontal angle from camera center
      * (degrees).
      */
@@ -416,14 +434,14 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
         return smoothedTyDeg;
     }
 
-    /** Returns the raw (unsmoothed) clump TX this frame. */
-    public double getRawClumpTxDeg() {
-        return clumpTxDeg;
+    /** Returns the clump's X offset from center of bot (forward in inches) */
+    public double getClumpRobotX() {
+        return clumpRobotX;
     }
 
-    /** Returns the raw (unsmoothed) clump TY this frame. */
-    public double getRawClumpTyDeg() {
-        return clumpTyDeg;
+    /** Returns the clump's Y offset from center of bot (lateral left in inches) */
+    public double getClumpRobotY() {
+        return clumpRobotY;
     }
 
     /**
@@ -431,18 +449,17 @@ public class LimelightBallDetector implements BluSubsystem, Subsystem {
      * clump centroid position on the ground.
      */
     public double getClumpDistanceFromRobot() {
-        return computeBallDistanceFromRobot(smoothedTxDeg, smoothedTyDeg);
+        return Math.sqrt(clumpRobotX * clumpRobotX + clumpRobotY * clumpRobotY);
     }
 
     /**
-     * Returns the distance (inches) from the robot center to a specific
-     * detected ball by index. Returns -1 if index is out of range.
+     * Returns the [X, Y] robot-relative displacement for a specific ball.
      */
-    public double getBallDistance(int index) {
-        if (index >= 0 && index < ballDistances.size()) {
-            return ballDistances.get(index);
+    public double[] getBallRobotPosition(int index) {
+        if (index >= 0 && index < ballRobotPositions.size()) {
+            return ballRobotPositions.get(index);
         }
-        return -1;
+        return new double[] { 0, 0 };
     }
 
     /** Returns the number of balls in the biggest detected cluster. */

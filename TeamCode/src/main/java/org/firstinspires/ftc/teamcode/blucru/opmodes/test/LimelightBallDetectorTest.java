@@ -20,6 +20,18 @@ public class LimelightBallDetectorTest extends BluLinearOpMode {
         addSixWheel();
         addBallDetector();
 
+        // Configure camera mounting geometry (adjust these to match your robot!)
+        // xOffset = forward from robot center (positive = front), inches
+        // yOffset = lateral from robot center (positive = left), inches
+        // zHeight = camera lens height above ground, inches
+        // mountAngle = degrees below horizontal (90 = straight down)
+        ballDetector.setCameraParameters(
+                11.3, // xOffset: camera forward from center
+                6.5, // yOffset: camera left from center
+                13.0, // zHeight: camera above ground
+                15.0 // mountAngle: 15° below horizontal
+        );
+
         sixWheel.reset();
     }
 
@@ -50,10 +62,10 @@ public class LimelightBallDetectorTest extends BluLinearOpMode {
                     String.format("%.2f / %.2f",
                             ballDetector.getClumpTxDeg(),
                             ballDetector.getClumpTyDeg()));
-            telemetry.addData("Raw TX / TY (deg)",
-                    String.format("%.2f / %.2f",
-                            ballDetector.getRawClumpTxDeg(),
-                            ballDetector.getRawClumpTyDeg()));
+            telemetry.addData("Clump Robot X (in)",
+                    String.format("%.2f (forward)", ballDetector.getClumpRobotX()));
+            telemetry.addData("Clump Robot Y (in)",
+                    String.format("%.2f (left)", ballDetector.getClumpRobotY()));
             telemetry.addData("Clump Dist from Robot (in)",
                     String.format("%.2f", ballDetector.getClumpDistanceFromRobot()));
             telemetry.addData("Clump Field X (in)",
