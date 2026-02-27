@@ -33,11 +33,10 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous
 public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
-    //Turret angle to be set while the robot is driving to shooting position
+    // Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -116;
 
-
-    //Turret angle to be set to once the bot reaches the shooting position
+    // Turret angle to be set to once the bot reaches the shooting position
     double turretAngleFinal = 156; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
@@ -79,6 +78,10 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         addTurret();
         addTransfer();
         addBallDetector();
+        // Set your physical camera mounting parameters here!
+        ballDetector.setCameraParameters(11.3, 6.5, 13.0, 15.0);
+        ballDetector.activate();
+
         shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
         shooter.write();
         elevator.setMiddle();
@@ -142,14 +145,14 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .state(State.SHOOT_HP)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
-                    shouldReadColorSensors = true;
-                    updateIntakeXPosition();
-                    startPath(buildIntakeCyclePath());
-                })
+                            shouldReadColorSensors = true;
+                            updateIntakeXPosition();
+                            startPath(buildIntakeCyclePath());
+                        })
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
-                    startPath(buildParkPath());
-                })
+                            startPath(buildParkPath());
+                        })
                 .state(State.INTAKE_CYCLE)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.SHOOT_CYCLE, () -> {
                     shouldReadColorSensors = false;
@@ -202,6 +205,8 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         sm.update();
         telemetry.addData("State", sm.getState());
         telemetry.addData("Time", matchTimer.seconds());
+        telemetry.addData("LL Clump X", ballDetector.getClumpFieldX());
+        telemetry.addData("Intake X", pickupWallX);
     }
 
     private void startPath(Path path) {
@@ -214,14 +219,18 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
             currentPath.endSixWheel();
         }
         new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight).schedule();
-        new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim).schedule();
+        new FarAutoTransferCommand(leftHood, middleHood, rightHood, turretAnglePreaim).schedule();
     }
-    private void updateIntakeXPosition(){
-        double fieldX = ballDetector.getClumpFieldX();
-        double minX = 20; //x value the closest we would ever want to intake towards the gate
-        double maxX= 62; //max x value we would want to intake towards the wall
-        pickupWallX = Range.clip(fieldX, minX, maxX);
+
+    private void updateIntakeXPosition() {
+        if (ballDetector.hasValidClump()) {
+            double fieldX = ballDetector.getClumpFieldX();
+            double minX = 20; // x value the closest we would ever want to intake towards the gate
+            double maxX = 62; // max x value we would want to intake towards the wall
+            pickupWallX = Range.clip(fieldX, minX, maxX);
+        }
     }
+
     private boolean isTransferFull() {
         // Only read color sensors during intake states to avoid I2C overhead
         if (!shouldReadColorSensors)
@@ -318,7 +327,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim)).schedule();
+                            new FarAutoTransferCommand(leftHood, middleHood, rightHood, turretAnglePreaim)).schedule();
                 })
                 .build();
     }
@@ -341,6 +350,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .waitMilliseconds(300)
                 .build();
     }
+
     private Path buildIntakeCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -351,7 +361,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new FarAutoTransferCommand(leftHood,middleHood,rightHood,turretAnglePreaim)).schedule();
+                            new FarAutoTransferCommand(leftHood, middleHood, rightHood, turretAnglePreaim)).schedule();
                 })
                 .build();
     }
@@ -374,6 +384,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .waitMilliseconds(300)
                 .build();
     }
+
     private Path buildParkPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
