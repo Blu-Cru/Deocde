@@ -215,7 +215,7 @@ public class Tele extends BluLinearOpMode{
         //llTagDetector.read();
         sm.update();
 
-        //Shooter
+        //switching alliances
         if(driver2.pressedRightBumper()){
             gamepad2.rumble(350);
             shooter.redAlliance = true;
@@ -226,6 +226,8 @@ public class Tele extends BluLinearOpMode{
             Globals.setAlliance(Alliance.BLUE);
         }
 
+
+        //hitting target vel
         if(shooter.targetHit() == true && targetHit == false){
             gamepad1.rumble(500);
             targetHit = true;
@@ -236,7 +238,16 @@ public class Tele extends BluLinearOpMode{
 //        if (driver2.pressedB() && !driver2.pressedOptions()){
 //            sixWheel.setPosition(llTagDetector.getLLBotPose());
 //        }
+        //pos lock
+        if (driver1.pressedTouchpad()){
+            if (sixWheel.isPosLock()) {
+                sixWheel.switchToPosLock();
+            } else {
+                sixWheel.releasePosLock();
+            }
+        }
 
+        //0,0,0 reset
         if (driver2.pressedA() && !driver2.pressedOptions()) {
             gamepad2.rumble(1000);
             sixWheel.setPosition(new Pose2d(0, 0, 0));

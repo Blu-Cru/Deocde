@@ -28,7 +28,8 @@ public class SixWheelDriveBase implements BluSubsystem {
         PID,
         TELE_DRIVE,
         TURN,
-        LINE_TO_X
+        LINE_TO_X,
+        POS_LOCK
     }
 
     State dtState;

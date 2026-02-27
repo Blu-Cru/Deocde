@@ -28,7 +28,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     public static double END_TOLERANCE = 1.5;
     public static double HEADING_TOLERANCE = 5.0; // Degrees
     private SixWheelPID pid;
+    private PosLockPID posLockPID;
     private double targetX;
+    private Pose2d posLockMarker;
 
     public SixWheelDrive() {
         super();
@@ -37,6 +39,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         targetHeading = null;
         computer = new PurePursuitComputer();
         pid = new SixWheelPID();
+        posLockPID = new PosLockPID();
+        posLockMarker = localizer.getPose();
     }
 
     @Override
@@ -108,6 +112,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 break;
             case LINE_TO_X:
                 drive(-pid.lineToX(targetX, localizer.getPose(), localizer.getVel()), 0);
+            case POS_LOCK:
+                drive(posLockPID.getLinPower(localizer.getPose(), posLockMarker, localizer.getVel()), posLockPID.getRotPower(localizer.getPose(), posLockMarker, localizer.getVel()));
         }
 
         super.write();
@@ -241,6 +247,16 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     public void lineToX(double x) {
         targetX = x;
         dtState = State.LINE_TO_X;
+    }
+    public void switchToPosLock(){
+        posLockMarker = localizer.getPose();
+        dtState = State.POS_LOCK;
+    }
+    public void releasePosLock(){
+        dtState = State.IDLE;
+    }
+    public boolean isPosLock(){
+        return dtState == State.POS_LOCK;
     }
 
     public State getState() {
