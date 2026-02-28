@@ -25,7 +25,8 @@ public class Auto extends BluLinearOpMode {
     enum AUTOSTARTINGPOS {
         FAR,
         CLOSE,
-        CLOSE_MOTIF
+        CLOSE_MOTIF,
+        ROOT_NEGATIVE_ONE
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
     AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
@@ -72,21 +73,29 @@ public class Auto extends BluLinearOpMode {
                     if(CurrentSelectedAlliance == Alliance.BLUE) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) {
                             telemetry.addLine("Blue Close <--");
-                            telemetry.addLine("Blue FAR");
+                            telemetry.addLine("Blue Far");
                             telemetry.addLine("Blue Close Motif");
+                            telemetry.addLine("Blue Root Negative One");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) {
                             telemetry.addLine("Blue Close");
                             telemetry.addLine("Blue Far <--");
                             telemetry.addLine("Blue Close Motif");
+                            telemetry.addLine("Blue Root Negative One");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) {
                             telemetry.addLine("Blue Close");
-                            telemetry.addLine("Blue FAR");
+                            telemetry.addLine("Blue Far");
                             telemetry.addLine("Blue Close Motif <--");
+                            telemetry.addLine("Blue Root Negative One");
+                        } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE) {
+                            telemetry.addLine("Blue Close");
+                            telemetry.addLine("Blue Far");
+                            telemetry.addLine("Blue Close Motif");
+                            telemetry.addLine("Blue Root Negative One <--");
                         }
                     } else if (CurrentSelectedAlliance == Alliance.RED) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) {
                             telemetry.addLine("Red Close <--");
-                            telemetry.addLine("Red FAR");
+                            telemetry.addLine("Red Far");
                             telemetry.addLine("Red Close Motif");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) {
                             telemetry.addLine("Red Close");
@@ -94,7 +103,7 @@ public class Auto extends BluLinearOpMode {
                             telemetry.addLine("Red Close Motif");
                         } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) {
                             telemetry.addLine("Red Close");
-                            telemetry.addLine("Red FAR");
+                            telemetry.addLine("Red Far");
                             telemetry.addLine("Red Close Motif <--");
                         }
                     }
@@ -102,9 +111,11 @@ public class Auto extends BluLinearOpMode {
                     if(driver1.pressedDpadDown()) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
-                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     } else if (driver1.pressedDpadUp()) {
-                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
+                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     }
@@ -124,6 +135,7 @@ public class Auto extends BluLinearOpMode {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.BLUE_FAR;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE_MOTIF;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE) autoEnum = AutoConfig.AUTOS.ROOT_NEGATIVE_ONE;
                     } else {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.RED_CLOSE;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.RED_FAR;
