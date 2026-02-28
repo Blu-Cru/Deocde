@@ -237,6 +237,8 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
             double minX = 20; // x value the closest we would ever want to intake towards the gate
             double maxX = 62; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
+        } else {
+            pickupWallX = null;
         }
     }
 
