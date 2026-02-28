@@ -130,10 +130,10 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new StateMachineBuilder()
                 .state(State.PRELOAD)
                     .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
-                    //startPath(buildSpikeMiddlePath());
+                    startPath(buildSpikeMiddlePath());
                 })
 
-                /*.state(State.MIDDLE_SPIKE)
+                .state(State.MIDDLE_SPIKE)
                 // Transition if path completes normally
                 .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE_PICKUP, () -> {
                     startPath(buildIntakeCyclePath());
@@ -184,7 +184,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 //Auto Done, switch to IDLE
                 .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
                 })
-*/
+
                 .state(State.IDLE)
                 .onEnter(this::stopIntakeShooterAndPath)
 
@@ -255,7 +255,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(-51, -54),
-                        new Point2d(-16, -19)
+                        new Point2d(-20, -22)
                 }, 2000)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -274,7 +274,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildSpikeMiddlePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(-16, -19),
+                        new Point2d(-20, -22),
                         //small guide point for the turn
                         new Point2d(-10, -15),
                         new Point2d(5, -47),
