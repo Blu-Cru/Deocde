@@ -311,6 +311,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
+                .waitMilliseconds(0)
                 .build();
     }
 
@@ -342,6 +343,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
+                .waitMilliseconds(0)
                 .build();
     }
 
@@ -384,6 +386,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .addTurnTo(-20, 1000)
                 .waitMilliseconds(100)
                 .callback(() -> new AutonomousShootWithMotifCommand().schedule())
+                .waitMilliseconds(0)
                 .build();
     }
 
@@ -413,6 +416,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 }, 2000)
                 .waitMilliseconds(100)
                 .callback(() -> new AutonomousShootWithMotifCommand().schedule())
+                .waitMilliseconds(0)
                 .build();
     }
 
