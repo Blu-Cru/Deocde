@@ -112,11 +112,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     startPath(buildShootSpikePath());
                 })
 //                // Transition early if transfer is full
-//                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
-//                    shouldReadColorSensors = false;
-//                    stopIntakeAndPath();
-//                    startPath(buildShootSpikePath());
-//                })
+                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
+                    shouldReadColorSensors = false;
+                    stopIntakeAndPath();
+                    startPath(buildShootSpikePath());
+                })
 
                 .state(State.SHOOT_SPIKE)
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -135,11 +135,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     startPath(buildShootHPPath());
                 })
                 // Transition early if transfer is full
-//                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
-//                    shouldReadColorSensors = false;
-//                    stopIntakeAndPath();
-//                    startPath(buildShootHPPath());
-//                })
+                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
+                    shouldReadColorSensors = false;
+                    stopIntakeAndPath();
+                    startPath(buildShootHPPath());
+                })
                 .state(State.SHOOT_HP)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
@@ -156,11 +156,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     shouldReadColorSensors = false;
                     startPath(buildShootCyclePath());
                 })
-//                .transition(() -> isTransferFull(), State.SHOOT_CYCLE, () -> {
-//                    shouldReadColorSensors = false;
-//                    stopIntakeAndPath();
-//                    startPath(buildShootCyclePath());
-//                })
+                .transition(() -> isTransferFull(), State.SHOOT_CYCLE, () -> {
+                    shouldReadColorSensors = false;
+                    stopIntakeAndPath();
+                    startPath(buildShootCyclePath());
+                })
 
                 .state(State.SHOOT_CYCLE)
                 // Cycle if time permits
