@@ -28,9 +28,9 @@ public class RootNegativeOneFSM extends BaseAuto {
     double preAimTurretAngle = -90;
     double velo            = 1150;
     double veloMiddle      = 1150;
-    double leftHood        = 30;
-    double middleHood      = 30;
-    double rightHood       = 30;
+    double leftHood        = 32;
+    double middleHood      = 32;
+    double rightHood       = 32;
 
     double GATE_CYCLE_TIME_THRESHOLD = 20;
 
@@ -129,7 +129,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     public StateMachine buildStateMachine() {
         return new StateMachineBuilder()
                 .state(State.PRELOAD)
-                    .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
+                    .transition(() -> currentPath != null && currentPath.isDone(), State.MIDDLE_SPIKE, () -> {
                     startPath(buildSpikeMiddlePath());
                 })
 
