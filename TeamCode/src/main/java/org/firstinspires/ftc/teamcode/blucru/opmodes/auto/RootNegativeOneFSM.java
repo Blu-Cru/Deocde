@@ -270,7 +270,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(-20, -22),
                         //small guide point for the turn
                         new Point2d(-8, -15),
-                        new Point2d(9, -47),
+                        new Point2d(9, -47)
                 }, 2000)
 
                 .callback(() -> {new SequentialCommandGroup(

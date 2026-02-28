@@ -351,7 +351,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(90,500)
+                .addTurnTo(-90,500)
                 .waitMilliseconds(1000)
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
@@ -387,7 +387,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(90,500)
+                .addTurnTo(-90,500)
                 .waitMilliseconds(1000)
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
