@@ -153,6 +153,14 @@ public class Turret implements BluSubsystem, Subsystem {
         }
     }
 
+    public boolean isTurretatGoal() {
+        if(Math.abs(getTargetPosition() - getAngle()) <= 2) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public boolean isManual() {
         return state == State.MANUAL;
     }
