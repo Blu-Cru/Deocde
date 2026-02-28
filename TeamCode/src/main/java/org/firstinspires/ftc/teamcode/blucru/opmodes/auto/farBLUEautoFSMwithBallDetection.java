@@ -38,7 +38,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
     double turretAnglePreaim = -107;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double turretAngleFinal = 156; // Field centric angle increase = towards obelisk decrease = towards gate
+    double turretAngleFinal = 164; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;

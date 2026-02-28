@@ -18,7 +18,7 @@ public class AutonomousShootCommand extends InstantCommand {
         super(() ->{
                 new SequentialCommandGroup(
                         new AllTransferUpCommand(),
-                        new WaitCommand(100),
+                        new WaitCommand(300),
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
                         //new WaitCommand(200),
