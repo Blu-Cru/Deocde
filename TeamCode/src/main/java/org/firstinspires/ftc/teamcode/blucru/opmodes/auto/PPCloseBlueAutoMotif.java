@@ -97,7 +97,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 1600)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
@@ -135,7 +135,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 1600)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
 
                     // PICKUP THIRD SET
                     .addPurePursuitPath(new Point2d[] {
@@ -176,7 +176,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 1600)
+                    .waitUntil(() -> shooter.hasShot(3), 2000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
