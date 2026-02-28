@@ -20,7 +20,7 @@ public class FarAutoTransferCommand extends InstantCommand {
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeSpitCommand(),
-                    new WaitCommand(300),
+                    new WaitCommand(600),
                     new ElevatorUpCommand(),
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),
