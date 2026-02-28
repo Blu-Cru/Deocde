@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -34,10 +35,10 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -116;
+    double turretAnglePreaim = -107;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double turretAngleFinal = 156; // Field centric angle increase = towards obelisk decrease = towards gate
+    double turretAngleFinal = 158; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
@@ -110,12 +111,12 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     shouldReadColorSensors = false;
                     startPath(buildShootSpikePath());
                 })
-                // Transition early if transfer is full
-                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
-                    shouldReadColorSensors = false;
-                    stopIntakeAndPath();
-                    startPath(buildShootSpikePath());
-                })
+//                // Transition early if transfer is full
+//                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
+//                    shouldReadColorSensors = false;
+//                    stopIntakeAndPath();
+//                    startPath(buildShootSpikePath());
+//                })
 
                 .state(State.SHOOT_SPIKE)
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -134,11 +135,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     startPath(buildShootHPPath());
                 })
                 // Transition early if transfer is full
-                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
-                    shouldReadColorSensors = false;
-                    stopIntakeAndPath();
-                    startPath(buildShootHPPath());
-                })
+//                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
+//                    shouldReadColorSensors = false;
+//                    stopIntakeAndPath();
+//                    startPath(buildShootHPPath());
+//                })
                 .state(State.SHOOT_HP)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
@@ -155,11 +156,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     shouldReadColorSensors = false;
                     startPath(buildShootCyclePath());
                 })
-                .transition(() -> isTransferFull(), State.SHOOT_CYCLE, () -> {
-                    shouldReadColorSensors = false;
-                    stopIntakeAndPath();
-                    startPath(buildShootCyclePath());
-                })
+//                .transition(() -> isTransferFull(), State.SHOOT_CYCLE, () -> {
+//                    shouldReadColorSensors = false;
+//                    stopIntakeAndPath();
+//                    startPath(buildShootCyclePath());
+//                })
 
                 .state(State.SHOOT_CYCLE)
                 // Cycle if time permits
@@ -186,10 +187,11 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
 
     @Override
     public void initializePeriodic() {
+        turret.read();
         if (driver1.pressedA()) {
-            turret.setAngle(-116);
-            turret.write();
+            turret.setAngle(turretAnglePreaim);
         }
+        turret.write();
         telemetry.addLine("--- INIT ---");
         telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
     }
@@ -263,7 +265,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
                 })
-                .waitMilliseconds(300)
+                .waitMilliseconds(1000)
                 .build();
     }
 
@@ -278,26 +280,29 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new IntakeStopCommand(),
-                            new WaitCommand(100),
-                            new IntakeSpitCommand(),
-                            new WaitCommand(300),
-                            new ElevatorUpCommand(),
-                            new WaitCommand(300),
-                            new ElevatorMiddleCommand(),
-                            new WaitCommand(150),
-                            new AllTransferMiddleCommand(),
-                            new SetLeftHoodAngleCommand(leftHood),
-                            new SetRightHoodAngleCommand(middleHood),
-                            new SetMiddleHoodAngleCommand(rightHood),
-                            // new WaitCommand(200), //TODO: TUNE WAIT
-                            new IntakeStopCommand(),
-                            new ParallelizeIntakeCommand()
+                        new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                        new IntakeSpitCommand(),
+                        new WaitCommand(200),
+                        new ElevatorUpCommand(),
+                        new WaitCommand(200),
+                        new ElevatorMiddleCommand(),
+                        new WaitCommand(150),
+                        new AllTransferMiddleCommand(),
+                        new SetLeftHoodAngleCommand(leftHood),
+                        new SetRightHoodAngleCommand(middleHood),
+                        new SetMiddleHoodAngleCommand(rightHood),
+                        // new WaitCommand(200), //TODO: TUNE WAIT
+                        new IntakeStopCommand(),
+                        new ParallelizeIntakeCommand(),
+                        new WaitCommand(400),
+                        new TurnTurretToPosCommand(-100)
+
+
                     // new WaitCommand(2000),
                     // new TurnTurretToPosCommand(102)
                     ).schedule();
                 })
+                .waitMilliseconds(0)
                 .build();
     }
 
@@ -336,6 +341,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                             new FarAutoTransferCommand(leftHood, middleHood, rightHood, turretAnglePreaim)).schedule();
                 })
+                .waitMilliseconds(0)
                 .build();
     }
 
@@ -370,6 +376,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                             new FarAutoTransferCommand(leftHood, middleHood, rightHood, turretAnglePreaim)).schedule();
                 })
+                .waitMilliseconds(0)
                 .build();
     }
 
