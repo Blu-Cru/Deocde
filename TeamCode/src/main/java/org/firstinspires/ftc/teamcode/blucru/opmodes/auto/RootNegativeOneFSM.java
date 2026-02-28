@@ -254,7 +254,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(-51, -54),
-                        new Point2d(-20, -25)
+                        new Point2d(-20, -20)
                 }, 2000)
                 .callback(() -> {
                     new SequentialCommandGroup(
