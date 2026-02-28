@@ -303,8 +303,8 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(5, -19),
-                        new Point2d(10, -40),
-                        new Point2d(5, -56)
+                        new Point2d(10, -44),
+                        new Point2d(7, -56)
                 }, 2000)
                 .waitMilliseconds(1000)
                 .callback(() -> {new SequentialCommandGroup(
@@ -319,7 +319,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildShootCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -56),
+                        new Point2d(7, -56),
                         new Point2d(5, -19)
                 }, 2000)
                 .waitMilliseconds(100)
@@ -333,8 +333,8 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(5, -19),
-                        new Point2d(10, -40),
-                        new Point2d(5, -56)
+                        new Point2d(10, -44),
+                        new Point2d(7, -56)
                 }, 2000)
                 .waitMilliseconds(1000)
                 .callback(() -> {new SequentialCommandGroup(
@@ -351,7 +351,8 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildShootMotifCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -56),
+                        new Point2d(7, -56),
+                        new Point2d(10, -44),
                         new Point2d(-12, -15)
                 }, 2000)
                 .waitMilliseconds(100)
