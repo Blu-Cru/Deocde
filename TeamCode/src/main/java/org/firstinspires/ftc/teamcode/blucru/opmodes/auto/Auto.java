@@ -57,9 +57,11 @@ public class Auto extends BluLinearOpMode {
                     }
                     if(driver1.pressedDpadDown()) {
                         if(CurrentSelectedAlliance == Alliance.BLUE) CurrentSelectedAlliance = Alliance.RED;
+                        if(CurrentSelectedAlliance == Alliance.RED) CurrentSelectedAlliance = Alliance.BLUE;
                     } else if (driver1.pressedDpadUp()) {
                         if (CurrentSelectedAlliance == Alliance.RED)
                             CurrentSelectedAlliance = Alliance.BLUE;
+                        if(CurrentSelectedAlliance == Alliance.BLUE) CurrentSelectedAlliance = Alliance.RED;
                     }
                     //telemetry.update();
                 })
