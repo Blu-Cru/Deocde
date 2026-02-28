@@ -7,6 +7,8 @@ import com.seattlesolvers.solverslib.command.Subsystem;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
@@ -70,14 +72,17 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 }
                 if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.GPP;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
                 if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PGP;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
                 if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PPG;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
             }

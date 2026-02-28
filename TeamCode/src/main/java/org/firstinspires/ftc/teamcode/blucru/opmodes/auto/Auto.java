@@ -34,6 +34,7 @@ public class Auto extends BluLinearOpMode {
     @Override
     public void initialize() {
         robot.clear();
+        robot.addTurretCam();
         addSixWheel();
         addIntake();
         addElevator();

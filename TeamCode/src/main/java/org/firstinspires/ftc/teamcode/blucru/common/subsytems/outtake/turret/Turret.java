@@ -37,9 +37,9 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kI = 0.06;
     public static double kD = 0.0014;
     public static double kF = 0.00175;
-    public static double kPTags = 0.015;
+    public static double kPTags = 0.001;
     public static double kITags = 0;
-    public static double kDTags = 0.0014;
+    public static double kDTags = 0.0001;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 0.95;
@@ -93,10 +93,10 @@ public class Turret implements BluSubsystem, Subsystem {
             case LOCK_ON_GOAL:
                 //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
-                /*if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-                    else {*/
+                if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
+                    else {
                 localizationBasedAutoAim();
-                updateControlLoop();//}
+                updateControlLoop();}
                 break;
             case PID:
                 updateControlLoop();
@@ -250,7 +250,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void tagBasedAutoAim(AprilTagDetection detection){
         double xDelta = detection.center.x - 320;
         Globals.telemetry.addData("Yaw Delta", xDelta);
-        servos.setPower(tagController.calculate(xDelta, servos.getPower()));
+        servos.setPower(tagController.calculate(-xDelta, 0));
         //saveTurretOffset(yawDelta + getAngle());
     }
 

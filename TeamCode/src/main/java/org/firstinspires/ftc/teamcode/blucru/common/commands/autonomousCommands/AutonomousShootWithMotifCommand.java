@@ -4,7 +4,9 @@ import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
@@ -46,13 +48,13 @@ public class AutonomousShootWithMotifCommand extends InstantCommand {
                             new AllTransferUpCommand().schedule();
                         }
                     }),
-                    new WaitCommand(1300),
+                    new WaitUntilCommand(() -> Robot.getInstance().shooter.hasShot(3)),
                     new IdleShooterCommand(),
                     new CenterTurretCommand(),
-                    new WaitCommand(400),
+                    new WaitCommand(100),
                     new ElevatorDownCommand(),
                     new AllTransferDownCommand(),
-                    new WaitCommand(400),
+                    new WaitCommand(300),
                     new IntakeStartCommand()
             ).schedule();
         });

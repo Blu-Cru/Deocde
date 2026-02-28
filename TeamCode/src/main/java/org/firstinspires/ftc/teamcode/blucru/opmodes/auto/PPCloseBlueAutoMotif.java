@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -26,7 +27,8 @@ import com.sfdev.assembly.state.StateMachineBuilder;
  */
 // @Autonomous(name = "PP Close Blue Auto (Motif)")
 public class PPCloseBlueAutoMotif extends BaseAuto {
-    double turretAngle = 143; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double turretAngle = 150; ////field centric, decrease = more towards gate, increase = towards obelisk
+    double nonFieldCentricTurretAngle = -87;
     double velo = 1115;
     double veloMiddle = 1130;
     double leftHood = 34;
@@ -74,7 +76,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                                 new WaitCommand(700),
-                                new TurnTurretToPosFieldCentricCommand(turretAngle)).schedule();
+                                new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
@@ -86,13 +88,16 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45, 1000)
+                    .callback(
+                            () -> {new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();}
+                    )
                     // SHOOT FIRST SET - Use motif-aware shooting
                     .waitMilliseconds(400)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 200)
+                    .waitUntil(() -> shooter.hasShot(3), 1600)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
@@ -108,7 +113,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                                 new WaitCommand(700),
-                                new TurnTurretToPosFieldCentricCommand(turretAngle)).schedule();
+                                new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
 
                     })
                     .waitMilliseconds(300)
@@ -119,7 +124,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
                     .callback(() -> {
-
+                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
                     })
                     .waitMilliseconds(400)
                     //small time for settling
@@ -130,7 +135,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 200)
+                    .waitUntil(() -> shooter.hasShot(3), 1600)
 
                     // PICKUP THIRD SET
                     .addPurePursuitPath(new Point2d[] {
@@ -171,7 +176,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new WaitCommand(300),
                                 new IntakeStopCommand()).schedule();
                     })
-                    .waitUntil(() -> shooter.hasShot(3), 200)
+                    .waitUntil(() -> shooter.hasShot(3), 1600)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
                             new Point2d(10, -30)
