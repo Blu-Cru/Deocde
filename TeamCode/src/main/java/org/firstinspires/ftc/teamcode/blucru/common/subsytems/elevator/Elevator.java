@@ -15,12 +15,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     private static final double DOWN_POSITION_LEFT = 0.42;// TODO: find positions
     private static final double UP_POSITION_LEFT = 0.65;
     private static final double MIDDLE_POSITION_LEFT = 0.51;
-    private static final double INTAKE_MIDDLE_POSITION_LEFT = 0.58;
+    private static final double INTAKE_MIDDLE_POSITION_LEFT = 0.55;
 
     private static final double DOWN_POSITION_RIGHT = 0.42;// TODO: find positions
     private static final double UP_POSITION_RIGHT = 0.65;
     private static final double MIDDLE_POSITION_RIGHT = 0.52;
-    private static final double INTAKE_MIDDLE_POSITION_RIGHT = 0.59;
+    private static final double INTAKE_MIDDLE_POSITION_RIGHT = 0.56;
     private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
             rightSensorTop;
 
