@@ -21,7 +21,7 @@ public class SixWheelDriveBase implements BluSubsystem {
 
     private BluMotor[] dtMotors;
 
-    RobotLocalizer localizer;
+    public RobotLocalizer localizer;
 
     public enum State {
         IDLE,
