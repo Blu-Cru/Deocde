@@ -128,12 +128,12 @@ public class RootNegativeOneFSM extends BaseAuto {
     @Override
     public StateMachine buildStateMachine() {
         return new StateMachineBuilder()
-                /*.state(State.PRELOAD)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.MIDDLE_SPIKE, () -> {
-                    startPath(buildSpikeMiddlePath());
+                .state(State.PRELOAD)
+                    .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
+                    //startPath(buildSpikeMiddlePath());
                 })
 
-                .state(State.MIDDLE_SPIKE)
+                /*.state(State.MIDDLE_SPIKE)
                 // Transition if path completes normally
                 .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE_PICKUP, () -> {
                     startPath(buildIntakeCyclePath());
@@ -184,9 +184,9 @@ public class RootNegativeOneFSM extends BaseAuto {
                 //Auto Done, switch to IDLE
                 .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
                 })
-
+*/
                 .state(State.IDLE)
-                .onEnter(this::stopIntakeShooterAndPath)*/
+                .onEnter(this::stopIntakeShooterAndPath)
 
                 .build();
     }
