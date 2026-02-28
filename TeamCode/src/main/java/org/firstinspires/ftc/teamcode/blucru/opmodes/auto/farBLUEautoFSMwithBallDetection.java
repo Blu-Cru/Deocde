@@ -38,7 +38,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
     double turretAnglePreaim = -107;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double turretAngleFinal = 158; // Field centric angle increase = towards obelisk decrease = towards gate
+    double turretAngleFinal = 159; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
@@ -67,7 +67,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
     Path currentPath;
     ElapsedTime matchTimer;
     // Time threshold to start a new cycle (30s match - ~7s per cycle)
-    final double CYCLE_TIME_THRESHOLD = 23.0;
+    final double CYCLE_TIME_THRESHOLD = 25.0;
     boolean shouldReadColorSensors = false;
 
     public void initialize() {
@@ -294,8 +294,8 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         // new WaitCommand(200), //TODO: TUNE WAIT
                         new IntakeStopCommand(),
                         new ParallelizeIntakeCommand(),
-                        new WaitCommand(400),
-                        new TurnTurretToPosCommand(-100)
+                        new WaitCommand(200),
+                        new TurnTurretToPosCommand(-95)
 
 
                     // new WaitCommand(2000),
@@ -318,7 +318,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
-                .waitMilliseconds(1000)
+                .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
@@ -335,7 +335,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(62, -55),
                         new Point2d(62, pickupWallY)
                 }, 1200)
-                .waitMilliseconds(1000)
+                .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
@@ -355,7 +355,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
-                .waitMilliseconds(1100)
+                .waitMilliseconds(500)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
@@ -368,9 +368,9 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(pickupWallX, pickupWallY)
+                        new Point2d(pickupWallX, pickupWallY-2)
                 }, 1200)
-                .waitMilliseconds(1000)
+                .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
@@ -390,7 +390,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
-                .waitMilliseconds(1100)
+                .waitMilliseconds(500)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
