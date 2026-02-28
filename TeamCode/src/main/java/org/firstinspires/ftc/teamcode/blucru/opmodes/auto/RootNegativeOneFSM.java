@@ -34,7 +34,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
     double GATE_CYCLE_TIME_THRESHOLD = 20;
 
-    enum State { PRELOAD, MIDDLE_SPIKE, GATE_CYCLE_PICKUP, GATE_CYCLE_SHOOT, LAST_GATE_CYCLE_PICKUP, LAST_GATE_CYCLE_SHOOT, CLOSE_SPIKE, FAR_SPIKE, PARK, IDLE}
+    enum State { PRELOAD, MIDDLE_SPIKE, GATE_CYCLE, LAST_GATE_CYCLE_PICKUP, LAST_GATE_CYCLE_SHOOT, CLOSE_SPIKE, FAR_SPIKE, PARK, IDLE}
     StateMachine autoStateMachine;
 
     /*public class AutoPath extends SixWheelPIDPathBuilder {
@@ -135,19 +135,12 @@ public class RootNegativeOneFSM extends BaseAuto {
 
                 .state(State.MIDDLE_SPIKE)
                 // Transition if path completes normally
-                .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE_PICKUP, () -> {
+                .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE, () -> {
                     startPath(buildIntakeCyclePath());
                 })
 
-                .state(State.GATE_CYCLE_PICKUP)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE_SHOOT, () -> {
-                    startPath(buildShootCyclePath());
-                })
-
-                .state(State.GATE_CYCLE_SHOOT)
-                // Cycle if time permits
-                .transition(() -> currentPath != null && currentPath.isDone()
-                        && Globals.matchTime.seconds() < GATE_CYCLE_TIME_THRESHOLD, State.GATE_CYCLE_PICKUP, () -> {
+                .state(State.GATE_CYCLE)
+                .transition(() -> currentPath != null && currentPath.isDone(), State.GATE_CYCLE, () -> {
                     startPath(buildIntakeCyclePath());
                 })
                 // Park if time is running out
@@ -276,8 +269,8 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(-20, -22),
                         //small guide point for the turn
-                        new Point2d(-10, -15),
-                        new Point2d(5, -47),
+                        new Point2d(-8, -15),
+                        new Point2d(7, -47),
                 }, 2000)
 
                 .callback(() -> {new SequentialCommandGroup(
@@ -287,8 +280,8 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
 
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(5, -47),
-                        new Point2d(5, -19)
+                        new Point2d(7, -47),
+                        new Point2d(7, -19)
                 }, 2000)
 
                 .callback(() -> {
@@ -302,7 +295,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildIntakeCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -19),
+                        new Point2d(7, -19),
                         new Point2d(10, -44),
                         new Point2d(7, -56)
                 }, 2000)
@@ -312,15 +305,9 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
-                .waitMilliseconds(0)
-                .build();
-    }
-
-    private Path buildShootCyclePath() {
-        return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(7, -56),
-                        new Point2d(5, -19)
+                        new Point2d(7, -19)
                 }, 2000)
                 .waitMilliseconds(100)
                 .callback(() ->
@@ -332,7 +319,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildIntakeMotifCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -19),
+                        new Point2d(7, -19),
                         new Point2d(10, -44),
                         new Point2d(7, -56)
                 }, 2000)

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
@@ -19,8 +20,9 @@ public class FarAutoTransferCommand extends InstantCommand {
     public FarAutoTransferCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle){
         super(() -> {
             new SequentialCommandGroup(
+                    new CenterTurretCommand(),
                     new IntakeSpitCommand(),
-                    new WaitCommand(600),
+                    new WaitCommand(800),
                     new ElevatorUpCommand(),
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand(),

@@ -38,7 +38,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
     double turretAnglePreaim = -107;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double turretAngleFinal = 164; // Field centric angle increase = towards obelisk decrease = towards gate
+    double turretAngleFinal = 160; // Field centric angle increase = towards obelisk decrease = towards gate
     double shootVeloLeft = 1440;
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
@@ -198,7 +198,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
 
     public void onStart() {
         matchTimer.reset();
-        shooter.shootWithVelocityIndependent(1510, 1520, 1490);
+        shooter.shootWithVelocityIndependent(1490, 1520, 1490);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 
@@ -335,7 +335,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(62, -55),
                         new Point2d(62, pickupWallY)
                 }, 1200)
-                .waitMilliseconds(600)
+                .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
@@ -351,7 +351,8 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .waitMilliseconds(300)
+                .addTurnTo(90,500)
+                .waitMilliseconds(1000)
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
@@ -370,7 +371,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         shootingPoint,
                         new Point2d(pickupWallX, pickupWallY-2)
                 }, 1200)
-                .waitMilliseconds(700)
+                .waitMilliseconds(1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
@@ -386,7 +387,8 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .waitMilliseconds(300)
+                .addTurnTo(90,500)
+                .waitMilliseconds(1000)
                 .callback(() -> {
                     new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
                 })
