@@ -37,7 +37,7 @@ public class RootNegativeOne extends BaseAuto {
             this
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-51, -54),
-                            new Point2d(-16, -19)
+                            new Point2d(-20, -25)
                     }, 2000)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -48,12 +48,14 @@ public class RootNegativeOne extends BaseAuto {
                         new IntakeStartCommand().schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(-16, -19),
-                            new Point2d(-5, -47)
+                            new Point2d(-20, -25),
+                            //small guide point for the turn
+                            new Point2d(-19, -15),
+                            new Point2d(-5, -47),
                     }, 2000)
                     .addPurePursuitPath(new Point2d[]{
                             new Point2d(-5, -47),
-                            new Point2d(-16, -19)
+                            new Point2d(-5, -19)
                     }, 2000)
                     .callback(() -> {
                         new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
