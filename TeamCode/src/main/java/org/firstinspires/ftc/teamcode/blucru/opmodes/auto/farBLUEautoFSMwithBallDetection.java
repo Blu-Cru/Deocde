@@ -78,8 +78,9 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         addTurret();
         addTransfer();
         addBallDetector();
-        // Set your physical camera mounting parameters here!
-        ballDetector.setCameraParameters(11.3, 6.5, 13.0, 15.0);
+
+        //TODO: SWAP THE Y OFFSET BASED ON ALLIANCE. POSITIVE Y = TO THE LEFT. NEGATIVE Y = TO THE RIGHT.
+        ballDetector.setCameraParameters(11.3, -6.5, 13.0, 15.0);
         ballDetector.activate();
 
         shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
@@ -93,10 +94,6 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         sixWheel.reset();
         sixWheel.write();
         intake.resetEncoder();
-        if (driver1.pressedA()) {
-            turret.setAngle(-116);
-            turret.write();
-        }
 
         matchTimer = new ElapsedTime();
 
@@ -187,6 +184,16 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
                 .build();
     }
 
+    @Override
+    public void initializePeriodic() {
+        if (driver1.pressedA()) {
+            turret.setAngle(-116);
+            turret.write();
+        }
+        telemetry.addLine("--- INIT ---");
+        telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
+    }
+
     public void onStart() {
         matchTimer.reset();
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
@@ -227,7 +234,7 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
             double fieldX = ballDetector.getClumpFieldX();
             double minX = 20; // x value the closest we would ever want to intake towards the gate
             double maxX = 62; // max x value we would want to intake towards the wall
-            pickupWallX = Range.clip(fieldX, minX, maxX);
+            pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
         }
     }
 
