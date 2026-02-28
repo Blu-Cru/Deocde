@@ -26,8 +26,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class RootNegativeOneFSM extends BaseAuto {
     double turretAngle     = 142;
     double preAimTurretAngle = -90;
-    double velo            = 1150;
-    double veloMiddle      = 1150;
+    double velo            = 1100;
+    double veloMiddle      = 1100;
     double leftHood        = 32;
     double middleHood      = 32;
     double rightHood       = 32;
@@ -304,7 +304,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(5, -19),
                         new Point2d(10, -40),
-                        new Point2d(5, -48)
+                        new Point2d(5, -56)
                 }, 2000)
                 .waitMilliseconds(1000)
                 .callback(() -> {new SequentialCommandGroup(
@@ -319,7 +319,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildShootCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -48),
+                        new Point2d(5, -56),
                         new Point2d(5, -19)
                 }, 2000)
                 .waitMilliseconds(100)
@@ -334,7 +334,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(5, -19),
                         new Point2d(10, -40),
-                        new Point2d(5, -48)
+                        new Point2d(5, -56)
                 }, 2000)
                 .waitMilliseconds(1000)
                 .callback(() -> {new SequentialCommandGroup(
@@ -351,7 +351,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildShootMotifCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(5, -48),
+                        new Point2d(5, -56),
                         new Point2d(-12, -15)
                 }, 2000)
                 .waitMilliseconds(100)
