@@ -215,6 +215,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         turret.setAngle(5);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
+        startPath(currentPath);
         Globals.setAlliance(Alliance.BLUE);
         sm.setState(State.PRELOAD);
         sm.start();
