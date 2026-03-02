@@ -26,7 +26,7 @@ public class Intake implements BluSubsystem, Subsystem {
     public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
-    public static double ENCODER_PPR_INTAKE = 145.090909091;
+    public static double ENCODER_PPR_INTAKE = 4000;
     public static double curr = 0;
     public static double offset = 0;
     boolean armsParallel;
@@ -149,8 +149,8 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (error >  quarter) error -= half;
                         if (error < -quarter) error += half;
 
-                        armsParallel = Math.abs(error) < 2;
-                        withinRange = Math.abs(error) < 5;
+                        armsParallel = Math.abs(error) < 20;
+                        withinRange = Math.abs(error) < 50;
 
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
