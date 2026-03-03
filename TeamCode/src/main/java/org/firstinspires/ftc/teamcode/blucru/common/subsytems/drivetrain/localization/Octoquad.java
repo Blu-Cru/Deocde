@@ -92,7 +92,7 @@ public class Octoquad implements RobotLocalizer{
      * inch, inch, radian
      * */
     public void setPosition(double x, double y, double h){
-        octoquad.setLocalizerPose((int) x,(int) y,(float) h);
+        octoquad.setLocalizerPose((int) (x * 25.4),(int) (y * 25.4),(float) h);
         read();
     }
 
