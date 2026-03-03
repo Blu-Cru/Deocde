@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Octoquad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitComputer;
@@ -42,7 +43,7 @@ public class SixWheelDriveBase implements BluSubsystem {
 
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br) {
         dtMotors = new BluMotor[] { fl, fr, bl, br };
-        localizer = new Pinpoint("pinpoint");
+        localizer = new Octoquad("octoquad");
         dtState = State.IDLE;
     }
 
