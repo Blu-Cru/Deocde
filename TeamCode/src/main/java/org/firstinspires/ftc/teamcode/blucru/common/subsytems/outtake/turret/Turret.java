@@ -23,7 +23,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private TurretServos servos;
     private BluEncoder encoder;
-    private PIDFController controller;
+    private PIDController controller;
 
     private PIDFController tagController;
     Vector2d target;
@@ -33,16 +33,15 @@ public class Turret implements BluSubsystem, Subsystem {
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
-        public static double kP = 0.02;
-    public static double kI = 0.06;
-    public static double kD = 0.0014;
-    public static double kF = 0.00175;
+        public static double kP = 0.028;
+    public static double kI = 0.02;
+    public static double kD = 0.0018;
     public static double kPTags = 0.001;
     public static double kITags = 0;
     public static double kDTags = 0.0001;
 
     public static double acceptableError = 0.5;
-    public static double powerClip = 0.95;
+    public static double powerClip = 1;
 
     public static double MAX_ANGLE = 150;
     public static double MIN_ANGLE = -150;
@@ -64,7 +63,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluCRServo servoCenter,BluEncoder encoder) {
         servos = new TurretServos(servoLeft, servoRight,servoCenter);
         this.encoder = encoder;
-        controller = new PIDFController(kP, kI, kD, kF);
+        controller = new PIDController(kP, kI, kD);
         tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
 
@@ -166,7 +165,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void updatePID() {
-        controller.setPIDF(kP, kI, kD,kF);
+        controller.setPID(kP, kI, kD);
     }
 
     public void updateControlLoop() {

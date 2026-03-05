@@ -3,23 +3,29 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
 import android.util.Size;
 
 import com.seattlesolvers.solverslib.command.Subsystem;
+import com.seattlesolvers.solverslib.geometry.Rotation2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 import java.util.ArrayList;
 
 public class TagCamera implements BluSubsystem, Subsystem {
-
     AprilTagProcessor tags;
     VisionPortal portal;
     AprilTagDetection detection;
@@ -27,6 +33,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     boolean streaming;
     final double tagDistToMiddleShooter = 8;
     MotifPattern motifPattern;
+
+
     public TagCamera(){
 
         tags = new AprilTagProcessor.Builder()
@@ -85,7 +93,26 @@ public class TagCamera implements BluSubsystem, Subsystem {
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
+                double tagFieldX = detection.metadata.fieldPosition.get(0);
+                double tagFieldY = detection.metadata.fieldPosition.get(1);
+                double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Robot.getInstance().turret.getAngle();
+                double angle = cameraFieldHeading;
+                double dx = detection.ftcPose.x; // left/right relative to camera
+                double dy = detection.ftcPose.y; // forward/back relative to camera
+                double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
+                double camToTagFieldY = dx * Math.sin(angle) + dy * Math.cos(angle);
+                double cameraFieldX = tagFieldX - camToTagFieldX;
+                double cameraFieldY = tagFieldY - camToTagFieldY;
+                double turretOffsetX = 0.0;
+                double turretOffsetY = 0.0;
+                double rotatedOffsetX = turretOffsetX * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) - turretOffsetY * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                double rotatedOffsetY = turretOffsetX * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) + turretOffsetY * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                double robotFieldX = cameraFieldX - rotatedOffsetX;
+                double robotFieldY = cameraFieldY - rotatedOffsetY;
+                Robot.getInstance().sixWheelDrivetrain.setPosition(new Pose2d(robotFieldX, robotFieldY, Robot.getInstance().sixWheelDrivetrain.getPos().getH())
+                );
             }
+
         }
     }
 

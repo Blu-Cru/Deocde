@@ -375,6 +375,10 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
+        telemetry.addData("Shooter State", state);
+        telemetry.addData("Left Vel", leftShooter.getVel());
+        telemetry.addData("Middle Vel", middleShooter.getVel());
+        telemetry.addData("Right Vel", rightShooter.getVel());
     }
 
     @Override

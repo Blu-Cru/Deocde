@@ -26,6 +26,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class RootNegativeOneFSM extends BaseAuto {
     double turretAngle     = 142;
     double preAimTurretAngle = -90;
+    double gateCyclePreAimAngle = -135;
     double velo            = 1100;
     double veloMiddle      = 1100;
     double leftHood        = 32;
@@ -304,7 +305,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                         new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                         new WaitCommand(700),
-                        new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
+                        new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();})
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, -56),
                         new Point2d(9, -19)
@@ -330,7 +331,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                         new AutonomousTransferCommand(leftHood, middleHood, rightHood),
                         new WaitCommand(700),
-                        new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
+                        new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();})
                 .waitMilliseconds(0)
                 .build();
     }
