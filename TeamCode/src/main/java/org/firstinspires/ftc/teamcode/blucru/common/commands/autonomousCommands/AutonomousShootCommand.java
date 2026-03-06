@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands;
 
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
@@ -18,17 +20,39 @@ public class AutonomousShootCommand extends InstantCommand {
         super(() ->{
                 new SequentialCommandGroup(
                         new AllTransferUpCommand(),
-                        new WaitCommand(300),
+                        new WaitCommand(100),
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
                         //new WaitCommand(200),
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand(),
-                        new WaitCommand(200),
+                        new WaitCommand(400),
 //                        new WaitCommand(300),
                         new IntakeStartCommand(),
                         new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())
                 ).schedule();}
+        );
+    }
+
+    public AutonomousShootCommand(boolean idleShooter){
+        super(() ->{
+                    new SequentialCommandGroup(
+                            new AllTransferUpCommand(),
+                            new WaitCommand(150),
+                            new InstantCommand(() -> {
+                                if (idleShooter){
+                                    new IdleShooterCommand().schedule();
+                                }
+                            }),
+                            new CenterTurretCommand(),
+                            //new WaitCommand(200),
+                            new ElevatorDownCommand(),
+                            new AllTransferDownCommand(),
+                            new WaitCommand(400),
+//                        new WaitCommand(300),
+                            new IntakeStartCommand(),
+                            new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())
+                    ).schedule();}
         );
     }
 
