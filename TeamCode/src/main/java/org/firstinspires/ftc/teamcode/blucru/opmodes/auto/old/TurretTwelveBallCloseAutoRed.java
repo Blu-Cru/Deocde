@@ -55,7 +55,6 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
 
 
         shooter.setHoodAngle(26);
-        shooter.setMiddleHoodAngle(30);
         shooter.write();
         transfer.setAllMiddle();
         transfer.write();
@@ -250,7 +249,7 @@ public class TurretTwelveBallCloseAutoRed extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
+        shooter.setHoodAngle(26); //orig 26 28 26 before switch to triple shot
         shooter.shootWithVelocity(900); //orig 850 before switching to triple shot
         turret.setAngle(30);
 

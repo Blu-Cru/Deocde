@@ -24,9 +24,7 @@ public class OldCloseCycleAutoRed extends BluLinearOpMode {
     double preAimTurretAngle = 90; //robot centric
     double velo =1120;
     double veloMiddle = 1140;
-    double leftHood=34;
-    double middleHood=34;
-    double rightHood=34;
+    double hood=34;
     boolean alreadySignalledPattern;
 
     public class TestingPath extends SixWheelPIDPathBuilder {
@@ -67,7 +65,7 @@ public class OldCloseCycleAutoRed extends BluLinearOpMode {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(1900),
                                 new TurnTurretToPosCommand(preAimTurretAngle)
                         ).schedule();
@@ -104,7 +102,7 @@ public class OldCloseCycleAutoRed extends BluLinearOpMode {
                     .callback( () -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(1900),
                                 new TurnTurretToPosCommand(preAimTurretAngle)
                         ).schedule();
@@ -139,7 +137,7 @@ public class OldCloseCycleAutoRed extends BluLinearOpMode {
                     .callback( () -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(1900),
                                 new TurnTurretToPosCommand(preAimTurretAngle)
                         ).schedule();
@@ -258,7 +256,7 @@ public class OldCloseCycleAutoRed extends BluLinearOpMode {
         addTurret();
         addTransfer();
         addLLTagDetector();
-        shooter.setHoodAngleIndependent(30, 30, 30);
+        shooter.setHoodAngle(30);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

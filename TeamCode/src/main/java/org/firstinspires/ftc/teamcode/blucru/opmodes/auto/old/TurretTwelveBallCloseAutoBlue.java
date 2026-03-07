@@ -50,7 +50,6 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
         drive = new TankDrive(hardwareMap, Globals.mapRRPose2d(startPose));
 
         shooter.setHoodAngle(26);
-        shooter.setMiddleHoodAngle(30);
         shooter.write();
         transfer.setAllMiddle();
         transfer.write();
@@ -210,7 +209,7 @@ public class TurretTwelveBallCloseAutoBlue extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        shooter.setHoodAngleIndependent(26, 26, 26);
+        shooter.setHoodAngle(26);
         shooter.shootWithVelocity(900);
         turret.setAngle(-32.5);
 

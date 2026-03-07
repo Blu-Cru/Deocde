@@ -29,9 +29,7 @@ public class PPCloseRedAutoMotif extends BaseAuto {
     double turretAngle = 217; // field centric, decrease = towards obelisk increase = towards gate
     double velo = 1110;
     double veloMiddle = 1120;
-    double leftHood = 34;
-    double middleHood = 34;
-    double rightHood = 34;
+    double hood = 34;
     boolean alreadySignalledPattern;
 
     enum State {
@@ -76,7 +74,7 @@ public class PPCloseRedAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                                new AutonomousTransferCommand(hood)).schedule();
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
@@ -111,7 +109,7 @@ public class PPCloseRedAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                                new AutonomousTransferCommand(hood)).schedule();
 
                     })
                     .waitMilliseconds(700)
@@ -147,7 +145,7 @@ public class PPCloseRedAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)).schedule();
+                                new AutonomousTransferCommand(hood)).schedule();
 
                     })
                     .waitMilliseconds(700)
@@ -211,7 +209,7 @@ public class PPCloseRedAutoMotif extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(32, 32, 32);
+        shooter.setHoodAngle(32);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

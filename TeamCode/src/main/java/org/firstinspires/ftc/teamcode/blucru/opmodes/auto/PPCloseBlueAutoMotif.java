@@ -31,9 +31,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
     double nonFieldCentricTurretAngle = -87;
     double velo = 1115;
     double veloMiddle = 1130;
-    double leftHood = 34;
-    double middleHood = 34;
-    double rightHood = 34;
+    double hood = 34;
     boolean alreadySignalledPattern;
 
     enum State {
@@ -74,7 +72,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
                                 new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
                         alreadySignalledPattern = true;
@@ -111,7 +109,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
                                 new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
 
@@ -151,7 +149,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new ReadBallColorsCommand(), // Read all color sensors at once
                                 new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                                new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
                                 new TurnTurretToPosFieldCentricCommand(turretAngle)).schedule();
 
@@ -219,7 +217,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(32, 32, 32);
+        shooter.setHoodAngle(32);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

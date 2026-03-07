@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutoLongSpitTransferCommand;
@@ -13,9 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorM
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
@@ -35,10 +32,7 @@ public class farBLUEauto extends BaseAuto {
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
     Point2d shootingPoint = new Point2d(45, -9);
-
-    double leftHood = 49;
-    double middleHood = 45;
-    double rightHood = 49;
+    double hood = 45;
     double pickupWallX1 = 61;
     double pickupWallX2 = 62;
     double pickupWallX3=62;
@@ -89,9 +83,7 @@ public class farBLUEauto extends BaseAuto {
                                 new ElevatorMiddleCommand(),
                                 new WaitCommand(150),
                                 new AllTransferMiddleCommand(),
-                                new SetLeftHoodAngleCommand(leftHood),
-                                new SetRightHoodAngleCommand(middleHood),
-                                new SetMiddleHoodAngleCommand(rightHood),
+                                new SetHoodAngleCommand(hood),
 //                    new WaitCommand(200), //TODO: TUNE WAIT
                                 new IntakeStopCommand(),
                                 new ParallelizeIntakeCommand()
@@ -131,7 +123,7 @@ public class farBLUEauto extends BaseAuto {
                         new SequentialCommandGroup(
 
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)
+                                new AutoLongSpitTransferCommand(hood)
 //                                new WaitCommand(4000),
 //                                new TurnTurretToPosCommand(102)
                         ).schedule();
@@ -168,7 +160,7 @@ public class farBLUEauto extends BaseAuto {
 //                                new WaitCommand(300),
 
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)
+                                new AutoLongSpitTransferCommand(hood)
 //                                new WaitCommand(4000),
 //                                new TurnTurretToPosCommand(102)
                         ).schedule();
@@ -202,7 +194,7 @@ public class farBLUEauto extends BaseAuto {
                         new SequentialCommandGroup(
 //                                new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                                new AutoLongSpitTransferCommand(leftHood, middleHood, rightHood)
+                                new AutoLongSpitTransferCommand(hood)
 //                                new WaitCommand(2000),
 //                                new TurnTurretToPosCommand(102)
                         ).schedule();
@@ -253,7 +245,7 @@ public class farBLUEauto extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(leftHood, middleHood, rightHood);
+        shooter.setHoodAngle(hood);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

@@ -29,9 +29,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     double gateCyclePreAimAngle = -135;
     double velo            = 1100;
     double veloMiddle      = 1100;
-    double leftHood        = 32;
-    double middleHood      = 32;
-    double rightHood       = 32;
+    double hood        = 32;
 
     double GATE_CYCLE_TIME_THRESHOLD = 20;
 
@@ -187,7 +185,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(30, 30, 30);
+        shooter.setHoodAngle(30);
         shooter.write();
         elevator.setMiddle();
         elevator.write();
@@ -276,7 +274,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
                 .callback(() -> {new SequentialCommandGroup(
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                        new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                        new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
 
@@ -303,7 +301,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .waitMilliseconds(1000)
                 .callback(() -> {new SequentialCommandGroup(
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                        new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                        new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();})
                 .addPurePursuitPath(new Point2d[] {
@@ -329,7 +327,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                        new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                        new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();})
                 .waitMilliseconds(0)
@@ -365,7 +363,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                        new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                        new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
                 .waitMilliseconds(100)
@@ -396,7 +394,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                        new AutonomousTransferCommand(leftHood, middleHood, rightHood),
+                        new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
                 .waitMilliseconds(100)

@@ -9,7 +9,6 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FtclibCommandAction;
@@ -20,9 +19,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
@@ -60,7 +57,6 @@ public class TurretFarAutoRed extends BluLinearOpMode {
 
 
         shooter.setHoodAngle(26);
-        shooter.setMiddleHoodAngle(30);
         shooter.write();
         transfer.setAllMiddle();
         transfer.write();
@@ -157,9 +153,7 @@ public class TurretFarAutoRed extends BluLinearOpMode {
                         new SequentialCommandGroup(
                                 new IntakeSpitCommand(),
                                 new ShootWithVelocityCommand(1390),
-                                new SetLeftHoodAngleCommand(43),
-                                new SetMiddleHoodAngleCommand(45),
-                                new SetRightHoodAngleCommand(43),
+                                new SetHoodAngleCommand(45),
                                 new WaitCommand(500),
                                 new ElevatorUpCommand(),
                                 new WaitCommand(500),
@@ -265,7 +259,7 @@ public class TurretFarAutoRed extends BluLinearOpMode {
 
         turret.setAngle(63);
         shooter.shootWithVelocity(1360);
-        shooter.setHoodAngleIndependent(41, 46, 41);
+        shooter.setHoodAngle(46);
 
         drive.lazyImu.get().resetYaw();                 // IMU yaw = 0
         drive.localizer.setPose(Globals.mapRRPose2d(startPose));  // RR pose heading = startPose.heading

@@ -11,15 +11,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorM
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
 @Config
 public class AutonomousAntiJamTransferCommand extends InstantCommand {
     //used so that it only lowers elevator down fully once the bot leaves intaking zone, prevents jams
-    public AutonomousAntiJamTransferCommand(double leftAngle, double middleAngle, double rightAngle){
+    public AutonomousAntiJamTransferCommand(double hood){
         super(() -> {
             new SequentialCommandGroup(
                     new ElevatorDownCommand(),
@@ -32,9 +30,7 @@ public class AutonomousAntiJamTransferCommand extends InstantCommand {
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
-                    new SetLeftHoodAngleCommand(leftAngle),
-                    new SetRightHoodAngleCommand(middleAngle),
-                    new SetMiddleHoodAngleCommand(rightAngle),
+                    new SetHoodAngleCommand(hood),
 //                    new WaitCommand(200), //TODO: TUNE WAIT
                     new IntakeStopCommand(),
                     new ParallelizeIntakeCommand()

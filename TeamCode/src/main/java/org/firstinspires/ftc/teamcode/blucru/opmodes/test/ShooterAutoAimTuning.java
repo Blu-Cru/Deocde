@@ -7,9 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
 @TeleOp(group = "test")
 public class ShooterAutoAimTuning extends BluLinearOpMode {
-    public static double leftAngle = 0;
-    public static double rightAngle = 0;
-    public static double middleAngle = 0;
+    public static double angle = 0;
 
     public static double turretAngle = 20;
 
@@ -34,9 +32,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         }
 
         if (driver1.pressedA()){
-            shooter.setLeftHoodAngle(leftAngle);
-            shooter.setMiddleHoodAngle(middleAngle);
-            shooter.setRightHoodAngle(rightAngle);
+            shooter.setHoodAngle(angle);
         }
 
         if (driver1.pressedY()){

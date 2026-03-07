@@ -13,9 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorU
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -25,7 +23,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 
 
 public class FarAutoTransferFailsafeCommand extends InstantCommand {
-    public FarAutoTransferFailsafeCommand(double leftAngle, double middleAngle, double rightAngle, double turretAngle) {
+    public FarAutoTransferFailsafeCommand(double hood, double turretAngle) {
         super(() -> {
             new SequentialCommandGroup(
                     // ===== INITIAL TRANSFER ATTEMPT =====
@@ -39,9 +37,7 @@ public class FarAutoTransferFailsafeCommand extends InstantCommand {
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
-                    new SetLeftHoodAngleCommand(leftAngle),
-                    new SetRightHoodAngleCommand(middleAngle),
-                    new SetMiddleHoodAngleCommand(rightAngle),
+                    new SetHoodAngleCommand(hood),
                     new WaitCommand(200),
 
                     // ===== CHECK & RETRY IF NEEDED =====
@@ -71,9 +67,7 @@ public class FarAutoTransferFailsafeCommand extends InstantCommand {
                                     new ElevatorMiddleCommand(), // drop balls onto transfer
                                     new WaitCommand(150),
                                     new AllTransferMiddleCommand(),
-                                    new SetLeftHoodAngleCommand(leftAngle),
-                                    new SetRightHoodAngleCommand(middleAngle),
-                                    new SetMiddleHoodAngleCommand(rightAngle),
+                                    new SetHoodAngleCommand(hood),
                                     new WaitCommand(200),
                                     new TurnTurretToPosCommand(turretAngle)),
 

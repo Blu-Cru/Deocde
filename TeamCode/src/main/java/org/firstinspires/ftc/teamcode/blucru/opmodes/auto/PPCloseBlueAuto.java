@@ -23,9 +23,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 public class PPCloseBlueAuto extends BaseAuto {
     double turretAngle = 142; //field centric, decrease = more towards gate, increase = towards obelisk
     double velo = 1150;
-    double leftHood;
-    double middleHood ;
-    double rightHood ;
+    double hood = 30;
     boolean alreadySignalledPattern;
 
     enum State {
@@ -61,7 +59,7 @@ public class PPCloseBlueAuto extends BaseAuto {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
+                                new AutonomousTransferCommand(hood)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -94,7 +92,7 @@ public class PPCloseBlueAuto extends BaseAuto {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
+                                new AutonomousTransferCommand(hood)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -130,7 +128,7 @@ public class PPCloseBlueAuto extends BaseAuto {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new SetShooterVelocityIndependentCommand(velo, velo, velo),
-                                new AutonomousTransferCommand(leftHood, middleHood, rightHood)
+                                new AutonomousTransferCommand(hood)
                         ).schedule();
                     })
                     .waitMilliseconds(1000)
@@ -190,7 +188,7 @@ public class PPCloseBlueAuto extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(30, 30, 30);
+        shooter.setHoodAngle(hood);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

@@ -38,7 +38,6 @@ public class TurretAutoPath extends BluLinearOpMode {
 //        turret.setRRPoseSupplier(() -> drive.localizer.getPose());
 
         shooter.setHoodAngle(26);
-        shooter.setMiddleHoodAngle(30);
         shooter.write();
         transfer.setAllMiddle();
         transfer.write();
@@ -198,7 +197,7 @@ public class TurretAutoPath extends BluLinearOpMode {
 
     @Override
     public void onStart() {
-        shooter.setHoodAngleIndependent(26, 26, 26); //orig 26 28 26 before switch to triple shot
+        shooter.setHoodAngle(26); //orig 26 28 26 before switch to triple shot
 //        shooter.shootWithVelocity(1050); //orig 850 before switching to triple shot
 //        turret.setAngle(25);
         TelemetryPacket packet = new TelemetryPacket();

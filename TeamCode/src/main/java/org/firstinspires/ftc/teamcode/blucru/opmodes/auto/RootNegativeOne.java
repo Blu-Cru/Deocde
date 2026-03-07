@@ -136,7 +136,7 @@ public class RootNegativeOne extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngleIndependent(30, 30, 30);
+        shooter.setHoodAngle(30);
         shooter.write();
         elevator.setMiddle();
         elevator.write();

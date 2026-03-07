@@ -9,13 +9,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorM
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
 public class AutonomousTransferCommand extends InstantCommand {
-    public AutonomousTransferCommand(double leftAngle, double middleAngle, double rightAngle){
+    public AutonomousTransferCommand(double hood){
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeSpitCommand(),
@@ -27,9 +25,7 @@ public class AutonomousTransferCommand extends InstantCommand {
                     new ElevatorMiddleCommand(),
                     new WaitCommand(150),
                     new AllTransferMiddleCommand(),
-                    new SetLeftHoodAngleCommand(leftAngle),
-                    new SetRightHoodAngleCommand(middleAngle),
-                    new SetMiddleHoodAngleCommand(rightAngle)
+                    new SetHoodAngleCommand(hood)
 
 
 

@@ -9,9 +9,7 @@ import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 // IMPORTS... (Keep your existing subsystem imports)
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
@@ -24,9 +22,7 @@ public class TransferNoAutoAim extends SequentialCommandGroup { // 1. Extend Seq
     public static double leftVel = 900;
     public static double rightVel = 900;
     public static double middleVel = 900;
-    public static double leftHood = 40;
-    public static double middleHood = 40;
-    public static double rightHood = 40;
+    public static double hood = 40;
     public static long elevatorUpWait = 400;
 
     public TransferNoAutoAim(boolean turreting) {
@@ -35,9 +31,7 @@ public class TransferNoAutoAim extends SequentialCommandGroup { // 1. Extend Seq
                 new AllTransferDownCommand(),
                 new CenterTurretCommand(),
                 new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
-                new SetLeftHoodAngleCommand(leftHood),
-                new SetMiddleHoodAngleCommand(middleHood),
-                new SetRightHoodAngleCommand(rightHood),
+                new SetHoodAngleCommand(hood),
                 new WaitCommand(100),
                 new ElevatorUpCommand(),
                 new WaitCommand(elevatorUpWait),

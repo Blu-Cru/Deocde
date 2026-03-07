@@ -9,13 +9,6 @@ public class ShooterAutoAimInterpolation {
             80, 85, 90, 95, 100, 105, 110, 115, 120, 125,
             130, 135, 140
     };
-
-    private static final double[] leftAngles = {
-            26, 26, 27, 30, 31, 33, 36, 39, 42, 42,
-            43, 43, 45,
-            50, 49, 49, 48, 48, 47, 46, 47, 46, 47
-    };
-
     private static final double[] leftVelocities = {
             960, 980, 1000, 1040, 1080, 1120, 1160, 1200, 1260, 1260,
             1280, 1320, 1360, 1380, 1400, 1400, 1420, 1440, 1500, 1520,
@@ -26,12 +19,6 @@ public class ShooterAutoAimInterpolation {
             16.5, 24, 37, 44.5, 49, 55, 60, 65, 70, 75,
             80, 85, 90, 95, 100, 105, 110, 115, 120, 125,
             130, 135, 140
-    };
-
-    private static final double[] middleAngles = {
-            26, 26, 27, 30, 31, 33, 36, 39, 41, 41,
-            42, 42, 44,
-            49, 48, 48, 47, 47, 46, 46, 46, 45, 46
     };
 
     private static final double[] middleVelocities = {
@@ -46,17 +33,14 @@ public class ShooterAutoAimInterpolation {
             130, 135, 140
     };
 
-    private static final double[] rightAngles = {
-            26, 26, 27, 30, 31, 33, 36, 39, 42, 42,
-            43, 43, 45,
-            50, 49, 49, 48, 48, 47, 46, 47, 46, 47
-    };
-
     private static final double[] rightVelocities = {
             960, 980, 1000, 1040, 1080, 1120, 1160, 1200, 1260, 1260,
             1320, 1320, 1360, 1380, 1400, 1400, 1420, 1440, 1480, 1500,
             1560, 1580, 1580
     };
+
+    private static final double[] hoodDists = {10,20,30,40};
+    private static final double[] hoodAngle = {28,32,35,37};
 
 
     private static final double[] middleShooterVels = {
@@ -68,7 +52,7 @@ public class ShooterAutoAimInterpolation {
     };
 
 
-    public static double[] interpolateLeft(double dist){
+    public static double interpolateLeft(double dist){
         // clamp to range to prevent hardware damage or crashes
         dist = Range.clip(dist, leftDists[0], leftDists[leftDists.length - 1]);
 
@@ -84,12 +68,11 @@ public class ShooterAutoAimInterpolation {
 
         // linear interpolation
         double vel = lerp(leftVelocities[i], leftVelocities[i+1], t);
-        double shooterAngle = lerp(leftAngles[i], leftAngles[i+1], t);
 
-        return new double[]{vel, shooterAngle};
+        return vel;
     }
 
-    public static double[] interpolateMiddle(double dist){
+    public static double interpolateMiddle(double dist){
         // clamp to range to prevent hardware damage or crashes
         dist = Range.clip(dist, middleDists[0], middleDists[middleDists.length - 1]);
 
@@ -105,12 +88,11 @@ public class ShooterAutoAimInterpolation {
 
         // linear interpolation
         double vel = lerp(middleVelocities[i], middleVelocities[i+1], t);
-        double shooterAngle = lerp(middleAngles[i], middleAngles[i+1], t);
 
-        return new double[]{vel, shooterAngle};
+        return vel;
     }
 
-    public static double[] interpolateRight(double dist){
+    public static double interpolateRight(double dist){
         // clamp to range to prevent hardware damage or crashes
         dist = Range.clip(dist, rightDists[0], rightDists[rightDists.length - 1]);
 
@@ -126,9 +108,28 @@ public class ShooterAutoAimInterpolation {
 
         // linear interpolation
         double vel = lerp(rightVelocities[i], rightVelocities[i+1], t);
-        double shooterAngle = lerp(rightAngles[i], rightAngles[i+1], t);
 
-        return new double[]{vel, shooterAngle};
+        return vel;
+    }
+
+    public static double interpolateHood(double dist){
+        // clamp to range to prevent hardware damage or crashes
+        dist = Range.clip(dist, hoodDists[0], hoodDists[hoodDists.length - 1]);
+
+        int i;
+        for (i = 0; i < hoodDists.length - 2; i++){
+            if (hoodDists[i+1] > dist){
+                break;
+            }
+        }
+
+        // calculate interpolation fraction
+        double t = (dist - hoodDists[i]) / (hoodDists[i+1] - hoodDists[i]);
+
+        // linear interpolation
+        double angle = lerp(hoodDists[i], hoodDists[i+1], t);
+
+        return angle;
     }
 
     private static double lerp(double start, double end, double t) {
