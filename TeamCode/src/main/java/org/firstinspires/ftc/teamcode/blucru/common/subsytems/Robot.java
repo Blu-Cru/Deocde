@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.Tilt;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
@@ -45,6 +46,7 @@ public class Robot {
     public LimelightObeliskTagDetector llTagDetector;
     public LimelightBallDetector ballDetector;
     public TagCamera turretCam;
+    public Tilt tilt;
     public PoseHistory positionHistory;
     private static Robot instance;
     HardwareMap hwMap;
@@ -197,5 +199,11 @@ public class Robot {
         elevator = new Elevator();
         subsystems.add(elevator);
         return elevator;
+    }
+
+    public Tilt addTilt(){
+        tilt = new Tilt("tilt", Globals.blMotorName);
+        subsystems.add(tilt);
+        return tilt;
     }
 }
