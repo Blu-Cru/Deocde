@@ -103,7 +103,7 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     new ElevatorMiddleForIntakeCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedTouchpad(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
@@ -116,7 +116,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                      new ElevatorDownCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedTouchpad(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
@@ -214,7 +214,7 @@ public class Tele extends BluLinearOpMode{
         sm.update();
 
         //Shooter
-        if(driver2.pressedRightBumper()){
+        if(driver2.pressedTouchpad()){
             gamepad2.rumble(350);
             shooter.redAlliance = true;
             Globals.setAlliance(Alliance.RED);
@@ -358,7 +358,7 @@ public class Tele extends BluLinearOpMode{
             Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;
         }
 
-        if (driver2.pressedY()){
+        if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){
             new TiltCommand().schedule();
         }
 //        if (driver2.pressedDpadLeft()){
