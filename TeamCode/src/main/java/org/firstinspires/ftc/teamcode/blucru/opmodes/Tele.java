@@ -20,6 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorM
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootReverseWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.tiltCommands.TiltCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.MiddleTransferUpCommand;
@@ -60,6 +61,7 @@ public class Tele extends BluLinearOpMode{
         addTransfer();
         addShooter();
         addTurret();
+        addTilt();
         CommandScheduler.getInstance().reset();
 
         sm = new StateMachineBuilder()
@@ -101,7 +103,7 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     new ElevatorMiddleForIntakeCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedTouchpad(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
@@ -114,7 +116,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                      new ElevatorDownCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedTouchpad(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
@@ -344,15 +346,20 @@ public class Tele extends BluLinearOpMode{
                 Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
             }
         }
+        /*
         if (driver2.pressedY()){
             transfer.setAllUp();
         }
         if (driver2.pressedTouchpad()){
             transfer.setAllDown();
-        }
+        }*/
         if (driver2.pressedLeftTrigger()){
             Intake.offset += 5;
             Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;
+        }
+
+        if (driver2.pressedY()){
+            new TiltCommand().schedule();
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
