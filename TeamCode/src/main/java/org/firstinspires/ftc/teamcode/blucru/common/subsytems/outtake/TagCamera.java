@@ -35,7 +35,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     boolean streaming;
     final double tagDistToMiddleShooter = 8;
     final double turretCenterToLocPoint = -72.35/25.4;
+    long captureTime;
     MotifPattern motifPattern;
+    Pose2d botpose;
 
 
     public TagCamera(){
@@ -59,6 +61,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .build();
         motifPattern = MotifPattern.UNKNOWN;
         streaming = true;
+        captureTime = 0;
+        botpose = null;
     }
 
     @Override
@@ -75,6 +79,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
             Globals.telemetry.addLine("Looking for tags");
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             for (AprilTagDetection detect : detections) {
+                captureTime = detect.frameAcquisitionNanoTime;
                 if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
                         || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
                     currentlySeeingGoodTags = true;
@@ -114,7 +119,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
                 Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 
-                Robot.getInstance().sixWheelDrivetrain.setPosition(new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH()));
+                botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
 
                 //non-vector code
@@ -162,6 +167,13 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
     public boolean detectedThisLoop(){
         return currentlySeeingGoodTags;
+    }
+    public Pose2d getBotPosePoseHistory() {
+        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
+        // now that we know offsets we can assume we havent changed off that much
+        return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
+                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
     }
     public double getTagDistToMiddleShooter(){
         return tagDistToMiddleShooter;

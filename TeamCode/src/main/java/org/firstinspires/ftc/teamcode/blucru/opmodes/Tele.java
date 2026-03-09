@@ -14,6 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleForIntakeCommand;
@@ -309,7 +310,7 @@ public class Tele extends BluLinearOpMode{
         if (driver1.pressedY()){
             if (llTagDetector.validLLReads()){
                 gamepad2.rumble(200);
-                sixWheel.setPosition(llTagDetector.getLLBotPose());
+                sixWheel.setPosition(Robot.getInstance().turretCam.getBotPosePoseHistory());
             }
             if(Globals.alliance == Alliance.RED) {
                 Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
