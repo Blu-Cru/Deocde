@@ -28,8 +28,8 @@ public class Tilt implements Subsystem, BluSubsystem {
      * class assumes that positions need to be inverted(ie if one servo needs to go to
      *
      * */
-    public Tilt(BluCRServo tilt, String encoder){
-        this.tilt = tilt;
+    public Tilt(String tilt, String encoder){
+        this.tilt = new BluCRServo(tilt);
         this.encoder = new BluEncoder(encoder);
         pid = new PDController(0.1, 0.001);
         state = State.MANUAL;
