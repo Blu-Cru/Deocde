@@ -14,6 +14,6 @@ public class TurretCamTest extends BluLinearOpMode {
 
     public void periodic(){
         telemetry.addData("Robot Pos Cam", Robot.getInstance().turretCam.getBotPosePoseHistory());
-        telemetry.addData("Robot Pos Loc", sixWheel.getPos())''
+        telemetry.addData("Robot Pos Loc", sixWheel.getPos());
     }
 }
