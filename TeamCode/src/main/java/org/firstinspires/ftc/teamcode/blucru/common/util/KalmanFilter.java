@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
-public class KhmanFilter {
+public class KalmanFilter {
     static double x = 0; // your initial state
     static double Q = 0.1; // your model covariance
     static double R = 0.4; // your sensor covariance
@@ -13,14 +13,14 @@ public class KhmanFilter {
     static double z = 0;
     static double lastinput = 0;
 
-    public KhmanFilter(double x, double Q, double R, double p, double K) {
+    public KalmanFilter(double x, double Q, double R, double p, double K) {
         this.x = x;
         this.Q = Q;
         this.R = R;
     }
     public void update(double input) {
         double predictedinput = input-lastinput;
-        u = predictedinput; // The new input
+        u = predictedinput; // The delta
         x = x_previous + u;
 
         p = p_previous + Q;
