@@ -16,25 +16,19 @@ public class ShooterAutoAimInterpolation {
     };
 
     private static final double[] middleVelocities = {
-            960, 980, 1000, 1040, 1080, 1120, 1180, 1200, 1280, 1280,
-            1300, 1340, 1380, 1400, 1420, 1440, 1460, 1480, 1520, 1540,
-            1560, 1580, 1600
+            1000,1000,1000,1000,1000,1000
     };
 
     private static final double[] rightDists = {
-            16.5, 24, 37, 44.5, 49, 55, 60, 65, 70, 75,
-            80, 85, 90, 95, 100, 105, 110, 115, 120, 125,
-            130, 135, 140
+            16.5, 24, 37, 44.5, 49, 55
     };
 
     private static final double[] rightVelocities = {
-            960, 980, 1000, 1040, 1080, 1120, 1160, 1200, 1260, 1260,
-            1320, 1320, 1360, 1380, 1400, 1400, 1420, 1440, 1480, 1500,
-            1560, 1580, 1580
+            1000,1000,1000,1000,1000,1000
     };
 
     private static final double[] hoodDists = {10,20,30,40};
-    private static final double[] hoodAngle = {28,32,35,37};
+    private static final double[] hoodAngle = {28,28,28,28};
 
 
     private static final double[] middleShooterVels = {
@@ -121,7 +115,7 @@ public class ShooterAutoAimInterpolation {
         double t = (dist - hoodDists[i]) / (hoodDists[i+1] - hoodDists[i]);
 
         // linear interpolation
-        double angle = lerp(hoodDists[i], hoodDists[i+1], t);
+        double angle = lerp(hoodAngle[i], hoodAngle[i+1], t);
 
         return angle;
     }
