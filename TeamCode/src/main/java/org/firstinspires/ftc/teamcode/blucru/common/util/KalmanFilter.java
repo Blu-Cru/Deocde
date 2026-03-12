@@ -39,6 +39,9 @@ public class KalmanFilter {
     }
 
     public double get() {
+        return x;
+    }
+    public double getUncertainty() {
         return p;
     }
 }
