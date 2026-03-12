@@ -23,7 +23,6 @@ public class Intake implements BluSubsystem, Subsystem {
     private double encoderIteration = 0;
     private BluEncoder encoder;
     public BluDigitalChannel parallelSensor;
-    public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
     public static double ENCODER_PPR_INTAKE = 4000;
@@ -80,7 +79,6 @@ public class Intake implements BluSubsystem, Subsystem {
         encoder = new BluEncoder(motorName);
         pid = new PDController(0.0004, 0.0002);
         state = State.IDlE;
-        jammed = false;
     }
 
     public void setPID(){
@@ -107,9 +105,6 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void write() {
-        if (jammed){
-            motor.setPower(-1);
-        } else {
             switch(state){
                 case IN:
                     armsParallel = false;
@@ -158,7 +153,7 @@ public class Intake implements BluSubsystem, Subsystem {
 //                        //resetEncoder();
 //                        armsParallel = true;
 //                    }
-            }
+
         }
 
         motor.write();

@@ -112,10 +112,10 @@ public class Tele extends BluLinearOpMode{
 
                 .state(State.INTAKING_ELEVATED)
                 .loop(() -> {
-                        intake.setIn();
+                    intake.setIn();
                 })
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
-                     new ElevatorDownCommand().schedule();
+                    new ElevatorDownCommand().schedule();
                 })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
@@ -182,7 +182,7 @@ public class Tele extends BluLinearOpMode{
                 })*/
                 .build();
 
-        sm.setState(State.INTAKING);
+        sm.setState(State.IDLE);
 
         elevator.setUp();
         elevator.write();
