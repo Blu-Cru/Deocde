@@ -31,7 +31,7 @@ public class Octoquad implements RobotLocalizer{
         //TODO UPDATE PER ROBOT
         //x encoder
         //TODO TUNE HEADING SCALAR
-        octoquad.setAllLocalizerParameters(0,1,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) parallelYOffset, (float) perpXOffset, 1,20);
+        octoquad.setAllLocalizerParameters(5,6,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) parallelYOffset, (float) perpXOffset, 1.02F,20);
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
         pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
         vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
@@ -40,8 +40,9 @@ public class Octoquad implements RobotLocalizer{
 
     @Override
     public void read() {
-        octoquad.readLocalizerData();
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
+        Globals.telemetry.addData("Info x", info.posX_mm);
+        Globals.telemetry.addData("Info y", info.posY_mm);
         //dividing for unit conversion
         pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
         vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
@@ -92,14 +93,13 @@ public class Octoquad implements RobotLocalizer{
      * inch, inch, radian
      * */
     public void setPosition(double x, double y, double h){
+        Globals.telemetry.addLine("Setting Pose");
         octoquad.setLocalizerPose((int) (x * 25.4),(int) (y * 25.4),(float) h);
         read();
     }
 
     @Override
     public void setPosition(Pose2d pose) {
-
-
         Globals.telemetry.addData("Pose", "X: " + pose.getX() + ",Y: " + pose.getY() + ",H: " + pose.getH());
         setPosition(pose.getX(), pose.getY(), pose.getH());
     }

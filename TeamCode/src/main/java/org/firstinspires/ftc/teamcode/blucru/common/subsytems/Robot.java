@@ -202,7 +202,7 @@ public class Robot {
     }
 
     public Tilt addTilt(){
-        tilt = new Tilt("tilt", Globals.blMotorName);
+        tilt = new Tilt("tilt");
         subsystems.add(tilt);
         return tilt;
     }

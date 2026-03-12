@@ -92,10 +92,13 @@ public class Turret implements BluSubsystem, Subsystem {
             case LOCK_ON_GOAL:
                 //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
-                if (Robot.getInstance().turretCam.detectedThisLoop()) tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-                    else {
-                localizationBasedAutoAim();
-                updateControlLoop();}
+                if (Robot.getInstance().turretCam.detectedThisLoop()){
+                    tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
+                }
+                else {
+                    localizationBasedAutoAim();
+                    updateControlLoop();
+                }
                 break;
             case PID:
                 updateControlLoop();

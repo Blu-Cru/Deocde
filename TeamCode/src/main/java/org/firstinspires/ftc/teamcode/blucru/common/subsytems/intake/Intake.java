@@ -78,7 +78,7 @@ public class Intake implements BluSubsystem, Subsystem {
         motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
         parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(motorName);
-        pid = new PDController(0.01, 0.002);
+        pid = new PDController(0.0004, 0.0002);
         state = State.IDlE;
         jammed = false;
     }
@@ -170,7 +170,7 @@ public class Intake implements BluSubsystem, Subsystem {
         motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
         telemetry.addData("Power", motor.getPower());
-        telemetry.addData("State", state);
+        telemetry.addData("Intake State", state);
     }
 
     @Override

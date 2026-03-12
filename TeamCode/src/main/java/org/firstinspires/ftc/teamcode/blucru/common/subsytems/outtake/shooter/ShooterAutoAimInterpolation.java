@@ -5,20 +5,14 @@ import com.qualcomm.robotcore.util.Range;
 public class ShooterAutoAimInterpolation {
 
     private static final double[] leftDists = {
-            16.5, 24, 37, 44.5, 49, 55, 60, 65, 70, 75,
-            80, 85, 90, 95, 100, 105, 110, 115, 120, 125,
-            130, 135, 140
+            16.5, 24, 37, 44.5, 49, 55
     };
     private static final double[] leftVelocities = {
-            960, 980, 1000, 1040, 1080, 1120, 1160, 1200, 1260, 1260,
-            1280, 1320, 1360, 1380, 1400, 1400, 1420, 1440, 1500, 1520,
-            1560, 1580, 1600
+            1000,1000,1000,1000,1000,1000
     };
 
     private static final double[] middleDists = {
-            16.5, 24, 37, 44.5, 49, 55, 60, 65, 70, 75,
-            80, 85, 90, 95, 100, 105, 110, 115, 120, 125,
-            130, 135, 140
+            16.5, 24, 37, 44.5, 49, 55
     };
 
     private static final double[] middleVelocities = {

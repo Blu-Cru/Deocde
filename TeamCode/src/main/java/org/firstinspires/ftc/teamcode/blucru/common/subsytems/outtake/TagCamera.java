@@ -38,6 +38,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     long captureTime;
     MotifPattern motifPattern;
     Pose2d botpose;
+    final Pose2d TAG_20 = new Pose2d(-58, 58, Math.toDegrees(0));
+    final Pose2d TAG_24 = new Pose2d(58, 58, Math.toDegrees(0));
 
 
     public TagCamera(){
@@ -78,6 +80,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
             Globals.telemetry.addLine("Looking for tags");
             ArrayList<AprilTagDetection> detections = tags.getDetections();
+            if (!detections.isEmpty()){
+                Globals.telemetry.addLine("Detected Tag");
+            }
             for (AprilTagDetection detect : detections) {
                 captureTime = detect.frameAcquisitionNanoTime;
                 if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
@@ -101,13 +106,19 @@ public class TagCamera implements BluSubsystem, Subsystem {
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
-                double tagFieldX = detection.metadata.fieldPosition.get(0);
-                double tagFieldY = detection.metadata.fieldPosition.get(1);
+                Pose2d tagPos = new Pose2d(0,0,0);
+                if (detect.id == 20){
+                    tagPos = TAG_20;
+                } else {
+                    tagPos = TAG_24;
+                }
+                double tagFieldX = tagPos.getX();
+                double tagFieldY = tagPos.getY();
                 Vector2d originToTag = new Vector2d(tagFieldX, tagFieldY);
                 double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle());
                 double angle = cameraFieldHeading;
-                double dx = detection.ftcPose.x; // left/right relative to camera
-                double dy = detection.ftcPose.y; // forward/back relative to camera
+                double dx = detect.ftcPose.x; // left/right relative to camera
+                double dy = detect.ftcPose.y; // forward/back relative to camera
                 Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
                 Vector2d tagToCam = tagToCamCamCentric.rotate(angle);
 
