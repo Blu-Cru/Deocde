@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 @Config
 public class Octoquad implements RobotLocalizer{
     //TODO TUNE PER ROBOT
-    public static double parallelYOffset = 138.5, perpXOffset = 94.05;
+    public static double parallelYOffset = -138.5, perpXOffset = -94.05;
     private OctoQuad octoquad;
     private double headingOffset;
 
@@ -31,7 +31,13 @@ public class Octoquad implements RobotLocalizer{
         //TODO UPDATE PER ROBOT
         //x encoder
         //TODO TUNE HEADING SCALAR
-        octoquad.setAllLocalizerParameters(5,6,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) parallelYOffset, (float) perpXOffset, 1.02F,20);
+
+        // Set encoder directions (must be set before resetLocalizerAndCalibrateIMU)
+        octoquad.setSingleEncoderDirection(5, OctoQuad.EncoderDirection.REVERSE);
+        octoquad.setSingleEncoderDirection(6, OctoQuad.EncoderDirection.REVERSE);
+
+        octoquad.setAllLocalizerParameters(5,6,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) perpXOffset, (float) parallelYOffset, 1.02F,20);
+
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
         pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
         vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
