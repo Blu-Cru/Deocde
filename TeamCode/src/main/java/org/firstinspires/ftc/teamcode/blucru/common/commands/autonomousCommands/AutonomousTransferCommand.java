@@ -16,6 +16,8 @@ public class AutonomousTransferCommand extends InstantCommand {
     public AutonomousTransferCommand(double hood){
         super(() -> {
             new SequentialCommandGroup(
+                    new IntakeStopCommand(),
+                    new WaitCommand(100),
                     new IntakeSpitCommand(),
                     new WaitCommand(300),
                     new ElevatorUpCommand(),

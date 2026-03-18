@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
 @TeleOp(group = "test")
@@ -16,9 +17,9 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
     public static double rightVel = 0;
 
     public void initialize(){
+        robot.addTurretCam();
         addShooter();
         addSixWheel();
-        //addLLTagDetector();
         addTransfer();
         addTurret();
         turret.resetEncoder();
@@ -61,6 +62,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         if (driver1.pressedDpadUp()){
             transfer.setAllMiddle();
         }
+        telemetry.addData("Dist", Robot.getInstance().turretCam.getDetection().ftcPose.range);
     }
 
 }

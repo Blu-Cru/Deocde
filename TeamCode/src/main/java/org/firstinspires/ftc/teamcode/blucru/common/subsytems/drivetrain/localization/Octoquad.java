@@ -47,8 +47,6 @@ public class Octoquad implements RobotLocalizer{
     @Override
     public void read() {
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
-        Globals.telemetry.addData("Info x", info.posX_mm);
-        Globals.telemetry.addData("Info y", info.posY_mm);
         //dividing for unit conversion
         pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
         vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);

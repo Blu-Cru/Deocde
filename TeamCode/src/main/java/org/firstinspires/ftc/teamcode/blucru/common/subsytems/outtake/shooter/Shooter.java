@@ -135,30 +135,22 @@ public class Shooter implements BluSubsystem, Subsystem {
                 rightShooter.setPower(rightShooter.getPowerToGoToVel());
                 break;
             case AUTO_AIM:
-                double dist = 0;
+                double[] vals = new double[4];
 
                 if (Robot.getInstance().turretCam.detectedThisLoop()){
-                    dist = tagBasedShooterAutoAim(Robot.getInstance().turretCam.getDetection());
+                    vals = tagBasedShooterAutoAim(Robot.getInstance().turretCam.getDetection());
                 } else {
 
-                    dist = localizationBasedAutoAim();
+                    vals = localizationBasedAutoAim();
                 }
 
-                Globals.telemetry.addData("dist", dist);
+                leftShooter.setVel(vals[0]);
 
+                middleShooter.setVel(vals[1]);
 
-                double leftLerp = ShooterAutoAimInterpolation.interpolateLeft(dist);
-                double middleLerp = ShooterAutoAimInterpolation.interpolateMiddle(dist);
-                double rightLerp = ShooterAutoAimInterpolation.interpolateRight(dist);
-                double hoodAngle = ShooterAutoAimInterpolation.interpolateHood(dist);
+                rightShooter.setVel(vals[2]);
 
-                leftShooter.setVel(leftLerp);
-
-                middleShooter.setVel(middleLerp);
-
-                rightShooter.setVel(rightLerp);
-
-                hood.setShooterAngle(hoodAngle);
+                hood.setShooterAngle(vals[3]);
 
                 leftShooter.setPower(leftShooter.getPowerToGoToVel());
                 middleShooter.setPower(middleShooter.getPowerToGoToVel());
@@ -255,7 +247,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public double getHoodAngle(){
         return hood.getHoodAngle();
     }
-    public double localizationBasedAutoAim(){
+    public double[] localizationBasedAutoAim(){
 
         //getting the shooter poses
         if (Globals.alliance == Alliance.RED) {
@@ -267,12 +259,12 @@ public class Shooter implements BluSubsystem, Subsystem {
         Vector2d midToGoal = turretToRobot.addNotInPlace(robotToGoal);
 
 
-        double middleDist = midToGoal.getMag();
+        double dist = midToGoal.getMag();
 
-        return middleDist;
+        //return middleDist;
 
         //3 hood code
-        /*double k = shooterDist / midToGoal.getMag();
+        double k = shooterDist / midToGoal.getMag();
         Vector2d midToLeft = midToGoal.rotate(Math.PI/2).scalarMultiplication(k);
         Vector2d midToRight = midToGoal.rotate(-Math.PI/2).scalarMultiplication(k);
         Vector2d leftToGoal = midToGoal.addNotInPlace(midToLeft);
@@ -311,18 +303,17 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         double shooterOffset = shooterDist * tan;
 //                Globals.telemetry.addData("Tan", tan);
-        double leftDist = leftToGoal.getMag() + shooterOffset;
-        double middleDist = midToGoal.getMag();
-        double rightDist = rightToGoal.getMag() - shooterOffset;
-        return new double[]{leftDist, middleDist, rightDist};*/
+        return new double[]{ShooterAutoAimInterpolation.interpolateLeft(dist) + shooterOffset * 10 / dist,
+                ShooterAutoAimInterpolation.interpolateMiddle(dist),
+                ShooterAutoAimInterpolation.interpolateRight(dist) - shooterOffset * 10 / dist,
+                ShooterAutoAimInterpolation.interpolateHood(dist)};
     }
 
-    public double tagBasedShooterAutoAim(AprilTagDetection detection){
+    public double[] tagBasedShooterAutoAim(AprilTagDetection detection){
         double camDistToTag = detection.ftcPose.range;
         Globals.telemetry.addData("Cam dist to tag", camDistToTag);
         double middleShooterDistToTag = camDistToTag + Robot.getInstance().turretCam.getTagDistToMiddleShooter();
-        return middleShooterDistToTag;
-        /*Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
+        Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
         Vector2d a = middleShooterToTag; // vector from mid shooter to goal
         Vector2d b = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());;      // reference direction
 
@@ -350,10 +341,9 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         double shooterOffset = shooterDist * tan;
 //                Globals.telemetry.addData("Tan", tan);
-        double leftDist = middleShooterDistToTag/* + shooterOffset*/
-        /*double middleDist = middleShooterDistToTag;
-        double rightDist = middleShooterDistToTag/* - shooterOffset*/
-        //return new double[]{leftDist, middleDist, rightDist};
+        return new double[]{ShooterAutoAimInterpolation.interpolateLeft(middleShooterDistToTag) + tan * 10/middleShooterDistToTag,
+                ShooterAutoAimInterpolation.interpolateMiddle(middleShooterDistToTag),
+                ShooterAutoAimInterpolation.interpolateRight(middleShooterDistToTag) - tan * 10/middleShooterDistToTag};
     }
 
     public boolean hasShot(int expectedBalls) {
@@ -363,10 +353,10 @@ public class Shooter implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Shooter State", state);
+        /*telemetry.addData("Shooter State", state);
         telemetry.addData("Left Vel", leftShooter.getVel());
         telemetry.addData("Middle Vel", middleShooter.getVel());
-        telemetry.addData("Right Vel", rightShooter.getVel());
+        telemetry.addData("Right Vel", rightShooter.getVel());*/
     }
 
     @Override

@@ -1,7 +1,9 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
+@TeleOp
 public class ElevatorTest extends BluLinearOpMode {
 
     public void initialize(){

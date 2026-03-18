@@ -181,7 +181,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
         double currentAngle = getAngle();
         double error = position - currentAngle;
-        Globals.telemetry.addData("Error", error);
+        //Globals.telemetry.addData("Error", error);
         double power = controller.calculate(currentAngle, position);
         power = Range.clip(power, -powerClip, powerClip);
 
@@ -282,6 +282,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void telemetry(Telemetry telemetry) {
         servos.telemetry();
         encoder.telemetry();
+        telemetry.addData("Target Pos", position);
         telemetry.addData("Turret State", state);
     }
 

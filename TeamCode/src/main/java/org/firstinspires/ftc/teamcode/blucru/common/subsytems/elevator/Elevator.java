@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -8,18 +9,18 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
-
+@Config
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServoLeft;
     private BluServo elevatorServoRight;
     public static double DOWN_POSITION_LEFT = 0.45;// TODO: find positions
     public static double UP_POSITION_LEFT = 0.65;
-    public static double MIDDLE_POSITION_LEFT = 0.51;
+    public static double MIDDLE_POSITION_LEFT = 0.48;
     public static double INTAKE_MIDDLE_POSITION_LEFT = 0.55;
 
     public static double DOWN_POSITION_RIGHT = 0.45;// TODO: find positions
     public static double UP_POSITION_RIGHT = 0.65;
-    public static double MIDDLE_POSITION_RIGHT = 0.52;
+    public static double MIDDLE_POSITION_RIGHT = 0.48;
     public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.56;
     private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
             rightSensorTop;
@@ -197,8 +198,8 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        // elevatorServoLeft.telemetry();
-        // elevatorServoRight.telemetry();
+        //elevatorServoLeft.telemetry();
+        //elevatorServoRight.telemetry();
     }
 
     @Override
