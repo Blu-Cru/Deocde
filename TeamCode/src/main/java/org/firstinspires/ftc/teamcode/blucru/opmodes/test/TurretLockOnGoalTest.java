@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -10,9 +11,11 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class TurretLockOnGoalTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
+        robot.addTurretCam();
         addSixWheel();
         addTurret();
         addShooter();
+        Globals.multiTelemetry = new MultipleTelemetry(telemetry);
     }
 
     public void periodic(){

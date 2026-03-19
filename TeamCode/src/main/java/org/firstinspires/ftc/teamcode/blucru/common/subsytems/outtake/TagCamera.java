@@ -39,7 +39,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     MotifPattern motifPattern;
     Pose2d botpose;
     final Pose2d TAG_20 = new Pose2d(-58, 58, Math.toDegrees(0));
-    final Pose2d TAG_24 = new Pose2d(58, 58, Math.toDegrees(0));
+    final Pose2d TAG_24 = new Pose2d(-58, -58, Math.toDegrees(0));
 
 
     public TagCamera(){
@@ -116,11 +116,12 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 double tagFieldY = tagPos.getY();
                 Vector2d originToTag = new Vector2d(tagFieldX, tagFieldY);
                 double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle());
+                Globals.telemetry.addData("Turret Field Angle", cameraFieldHeading);
                 double angle = cameraFieldHeading;
                 double dx = detect.ftcPose.x; // left/right relative to camera
                 double dy = detect.ftcPose.y; // forward/back relative to camera
                 Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
-                Vector2d tagToCam = tagToCamCamCentric.rotate(angle);
+                Vector2d tagToCam = tagToCamCamCentric.rotate(-angle);
 
                 Vector2d camToTurret = new Vector2d(tagDistToMiddleShooter,0).rotate(cameraFieldHeading);
 
@@ -185,6 +186,10 @@ public class TagCamera implements BluSubsystem, Subsystem {
         // now that we know offsets we can assume we havent changed off that much
         return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
                 Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
+
+    public Pose2d getBotpose(){
+        return botpose;
     }
     public double getTagDistToMiddleShooter(){
         return tagDistToMiddleShooter;

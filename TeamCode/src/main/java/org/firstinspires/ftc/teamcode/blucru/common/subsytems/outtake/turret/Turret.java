@@ -36,9 +36,9 @@ public class Turret implements BluSubsystem, Subsystem {
         public static double kP = 0.028;
     public static double kI = 0.02;
     public static double kD = 0.0018;
-    public static double kPTags = 0.001;
+    public static double kPTags = 0.00115;
     public static double kITags = 0;
-    public static double kDTags = 0.0001;
+    public static double kDTags = 0.0002125;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
@@ -260,6 +260,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void tagBasedAutoAim(AprilTagDetection detection){
         double xDelta = detection.center.x - 320;
         Globals.telemetry.addData("Yaw Delta", xDelta);
+        Globals.multiTelemetry.addData("Delta", xDelta);
         servos.setPower(tagController.calculate(-xDelta, 0));
         //saveTurretOffset(yawDelta + getAngle());
     }
