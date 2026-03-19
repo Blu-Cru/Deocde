@@ -343,7 +343,8 @@ public class Shooter implements BluSubsystem, Subsystem {
 //                Globals.telemetry.addData("Tan", tan);
         return new double[]{ShooterAutoAimInterpolation.interpolateLeft(middleShooterDistToTag) + tan * 10/middleShooterDistToTag,
                 ShooterAutoAimInterpolation.interpolateMiddle(middleShooterDistToTag),
-                ShooterAutoAimInterpolation.interpolateRight(middleShooterDistToTag) - tan * 10/middleShooterDistToTag};
+                ShooterAutoAimInterpolation.interpolateRight(middleShooterDistToTag) - tan * 10/middleShooterDistToTag,
+                ShooterAutoAimInterpolation.interpolateHood(middleShooterDistToTag)};
     }
 
     public boolean hasShot(int expectedBalls) {
