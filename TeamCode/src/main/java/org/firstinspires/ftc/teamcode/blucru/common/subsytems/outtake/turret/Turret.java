@@ -260,7 +260,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void tagBasedAutoAim(AprilTagDetection detection){
         double xDelta = detection.center.x - 320;
         Globals.telemetry.addData("Yaw Delta", xDelta);
-        Globals.multiTelemetry.addData("Delta", xDelta);
+        Globals.telemetry.addData("Delta", xDelta);
         servos.setPower(tagController.calculate(-xDelta, 0));
         //saveTurretOffset(yawDelta + getAngle());
     }
