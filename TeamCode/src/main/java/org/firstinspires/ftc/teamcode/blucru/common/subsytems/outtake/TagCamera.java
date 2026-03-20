@@ -115,8 +115,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 double tagFieldX = tagPos.getX();
                 double tagFieldY = tagPos.getY();
                 Vector2d originToTag = new Vector2d(tagFieldX, tagFieldY);
-                double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle());
-                Globals.telemetry.addData("Turret Field Angle", cameraFieldHeading);
+                double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
+                Globals.telemetry.addData("Turret Field Angle", Math.toDegrees(cameraFieldHeading));
                 double angle = cameraFieldHeading;
                 double dx = detect.ftcPose.x; // left/right relative to camera
                 double dy = detect.ftcPose.y; // forward/back relative to camera

@@ -119,6 +119,7 @@ public class ShooterMotifCoordinator {
                                 new WaitCommand(waits),
                                 new RightTransferUpCommand(),
                                 new MiddleTransferUpCommand()));
+                motif = MotifPattern.UNKNOWN;
         }
 
         public static Command getOrderToShoot(Alliance alliance) {

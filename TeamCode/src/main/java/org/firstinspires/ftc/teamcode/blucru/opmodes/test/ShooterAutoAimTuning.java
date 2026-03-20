@@ -22,6 +22,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         addSixWheel();
         addTransfer();
         addTurret();
+        addDrivetrain();
         turret.resetEncoder();
     }
 

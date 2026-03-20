@@ -14,11 +14,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
@@ -221,6 +223,9 @@ public class RootNegativeOneFSM extends BaseAuto {
             sm.update();
             telemetry.addData("State", sm.getState());
         }
+        if (ShooterMotifCoordinator.getMotif() == MotifPattern.UNKNOWN && robot.turretCam.getMotif() != MotifPattern.UNKNOWN){
+            ShooterMotifCoordinator.setMotif(robot.turretCam.getMotif());
+        }
         telemetry.addData("Time", Globals.matchTime.seconds());
     }
 
@@ -254,7 +259,6 @@ public class RootNegativeOneFSM extends BaseAuto {
                     ).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
-                .waitMilliseconds(200)
                 .build();
     }
 
@@ -290,7 +294,6 @@ public class RootNegativeOneFSM extends BaseAuto {
                 })
 
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
-                .waitMilliseconds(500)
                 .build();
     }
 
@@ -302,7 +305,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(13, -54),
                         new Point2d(10, -60)
                 }, 2000)
-                .waitMilliseconds(3000)
+                .waitMilliseconds(2500)
                 .callback(() -> {new SequentialCommandGroup(
                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                         new AutonomousTransferCommand(hood),
@@ -313,7 +316,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(13, -54),
                         new Point2d(9, -19)
                 }, 2000)
-                .waitMilliseconds(600)
+                .waitMilliseconds(300)
                 .callback(() ->
                         new AutonomousShootCommand(false).schedule())
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
@@ -328,7 +331,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(11, -50),
                         new Point2d(9, -56)
                 }, 2000)
-                .waitMilliseconds(3000)
+                .waitMilliseconds(2500)
                 .callback(() -> {new SequentialCommandGroup(
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
@@ -347,7 +350,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(10, -44),
                         new Point2d(-12, -15)
                 }, 2000)
-                .waitMilliseconds(500)
+                .waitMilliseconds(200)
                 .callback(() ->
                         new AutonomousShootWithMotifCommand().schedule())
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
@@ -364,7 +367,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(-12, -15),
                         new Point2d(-16, -37)
                 }, 2000)
-                .waitMilliseconds(500)
+                .waitMilliseconds(200)
                 .callback(() -> {new SequentialCommandGroup(
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
@@ -372,13 +375,12 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
-                .waitMilliseconds(500)
+                .waitMilliseconds(100)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(-16, -37),
                         new Point2d(-16, -20)
                 }, 2000)
                 .addTurnTo(-20, 1000)
-                .waitMilliseconds(100)
                 .callback(() -> new AutonomousShootWithMotifCommand().schedule())
                 .waitMilliseconds(0)
                 .build();
@@ -395,7 +397,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(-16, -37),
                         new Point2d(16, -58)
                 }, 2000)
-                .waitMilliseconds(500)
+                .waitMilliseconds(100)
                 .callback(() -> {new SequentialCommandGroup(
                         new ReadBallColorsCommand(),
                         new WaitCommand(100),
@@ -403,12 +405,11 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new AutonomousTransferCommand(hood),
                         new WaitCommand(700),
                         new TurnTurretToPosCommand(preAimTurretAngle)).schedule();})
-                .waitMilliseconds(500)
+                .waitMilliseconds(100)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(16, -58),
                         new Point2d(-5, -10)
                 }, 2000)
-                .waitMilliseconds(500)
                 .callback(() -> new AutonomousShootWithMotifCommand().schedule())
                 .waitMilliseconds(0)
                 .build();
