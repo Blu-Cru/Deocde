@@ -107,7 +107,7 @@ public class SixWheelDriveBase implements BluSubsystem {
          * motor.telemetry();
          * }
          */
-        //localizer.telemetry(telemetry);
+        localizer.telemetry(telemetry);
         //telemetry.addData("pos", localizer.getPose());
         //telemetry.addData("Brake Mode", dtMotors[0].getZeroPowerBehavior());
     }

@@ -38,8 +38,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     long captureTime;
     MotifPattern motifPattern;
     Pose2d botpose;
-    final Pose2d TAG_20 = new Pose2d(-58, 58, Math.toDegrees(0));
-    final Pose2d TAG_24 = new Pose2d(-58, -58, Math.toDegrees(0));
+    final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toDegrees(0));
+    final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toDegrees(0));
 
 
     public TagCamera(){
@@ -112,22 +112,26 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 } else {
                     tagPos = TAG_24;
                 }
-                double tagFieldX = tagPos.getX();
-                double tagFieldY = tagPos.getY();
-                Vector2d originToTag = new Vector2d(tagFieldX, tagFieldY);
+                Vector2d originToTag = tagPos.vec();
                 double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
-                Globals.telemetry.addData("Turret Field Angle", Math.toDegrees(cameraFieldHeading));
                 double angle = cameraFieldHeading;
                 double dx = detect.ftcPose.x; // left/right relative to camera
                 double dy = detect.ftcPose.y; // forward/back relative to camera
                 Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
-                Vector2d tagToCam = tagToCamCamCentric.rotate(-angle);
 
-                Vector2d camToTurret = new Vector2d(tagDistToMiddleShooter,0).rotate(cameraFieldHeading);
+                Globals.telemetry.addData("Tag To Cam Cam Centric", tagToCamCamCentric);
+                Vector2d tagToCam = tagToCamCamCentric.rotate(-angle - Math.PI/2);
+                tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
+
+                Globals.telemetry.addData("Tag To Cam", tagToCam);
+                Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter,0).rotate(cameraFieldHeading);
+                Globals.telemetry.addData("Cam To Turret", camToTurret);
+
 
                 Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
                 Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
+                Globals.telemetry.addData("Tag To Robot", tagToRobot);
 
                 Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 
