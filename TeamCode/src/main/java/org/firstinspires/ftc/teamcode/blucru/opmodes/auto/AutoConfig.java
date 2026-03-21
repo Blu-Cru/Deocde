@@ -8,7 +8,8 @@ public abstract class AutoConfig {
         BLUE_FAR,
         RED_CLOSE_MOTIF,
         BLUE_CLOSE_MOTIF,
-        ROOT_NEGATIVE_ONE
+        ROOT_NEGATIVE_ONE_FSM,
+        BLUE_FAR_WITH_DETECTION
     }
 
     private static boolean isInitBusy = false;
@@ -29,8 +30,10 @@ public abstract class AutoConfig {
             autoToReturn = new PPCloseRedAutoMotif();
         } else if (givenauto == AUTOS.BLUE_CLOSE_MOTIF) {
             autoToReturn = new PPCloseBlueAutoMotif();
-        } else if (givenauto == AUTOS.ROOT_NEGATIVE_ONE){
+        } else if (givenauto == AUTOS.ROOT_NEGATIVE_ONE_FSM){
             autoToReturn = new RootNegativeOneFSM();
+        } else if (givenauto == AUTOS.BLUE_FAR_WITH_DETECTION) {
+            autoToReturn = new farBLUEautoFSMwithBallDetection();
         }
 
         // Simulating the end of synchronous instance creation for path generation.

@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-@Autonomous
 public class RootNegativeOne extends BaseAuto {
     double turretAngle     = 142;
     double preAimTurretAngle = -90;

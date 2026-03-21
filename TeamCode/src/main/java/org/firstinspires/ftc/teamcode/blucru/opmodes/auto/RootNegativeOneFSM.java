@@ -24,7 +24,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-@Autonomous
 public class RootNegativeOneFSM extends BaseAuto {
     double turretAngle     = 142;
     double preAimTurretAngle = -90;

@@ -31,10 +31,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@Autonomous
-public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
+
+public class farBLUEautoFSMwithBallDetection extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -107;
 
@@ -65,7 +64,6 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         IDLE
     }
 
-    StateMachine sm;
     Path currentPath;
     ElapsedTime matchTimer;
     ElapsedTime retryTimer;       // tracks retry sequence duration
@@ -299,6 +297,16 @@ public class farBLUEautoFSMwithBallDetection extends BluLinearOpMode {
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
         sm.start();
+    }
+
+    @Override
+    public Pose2d getStartPose() {
+        return null;
+    }
+
+    @Override
+    public StateMachine buildStateMachine() {
+        return null;
     }
 
     public void periodic() {
