@@ -20,6 +20,11 @@ public class TurretCamRelocalizationTest extends BluLinearOpMode {
             turret.resetEncoder();
         }
         telemetry.addData("Turret Cam Pose", robot.turretCam.getBotpose());
+        try{
+            wait(10);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        };
         //telemetry.addData("Turret Cam Pose Pose History", robot.turretCam.getBotPosePoseHistory());
     }
 

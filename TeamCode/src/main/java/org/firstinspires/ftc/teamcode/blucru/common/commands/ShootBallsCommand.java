@@ -19,7 +19,6 @@ public class ShootBallsCommand extends InstantCommand {
                 new SequentialCommandGroup(
                         new LeftTransferUpCommand(),
                         new RightTransferUpCommand(),
-                        new WaitCommand(50),
                         new MiddleTransferUpCommand(),
                         new WaitCommand(400),
                         new CenterTurretCommand(),
