@@ -86,6 +86,11 @@ public class Tele extends BluLinearOpMode{
                             new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot = 0;
+                    new TransferCommand(turreting).schedule();
+                })
                 .transition(() -> gamepad1.left_trigger > 0.2 && gamepad1.right_trigger > 0.2, State.INTAKING_ELEVATED, () ->{
                     gamepad1.rumble(rumbleDur);
                     new ElevatorMiddleCommand().schedule();
