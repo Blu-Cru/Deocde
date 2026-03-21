@@ -5,30 +5,30 @@ import com.qualcomm.robotcore.util.Range;
 public class ShooterAutoAimInterpolation {
 
     private static final double[] leftDists = {
-            16.5, 24, 37, 44.5, 49, 55
+            32.7, 29, 38.2, 42.2, 47.3, 53.8, 60.3, 65, 69.3, 74.7, 78.4, 83.4, 89, 93.6, 97.75, 104, 108, 115, 119, 127
     };
     private static final double[] leftVelocities = {
-            1000,1000,1000,1000,1000,1000
+            1020, 990, 1020, 1020, 1050, 1080, 1130, 1160, 1210, 1240, 1260, 1290, 1310, 1340, 1380, 1420, 1440, 1470, 1490
     };
 
     private static final double[] middleDists = {
-            16.5, 24, 37, 44.5, 49, 55
+            32.7, 29, 38.2, 42.2, 47.3, 53.8, 60.3, 65, 69.3, 74.7, 78.4, 83.4, 89, 93.6, 97.75, 104, 108, 115, 119, 127
     };
 
     private static final double[] middleVelocities = {
-            1000,1000,1000,1000,1000,1000
+            1020, 990, 1020, 1040, 1080, 1110, 1160, 1190, 1240, 1270, 1290, 1330, 1360, 1380, 1420, 1450, 1470, 1505, 1520
     };
 
     private static final double[] rightDists = {
-            16.5, 24, 37, 44.5, 49, 55
+            32.7, 29, 38.2, 42.2, 47.3, 53.8, 60.3, 65, 69.3, 74.7, 78.4, 83.4, 89, 93.6, 97.75, 104, 108, 115, 119, 127
     };
 
     private static final double[] rightVelocities = {
-            1000,1000,1000,1000,1000,1000
+            1020, 990, 1020, 1040, 1080, 1110, 1160, 1190, 1240, 1270, 1290, 1325, 1345, 1380, 1415, 1440, 1460, 1515, 1535
     };
 
-    private static final double[] hoodDists = {10,20,30,40};
-    private static final double[] hoodAngle = {28,28,28,28};
+    private static final double[] hoodDists = {32.7, 29, 38.2, 42.2, 47.3, 53.8, 60.3, 65, 69.3, 74.7, 78.4, 83.4, 89, 93.6, 97.75, 104, 108, 115, 119, 127};
+    private static final double[] hoodAngle = {29, 27, 34, 36, 37, 39, 41, 43, 44, 45, 46, 46.5, 48, 49, 47, 48, 48, 48, 48, 49};
 
 
     private static final double[] middleShooterVels = {
