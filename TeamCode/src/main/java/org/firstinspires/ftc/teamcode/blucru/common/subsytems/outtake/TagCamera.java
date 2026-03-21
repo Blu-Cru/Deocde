@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.KalmanFilter;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
@@ -38,6 +39,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     long captureTime;
     MotifPattern motifPattern;
     Pose2d botpose;
+    Pose2d botposeOnTheMove;
+    Pose2d kalmanFilteredBotpose;
+    KalmanFilter xFilter, yFilter;
     final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toDegrees(0));
     final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toDegrees(0));
 
@@ -65,7 +69,11 @@ public class TagCamera implements BluSubsystem, Subsystem {
         streaming = true;
         captureTime = 0;
         botpose = null;
+        botposeOnTheMove = null;
+        kalmanFilteredBotpose = null;
         detection = null;
+        xFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
+        yFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
     }
 
     @Override
@@ -139,6 +147,11 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
                 botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
+                Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+                Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
+                // now that we know offsets we can assume we havent changed off that much
+                botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
+                        Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
                 //non-vector code
                 /*double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
