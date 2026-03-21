@@ -33,7 +33,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     AprilTagDetection detection;
     boolean currentlySeeingGoodTags;
     boolean streaming;
-    final double tagDistToMiddleShooter = 8;
+    final double tagDistToMiddleShooter = 7.5;
     final double turretCenterToLocPoint = -72.35/25.4;
     long captureTime;
     MotifPattern motifPattern;
@@ -65,6 +65,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         streaming = true;
         captureTime = 0;
         botpose = null;
+        detection = null;
     }
 
     @Override
@@ -89,6 +90,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
                         || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
                     currentlySeeingGoodTags = true;
                     detection = detect;
+                    Globals.telemetry.addData("Detect ID", detect.id);
                     break;
                 }
                 if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
@@ -200,6 +202,13 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
     public MotifPattern getMotif(){
         return motifPattern;
+    }
+
+    public double getDistance(){
+        if (detection == null){
+            return 0;
+        }
+        return detection.ftcPose.range * Math.cos(Math.toRadians(24)) + tagDistToMiddleShooter;
     }
 
     @Override

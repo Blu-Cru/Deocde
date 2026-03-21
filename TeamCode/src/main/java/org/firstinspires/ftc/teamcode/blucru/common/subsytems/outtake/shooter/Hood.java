@@ -7,8 +7,8 @@ public class Hood {
 
     static final double ZERO_ANGLE = 26;
     static final double TOP_ANGLE = 50;
-    double BOTTOM_ANGLE_POS = 0;
-    double TOP_ANGLE_POS = 1;
+    double BOTTOM_ANGLE_POS = 0.29;
+    double TOP_ANGLE_POS = 0.63;
     double ANGLE_DELTA = TOP_ANGLE - ZERO_ANGLE;
     double SERVO_POS_DELTA = TOP_ANGLE_POS - BOTTOM_ANGLE_POS;
     double SLOPE = SERVO_POS_DELTA/ANGLE_DELTA;

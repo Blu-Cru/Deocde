@@ -312,7 +312,7 @@ public class Shooter implements BluSubsystem, Subsystem {
     public double[] tagBasedShooterAutoAim(AprilTagDetection detection){
         double camDistToTag = detection.ftcPose.range;
         Globals.telemetry.addData("Cam dist to tag", camDistToTag);
-        double middleShooterDistToTag = camDistToTag + Robot.getInstance().turretCam.getTagDistToMiddleShooter();
+        double middleShooterDistToTag = Robot.getInstance().turretCam.getDistance();
         Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
         Vector2d a = middleShooterToTag; // vector from mid shooter to goal
         Vector2d b = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());;      // reference direction
@@ -341,9 +341,9 @@ public class Shooter implements BluSubsystem, Subsystem {
 
         double shooterOffset = shooterDist * tan;
 //                Globals.telemetry.addData("Tan", tan);
-        return new double[]{ShooterAutoAimInterpolation.interpolateLeft(middleShooterDistToTag) + tan * 10/middleShooterDistToTag,
+        return new double[]{ShooterAutoAimInterpolation.interpolateLeft(middleShooterDistToTag) + shooterOffset * 10/middleShooterDistToTag,
                 ShooterAutoAimInterpolation.interpolateMiddle(middleShooterDistToTag),
-                ShooterAutoAimInterpolation.interpolateRight(middleShooterDistToTag) - tan * 10/middleShooterDistToTag,
+                ShooterAutoAimInterpolation.interpolateRight(middleShooterDistToTag) - shooterOffset * 10/middleShooterDistToTag,
                 ShooterAutoAimInterpolation.interpolateHood(middleShooterDistToTag)};
     }
 

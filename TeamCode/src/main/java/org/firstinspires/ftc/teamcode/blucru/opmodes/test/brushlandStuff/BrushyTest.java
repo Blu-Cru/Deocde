@@ -8,26 +8,26 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class BrushyTest extends BluLinearOpMode {
 
     BluBrushlandLabsColorSensor brushlandLeft;
-    BluBrushlandLabsColorSensor brushlandRight;
+    //BluBrushlandLabsColorSensor brushlandRight;
 
     @Override
     public void initialize(){
         brushlandLeft = new BluBrushlandLabsColorSensor("brushlandLeftPurple", "brushlandLeftGreen");
-        brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
+        //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
         brushlandLeft.read();
-        brushlandRight.read();
+        //brushlandRight.read();
     }
 
     public void periodic(){
         brushlandLeft.read();
-        brushlandRight.read();
+        //brushlandRight.read();
     }
 
     public void telemetry(){
         telemetry.addData("Green Left?", brushlandLeft.greenBall());
-        telemetry.addData("Green Right?", brushlandRight.greenBall());
+        //telemetry.addData("Green Right?", brushlandRight.greenBall());
         telemetry.addData("Purple Left?", brushlandLeft.purpleBall());
-        telemetry.addData("Purple Right?", brushlandRight.purpleBall());
+        //telemetry.addData("Purple Right?", brushlandRight.purpleBall());
     }
 
 }

@@ -20,17 +20,17 @@ import org.firstinspires.ftc.teamcode.R;
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
 
-    public double purpleLowerBound = 160/360.0 * 255;
-    public double purpleHighBound = 190 / 360.0 * 255;
-    public double greenLowerBound = 110/360.0 * 255;
-    public double greenHigherBound = 140 / 360.0 * 255;
+    public double purpleLowerBound = 211/360.0 * 255;
+    public double purpleHighBound = 220/ 360.0 * 255;
+    public double greenLowerBound = 210/360.0 * 255;
+    public double greenHigherBound = 190 / 360.0 * 255;
     public double maxDist = 1;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ColorRangefinder crf = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "Color"));
-        NormalizedColorSensor colorSensorV3 = hardwareMap.get(RevColorSensorV3.class, "Color");
-        RevColorSensorV3 colorSensorV4 = hardwareMap.get(RevColorSensorV3.class, "Color");
+        ColorRangefinder crf = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom"));
+        NormalizedColorSensor colorSensorV3 = hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom");
+        RevColorSensorV3 colorSensorV4 = hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom");
         waitForStart();
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
