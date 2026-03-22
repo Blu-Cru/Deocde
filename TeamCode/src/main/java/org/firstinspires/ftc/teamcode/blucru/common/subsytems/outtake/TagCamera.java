@@ -72,8 +72,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
         botposeOnTheMove = null;
         kalmanFilteredBotpose = null;
         detection = null;
-        xFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
-        yFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
+        //xFilter = new KalmanFilter(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), 0.7,0.5,0.01,1);
+        //yFilter = new KalmanFilter(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), 0.7,0.5,0.01,1);
     }
 
     @Override
@@ -147,11 +147,11 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
                 botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
-                Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+                /*Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
                 Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
                 // now that we know offsets we can assume we havent changed off that much
                 botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                        Robot.getInstance().sixWheelDrivetrain.getPos().getH());*/
 
                 //non-vector code
                 /*double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
