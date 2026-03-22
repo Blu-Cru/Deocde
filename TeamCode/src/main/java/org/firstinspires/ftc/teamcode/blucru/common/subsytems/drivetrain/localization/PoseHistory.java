@@ -29,6 +29,7 @@ public class PoseHistory {
     }
 
     public PoseMarker getPoseAtTime(long nanoTime){
+        if (poseList.isEmpty()) return null;
         PoseMarker poseMarkerAfterTime = poseList.get(0);
         PoseMarker poseMarkerBeforeTime = poseList.get(0);
         Globals.telemetry.addData("list size", poseList.size());

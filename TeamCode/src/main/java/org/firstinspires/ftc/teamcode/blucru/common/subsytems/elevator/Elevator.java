@@ -26,6 +26,7 @@ public class Elevator implements BluSubsystem, Subsystem {
             rightSensorTop;
 
     public Elevator() {
+        /*
         leftSensorBottom = new BluColorSensor("leftColorSensorBottom");
         // leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new
         // double[][]{{0,0,0}, {1,1,1}, {0,0,0}, {1,1,1}});
@@ -34,6 +35,8 @@ public class Elevator implements BluSubsystem, Subsystem {
         middleSensorLeft = new BluColorSensor("middleColorSensorLeft");
         rightSensorBottom = new BluColorSensor("rightColorSensorBottom");
         rightSensorTop = new BluColorSensor("rightColorSensorTop");
+
+         */
         elevatorServoLeft = new BluServo("elevatorLeft");
         elevatorServoRight = new BluServo("elevatorRight");
         setDown();
