@@ -41,7 +41,7 @@ public class Octoquad implements RobotLocalizer{
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
         pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
         vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
-
+        Robot.getInstance().positionHistory.add(pose, vel);
     }
 
     @Override
@@ -50,6 +50,7 @@ public class Octoquad implements RobotLocalizer{
         //dividing for unit conversion
         pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
         vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
+        Robot.getInstance().positionHistory.add(pose, vel);
     }
     /**
      * returns pose in x,y,h in inch,inch,radian

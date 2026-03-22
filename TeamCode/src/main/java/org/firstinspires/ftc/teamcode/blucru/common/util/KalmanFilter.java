@@ -20,8 +20,8 @@ public class KalmanFilter {
         this.P = P;
         this.K = K;
     }
-    public void update(double input) {
-        double predictedinput = input-lastinput;
+    public void update(double firstInput, double secondInput) {
+        double predictedinput = firstInput-lastinput;
         u = predictedinput; // The delta
         x = x_previous + u;
 
@@ -29,7 +29,7 @@ public class KalmanFilter {
 
         K = P/(P + R);
 
-        z = input; // The known current input
+        z = secondInput; // The known current input
 
         x = x + K * (z - x);
 
@@ -37,10 +37,10 @@ public class KalmanFilter {
 
         x_previous = x;
         p_previous = P;
-        lastinput = input;
+        lastinput = firstInput;
     }
 
-    public void update(double input, double givenlastinput) {
+    /*public void update(double input, double givenlastinput) {
         double predictedinput = input-givenlastinput;
         u = predictedinput; // The delta
         x = x_previous + u;
@@ -58,6 +58,9 @@ public class KalmanFilter {
         x_previous = x;
         p_previous = P;
         lastinput = input;
+    }*/
+    public void setVal(double val){
+        this.x = val;
     }
 
     public double get() {
