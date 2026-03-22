@@ -72,11 +72,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         botposeOnTheMove = null;
         kalmanFilteredBotpose = null;
         detection = null;
-        /*
         xFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
         yFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
-a
-         */
+
     }
 
     @Override
@@ -158,7 +156,7 @@ a
                 botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
                         Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 xFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), botposeOnTheMove.getX());
-
+                yFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getY(), botposeOnTheMove.getY());
                 //non-vector code
                 /*double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
                 double camToTagFieldY = dx * Math.sin(angle) + dy * Math.cos(angle);
