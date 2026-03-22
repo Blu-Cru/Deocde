@@ -232,4 +232,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     public void reset() {
         disable();
     }
+
+    public Pose2d getKalmanFilteredBotpose() {
+        return new Pose2d(xFilter.get(),yFilter.get(), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
 }
