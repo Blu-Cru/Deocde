@@ -11,14 +11,19 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class TurretLockOnGoalTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
-        robot.addTurretCam();
         addSixWheel();
-        addTurret();
+        robot.addTurretCam();
+        //addLLTagDetector();
+        addIntake();
+        addElevator();
+        addTransfer();
         addShooter();
+        addTurret();
+        addTilt();
         Globals.multiTelemetry = new MultipleTelemetry(telemetry);
     }
 
-    public void periodic(){
+    public void periodic() throws InterruptedException {
         if (gamepad1.a){
             turret.lockOnGoal();
         }
@@ -35,5 +40,6 @@ public class TurretLockOnGoalTest extends BluLinearOpMode {
         if (driver1.pressedLeftBumper()){
             Globals.setAlliance(Alliance.BLUE);
         }
+        //Thread.sleep(10);
     }
 }

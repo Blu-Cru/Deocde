@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
 import java.util.ArrayList;
 
-public class    TagCamera implements BluSubsystem, Subsystem {
+public class TagCamera implements BluSubsystem, Subsystem {
     AprilTagProcessor tags;
     VisionPortal portal;
     AprilTagDetection detection;
@@ -82,6 +82,8 @@ a
     @Override
     public void init() {
         read();
+        xFilter.setVal(Robot.getInstance().sixWheelDrivetrain.getPos().getX());
+        yFilter.setVal(Robot.getInstance().sixWheelDrivetrain.getPos().getY());
     }
 
     @Override
@@ -155,6 +157,7 @@ a
                 // now that we know offsets we can assume we havent changed off that much
                 botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
                         Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                xFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), botposeOnTheMove.getX());
 
                 //non-vector code
                 /*double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
