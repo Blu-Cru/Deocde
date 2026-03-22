@@ -311,7 +311,8 @@ public class Tele extends BluLinearOpMode{
             }
         }
 
-        //relocalization
+        //relocalization TODO:Make this for adrucam
+        /*
         if (driver1.pressedY()){
             if (llTagDetector.validLLReads()){
                 gamepad2.rumble(200);
@@ -327,6 +328,8 @@ public class Tele extends BluLinearOpMode{
                 Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
             }
         }
+
+         */
         /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
             if (llTagDetector.validLLReads()){
                 sixWheel.setPosition(llTagDetector.getLLBotPosePoseHistory());
