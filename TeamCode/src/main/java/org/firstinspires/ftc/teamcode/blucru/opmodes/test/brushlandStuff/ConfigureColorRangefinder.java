@@ -19,18 +19,19 @@ import org.firstinspires.ftc.teamcode.R;
 @TeleOp
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
-
-    public double purpleLowerBound = 211/360.0 * 255;
-    public double purpleHighBound = 220/ 360.0 * 255;
-    public double greenLowerBound = 210/360.0 * 255;
-    public double greenHigherBound = 190 / 360.0 * 255;
-    public double maxDist = 1;
+    public static String name = "leftColorSensorBottom";
+    public static double purpleLowerBound = 160/360.0 * 255;
+    public static double purpleHighBound = 190/ 360.0 * 255;
+    public static double greenLowerBound = 110/360.0 * 255;
+    public static double greenHigherBound = 140/ 360.0 * 255;
+    public static double maxDist = 50;
+    public static boolean update = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
-        ColorRangefinder crf = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom"));
-        NormalizedColorSensor colorSensorV3 = hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom");
-        RevColorSensorV3 colorSensorV4 = hardwareMap.get(RevColorSensorV3.class, "leftColorSensorBottom");
+        ColorRangefinder crf = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, name));
+        NormalizedColorSensor colorSensorV3 = hardwareMap.get(RevColorSensorV3.class, name);
+        RevColorSensorV3 colorSensorV4 = hardwareMap.get(RevColorSensorV3.class, name);
         waitForStart();
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
@@ -38,7 +39,7 @@ public class ConfigureColorRangefinder extends LinearOpMode {
 
         while (opModeIsActive()){
 
-            if (gamepad1.a) {
+            if (gamepad1.a || update) {
                 crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, purpleLowerBound, purpleHighBound); // purple
                 crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
                 crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound, greenHigherBound); // green

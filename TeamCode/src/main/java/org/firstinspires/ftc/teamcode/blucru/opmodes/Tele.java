@@ -377,6 +377,7 @@ public class Tele extends BluLinearOpMode{
 
     public void telemetry(){
         telemetry.addData("State", sm.getState());
+        telemetry.addData("Pose History Length", robot.positionHistory.size());
     }
 
 }

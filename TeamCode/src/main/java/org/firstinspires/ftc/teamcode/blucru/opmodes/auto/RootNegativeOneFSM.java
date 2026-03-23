@@ -14,14 +14,18 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+
+import java.util.concurrent.locks.Lock;
 
 public class RootNegativeOneFSM extends BaseAuto {
         double turretAngle = 142;
@@ -31,7 +35,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         double veloMiddle = 1300;
         double hood = 40;
 
-        double GATE_CYCLE_TIME_THRESHOLD = 30;
+        double GATE_CYCLE_TIME_THRESHOLD = 25;
 
         enum State {
                 PRELOAD, MIDDLE_SPIKE, GATE_CYCLE, LAST_GATE_CYCLE_PICKUP, LAST_GATE_CYCLE_SHOOT, CLOSE_SPIKE,
@@ -213,26 +217,23 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                                         velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(preAimTurretAngle),
-                                                        new TurnTurretToPosCommand(-120)
+                                                        new LockOnGoalCommand()
                                                 ).schedule();
                                 })
-                        .waitMilliseconds(1000)
+                                .waitMilliseconds(1000)
                                 .addTurnTo(-90, 500)
                                 .waitMilliseconds(500)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(7, -47),
                                                 new Point2d(9, -19)
                                 }, 2000)
-                        .waitMilliseconds(3000)
+                                .waitMilliseconds(1000)
                                 .callback(() -> {
                                     new SequentialCommandGroup(
-                                            new TurnTurretToPosFieldCentricCommand(turretAngle),
-                                            new WaitCommand(3000),
                                             new AutonomousShootCommand(false)
                                     ).schedule();
                                 })
-                        .waitMilliseconds(3000)
+                                .waitMilliseconds(1000)
                                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 1000)
                                 .build();
         }
@@ -252,7 +253,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                                         velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();
+                                                new LockOnGoalCommand()).schedule();
                                 })
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
@@ -276,13 +277,13 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 .waitMilliseconds(2500)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
-                                                        new ReadBallColorsCommand(),
-                                                        new WaitCommand(100),
+                                                        //new ReadBallColorsCommand(),
+                                                        //new WaitCommand(100),
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle,
                                                                         velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(gateCyclePreAimAngle)).schedule();
+                                                new LockOnGoalCommand()).schedule();
                                 })
                                 .waitMilliseconds(0)
                                 .build();
@@ -296,7 +297,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(-12, -15)
                                 }, 2000)
                                 .waitMilliseconds(200)
-                                .callback(() -> new AutonomousShootWithMotifCommand().schedule())
+                                .callback(() -> new AutonomousShootCommand().schedule())
                                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
                                 .build();
         }
@@ -315,13 +316,13 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 .waitMilliseconds(200)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
-                                                        new ReadBallColorsCommand(),
-                                                        new WaitCommand(100),
+                                                        //new ReadBallColorsCommand(),
+                                                        //new WaitCommand(100),
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle,
                                                                         velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(preAimTurretAngle)).schedule();
+                                                new LockOnGoalCommand()).schedule();
                                 })
                                 .waitMilliseconds(100)
                                 .addPurePursuitPath(new Point2d[] {
@@ -329,7 +330,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(-16, -20)
                                 }, 2000)
                                 .addTurnTo(-20, 1000)
-                                .callback(() -> new AutonomousShootWithMotifCommand().schedule())
+                                .callback(() -> new AutonomousShootCommand().schedule())
                                 .waitMilliseconds(0)
                                 .build();
         }
@@ -343,25 +344,27 @@ public class RootNegativeOneFSM extends BaseAuto {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-16, -37),
+                                                new Point2d(1, -40),
                                                 new Point2d(16, -58)
                                 }, 2000)
                                 .waitMilliseconds(100)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
-                                                        new ReadBallColorsCommand(),
-                                                        new WaitCommand(100),
+                                                        //new ReadBallColorsCommand(),
+                                                        //new WaitCommand(100),
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle,
                                                                         velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(preAimTurretAngle)).schedule();
+                                                        new LockOnGoalCommand())
+                                                .schedule();
                                 })
                                 .waitMilliseconds(100)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(16, -58),
                                                 new Point2d(-5, -10)
                                 }, 2000)
-                                .callback(() -> new AutonomousShootWithMotifCommand().schedule())
+                                .callback(() -> new AutonomousShootCommand().schedule())
                                 .waitMilliseconds(0)
                                 .build();
         }

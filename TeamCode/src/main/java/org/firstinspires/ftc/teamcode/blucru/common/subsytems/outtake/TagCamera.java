@@ -72,9 +72,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         botposeOnTheMove = null;
         kalmanFilteredBotpose = null;
         detection = null;
-        xFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
-        yFilter = new KalmanFilter(Robot.getInstance().drivetrain.getCurrPose().getX(), 0.7,0.5,0.01,1);
 
+        xFilter = new KalmanFilter(0, 0.7,0.5,0.01,1);
+        yFilter = new KalmanFilter(0, 0.7,0.5,0.01,1);
     }
 
     @Override

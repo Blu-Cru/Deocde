@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -31,6 +32,10 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
     double nonFieldCentricTurretAngle = -87;
     double velo = 1115;
     double veloMiddle = 1130;
+    double farVeloLeft = 1500;
+    double farVeloMiddle = 1500;
+    double farVeloRight = 1500;
+    double hoodFar = 49;
     double hood = 34;
     boolean alreadySignalledPattern;
 
@@ -53,24 +58,22 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new AutonomousShootCommand()).schedule();
                     })
                     .waitUntil(() -> shooter.hasShot(3), 200)
+
+                    //TURN TO CLOSE SET
                     .addTurnTo(-10,1000)
 
                     .waitMilliseconds(50) // TODO: Remove this check if it is turned to move on
 
-                    // INTAKE FIRST SET
+                    // INTAKE CLOSE SET
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(-14, -37),
-                            new Point2d(-9, -47),
-                            new Point2d(-5,-60)
+                            new Point2d(-14, -37)
                     }, 2000)
 
                     // Transfer - Wait for stillness, read colors, then transfer
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new ReadBallColorsCommand(), // Read all color sensors at once
-                                new WaitCommand(300),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
@@ -78,7 +81,7 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                         alreadySignalledPattern = true;
                         llTagDetector.switchToPosition();
                     })
-                    .waitMilliseconds(300)
+                    .waitMilliseconds(100)
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
@@ -93,14 +96,15 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                     .waitMilliseconds(400)
                     .callback(() -> {
                         new SequentialCommandGroup(
-                                new AutonomousShootWithMotifCommand()).schedule();
+                                new AutonomousShootCommand()).schedule();
                     })
                     .waitUntil(() -> shooter.hasShot(3), 2000)
 
                     // INTAKE SECOND SET
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(19, -53)
+                            new Point2d(19, -53),
+                            new Point2d(19, -60)
                     }, 2000)
                     .waitMilliseconds(100)
                     // Transfer - Wait for stillness, read colors, then transfer
@@ -175,10 +179,36 @@ public class PPCloseBlueAutoMotif extends BaseAuto {
                                 new IntakeStopCommand()).schedule();
                     })
                     .waitUntil(() -> shooter.hasShot(3), 2000)
+                    //PICKUP FARTHEST SET
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(10, -30)
+                            new Point2d(50, -19),
+                            new Point2d(58, -50)
                     }, 1300)
+                    .waitMilliseconds(100)
+                    .callback(() -> {
+                        new SequentialCommandGroup(
+                                new ReadBallColorsCommand(),
+                                new WaitCommand(100),
+                                new SetShooterVelocityIndependentCommand(farVeloLeft, farVeloMiddle, farVeloRight),
+                                new AutonomousTransferCommand(hoodFar),
+                                new WaitCommand(700),
+                                new LockOnGoalCommand()
+                        ).schedule();
+                    })
+                    .waitMilliseconds(100)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(58, -50),
+                            new Point2d(58, -16)
+                    }, 2000)
+                    .callback(() -> {
+                        new AutonomousShootWithMotifCommand().schedule();
+                    })
+                    .waitUntil(() -> shooter.hasShot(3), 400)
+                    .addPurePursuitPath(new Point2d[]{
+                            new Point2d(58, -16),
+                            new Point2d(58, -30)
+                    }, 1500)
                     .build();
         }
     }
