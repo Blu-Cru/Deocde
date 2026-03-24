@@ -4,10 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 @Config
 public class Elevator implements BluSubsystem, Subsystem {
@@ -22,163 +24,21 @@ public class Elevator implements BluSubsystem, Subsystem {
     public static double UP_POSITION_RIGHT = 0.65;
     public static double MIDDLE_POSITION_RIGHT = 0.48;
     public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.56;
-    private BluColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
+    private BluBrushlandLabsColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
             rightSensorTop;
 
     public Elevator() {
-        /*
-        leftSensorBottom = new BluColorSensor("leftColorSensorBottom");
-        // leftSensorBottom = new BluColorSensor("leftColorSensorBottom", new
-        // double[][]{{0,0,0}, {1,1,1}, {0,0,0}, {1,1,1}});
-        leftSensorTop = new BluColorSensor("leftColorSensorTop");
-        middleSensorRight = new BluColorSensor("middleColorSensorRight");
-        middleSensorLeft = new BluColorSensor("middleColorSensorLeft");
-        rightSensorBottom = new BluColorSensor("rightColorSensorBottom");
-        rightSensorTop = new BluColorSensor("rightColorSensorTop");
 
-         */
+        leftSensorBottom = new BluBrushlandLabsColorSensor("purpleLeftBottom", "greenLeftBottom");
+        leftSensorTop = new BluBrushlandLabsColorSensor("purpleLeftTop", "greenLeftTop");
+        middleSensorRight = new BluBrushlandLabsColorSensor("purpleMiddleRight", "greenMiddleRight");
+        middleSensorLeft = new BluBrushlandLabsColorSensor("purpleMiddleLeft","greenMiddleLeft");
+        rightSensorBottom = new BluBrushlandLabsColorSensor("purpleRightBottom", "greenRightBottom");
+        rightSensorTop = new BluBrushlandLabsColorSensor("purpleRightTop", "greenRightTop");
         elevatorServoLeft = new BluServo("elevatorLeft");
         elevatorServoRight = new BluServo("elevatorRight");
         setDown();
         write();
-    }
-
-    public void setUp() {
-        elevatorServoLeft.setPos(UP_POSITION_LEFT);
-        elevatorServoRight.setPos(UP_POSITION_RIGHT);
-    }
-
-    public void setDown() {
-        elevatorServoLeft.setPos(DOWN_POSITION_LEFT);
-        elevatorServoRight.setPos(DOWN_POSITION_RIGHT);
-    }
-
-    public void updateLeftBallColor() {
-        final double greenRed = 0.01716;
-        final double greenBlue = 0.03354;
-        final double greenGreen = 0.0519;
-        final double purpleRed = 0.03426;
-        final double purpleBlue = 0.03934;
-        final double purpleGreen = 0.03086;
-        BallColor targetColor;
-        leftSensorBottom.read();
-        leftSensorTop.read();
-        double red = Math.max(leftSensorBottom.getRed(), leftSensorTop.getRed());
-        double green = Math.max(leftSensorBottom.getGreen(), leftSensorTop.getGreen());
-        double blue = Math.max(leftSensorBottom.getBlue(), leftSensorTop.getBlue());
-        double mag = Math.hypot(red, Math.hypot(green, blue));
-        // Globals.telemetry.addData("Red Left", red);
-        // Globals.telemetry.addData("Blue Left", blue);
-        // Globals.telemetry.addData("Green Left",green);
-        if (mag > 0.0075) {
-            double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
-            double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
-            double angleBetweenGreen = Math.acos(cosGreen);
-            double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple) {
-                // farther away from purple than green
-                targetColor = BallColor.GREEN;
-            } else {
-                targetColor = BallColor.PURPLE;
-            }
-        } else {
-            targetColor = BallColor.UNKNOWN;
-        }
-
-        ShooterMotifCoordinator.setLeftColor(targetColor);
-    }
-
-    public void updateMiddleBallColor() {
-        final double greenRed = 0.00172;
-        final double greenBlue = 0.0041;
-        final double greenGreen = 0.00462;
-        final double purpleRed = 0.0022;
-        final double purpleBlue = 0.00428;
-        final double purpleGreen = 0.00344;
-        BallColor targetColor;
-        middleSensorLeft.read();
-        middleSensorRight.read();
-        double red = Math.max(middleSensorLeft.getRed(), middleSensorRight.getRed());
-        double green = Math.max(middleSensorLeft.getGreen(), middleSensorRight.getGreen());
-        double blue = Math.max(middleSensorLeft.getBlue(), middleSensorRight.getBlue());
-        // Globals.telemetry.addData("Red Middle", red);
-        // Globals.telemetry.addData("Blue Middle", blue);
-        // Globals.telemetry.addData("Green Middle",green);
-        double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.003) {
-            double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
-            double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
-            double angleBetweenGreen = Math.acos(cosGreen);
-            double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple) {
-                // farther away from purple than green
-                targetColor = BallColor.GREEN;
-            } else {
-                targetColor = BallColor.PURPLE;
-            }
-        } else {
-            targetColor = BallColor.UNKNOWN;
-        }
-
-        ShooterMotifCoordinator.setMiddleColor(targetColor);
-    }
-
-    public void updateRightBallColor() {
-        final double greenRed = 0.01398;
-        final double greenBlue = 0.03342;
-        final double greenGreen = 0.04712;
-        final double purpleRed = 0.02484;
-        final double purpleBlue = 0.04418;
-        final double purpleGreen = 0.0293;
-        BallColor targetColor;
-        rightSensorTop.read();
-        rightSensorBottom.read();
-        double red = Math.max(rightSensorTop.getRed(), rightSensorBottom.getRed());
-        double green = Math.max(rightSensorTop.getGreen(), rightSensorBottom.getGreen());
-        double blue = Math.max(rightSensorTop.getBlue(), rightSensorBottom.getBlue());
-        // Globals.telemetry.addData("Red Right", red);
-        // Globals.telemetry.addData("Blue Right", blue);
-        // Globals.telemetry.addData("Green Right",green);
-        double mag = Math.hypot(red, Math.hypot(green, blue));
-        if (mag > 0.0075) {
-            double dotGreen = red * greenRed + blue * greenBlue + green * greenGreen;
-            double dotPurple = red * purpleRed + blue * purpleBlue + green * purpleGreen;
-            double cosPurple = dotPurple / (mag * Math.hypot(purpleRed, Math.hypot(purpleBlue, purpleGreen)));
-            double cosGreen = dotGreen / (mag * Math.hypot(greenRed, Math.hypot(greenBlue, greenGreen)));
-            double angleBetweenGreen = Math.acos(cosGreen);
-            double angleBetweenPurple = Math.acos(cosPurple);
-            if (angleBetweenGreen < angleBetweenPurple) {
-                // farther away from purple than green
-                targetColor = BallColor.GREEN;
-            } else {
-                targetColor = BallColor.PURPLE;
-            }
-        } else {
-            targetColor = BallColor.UNKNOWN;
-        }
-
-        ShooterMotifCoordinator.setRightColor(targetColor);
-    }
-
-    public void turnOffElevatorServo() {
-        elevatorServoLeft.disable();
-        elevatorServoRight.disable();
-        // always want to write after a disable
-        elevatorServoLeft.write();
-        elevatorServoRight.write();
-    }
-
-    public void setMiddle() {
-        elevatorServoLeft.setPos(MIDDLE_POSITION_LEFT);
-        elevatorServoRight.setPos(MIDDLE_POSITION_RIGHT);
-    }
-    public void setMiddleForIntake() {
-        elevatorServoLeft.setPos(INTAKE_MIDDLE_POSITION_LEFT);
-        elevatorServoRight.setPos(INTAKE_MIDDLE_POSITION_RIGHT);
     }
 
     @Override
@@ -191,10 +51,82 @@ public class Elevator implements BluSubsystem, Subsystem {
     public void read() {
         elevatorServoLeft.read();
         elevatorServoRight.read();
+        leftSensorTop.read();
+        leftSensorBottom.read();
+        middleSensorRight.read();
+        middleSensorLeft.read();
+        rightSensorTop.read();
+        rightSensorBottom.read();
     }
 
     @Override
     public void write() {
+        elevatorServoLeft.write();
+        elevatorServoRight.write();
+    }
+
+    public void setUp() {
+        elevatorServoLeft.setPos(UP_POSITION_LEFT);
+        elevatorServoRight.setPos(UP_POSITION_RIGHT);
+    }
+
+    public void setDown() {
+        elevatorServoLeft.setPos(DOWN_POSITION_LEFT);
+        elevatorServoRight.setPos(DOWN_POSITION_RIGHT);
+    }
+
+    public void setMiddle() {
+        elevatorServoLeft.setPos(MIDDLE_POSITION_LEFT);
+        elevatorServoRight.setPos(MIDDLE_POSITION_RIGHT);
+    }
+    public void setMiddleForIntake() {
+        elevatorServoLeft.setPos(INTAKE_MIDDLE_POSITION_LEFT);
+        elevatorServoRight.setPos(INTAKE_MIDDLE_POSITION_RIGHT);
+    }
+
+    public boolean elevatorFull(){
+        return (leftSensorBottom.ballDetected() || leftSensorTop.ballDetected())
+                && (rightSensorBottom.ballDetected() || rightSensorTop.ballDetected())
+                && (middleSensorLeft.ballDetected() || middleSensorRight.ballDetected());
+    }
+
+    public void updateLeftBallColor() {
+        BallColor targetColor = BallColor.UNKNOWN;
+        if (leftSensorTop.greenBall() || leftSensorBottom.greenBall()){
+            targetColor = BallColor.GREEN;
+        } else if (leftSensorTop.purpleBall() || leftSensorBottom.purpleBall()){
+            targetColor = BallColor.PURPLE;
+        }
+
+        ShooterMotifCoordinator.setLeftColor(targetColor);
+    }
+
+    public void updateMiddleBallColor() {
+        BallColor targetColor = BallColor.UNKNOWN;
+        if (middleSensorLeft.greenBall() || middleSensorRight.greenBall()){
+            targetColor = BallColor.GREEN;
+        } else if (middleSensorLeft.purpleBall() || middleSensorRight.purpleBall()){
+            targetColor = BallColor.PURPLE;
+        }
+
+        ShooterMotifCoordinator.setMiddleColor(targetColor);
+    }
+
+    public void updateRightBallColor() {
+        BallColor targetColor = BallColor.UNKNOWN;
+        if (rightSensorTop.greenBall() || rightSensorBottom.greenBall()){
+            targetColor = BallColor.GREEN;
+        } else if (rightSensorTop.purpleBall() || rightSensorBottom.purpleBall()){
+            targetColor = BallColor.PURPLE;
+        }
+
+        ShooterMotifCoordinator.setRightColor(targetColor);
+    }
+
+    public void turnOffElevatorServo() {
+        elevatorServoLeft.disable();
+        elevatorServoRight.disable();
+        // always want to write after a disable
         elevatorServoLeft.write();
         elevatorServoRight.write();
     }
