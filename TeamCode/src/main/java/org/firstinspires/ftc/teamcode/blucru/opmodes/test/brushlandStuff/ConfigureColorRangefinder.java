@@ -20,10 +20,10 @@ import org.firstinspires.ftc.teamcode.R;
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
     public static String name = "leftColorSensorBottom";
-    public static double purpleLowerBound = 194/360.0 * 255;
-    public static double purpleHighBound = 214/ 360.0 * 255;
-    public static double greenLowerBound = 140/360.0 * 255;
-    public static double greenHigherBound = 160/ 360.0 * 255;
+    public static double purpleLowerBound = 155/360.0 * 255;
+    public static double purpleHighBound = 200/360.0 * 255;
+    public static double greenLowerBound = 105/360.0 * 255;
+    public static double greenHigherBound = 150/360.0 * 255;
     public static double maxDist = 50;
     public static boolean update = false;
 
@@ -41,7 +41,7 @@ public class ConfigureColorRangefinder extends LinearOpMode {
 
             if (gamepad1.a || update) {
                 crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, purpleLowerBound, purpleHighBound); // purple
-                crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
+                crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist);
                 crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound, greenHigherBound); // green
                 crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
                 stop();
