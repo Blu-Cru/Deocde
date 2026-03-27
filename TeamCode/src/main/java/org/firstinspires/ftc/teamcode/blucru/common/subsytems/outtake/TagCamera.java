@@ -86,7 +86,6 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
     @Override
     public void read() {
-        currentlySeeingGoodTags = false;
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
 
@@ -94,6 +93,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             if (!detections.isEmpty()){
                 Globals.telemetry.addLine("Detected Tag");
+            } else {
+                currentlySeeingGoodTags = false;
             }
             for (AprilTagDetection detect : detections) {
                 captureTime = detect.frameAcquisitionNanoTime;

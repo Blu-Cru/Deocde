@@ -106,7 +106,6 @@ public class Turret implements BluSubsystem, Subsystem {
                 }
                 else {
                     localizationBasedAutoAim();
-                    updateControlLoop();
                     if (lastAutoAimMode == LastAutoAimMode.TAG){
                         Globals.telemetry.addLine("SWITCHING TO LOCALIZATION");
                         lastAutoAimMode = LastAutoAimMode.LOC;
