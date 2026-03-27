@@ -77,7 +77,7 @@ public class MtiAuto extends BaseAuto {
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
-                                new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
+                                new LockOnGoalCommand()).schedule();
                         alreadySignalledPattern = true;
                     })
                     .waitMilliseconds(100)
@@ -88,9 +88,9 @@ public class MtiAuto extends BaseAuto {
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
                     .addTurnTo(-45, 1000)
-                    .callback(
-                            () -> {new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();}
-                    )
+//                    .callback(
+//                            () -> {new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();}
+//                    )
                     // SHOOT FIRST SET - Use motif-aware shooting
                     .waitMilliseconds(400)
                     .callback(() -> {
@@ -114,7 +114,7 @@ public class MtiAuto extends BaseAuto {
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
-                                new TurnTurretToPosCommand(nonFieldCentricTurretAngle)).schedule();
+                                new LockOnGoalCommand()).schedule();
 
                     })
                     .waitMilliseconds(300)
@@ -124,9 +124,9 @@ public class MtiAuto extends BaseAuto {
                             new Point2d(13, -49), // was (12.5, 46)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
-                    .callback(() -> {
-                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
-                    })
+//                    .callback(() -> {
+//                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+//                    })
                     .waitMilliseconds(400)
                     //small time for settling
                     .waitMilliseconds(50)
@@ -154,7 +154,7 @@ public class MtiAuto extends BaseAuto {
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
-                                new TurnTurretToPosFieldCentricCommand(turretAngle)).schedule();
+                                new LockOnGoalCommand()).schedule();
 
                     })
                     .waitMilliseconds(400)
@@ -163,10 +163,9 @@ public class MtiAuto extends BaseAuto {
                             new Point2d(10, -30),
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 1200)
-                    //.waitMilliseconds(1000)
-                    .callback(() -> {
-                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
-                    })
+//                    .callback(() -> {
+//                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
+//                    })
                     .waitUntil(() -> turret.atTarget(),750)
                     //small time for settling
                     .waitMilliseconds(50)
@@ -174,8 +173,9 @@ public class MtiAuto extends BaseAuto {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootWithMotifCommand(),
-                                new WaitCommand(300),
-                                new IntakeStopCommand()).schedule();
+                                new WaitCommand(300)
+//                                new IntakeStopCommand()
+                        ).schedule();
                     })
                     .waitUntil(() -> shooter.hasShot(3), 2000)
                     //PICKUP FARTHEST SET
