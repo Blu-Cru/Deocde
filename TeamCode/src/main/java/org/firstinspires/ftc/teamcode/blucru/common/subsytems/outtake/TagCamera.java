@@ -90,6 +90,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         if (streaming && portal.getProcessorEnabled(tags)) {
 
             Globals.telemetry.addLine("Looking for tags");
+            Globals.telemetry.addData("streaming", portal.getCameraState() == VisionPortal.CameraState.STREAMING);
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             if (!detections.isEmpty()){
                 Globals.telemetry.addLine("Detected Tag");
