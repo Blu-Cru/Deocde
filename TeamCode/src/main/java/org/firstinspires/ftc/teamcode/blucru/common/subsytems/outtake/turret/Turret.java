@@ -96,7 +96,8 @@ public class Turret implements BluSubsystem, Subsystem {
             case LOCK_ON_GOAL:
                 //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
-                if (Robot.getInstance().turretCam.getDetection() != null && ( Robot.getInstance().turretCam.detectedThisLoop() || (System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000)){
+                Globals.telemetry.addData("detection", Robot.getInstance().turretCam.getDetection());
+                if (Robot.getInstance().turretCam.getDetection() != null && ( Robot.getInstance().turretCam.detectedThisLoop() || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000)){
                     Globals.telemetry.addLine("here hallo hi hi hi hi hallo here");
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                     if (lastAutoAimMode == LastAutoAimMode.LOC){
@@ -254,7 +255,7 @@ public class Turret implements BluSubsystem, Subsystem {
         return Math.toDegrees(Math.atan2(dx, dy)) - 90;
     }
 
-    public void localizationBasedAutoAim(){
+    public void  localizationBasedAutoAim(){
         double turretTargetDeg =
                 getFieldCentricTargetGoalAngle(
                         Robot.getInstance().sixWheelDrivetrain.getPos()
