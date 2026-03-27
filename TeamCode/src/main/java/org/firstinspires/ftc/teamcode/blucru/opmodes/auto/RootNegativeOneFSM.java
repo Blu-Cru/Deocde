@@ -213,8 +213,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
                                 .callback(() -> {
                                         new SequentialCommandGroup(
-                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle,
-                                                                        velo),
+                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
                                                         new LockOnGoalCommand()
@@ -246,14 +245,14 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(13, -54),
                                                 new Point2d(10, -60)
                                 }, 2000)
-                                .waitMilliseconds(2500)
+                                .waitMilliseconds(1000)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
-                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle,
-                                                                        velo),
+                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                new LockOnGoalCommand()).schedule();
+                                                        new LockOnGoalCommand()
+                                        ).schedule();
                                 })
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
@@ -318,8 +317,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                         new SequentialCommandGroup(
                                                         //new ReadBallColorsCommand(),
                                                         //new WaitCommand(100),
-                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle,
-                                                                        velo),
+                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
                                                 new LockOnGoalCommand()).schedule();
