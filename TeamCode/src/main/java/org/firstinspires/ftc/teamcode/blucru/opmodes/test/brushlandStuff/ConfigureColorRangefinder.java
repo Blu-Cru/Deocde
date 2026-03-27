@@ -20,10 +20,10 @@ import org.firstinspires.ftc.teamcode.R;
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
     public static String name = "leftColorSensorBottom";
-    public static double purpleLowerBound = 150/360.0 * 255;
-    public static double purpleHighBound = 190/ 360.0 * 255;
-    public static double greenLowerBound = 125/360.0 * 255;
-    public static double greenHigherBound = 165/ 360.0 * 255;
+    public static double purpleLowerBound = 194/360.0 * 255;
+    public static double purpleHighBound = 214/ 360.0 * 255;
+    public static double greenLowerBound = 140/360.0 * 255;
+    public static double greenHigherBound = 160/ 360.0 * 255;
     public static double maxDist = 50;
     public static boolean update = false;
 

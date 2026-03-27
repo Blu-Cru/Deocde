@@ -15,7 +15,7 @@ public class BrushyTest extends BluLinearOpMode {
     @Override
     public void initialize(){
         Globals.multiTelemetry = new MultipleTelemetry(telemetry);
-        brushlandLeft = new BluBrushlandLabsColorSensor("brushlandLeftPurple", "brushlandLeftGreen");
+        brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftBottom", "greenLeftBottom");
         //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
         brushlandLeft.read();
         //brushlandRight.read();
