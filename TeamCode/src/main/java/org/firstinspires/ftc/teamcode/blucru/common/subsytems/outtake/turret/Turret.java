@@ -49,7 +49,10 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double distFromCenter = 72.35 / 25.4;
 
     private double targetXTags = 0;
-
+    private enum LastAutoAimMode {
+        TAG,
+        LOC
+    }
 
     private enum State {
         MANUAL,
@@ -58,6 +61,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     private State state;
+    private LastAutoAimMode lastAutoAimMode;
 
 
     public Turret(BluCRServo servoLeft, BluCRServo servoRight, BluCRServo servoCenter,BluEncoder encoder) {
@@ -66,7 +70,7 @@ public class Turret implements BluSubsystem, Subsystem {
         controller = new PIDController(kP, kI, kD);
         tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
-
+        lastAutoAimMode = LastAutoAimMode.LOC;
         //dealing with camera
 
     }
@@ -92,12 +96,20 @@ public class Turret implements BluSubsystem, Subsystem {
             case LOCK_ON_GOAL:
                 //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
-                if (Robot.getInstance().turretCam.detectedThisLoop()){
+                if (Robot.getInstance().turretCam.detectedThisLoop() || (Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 2000000){
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
+                    if (lastAutoAimMode == LastAutoAimMode.LOC){
+                        Globals.telemetry.addLine("SWITCHING TO CAMERA");
+                        lastAutoAimMode = LastAutoAimMode.TAG;
+                    }
                 }
                 else {
                     localizationBasedAutoAim();
                     updateControlLoop();
+                    if (lastAutoAimMode == LastAutoAimMode.TAG){
+                        Globals.telemetry.addLine("SWITCHING TO LOCALIZATION");
+                        lastAutoAimMode = LastAutoAimMode.LOC;
+                    }
                 }
                 break;
             case PID:
