@@ -98,20 +98,20 @@ public class Turret implements BluSubsystem, Subsystem {
                 Globals.telemetry.addData("Turret Offset", headingOffset);
                 Globals.telemetry.addData("detection", Robot.getInstance().turretCam.getDetection());
                 if (Robot.getInstance().turretCam.getDetection() != null && ( Robot.getInstance().turretCam.detectedThisLoop() || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000)){
-                    controller.reset();
                     Globals.telemetry.addLine("here hallo hi hi hi hi hallo here");
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                     if (lastAutoAimMode == LastAutoAimMode.LOC){
                         Globals.telemetry.addLine("SWITCHING TO CAMERA");
                         lastAutoAimMode = LastAutoAimMode.TAG;
+                        tagController.reset();
                     }
                 }
                 else {
-                    tagController.reset();
                     localizationBasedAutoAim();
                     if (lastAutoAimMode == LastAutoAimMode.TAG){
                         Globals.telemetry.addLine("SWITCHING TO LOCALIZATION");
                         lastAutoAimMode = LastAutoAimMode.LOC;
+                        controller.reset();
                     }
                 }
                 break;
