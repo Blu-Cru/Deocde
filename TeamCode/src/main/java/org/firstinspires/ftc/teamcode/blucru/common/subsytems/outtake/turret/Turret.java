@@ -43,6 +43,11 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
 
+    // Tune these in Dashboard to offset the autoaim!
+    // Positive offset = aim more right
+    public static double locAutoAimAngleOffset = 2; // degrees
+    public static double tagAutoAimPixelOffset = 20; // pixels
+
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     private static final int TAG_DROPOUT_THRESHOLD = 10;
     private int tagDropoutCounter = 0;
@@ -286,7 +291,7 @@ public class Turret implements BluSubsystem, Subsystem {
                         Robot.getInstance().sixWheelDrivetrain.getPos()
                 );
         setFieldCentricPositionAutoAim(
-                applyTurretOffset(turretTargetDeg),
+                applyTurretOffset(turretTargetDeg) + locAutoAimAngleOffset,
                 Math.toDegrees(
                         Robot.getInstance().sixWheelDrivetrain.getPos().getH()
                 ),
@@ -296,7 +301,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void tagBasedAutoAim(AprilTagDetection detection){
-        double xDelta = detection.center.x - 320;
+        double xDelta = detection.center.x - (320 - tagAutoAimPixelOffset);
         Globals.telemetry.addData("Yaw Delta", xDelta);
         Globals.telemetry.addData("Delta", xDelta);
         servos.setPower(tagController.calculate(-xDelta, 0));
