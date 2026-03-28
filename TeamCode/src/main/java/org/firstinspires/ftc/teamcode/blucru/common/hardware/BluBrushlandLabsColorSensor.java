@@ -41,6 +41,12 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     public boolean purpleBall(){
         return state1;
     }
+    public boolean getRawState1(){
+        return state1;
+    }
+    public boolean getRawState2(){
+        return state2;
+    }
 
     @Override
     public void telemetry() {

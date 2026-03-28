@@ -17,7 +17,9 @@ public class BrushyTest extends BluLinearOpMode {
         Globals.multiTelemetry = new MultipleTelemetry(telemetry);
         brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftBottom", "greenLeftBottom");
         //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
+        brushlandLeft.init();
         brushlandLeft.read();
+        //brushlandRight.init();
         //brushlandRight.read();
     }
 
@@ -28,8 +30,11 @@ public class BrushyTest extends BluLinearOpMode {
 
     public void telemetry(){
         Globals.multiTelemetry.addData("Green Left?", brushlandLeft.greenBall());
-        //telemetry.addData("Green Right?", brushlandRight.greenBall());
         Globals.multiTelemetry.addData("Purple Left?", brushlandLeft.purpleBall());
+        Globals.multiTelemetry.addData("Raw Pin0 (Purple)", brushlandLeft.getRawState1());
+        Globals.multiTelemetry.addData("Raw Pin1 (Green)", brushlandLeft.getRawState2());
+        Globals.multiTelemetry.addData("Ball Detected?", brushlandLeft.ballDetected());
+        //telemetry.addData("Green Right?", brushlandRight.greenBall());
         //telemetry.addData("Purple Right?", brushlandRight.purpleBall());
     }
 
