@@ -227,7 +227,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         if (detection == null){
             return 0;
         }
-        return detection.ftcPose.range * Math.cos(Math.toRadians(24)) + tagDistToMiddleShooter;
+        return detection.ftcPose.range * Math.cos(Math.toRadians(20)) + tagDistToMiddleShooter;
     }
 
     @Override
