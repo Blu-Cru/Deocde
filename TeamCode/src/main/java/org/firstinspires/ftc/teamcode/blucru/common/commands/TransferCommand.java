@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.seattlesolvers.solverslib.command.WaitUntilCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 
 // IMPORTS... (Keep your existing subsystem imports)
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
@@ -32,16 +33,13 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                 new ElevatorUpCommand(),
                 new WaitCommand(400),
                 new ElevatorMiddleCommand(),
-                new WaitUntilCommand(new ParallelArmsBooleanSupplier()),
+                new WaitCommand(200),
                 new AllTransferMiddleCommand(),
-                new InstantCommand( () -> {
-                    if (turreting){
-                        new LockOnGoalCommand().schedule();
-                    } else {
-                        Globals.telemetry.addLine("CENTER TURRET");
-                        new CenterTurretCommand().schedule();;
-                    }
-                })
+                new ConditionalCommand(
+                        new LockOnGoalCommand(),
+                        new CenterTurretCommand(),
+                        () -> turreting
+                )
                 ).schedule();
         }
         );
