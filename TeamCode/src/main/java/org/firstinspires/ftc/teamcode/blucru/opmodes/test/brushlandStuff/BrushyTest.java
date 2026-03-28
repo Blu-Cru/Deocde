@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test.brushlandStuff;
 
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
@@ -14,8 +13,7 @@ public class BrushyTest extends BluLinearOpMode {
 
     @Override
     public void initialize(){
-        Globals.multiTelemetry = new MultipleTelemetry(telemetry);
-        brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftBottom", "greenLeftBottom");
+        brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftTop", "greenLeftTop");
         //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
         brushlandLeft.init();
         brushlandLeft.read();
@@ -29,11 +27,11 @@ public class BrushyTest extends BluLinearOpMode {
     }
 
     public void telemetry(){
-        Globals.multiTelemetry.addData("Green Left?", brushlandLeft.greenBall());
-        Globals.multiTelemetry.addData("Purple Left?", brushlandLeft.purpleBall());
-        Globals.multiTelemetry.addData("Raw Pin0 (Purple)", brushlandLeft.getRawState1());
-        Globals.multiTelemetry.addData("Raw Pin1 (Green)", brushlandLeft.getRawState2());
-        Globals.multiTelemetry.addData("Ball Detected?", brushlandLeft.ballDetected());
+        telemetry.addData("Green Left?", brushlandLeft.greenBall());
+        telemetry.addData("Purple Left?", brushlandLeft.purpleBall());
+        telemetry.addData("Raw Pin0 (Purple)", brushlandLeft.getRawState1());
+        telemetry.addData("Raw Pin1 (Green)", brushlandLeft.getRawState2());
+        telemetry.addData("Ball Detected?", brushlandLeft.ballDetected());
         //telemetry.addData("Green Right?", brushlandRight.greenBall());
         //telemetry.addData("Purple Right?", brushlandRight.purpleBall());
     }
