@@ -45,8 +45,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
-    public static double locAutoAimAngleOffset = 2; // degrees
-    public static double tagAutoAimPixelOffset = 20; // pixels
+    public static double locAutoAimAngleOffset = 3; // degrees
+    public static double tagAutoAimPixelOffset = 28; // pixels
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     private static final int TAG_DROPOUT_THRESHOLD = 10;
