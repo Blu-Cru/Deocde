@@ -68,7 +68,7 @@ public class MtiAuto extends BaseAuto {
                     .addTurnTo(-90, 5000)
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(-14, -37)
+                            new Point2d(-14, -47)
                     }, 2000)
 
                     // Transfer - Wait for stillness, read colors, then transfer
@@ -84,26 +84,29 @@ public class MtiAuto extends BaseAuto {
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(-6, -57), // was (-10, 50)
+                            new Point2d(-14, -47), // was (-10, 50)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
-                    .addTurnTo(-45, 1000)
+//                    .addTurnTo(-45, 1000)
 //                    .callback(
 //                            () -> {new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();}
 //                    )
                     // SHOOT FIRST SET - Use motif-aware shooting
-                    .waitMilliseconds(400)
+                    .waitMilliseconds(2000)
+                    .waitUntil(() -> turret.atTarget(),750)
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new AutonomousShootCommand()).schedule();
                     })
                     .waitUntil(() -> shooter.hasShot(3), 2000)
 
-                    // INTAKE SECOND SET
+                    // INTAKE MIDDLE SPIKE
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(19, -53),
-                            new Point2d(19, -60)
+                            new Point2d(-10, -24),
+                            new Point2d(7, -28),
+                            new Point2d(10, -50),
+                            new Point2d(3, -63)
                     }, 2000)
                     .waitMilliseconds(100)
                     // Transfer - Wait for stillness, read colors, then transfer
@@ -121,12 +124,13 @@ public class MtiAuto extends BaseAuto {
 
                     // HEAD BACK
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(13, -49), // was (12.5, 46)
+                            new Point2d(3, -63), // was (12.5, 46)
                             new Point2d(-16, -19) // was (-10, 17)
                     }, 2000)
 //                    .callback(() -> {
 //                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
 //                    })
+                    .waitUntil(() -> turret.atTarget(),1000)
                     .waitMilliseconds(400)
                     //small time for settling
                     .waitMilliseconds(50)
@@ -141,8 +145,8 @@ public class MtiAuto extends BaseAuto {
                     // PICKUP THIRD SET
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19), // was (-10, 17)
-                            new Point2d(10, -30),
-                            new Point2d(38, -47) // was (37, 46)
+//                            new Point2d(10, -30),
+                            new Point2d(38, -52) // was (37, 46)
                     }, 1100)
                     .addTurnTo(-31, 500)
                     .waitMilliseconds(500)
@@ -150,7 +154,7 @@ public class MtiAuto extends BaseAuto {
                     .callback(() -> {
                         new SequentialCommandGroup(
                                 new ReadBallColorsCommand(), // Read all color sensors at once
-                                new WaitCommand(300),
+                                new WaitCommand(100),
                                 new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                 new AutonomousTransferCommand(hood),
                                 new WaitCommand(700),
@@ -159,14 +163,14 @@ public class MtiAuto extends BaseAuto {
                     })
                     .waitMilliseconds(400)
                     .addPurePursuitPath(new Point2d[] {
-                            new Point2d(36, -45),
+                            new Point2d(38, -52),
                             new Point2d(10, -30),
                             new Point2d(-16, -19) // was (-10, 17)
-                    }, 1200)
+                    }, 2000)
 //                    .callback(() -> {
 //                        new TurnTurretToPosFieldCentricCommand(turretAngle).schedule();
 //                    })
-                    .waitUntil(() -> turret.atTarget(),750)
+                    .waitUntil(() -> turret.atTarget(),2000)
                     //small time for settling
                     .waitMilliseconds(50)
                     // SHOOT THIRD SET - Use motif-aware anti-jam shooting
@@ -181,9 +185,9 @@ public class MtiAuto extends BaseAuto {
                     //PICKUP FARTHEST SET
                     .addPurePursuitPath(new Point2d[] {
                             new Point2d(-16, -19),
-                            new Point2d(50, -19),
-                            new Point2d(58, -50)
-                    }, 1300)
+                            new Point2d(45, -30),
+                            new Point2d(62, -62)
+                    }, 2500)
                     .waitMilliseconds(100)
                     .callback(() -> {
                         new SequentialCommandGroup(
@@ -197,16 +201,21 @@ public class MtiAuto extends BaseAuto {
                     })
                     .waitMilliseconds(100)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(58, -50),
-                            new Point2d(58, -16)
+                            new Point2d(62, -62),
+                            new Point2d(45, -9)
                     }, 2000)
+                    .waitMilliseconds(3000)
                     .callback(() -> {
-                        new AutonomousShootWithMotifCommand().schedule();
+                        new SequentialCommandGroup(
+                                new AutonomousShootWithMotifCommand(),
+                                new WaitCommand(300)
+                        ).schedule();
+
                     })
                     .waitUntil(() -> shooter.hasShot(3), 400)
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(58, -16),
-                            new Point2d(58, -30)
+                            new Point2d(45, -9),
+                            new Point2d(45, -20)
                     }, 1500)
                     .build();
         }
