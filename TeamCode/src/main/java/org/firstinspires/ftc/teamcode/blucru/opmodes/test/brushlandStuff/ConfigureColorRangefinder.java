@@ -41,7 +41,7 @@ public class ConfigureColorRangefinder extends LinearOpMode {
 
             if (gamepad1.a || update) {
                 crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, purpleLowerBound, purpleHighBound); // purple
-                crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist);
+               crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist);
                 crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound, greenHigherBound); // green
                 crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
                 stop();
