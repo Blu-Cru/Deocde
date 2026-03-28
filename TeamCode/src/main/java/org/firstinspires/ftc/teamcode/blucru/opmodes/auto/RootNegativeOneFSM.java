@@ -209,16 +209,14 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(-10, -20),
                                                 new Point2d(7, -28),
                                                 new Point2d(10, -50),
-                                                new Point2d(15, -58),
-                                }, 2000)
-
+                                                new Point2d(15, -55),
+                                }, 2500)
+                        .waitMilliseconds(500)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(-110),
-                                                        new WaitCommand(400),
                                                         new LockOnGoalCommand()
                                                 ).schedule();
                                 })
@@ -229,14 +227,14 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(7, -47),
                                                 new Point2d(9, -19)
                                 }, 2000)
-                                .waitMilliseconds(1000)
+                                .waitMilliseconds(400)
                                 .callback(() -> {
                                     new SequentialCommandGroup(
                                             new AutonomousShootCommand(false)
                                     ).schedule();
                                 })
-                                .waitMilliseconds(300)
-                                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 1000)
+//                                .waitMilliseconds(300)
+                                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
                                 .build();
         }
 
@@ -248,7 +246,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(13, -54),
                                                 new Point2d(10, -60)
                                 }, 2000)
-                                .waitMilliseconds(1000)
+                                .waitMilliseconds(1500)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
@@ -314,7 +312,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(9, -19),
-                                                new Point2d(-6, -30),
+                                                new Point2d(-3, -30),
                                                 new Point2d(-14, -55)
                                 }, 2000)
                                 .waitMilliseconds(200)
@@ -322,20 +320,21 @@ public class RootNegativeOneFSM extends BaseAuto {
                                         new SequentialCommandGroup(
                                                         //new ReadBallColorsCommand(),
                                                         //new WaitCommand(100),
-                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
+                                                        new SetShooterVelocityIndependentCommand(velo-60, veloMiddle-60, velo-60),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
+                                                        new WaitCommand(1000),//wait for the addturnto
                                                 new LockOnGoalCommand()).schedule();
                                 })
-                                .waitMilliseconds(100)
+//                                .waitMilliseconds(100)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-14, -55),
                                                 new Point2d(-16, -19)
                                 }, 2000)
                                 .addTurnTo(-20, 1000)
-                                .waitMilliseconds(800)
+                                .waitMilliseconds(500)
                                 .callback(() -> new AutonomousShootCommand().schedule())
-                                .waitMilliseconds(300)
+                                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 400)
                                 .build();
         }
 
@@ -348,7 +347,9 @@ public class RootNegativeOneFSM extends BaseAuto {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-16, -19),
-                                                new Point2d(33, -48)
+                                                new Point2d(33, -44),
+                                                new Point2d(38, -48),
+
                                 }, 2000)
                                 .waitMilliseconds(100)
                                 .callback(() -> {
@@ -367,7 +368,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(33, -48),
                                                 new Point2d(-9, -19)
                                 }, 2000)
-                        .waitMilliseconds(1000)
+                        .waitMilliseconds(600)
                                 .callback(() -> new AutonomousShootCommand().schedule())
                                 .waitMilliseconds(300)
                                 .build();
