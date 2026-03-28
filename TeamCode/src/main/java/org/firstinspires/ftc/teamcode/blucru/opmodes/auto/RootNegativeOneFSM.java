@@ -137,7 +137,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
         public void onStart() {
                 Globals.matchTime.reset();
-                shooter.shootWithVelocity(1050);
+                shooter.shootWithVelocityIndependent(1000,1050,1000);
                 turret.setAngle(2);
                 sixWheel.setPosition(startPose);
                 currentPath = buildPreloadPath();
@@ -235,9 +235,9 @@ public class RootNegativeOneFSM extends BaseAuto {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(9, -19),
-                                                new Point2d(13.5, -44),
-                                                new Point2d(13, -54),
-                                                new Point2d(9.5, -60)
+                                                new Point2d(21, -34),
+                                                new Point2d(13.5, -54),
+                                                new Point2d(10, -60)
                                 }, 2000)
                                 .waitMilliseconds(1000)
                                 .callback(() -> {
@@ -250,7 +250,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 })
                                 .addTurnTo(-90,500)
                                 .addPurePursuitPath(new Point2d[] {
-                                                new Point2d(9.5, -60),
+                                                new Point2d(10, -60),
                                                 new Point2d(13, -54),
                                                 new Point2d(9, -19)
                                 }, 2000)
@@ -264,9 +264,9 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, -19),
-                        new Point2d(13.5, -44),
-                        new Point2d(13, -54),
-                        new Point2d(9.5, -60)
+                        new Point2d(21, -34),
+                        new Point2d(13.5, -54),
+                        new Point2d(10, -60)
                 }, 2000)
                 .waitMilliseconds(1500)
                 .callback(() -> {
@@ -279,7 +279,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 })
                 .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(9.5, -60),
+                        new Point2d(10, -60),
                         new Point2d(13, -54),
                         new Point2d(9, -19)
                 }, 2000)
