@@ -44,11 +44,14 @@ public class ConfigureColorRangefinder extends LinearOpMode {
                crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist);
                 crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound, greenHigherBound); // green
                 crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, maxDist); // 50mm or closer requirement
-                stop();
+                update = false;
+                requestOpModeStop();
+            } else {
+                telemetry.addData("HSV", JavaUtil.colorToHue(colorSensorV3.getNormalizedColors().toColor()));
+                telemetry.addData("Dist", colorSensorV4.getDistance(DistanceUnit.MM));
+                telemetry.update();
+                sleep(20);
             }
-            telemetry.addData("HSV", JavaUtil.colorToHue(colorSensorV3.getNormalizedColors().toColor()));
-            telemetry.addData("Dist", colorSensorV4.getDistance(DistanceUnit.MM));
-            telemetry.update();
         }
 
     }

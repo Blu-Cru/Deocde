@@ -200,6 +200,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     // ===============================
     // LOOP TIMING UTILS
     // ===============================
+    private double currentLoopTimeSegmentAvg = 0;
+
     public double[] getLoopTimes() {
         double now = Globals.matchTime.milliseconds();
         loopTimeSegmentSum += now - lastTimeLoopWasRun;
@@ -212,10 +214,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         res[1] = amountOfLoopsOverall / Math.max(Globals.matchTime.seconds(), 0.001);
 
         if (amountOfLoopsInSegment > 20) {
-            res[0] = loopTimeSegmentSum / amountOfLoopsInSegment;
+            currentLoopTimeSegmentAvg = loopTimeSegmentSum / amountOfLoopsInSegment;
             loopTimeSegmentSum = 0;
             amountOfLoopsInSegment = 0;
         }
+        res[0] = currentLoopTimeSegmentAvg;
 
         return res;
     }

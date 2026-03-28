@@ -18,7 +18,8 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
 
     @Override
     public void init() {
-
+        pin0.setMode(DigitalChannel.Mode.INPUT);
+        pin1.setMode(DigitalChannel.Mode.INPUT);
     }
 
     @Override
