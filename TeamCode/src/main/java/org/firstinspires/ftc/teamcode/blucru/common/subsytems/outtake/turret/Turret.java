@@ -43,6 +43,10 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
 
+    // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
+    private static final int TAG_DROPOUT_THRESHOLD = 10;
+    private int tagDropoutCounter = 0;
+
     public static double MAX_ANGLE = 150;
     public static double MIN_ANGLE = -150;
 
@@ -94,25 +98,44 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-                //Globals.telemetry.addData("Turret Cam Detecting", Robot.getInstance().turretCam.detectedThisLoop());
                 Globals.telemetry.addData("Turret Offset", headingOffset);
                 Globals.telemetry.addData("detection", Robot.getInstance().turretCam.getDetection());
-                if (Robot.getInstance().turretCam.getDetection() != null && ( Robot.getInstance().turretCam.detectedThisLoop() || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000)){
-                    Globals.telemetry.addLine("here hallo hi hi hi hi hallo here");
+                Globals.telemetry.addData("Auto-Aim Mode", lastAutoAimMode);
+                Globals.telemetry.addData("Tag Dropout Counter", tagDropoutCounter);
+
+                boolean tagAvailable = Robot.getInstance().turretCam.getDetection() != null
+                        && (Robot.getInstance().turretCam.detectedThisLoop()
+                            || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000);
+
+                if (tagAvailable) {
+                    // Tag is visible — reset dropout counter and use camera-based aiming
+                    tagDropoutCounter = 0;
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-                    if (lastAutoAimMode == LastAutoAimMode.LOC){
+
+                    if (lastAutoAimMode == LastAutoAimMode.LOC) {
                         Globals.telemetry.addLine("SWITCHING TO CAMERA");
                         lastAutoAimMode = LastAutoAimMode.TAG;
                         tagController.reset();
                     }
-                }
-                else {
-                    localizationBasedAutoAim();
-                    if (lastAutoAimMode == LastAutoAimMode.TAG){
+                } else if (lastAutoAimMode == LastAutoAimMode.TAG) {
+                    // Tag was active but just dropped — use hysteresis before switching back
+                    tagDropoutCounter++;
+
+                    if (tagDropoutCounter < TAG_DROPOUT_THRESHOLD) {
+                        // Still within grace period: hold last tag-based power (coast)
+                        // Don't switch modes, don't reset controllers — just wait
+                        Globals.telemetry.addLine("TAG DROPOUT GRACE (" + tagDropoutCounter + "/" + TAG_DROPOUT_THRESHOLD + ")");
+                    } else {
+                        // Tag has been gone long enough — genuinely fall back to localization
                         Globals.telemetry.addLine("SWITCHING TO LOCALIZATION");
                         lastAutoAimMode = LastAutoAimMode.LOC;
+                        tagDropoutCounter = 0;
                         controller.reset();
+                        localizationBasedAutoAim();
                     }
+                } else {
+                    // Never had tag, or already fell back — use localization
+                    localizationBasedAutoAim();
                 }
                 break;
             case PID:
