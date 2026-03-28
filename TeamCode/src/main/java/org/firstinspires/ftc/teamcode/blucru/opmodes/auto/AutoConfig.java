@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import androidx.core.widget.AutoScrollHelper;
+
 public abstract class AutoConfig {
     public enum AUTOS {
         RED_CLOSE,
@@ -9,7 +11,8 @@ public abstract class AutoConfig {
         RED_CLOSE_MOTIF,
         BLUE_CLOSE_MOTIF,
         ROOT_NEGATIVE_ONE_FSM,
-        BLUE_FAR_WITH_DETECTION
+        BLUE_FAR_WITH_DETECTION,
+        BLUE_MTI_AUTO
     }
 
     private static boolean isInitBusy = false;
@@ -34,7 +37,9 @@ public abstract class AutoConfig {
             autoToReturn = new RootNegativeOneFSM();
         } else if (givenauto == AUTOS.BLUE_FAR_WITH_DETECTION) {
             autoToReturn = new farBLUEautoFSMwithBallDetection();
-        }
+        } else if (givenauto == AUTOS.BLUE_MTI_AUTO) {
+            autoToReturn = new MtiAuto();
+       }
 
         // Simulating the end of synchronous instance creation for path generation.
         // Once this returns, it's immediately ready in Auto.java, so we mark it done.
