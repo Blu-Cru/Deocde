@@ -17,7 +17,7 @@ public class AutonomousTransferCommand extends InstantCommand {
         super(() -> {
             new SequentialCommandGroup(
                     new IntakeStopCommand(),
-                    new WaitCommand(100),
+//                    new WaitCommand(100),
                     new IntakeSpitCommand(),
                     new WaitCommand(300),
                     new ElevatorUpCommand(),
