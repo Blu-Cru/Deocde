@@ -26,7 +26,11 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
+
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class TagCamera implements BluSubsystem, Subsystem {
     AprilTagProcessor tags;
@@ -34,6 +38,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     AprilTagDetection detection;
     boolean currentlySeeingGoodTags;
     boolean streaming;
+    boolean exposureSet = false;  // one-shot flag for exposure init
     final double tagDistToMiddleShooter = 7.5;
     final double turretCenterToLocPoint = -72.35/25.4;
     long captureTime;
@@ -57,6 +62,10 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 .setLensIntrinsics(563.115, 562.734, 312.667, 239.793)
                 .setSuppressCalibrationWarnings(true)
                 .build();
+        // Decimation speeds up detection by downsampling internally
+        // 2 = process at half res, good balance of speed vs range
+        tags.setDecimation(2);
+
         portal = new VisionPortal.Builder()
                 .setCamera(Globals.hwMap.get(WebcamName.class, "autoaim cam"))
                 .enableLiveView(false)
@@ -77,6 +86,24 @@ public class TagCamera implements BluSubsystem, Subsystem {
         yFilter = new KalmanFilter(0, 0.7,0.5,0.01,1);
     }
 
+    /**
+     * Call after the camera has started streaming to lock exposure.
+     * Low exposure (6ms) eliminates motion blur when the turret is rotating.
+     */
+    public void setManualExposure(int exposureMs, int gain) {
+        // Wait for camera to be streaming
+        if (portal.getCameraState() != VisionPortal.CameraState.STREAMING) return;
+
+        ExposureControl exposureControl = portal.getCameraControl(ExposureControl.class);
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+        }
+        exposureControl.setExposure(exposureMs, TimeUnit.MILLISECONDS);
+
+        GainControl gainControl = portal.getCameraControl(GainControl.class);
+        gainControl.setGain(gain);
+    }
+
     @Override
     public void init() {
         read();
@@ -86,6 +113,12 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
     @Override
     public void read() {
+        // One-shot: lock exposure the first time camera is streaming
+        if (!exposureSet && portal.getCameraState() == VisionPortal.CameraState.STREAMING) {
+            setManualExposure(6, 250);  // 6ms exposure, 250 gain
+            exposureSet = true;
+        }
+
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
 
