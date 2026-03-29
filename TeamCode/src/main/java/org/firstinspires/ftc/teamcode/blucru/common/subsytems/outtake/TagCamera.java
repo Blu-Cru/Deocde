@@ -98,6 +98,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 currentlySeeingGoodTags = false;
             }
             for (AprilTagDetection detect : detections) {
+                if (detect.ftcPose == null) continue;
                 captureTime = detect.frameAcquisitionNanoTime;
                 if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
                         || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
@@ -224,7 +225,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
 
     public double getDistance(){
-        if (detection == null){
+        if (detection == null || detection.ftcPose == null){
             return 0;
         }
         return detection.ftcPose.range * Math.cos(Math.toRadians(20)) + tagDistToMiddleShooter;
