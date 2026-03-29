@@ -250,13 +250,15 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
+                                                        new TurnTurretToPosCommand(-110),
+                                                        new WaitCommand(400),
                                                         new LockOnGoalCommand()
                                         ).schedule();
                                 })
 //                                .addTurnTo(-90,500)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
-                                                new Point2d(13, -54),
+                                                new Point2d(17, -52),
                                         shootingPose
                                 }, 2000)
                                 .callback(() -> new AutonomousShootCommand(false).schedule())
@@ -279,13 +281,15 @@ public class RootNegativeOneFSM extends BaseAuto {
                             new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(700),
+                            new TurnTurretToPosCommand(-110),
+                            new WaitCommand(400),
                             new LockOnGoalCommand()
                     ).schedule();
                 })
 //                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10, -60),
-                        new Point2d(13, -54),
+                        new Point2d(17, -52),
                         shootingPose
                 }, 2000)
                                 .waitMilliseconds(400)
@@ -390,7 +394,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
                                                         new TurnTurretToPosCommand(-70),
-                                                        new WaitCommand(300),
+                                                        new WaitCommand(400),
                                                         new LockOnGoalCommand())
                                                 .schedule();
                                 })
