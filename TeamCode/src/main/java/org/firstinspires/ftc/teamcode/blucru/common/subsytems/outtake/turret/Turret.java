@@ -33,7 +33,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
-        public static double kP = 0.028;
+        public static double kP = 0.023;
     public static double kI = 0.02;
     public static double kD = 0.0018;
     public static double kPTags = 0.00145;
@@ -46,10 +46,10 @@ public class Turret implements BluSubsystem, Subsystem {
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
     public static double locAutoAimAngleOffset = 3; // degrees
-    public static double tagAutoAimPixelOffset = 24; // pixels
+    public static double tagAutoAimPixelOffset = 21; // pixels
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
-    private static final int TAG_DROPOUT_THRESHOLD = 10;
+    public static int TAG_DROPOUT_THRESHOLD = 10;
     private int tagDropoutCounter = 0;
 
     public static double MAX_ANGLE = 150;

@@ -243,7 +243,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                         new Point2d(14.5, -50),
                                         new Point2d(10, -60)
                                 }, 2000)
-                                .waitMilliseconds(1300)
+                                .waitMilliseconds(1800)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
 //                                                new WaitCommand(400),
