@@ -258,7 +258,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                                .addTurnTo(-90,500)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
-                                                new Point2d(17, -52),
+                                                new Point2d(20, -52),
                                         shootingPose
                                 }, 2000)
                                 .callback(() -> new AutonomousShootCommand(false).schedule())
@@ -289,7 +289,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10, -60),
-                        new Point2d(17, -52),
+                        new Point2d(20, -52),
                         shootingPose
                 }, 2000)
                                 .waitMilliseconds(400)
