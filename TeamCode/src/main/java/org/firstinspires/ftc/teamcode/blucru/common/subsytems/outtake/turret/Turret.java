@@ -25,7 +25,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private BluEncoder encoder;
     private PIDController controller;
 
-    private PIDFController tagController;
+    private PIDController tagController;
     Vector2d target;
     AprilTagProcessor tags;
     public double headingOffset = 0;
@@ -39,6 +39,13 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kPTags = 0.00145;
     public static double kITags = 0;
     public static double kDTags = 0.0001;
+    public static double kPTagsSmall = 0.0025;
+    public static double kITagsSmall = 0.01;
+    public static double kDTagsSmall = 0.0002;
+
+    public static double tagErrorThreshold = 40.0;
+    public static double tagHysteresis = 5.0; // Buffer to prevent rapid switching
+    private boolean usingSmallTagPID = false;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
@@ -302,8 +309,20 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void tagBasedAutoAim(AprilTagDetection detection){
         double xDelta = detection.center.x - (320 - tagAutoAimPixelOffset);
+        double error = -xDelta;
+        if (!usingSmallTagPID && Math.abs(error) < (tagErrorThreshold - tagHysteresis)) {
+            usingSmallTagPID = true;
+            tagController.setPID(kPTagsSmall, kITagsSmall, kDTagsSmall);
+            tagController.reset(); // Clear I-term for the new mode
+        }
+        else if (usingSmallTagPID && Math.abs(error) > (tagErrorThreshold + tagHysteresis)) {
+            usingSmallTagPID = false;
+            tagController.setPID(kPTags, kITags, kDTags);
+            tagController.reset(); // Clear I-term for the new mode
+        }
         Globals.telemetry.addData("Yaw Delta", xDelta);
         Globals.telemetry.addData("Delta", xDelta);
+
         servos.setPower(tagController.calculate(-xDelta, 0));
         //saveTurretOffset(yawDelta + getAngle());
     }
