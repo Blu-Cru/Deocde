@@ -115,7 +115,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     public void read() {
         // One-shot: lock exposure the first time camera is streaming
         if (!exposureSet && portal.getCameraState() == VisionPortal.CameraState.STREAMING) {
-            setManualExposure(6, 250);  // 6ms exposure, 250 gain
+            setManualExposure(7, 1);
+
             exposureSet = true;
         }
 
