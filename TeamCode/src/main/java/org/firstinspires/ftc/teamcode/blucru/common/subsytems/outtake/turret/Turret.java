@@ -24,6 +24,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private TurretServos servos;
     private BluEncoder encoder;
     private PIDController controller;
+    private PIDController controllerClose;  // PID controller for close-range (small errors)
 
     private PIDFController tagController;
     Vector2d target;
@@ -33,15 +34,22 @@ public class Turret implements BluSubsystem, Subsystem {
     private Double lastSetpoint = null;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
-        public static double kP = 0.023;
+    // Far PID (large errors)
+    public static double kP = 0.023;
     public static double kI = 0.02;
     public static double kD = 0.0018;
+    // Close PID (small errors) - tune these to reduce oscillation near target
+    public static double kPClose = 0.012;
+    public static double kIClose = 0.008;
+    public static double kDClose = 0.0009;
+    
     public static double kPTags = 0.00145;
     public static double kITags = 0;
     public static double kDTags = 0.0001;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
+    public static double errorThreshold = 50;  // Switch to close PID when error is below this (degrees)
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
@@ -49,7 +57,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 21; // pixels
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
-    public static int TAG_DROPOUT_THRESHOLD = 10;
+    public static int TAG_DROPOUT_THRESHOLD = 20;
     private int tagDropoutCounter = 0;
 
     public static double MAX_ANGLE = 150;
@@ -77,6 +85,7 @@ public class Turret implements BluSubsystem, Subsystem {
         servos = new TurretServos(servoLeft, servoRight,servoCenter);
         this.encoder = encoder;
         controller = new PIDController(kP, kI, kD);
+        controllerClose = new PIDController(kPClose, kIClose, kDClose);
         tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
         lastAutoAimMode = LastAutoAimMode.LOC;
@@ -136,6 +145,7 @@ public class Turret implements BluSubsystem, Subsystem {
                         lastAutoAimMode = LastAutoAimMode.LOC;
                         tagDropoutCounter = 0;
                         controller.reset();
+                        controllerClose.reset();
                         localizationBasedAutoAim();
                     }
                 } else {
@@ -157,6 +167,7 @@ public class Turret implements BluSubsystem, Subsystem {
         angle = -angle;
         if (lastSetpoint == null || Math.abs(angle - lastSetpoint) > 1e-6) {
             controller.reset();
+            controllerClose.reset();
             lastSetpoint = angle;
         }
         position = angle;
@@ -212,6 +223,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void updatePID() {
         controller.setPID(kP, kI, kD);
+        controllerClose.setPID(kPClose, kIClose, kDClose);
     }
 
     public void updateControlLoop() {
@@ -225,7 +237,16 @@ public class Turret implements BluSubsystem, Subsystem {
         double currentAngle = getAngle();
         double error = position - currentAngle;
         //Globals.telemetry.addData("Error", error);
-        double power = controller.calculate(currentAngle, position);
+        
+        // Select appropriate PID controller based on error magnitude
+        PIDController activePID;
+        if (Math.abs(error) < errorThreshold) {
+            activePID = controllerClose;
+        } else {
+            activePID = controller;
+        }
+        
+        double power = activePID.calculate(currentAngle, position);
         power = Range.clip(power, -powerClip, powerClip);
 
         // software safety limits
@@ -300,12 +321,15 @@ public class Turret implements BluSubsystem, Subsystem {
         updateControlLoop();
     }
 
-    public void tagBasedAutoAim(AprilTagDetection detection){
+    public void tagBasedAutoAim(AprilTagDetection detection) {
         double xDelta = detection.center.x - (320 - tagAutoAimPixelOffset);
         Globals.telemetry.addData("Yaw Delta", xDelta);
-        Globals.telemetry.addData("Delta", xDelta);
         servos.setPower(tagController.calculate(-xDelta, 0));
-        //saveTurretOffset(yawDelta + getAngle());
+
+        if (Math.abs(xDelta) < 5) {
+            saveTurretOffset(getAngle());
+            Globals.telemetry.addData("Heading Offset", headingOffset);
+        }
     }
 
     public void saveTurretOffset(double detectedAngle) {
