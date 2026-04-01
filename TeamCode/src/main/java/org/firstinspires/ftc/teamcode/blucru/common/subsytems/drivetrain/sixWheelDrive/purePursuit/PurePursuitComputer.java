@@ -222,20 +222,20 @@ public class PurePursuitComputer {
         return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);
     }
 
-    public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid) {
+    public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid, Boolean forceReverse) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        boolean isDrivingBackwards = (forceReverse != null) ? forceReverse : pid.shouldDriveBackwards(robotPose, goalPoint);
 
         return getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, angleVel, pid, isDrivingBackwards);
     }
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
-            SixWheelPID pid) {
+            SixWheelPID pid, Boolean forceReverse) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
         //Globals.telemetry.addData("Target Point", goalPoint);
 
-        // Determine backwards driving once, use for both linear and heading control
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        // Determine backwards driving: use forceReverse if provided, otherwise fallback to PID logic
+        boolean isDrivingBackwards = (forceReverse != null) ? forceReverse : pid.shouldDriveBackwards(robotPose, goalPoint);
 
         // --- Path Following Improvements ---
 

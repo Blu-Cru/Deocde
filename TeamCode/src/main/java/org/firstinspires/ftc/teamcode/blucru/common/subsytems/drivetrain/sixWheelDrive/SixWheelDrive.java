@@ -20,6 +20,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
     private Double targetHeading; // Target heading for turnTo command
+    private Boolean forceReverse = null; // Forced driving direction (null = auto)
     private PurePursuitComputer computer;
 
     // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but
@@ -68,7 +69,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 double[] powers = computer.computeRotAndXY(path, localizer.getPose(), localizer.getVel(),
-                        LOOK_AHEAD_DIST, pid);
+                        LOOK_AHEAD_DIST, pid, forceReverse);
                 drive(powers[0], -powers[1]); // Negate rotation to match TURN convention
                 break;
             case TURN:
@@ -153,8 +154,13 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public void followPath(Point2d[] path) {
+        followPath(path, null);
+    }
+
+    public void followPath(Point2d[] path, Boolean reverse) {
         this.path = path;
         this.targetHeading = null;
+        this.forceReverse = reverse;
         computer.resetLastFoundIndex();
         pid.resetBackwardsDrivingState();
         dtState = State.PID;

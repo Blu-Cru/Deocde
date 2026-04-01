@@ -260,7 +260,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(10, -60),
                                                 new Point2d(20, -52),
                                         shootingPose
-                                }, 2000)
+                                }, 2000, true)
                                 .callback(() -> new AutonomousShootCommand(false).schedule())
                                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 300)
                                 .build();
@@ -291,7 +291,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(10, -60),
                         new Point2d(20, -52),
                         shootingPose
-                }, 2000)
+                }, 2000, true)
                                 .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootCommand(false).schedule())
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 300)

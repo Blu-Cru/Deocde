@@ -12,10 +12,16 @@ public class PurePursuitSegment implements PathSegment {
     Point2d[] path;
     double startTime;
     double maxTime;
+    Boolean reverse = null;
 
     public PurePursuitSegment(Point2d[] path, double maxTime) {
         this.path = path;
         this.maxTime = maxTime;
+    }
+
+    public PurePursuitSegment(Point2d[] path, double maxTime, boolean reverse) {
+        this(path, maxTime);
+        this.reverse = reverse;
     }
 
     @Override
@@ -31,7 +37,7 @@ public class PurePursuitSegment implements PathSegment {
     @Override
     public void startSegment() {
         startTime = System.currentTimeMillis();
-        Robot.getInstance().sixWheelDrivetrain.followPath(path);
+        Robot.getInstance().sixWheelDrivetrain.followPath(path, reverse);
     }
 
     @Override

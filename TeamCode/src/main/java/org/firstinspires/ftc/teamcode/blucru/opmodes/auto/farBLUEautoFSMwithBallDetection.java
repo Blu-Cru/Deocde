@@ -447,7 +447,7 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                         new Point2d(61, -45),
                         new Point2d(62, -55),
                         new Point2d(62, pickupWallY)
-                }, 1200)
+                }, 1200, true)
                 .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -474,7 +474,7 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
                         new Point2d(pickupWallX, pickupWallY - 2)
-                }, 1200)
+                }, 1200, true)
                 .waitMilliseconds(1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
