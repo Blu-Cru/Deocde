@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret;
 
+import android.provider.Settings;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.controller.PIDController;
@@ -39,12 +41,12 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kPTags = 0.00145;
     public static double kITags = 0;
     public static double kDTags = 0.0001;
-    public static double kPTagsSmall = 0.0025;
+    public static double kPTagsSmall = 0.002;
     public static double kITagsSmall = 0.01;
-    public static double kDTagsSmall = 0.0002;
+    public static double kDTagsSmall = 0.00024;
 
     public static double tagErrorThreshold = 40.0;
-    public static double tagHysteresis = 5.0; // Buffer to prevent rapid switching
+    public static double tagHysteresis = 15.0; // Buffer to prevent rapid switching
     private boolean usingSmallTagPID = false;
 
     public static double acceptableError = 0.5;
@@ -307,27 +309,28 @@ public class Turret implements BluSubsystem, Subsystem {
         updateControlLoop();
     }
 
-    public void tagBasedAutoAim(AprilTagDetection detection){
+    public void tagBasedAutoAim(AprilTagDetection detection) {
         double xDelta = detection.center.x - (320 - tagAutoAimPixelOffset);
         double error = -xDelta;
         if (!usingSmallTagPID && Math.abs(error) < (tagErrorThreshold - tagHysteresis)) {
             usingSmallTagPID = true;
             tagController.setPID(kPTagsSmall, kITagsSmall, kDTagsSmall);
-            tagController.reset(); // Clear I-term for the new mode
-        }
-        else if (usingSmallTagPID && Math.abs(error) > (tagErrorThreshold + tagHysteresis)) {
+            tagController.reset();
+        } else if (usingSmallTagPID && Math.abs(error) > (tagErrorThreshold + tagHysteresis)) {
             usingSmallTagPID = false;
             tagController.setPID(kPTags, kITags, kDTags);
-            tagController.reset(); // Clear I-term for the new mode
+            tagController.reset();
         }
-        Globals.telemetry.addData("Yaw Delta", xDelta);
-        Globals.telemetry.addData("Delta", xDelta);
 
-        servos.setPower(tagController.calculate(-xDelta, 0));
-        //saveTurretOffset(yawDelta + getAngle());
+        Globals.telemetry.addData("Tag Error", error);
+        Globals.telemetry.addData("PID Mode", usingSmallTagPID ? "SMALL (Fine)" : "LARGE (Coarse)");
+
+        double power = tagController.calculate(error, 0);
+        servos.setPower(power);
     }
 
-    public void saveTurretOffset(double detectedAngle) {
+
+        public void saveTurretOffset(double detectedAngle) {
         // Get's the turret angle that localizer thinks it should be
         double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
         double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
