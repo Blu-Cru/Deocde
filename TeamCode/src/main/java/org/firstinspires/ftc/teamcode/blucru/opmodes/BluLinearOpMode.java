@@ -171,7 +171,10 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void initialize() {}
     public void initializePeriodic() {}
     public void onStart() {}
-    public void periodic() throws InterruptedException {}
+    public void periodic() throws InterruptedException {
+        Globals.updateVoltage(Robot.getInstance().getVoltage());
+    }
+
     public void telemetry() {}
     public void end() {}
 
