@@ -29,9 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import android.util.Size;
-
-import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
@@ -160,23 +158,13 @@ public class ConceptAprilTagOptimizeExposure extends LinearOpMode
      */
     private void initAprilTag() {
         // Create the AprilTag processor by using a builder.
-        aprilTag = new AprilTagProcessor.Builder()
-                .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
-                .setLensIntrinsics(563.115, 562.734, 312.667, 239.793)
-                .setSuppressCalibrationWarnings(true)
-                .build();
-        aprilTag.setDecimation(2);
+        aprilTag = new AprilTagProcessor.Builder().build();
 
-        // Create the WEBCAM vision portal matching our arducam config.
+        // Create the WEBCAM vision portal by using a builder.
         visionPortal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "autoaim cam"))
                 .addProcessor(aprilTag)
-                .setCameraResolution(new Size(640, 480))
-                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .build();
-
-        // Stream camera to FTC Dashboard
-        FtcDashboard.getInstance().startCameraStream(visionPortal, 0);
     }
 
     /*
