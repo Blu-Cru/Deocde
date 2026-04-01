@@ -75,7 +75,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     // ===============================
     @Override
     public final void runOpMode() throws InterruptedException {
-
+        enableDash();
         Globals.matchTime = new ElapsedTime();
         Globals.hwMap = hardwareMap;
         Globals.telemetry = telemetry;
