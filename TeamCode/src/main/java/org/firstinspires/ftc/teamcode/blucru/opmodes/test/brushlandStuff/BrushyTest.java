@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test.brushlandStuff;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -9,20 +12,26 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 public class BrushyTest extends BluLinearOpMode {
 
     BluBrushlandLabsColorSensor brushlandLeft;
+    DigitalChannel pin0, pin1;
     //BluBrushlandLabsColorSensor brushlandRight;
 
     @Override
     public void initialize(){
         brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftTop", "greenLeftTop");
+        pin0 = hardwareMap.get(DigitalChannel.class, "purpleLeftTop");
+        pin1 = hardwareMap.get(DigitalChannel.class, "greenLeftTop");
         //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
         brushlandLeft.init();
         brushlandLeft.read();
         //brushlandRight.init();
         //brushlandRight.read();
+        enableDash();
     }
 
     public void periodic(){
         brushlandLeft.read();
+        Log.i("BRUSHLANDS","PIN 0:" + pin0.getState());
+        Log.i("BRUSHLANDS","PIN 1:" + pin1.getState());
         //brushlandRight.read();
     }
 

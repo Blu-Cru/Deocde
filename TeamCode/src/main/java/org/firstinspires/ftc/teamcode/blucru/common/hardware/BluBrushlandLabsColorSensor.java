@@ -12,14 +12,13 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     private boolean state2;
 
     public BluBrushlandLabsColorSensor(String pin0, String pin1){
-        this.pin0 = Globals.hwMap.digitalChannel.get(pin0);
-        this.pin1 = Globals.hwMap.digitalChannel.get(pin1);
+        this.pin0 = Globals.hwMap.get(DigitalChannel.class,pin0);
+        this.pin1 = Globals.hwMap.get(DigitalChannel.class,pin1);
     }
 
     @Override
     public void init() {
-        pin0.setMode(DigitalChannel.Mode.INPUT);
-        pin1.setMode(DigitalChannel.Mode.INPUT);
+
     }
 
     @Override

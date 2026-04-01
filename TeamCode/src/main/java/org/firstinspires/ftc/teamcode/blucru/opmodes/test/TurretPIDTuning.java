@@ -23,7 +23,7 @@ public class TurretPIDTuning extends BluLinearOpMode {
         robot.clear();
         addTurret();
         turret.resetEncoder();
-        Globals.multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        enableDash();
     }
 
     public void periodic() throws InterruptedException {
@@ -37,11 +37,11 @@ public class TurretPIDTuning extends BluLinearOpMode {
             turret.setPower(power);
         }
 
-        Globals.multiTelemetry.addData("Turret Pos", -turret.getAngle());
-        Globals.multiTelemetry.addData("Target Pos", angle);
-        Globals.multiTelemetry.addData("Target Power", turret.getPower());
+        Globals.telemetry.addData("Turret Pos", -turret.getAngle());
+        Globals.telemetry.addData("Target Pos", angle);
+        Globals.telemetry.addData("Target Power", turret.getPower());
         //Globals.multiTelemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
         turret.telemetry(telemetry);
-        Globals.multiTelemetry.update();
+        Globals.telemetry.update();
     }
 }

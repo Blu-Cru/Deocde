@@ -16,7 +16,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Globals {
     public static HardwareMap hwMap;
     public static Telemetry telemetry;
-    public static MultipleTelemetry multiTelemetry;
     public static double voltage = 13.0;
     public static Alliance alliance = RED;
     public static double leftGoalX = -58;

@@ -20,7 +20,7 @@ public class TurretLockOnGoalTest extends BluLinearOpMode {
         addShooter();
         addTurret();
         addTilt();
-        Globals.multiTelemetry = new MultipleTelemetry(telemetry);
+        enableDash();
     }
 
     public void periodic() throws InterruptedException {

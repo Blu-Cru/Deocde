@@ -124,7 +124,6 @@ public class TagCamera implements BluSubsystem, Subsystem {
         if (streaming && portal.getProcessorEnabled(tags)) {
 
             Globals.telemetry.addLine("Looking for tags");
-            Globals.telemetry.addData("streaming", portal.getCameraState() == VisionPortal.CameraState.STREAMING);
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             if (!detections.isEmpty()){
                 Globals.telemetry.addLine("Detected Tag");
@@ -169,19 +168,19 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 double dy = detect.ftcPose.y; // forward/back relative to camera
                 Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
 
-                Globals.telemetry.addData("Tag To Cam Cam Centric", tagToCamCamCentric);
+                //Globals.telemetry.addData("Tag To Cam Cam Centric", tagToCamCamCentric);
                 Vector2d tagToCam = tagToCamCamCentric.rotate(-angle - Math.PI/2);
                 tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
 
-                Globals.telemetry.addData("Tag To Cam", tagToCam);
+                //Globals.telemetry.addData("Tag To Cam", tagToCam);
                 Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter,0).rotate(cameraFieldHeading);
-                Globals.telemetry.addData("Cam To Turret", camToTurret);
+                //Globals.telemetry.addData("Cam To Turret", camToTurret);
 
 
                 Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
 
                 Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
-                Globals.telemetry.addData("Tag To Robot", tagToRobot);
+                //Globals.telemetry.addData("Tag To Robot", tagToRobot);
 
                 Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 

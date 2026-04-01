@@ -111,9 +111,9 @@ public class Shooter implements BluSubsystem, Subsystem {
             lastLeftVel = currentLeftVel;
             lastRightVel = currentRightVel;
             lastMiddleVel = currentMiddleVel;
-            Globals.telemetry.addData("Left Shooter Shot", leftShooterShot);
+            /*Globals.telemetry.addData("Left Shooter Shot", leftShooterShot);
             Globals.telemetry.addData("Middle Shooter Shot", middleShooterShot);
-            Globals.telemetry.addData("Right Shooter Shot", rightShooterShot);
+            Globals.telemetry.addData("Right Shooter Shot", rightShooterShot);*/
         }
     }
 
@@ -348,7 +348,6 @@ public class Shooter implements BluSubsystem, Subsystem {
     }
 
     public boolean hasShot(int expectedBalls) {
-        Globals.telemetry.addData("Detected Shots", detectedShots);
         return detectedShots >= expectedBalls;
     }
 

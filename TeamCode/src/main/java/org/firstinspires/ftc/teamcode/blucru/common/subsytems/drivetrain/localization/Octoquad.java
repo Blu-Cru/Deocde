@@ -122,7 +122,7 @@ public class Octoquad implements RobotLocalizer{
     @Override
     public void telemetry(Telemetry telemetry) {
 
-        telemetry.addData("Pinpoint heading", pose.getH());
+        telemetry.addData("heading", pose.getH());
 
     }
 

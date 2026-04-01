@@ -75,7 +75,6 @@ public class SixWheelDriveBase implements BluSubsystem {
         dtMotors[2].setPower(powers[0]);
         dtMotors[1].setPower(powers[1]);
         dtMotors[3].setPower(powers[1]);
-        Globals.telemetry.addData("Powers", Arrays.toString(powers));
     }
 
     public void makeMotorsBeInBrake() {
