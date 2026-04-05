@@ -184,7 +184,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-51, -54),
                                                 new Point2d(-30, -32)
-                                }, 2000)
+                                }, 1000)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
                                                         new AutonomousShootCommand(false)).schedule();
@@ -204,8 +204,8 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-30, -32),
                                                 // small guide point for the turn
-                                                new Point2d(-10, -20),
-                                                new Point2d(7, -28),
+                                                new Point2d(-10, -30),
+                                                new Point2d(7, -37),
                                                 new Point2d(13, -50),
                                                 new Point2d(14, -65),
                                 }, 2500)
@@ -258,7 +258,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                                .addTurnTo(-90,500)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
-                                                new Point2d(20, -52),
+                                                new Point2d(16, -52),
                                         shootingPose
                                 }, 2000, true)
                                 .callback(() -> new AutonomousShootCommand(false).schedule())
@@ -289,7 +289,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10, -60),
-                        new Point2d(20, -52),
+                        new Point2d(16, -52),
                         shootingPose
                 }, 2000, true)
                                 .waitMilliseconds(400)
@@ -352,7 +352,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                         //new ReadBallColorsCommand(),
                                                         //new WaitCommand(100),
                                                         new WaitCommand(400),
-                                                        new SetShooterVelocityIndependentCommand(velo-80, veloMiddle-80, velo-80),
+                                                        new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
                                                         new WaitCommand(400),//wait for the addturnto
@@ -361,9 +361,10 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                                .waitMilliseconds(100)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(-14, -55),
-                                                new Point2d(-16, -19)
+                                                new Point2d(-6, -19),
+                                                new Point2d(-15,-12)
                                 }, 2000)
-                                .addTurnTo(-30, 1000)
+//                                .addTurnTo(-30, 1000)
                                 .waitMilliseconds(400)
                                 .callback(() -> new AutonomousShootCommand().schedule())
                                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 300)
@@ -378,7 +379,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         private Path buildSpikeFarPath() {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
-                                                new Point2d(-16, -19),
+                                                new Point2d(-15, -12),
                                                 new Point2d(33, -46),
                                                 new Point2d(40, -52),
 
@@ -392,8 +393,8 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new SetShooterVelocityIndependentCommand(velo-40, veloMiddle, velo-20),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(-70),
-                                                        new WaitCommand(400),
+//                                                        new TurnTurretToPosCommand(-70),
+//                                                        new WaitCommand(400),
                                                         new LockOnGoalCommand())
                                                 .schedule();
                                 })
