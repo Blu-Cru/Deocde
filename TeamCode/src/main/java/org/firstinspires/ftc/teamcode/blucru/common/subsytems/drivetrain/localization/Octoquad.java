@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 
@@ -51,6 +53,8 @@ public class Octoquad implements RobotLocalizer{
         pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
         vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
         Robot.getInstance().positionHistory.add(pose, vel);
+        Log.i("POS", "Robot Pose: " + pose);
+        Log.i("POS","Robot Heading: " + getHeading());
     }
     /**
      * returns pose in x,y,h in inch,inch,radian

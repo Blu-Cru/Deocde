@@ -65,6 +65,7 @@ public class Tele extends BluLinearOpMode{
         addTurret();
         addTilt();
         CommandScheduler.getInstance().reset();
+        enableDash();
 
         sm = new StateMachineBuilder()
 

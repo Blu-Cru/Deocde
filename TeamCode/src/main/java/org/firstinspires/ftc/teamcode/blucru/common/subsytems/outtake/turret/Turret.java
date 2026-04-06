@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.controller.PIDController;
@@ -311,6 +313,7 @@ public class Turret implements BluSubsystem, Subsystem {
                 getFieldCentricTargetGoalAngle(
                         Robot.getInstance().sixWheelDrivetrain.getPos()
                 );
+        Log.i("TURRET", "Target Field Centric Angle: " + turretTargetDeg);
         setFieldCentricPositionAutoAim(
                 applyTurretOffset(turretTargetDeg) + locAutoAimAngleOffset,
                 Math.toDegrees(
