@@ -187,7 +187,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void setFieldCentricPositionAutoAim(double targetHeading, double robotHeading, boolean switchState) {
-        setAngle(180 - targetHeading - robotHeading, switchState);
+        setAngle(getTurretAngleForFieldHeading(targetHeading, robotHeading), switchState);
     }
 
     public void setFieldCentricPosition(double targetHeading, double robotHeading, double desiredHeading, boolean switchState) {
@@ -303,21 +303,28 @@ public class Turret implements BluSubsystem, Subsystem {
         double dx = target.getX() - turretCenterX;
         double dy = target.getY() - turretCenterY;
 
-        return Math.toDegrees(Math.atan2(dx, dy)) - 90;
+        return normalizeDegrees(Math.toDegrees(Math.atan2(dy, dx)));
+    }
+
+    public double getTurretAngleForFieldHeading(double targetHeading, double robotHeading) {
+        return normalizeDegrees(targetHeading - robotHeading - 180);
     }
 
     public void  localizationBasedAutoAim(){
-        double turretTargetDeg =
-                getFieldCentricTargetGoalAngle(
-                        Robot.getInstance().sixWheelDrivetrain.getPos()
-                );
-        setFieldCentricPositionAutoAim(
-                applyTurretOffset(turretTargetDeg) + locAutoAimAngleOffset,
-                Math.toDegrees(
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH()
-                ),
-                false
-        );
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double targetFieldHeading = getFieldCentricTargetGoalAngle(robotPose);
+        double robotHeading = Math.toDegrees(robotPose.getH());
+        double theoreticalTurretAngle = getTurretAngleForFieldHeading(targetFieldHeading, robotHeading);
+        double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
+
+        position = correctedTurretAngle;
+
+        Globals.telemetry.addData("Target Field Heading", targetFieldHeading);
+        Globals.telemetry.addData("Target Turret Angle", theoreticalTurretAngle);
+        Globals.telemetry.addData("Corrected Turret Angle", correctedTurretAngle);
+        Globals.telemetry.addData("Current Turret Field Heading",
+                normalizeDegrees(robotHeading + getAngle() + 180));
+
         updateControlLoop();
     }
 
@@ -333,16 +340,28 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void saveTurretOffset(double detectedAngle) {
-        // Get's the turret angle that localizer thinks it should be
-        double targetHeading = getFieldCentricTargetGoalAngle(Robot.getInstance().sixWheelDrivetrain.getPos());
-        double robotHeading = Math.toDegrees(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-        double theoreticalTurretAngle = 180 - targetHeading - robotHeading;
-        // With the given camera detected angle we're able to set an offset to use for localizer based turret tracking
-        headingOffset = theoreticalTurretAngle-detectedAngle;
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double targetFieldHeading = getFieldCentricTargetGoalAngle(robotPose);
+        double robotHeading = Math.toDegrees(robotPose.getH());
+        double theoreticalTurretAngle = getTurretAngleForFieldHeading(targetFieldHeading, robotHeading);
+
+        // Store the learned correction in turret space so localization can keep tracking
+        // the goal after the tag disappears.
+        headingOffset = normalizeDegrees(detectedAngle - theoreticalTurretAngle);
     }
 
-    public double applyTurretOffset(double localizerangle) {
-        return localizerangle + headingOffset;
+    public double applyTurretOffset(double turretAngle) {
+        return normalizeDegrees(turretAngle + headingOffset);
+    }
+
+    private double normalizeDegrees(double angle) {
+        while (angle > 180) {
+            angle -= 360;
+        }
+        while (angle <= -180) {
+            angle += 360;
+        }
+        return angle;
     }
 
 

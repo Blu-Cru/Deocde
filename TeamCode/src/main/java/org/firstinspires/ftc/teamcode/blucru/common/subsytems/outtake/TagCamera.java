@@ -33,6 +33,9 @@ import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class TagCamera implements BluSubsystem, Subsystem {
+    private static final int BLUE_GOAL_TAG_ID = 20;
+    private static final int RED_GOAL_TAG_ID = 24;
+
     AprilTagProcessor tags;
     VisionPortal portal;
     AprilTagDetection detection;
@@ -122,19 +125,18 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
+            currentlySeeingGoodTags = false;
+            detection = null;
 
             Globals.telemetry.addLine("Looking for tags");
             ArrayList<AprilTagDetection> detections = tags.getDetections();
-            if (!detections.isEmpty()){
+            if (!detections.isEmpty()) {
                 Globals.telemetry.addLine("Detected Tag");
-            } else {
-                currentlySeeingGoodTags = false;
             }
             for (AprilTagDetection detect : detections) {
                 if (detect.ftcPose == null) continue;
                 captureTime = detect.frameAcquisitionNanoTime;
-                if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
-                        || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
+                if (isAllianceGoalTag(detect)) {
                     currentlySeeingGoodTags = true;
                     detection = detect;
                     Globals.telemetry.addData("Detect ID", detect.id);
@@ -271,5 +273,14 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
     public Pose2d getKalmanFilteredBotpose() {
         return new Pose2d(xFilter.get(),yFilter.get(), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
+
+    private boolean isAllianceGoalTag(AprilTagDetection detect) {
+        if (detect == null) {
+            return false;
+        }
+
+        return (Globals.alliance == Alliance.BLUE && detect.id == BLUE_GOAL_TAG_ID)
+                || (Globals.alliance == Alliance.RED && detect.id == RED_GOAL_TAG_ID);
     }
 }
