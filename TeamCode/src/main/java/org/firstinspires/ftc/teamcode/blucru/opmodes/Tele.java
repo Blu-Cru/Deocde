@@ -244,7 +244,7 @@ public class Tele extends BluLinearOpMode{
 
         if (driver2.pressedA() && !driver2.pressedOptions()) {
             gamepad2.rumble(1000);
-            sixWheel.setPosition(new Pose2d(60.629, -61, -Math.PI/2));
+            sixWheel.setPosition(new Pose2d(0, 0, 0));
         }
 
         /**if (driver1.pressedRightTrigger()){
