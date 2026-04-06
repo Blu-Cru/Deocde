@@ -107,17 +107,21 @@ public class Robot {
     }
 
     public double getVoltage(){
+        // Legacy voltage used by existing power correction code.
+        return Math.min(12.0, getRawVoltage());
+    }
 
-        //start at 12 bc that is the max power, otherwsie the power correction returns values < 1
-        double result = 12;
-        //read voltage sensor and
-        for (VoltageSensor sensor: hwMap.voltageSensor){
+    public double getRawVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+
+        for (VoltageSensor sensor : hwMap.voltageSensor) {
             double voltage = sensor.getVoltage();
-            if (voltage > 0){
+            if (voltage > 0) {
                 result = Math.min(result, voltage);
             }
         }
-        return result;
+
+        return Double.isFinite(result) ? result : 12.0;
     }
 
     public void telemetry(Telemetry telemetry){

@@ -21,6 +21,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private Point2d[] path;
     private Double targetHeading; // Target heading for turnTo command
     private Boolean forceReverse = null; // Forced driving direction (null = auto)
+    private Double simulatedBatteryVoltage;
     private PurePursuitComputer computer;
 
     // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but
@@ -36,6 +37,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         drivePower = 1;
         path = null;
         targetHeading = null;
+        simulatedBatteryVoltage = null;
         computer = new PurePursuitComputer();
         pid = new SixWheelPID();
     }
@@ -70,7 +72,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
                 double[] powers = computer.computeRotAndXY(path, localizer.getPose(), localizer.getVel(),
                         LOOK_AHEAD_DIST, pid, forceReverse);
-                drive(powers[0], -powers[1]); // Negate rotation to match TURN convention
+                double driveScale = getSimulatedBatteryScale();
+                drive(powers[0] * driveScale, -powers[1] * driveScale); // Negate rotation to match TURN convention
                 break;
             case TURN:
                 // Turn in place to target heading
@@ -153,6 +156,27 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         return drivePower;
     }
 
+    public void setSimulatedBatteryVoltage(Double simulatedBatteryVoltage) {
+        this.simulatedBatteryVoltage = simulatedBatteryVoltage;
+    }
+
+    public void clearSimulatedBatteryVoltage() {
+        simulatedBatteryVoltage = null;
+    }
+
+    private double getSimulatedBatteryScale() {
+        if (simulatedBatteryVoltage == null) {
+            return 1.0;
+        }
+
+        double rawVoltage = Robot.getInstance().getRawVoltage();
+        if (rawVoltage <= 0) {
+            return 1.0;
+        }
+
+        return Math.min(1.0, simulatedBatteryVoltage / rawVoltage);
+    }
+
     public void followPath(Point2d[] path) {
         followPath(path, null);
     }
@@ -203,6 +227,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public void switchToIdle() {
+        clearSimulatedBatteryVoltage();
         drive(0, 0);
         dtState = State.IDLE;
     }

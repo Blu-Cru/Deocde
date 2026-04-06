@@ -22,6 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -427,9 +428,8 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                         new Point2d(45, -25),
                         shootingPoint
                 }, 2000)
-                .waitMilliseconds(300)
                 .callback(() -> {
-                    new TurnTurretToPosFieldCentricCommand(turretAngleFinal).schedule();
+                    new LockOnGoalCommand().schedule();
                 })
                 .waitMilliseconds(400)
                 .callback(() -> {
@@ -447,7 +447,7 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                         new Point2d(61, -45),
                         new Point2d(62, -55),
                         new Point2d(62, pickupWallY)
-                }, 1200, true)
+                }, 1200)
                 .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -474,7 +474,7 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
                         new Point2d(pickupWallX, pickupWallY - 2)
-                }, 1200, true)
+                }, 1200)
                 .waitMilliseconds(1000)
                 .callback(() -> {
                     new SequentialCommandGroup(

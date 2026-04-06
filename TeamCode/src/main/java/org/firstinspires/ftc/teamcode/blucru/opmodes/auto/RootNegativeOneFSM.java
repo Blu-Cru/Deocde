@@ -8,6 +8,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
+import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelDrivetrainSetSimulatedBatteryVoltageCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
@@ -27,6 +28,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         double velo = 1230;
         double veloMiddle = 1230;
         double hood = 40;
+        double intakeCycleSimulatedVoltage = 13;
 
         double GATE_CYCLE_TIME_THRESHOLD = 16;
         private Point2d shootingPose = new Point2d(5, -7);
@@ -207,24 +209,25 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(-10, -30),
                                                 new Point2d(7, -37),
                                                 new Point2d(13, -50),
-                                                new Point2d(14, -65),
-                                }, 2500)
+                                                new Point2d(13, -65),
+                                }, 3000)
 //                        .waitMilliseconds(500)
                                 .callback(() -> {
                                         new SequentialCommandGroup(
                                                         new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new TurnTurretToPosCommand(-100),
-                                                        new WaitCommand(400),
+//                                                        new TurnTurretToPosCommand(-100),
+//                                                        new WaitCommand(400),
                                                         new LockOnGoalCommand()
                                                 ).schedule();
                                 })
-                                .addTurnTo(-80, 300)
+//                                .addTurnTo(-80, 300)
                                 .addPurePursuitPath(new Point2d[] {
-                                                new Point2d(15, -55),
+                                                new Point2d(13, -55),
+                                        new Point2d(5, -40),
                                         shootingPose
-                                }, 1500)
+                                }, 1500, true)
                                 .waitUntil(()-> Robot.getInstance().turret.atTarget(), 400)
                                 .callback(() -> {
                                     new SequentialCommandGroup(
@@ -237,6 +240,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
         private Path buildFirstIntakeCyclePath() {
                 return new SixWheelPIDPathBuilder()
+                                .schedule(new SixWheelDrivetrainSetSimulatedBatteryVoltageCommand(intakeCycleSimulatedVoltage))
                                 .addPurePursuitPath(new Point2d[] {
                                         shootingPose,
                                         new Point2d(16, -42),
@@ -256,6 +260,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                         ).schedule();
                                 })
 //                                .addTurnTo(-90,500)
+                                .schedule(new SixWheelDrivetrainSetSimulatedBatteryVoltageCommand(null))
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(10, -60),
                                                 new Point2d(16, -52),
@@ -268,6 +273,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
     private Path buildRestIntakeCyclePath() {
         return new SixWheelPIDPathBuilder()
+                .schedule(new SixWheelDrivetrainSetSimulatedBatteryVoltageCommand(intakeCycleSimulatedVoltage))
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
                         new Point2d(16, -42),
@@ -287,6 +293,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                     ).schedule();
                 })
 //                .addTurnTo(-90,500)
+                .schedule(new SixWheelDrivetrainSetSimulatedBatteryVoltageCommand(null))
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10, -60),
                         new Point2d(16, -52),
@@ -298,28 +305,6 @@ public class RootNegativeOneFSM extends BaseAuto {
                 .build();
     }
 
-        private Path buildIntakeMotifCyclePath() {
-                return new SixWheelPIDPathBuilder()
-                                .addPurePursuitPath(new Point2d[] {
-                                        shootingPose,
-                                                new Point2d(12, -35),
-                                                new Point2d(11, -50),
-                                                new Point2d(9, -56)
-                                }, 2000)
-                                .waitMilliseconds(2500)
-                                .callback(() -> {
-                                        new SequentialCommandGroup(
-                                                        //new ReadBallColorsCommand(),
-                                                        //new WaitCommand(100),
-                                                        new SetShooterVelocityIndependentCommand(velo, veloMiddle,
-                                                                        velo),
-                                                        new AutonomousTransferCommand(hood),
-                                                        new WaitCommand(700),
-                                                new LockOnGoalCommand()).schedule();
-                                })
-                                .waitMilliseconds(0)
-                                .build();
-        }
 
         private Path buildShootMotifCyclePath() {
                 return new SixWheelPIDPathBuilder()
@@ -401,7 +386,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                                .waitMilliseconds(100)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(33, -48),
-                                                new Point2d(-3, -10)
+                                                new Point2d(-3, -13)
                                 }, 2000)
                                 .waitUntil(()-> Robot.getInstance().turret.atTarget(), 500)
                                 .callback(() -> new AutonomousShootCommand().schedule())
@@ -412,7 +397,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         private Path buildParkPath() {
                 return new SixWheelPIDPathBuilder()
                                 .addPurePursuitPath(new Point2d[] {
-                                        new Point2d(-3,-10),
+                                        new Point2d(-3,-13),
                                                 new Point2d(10, -19)
                                 }, 5000)
                                 .build();
