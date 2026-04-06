@@ -19,7 +19,7 @@ import org.firstinspires.ftc.teamcode.R;
 @TeleOp
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
-    public String name = "leftColorSensorBottom";
+    public static String name = "leftColorSensorBottom";
     public static double purpleLowerBound = 155/360.0 * 255;
     public static double purpleHighBound = 200/360.0 * 255;
     public static double greenLowerBound = 105/360.0 * 255;

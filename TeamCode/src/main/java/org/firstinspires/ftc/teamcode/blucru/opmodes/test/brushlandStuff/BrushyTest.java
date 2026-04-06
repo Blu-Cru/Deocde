@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
-import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @TeleOp(group = "test")
 public class BrushyTest extends BluLinearOpMode {
@@ -20,6 +19,8 @@ public class BrushyTest extends BluLinearOpMode {
         brushlandLeft = new BluBrushlandLabsColorSensor("purpleLeftTop", "greenLeftTop");
         pin0 = hardwareMap.get(DigitalChannel.class, "purpleLeftTop");
         pin1 = hardwareMap.get(DigitalChannel.class, "greenLeftTop");
+        pin0.setMode(DigitalChannel.Mode.INPUT);
+        pin1.setMode(DigitalChannel.Mode.INPUT);
         //brushlandRight = new BluBrushlandLabsColorSensor("brushlandRightPurple", "brushlandRightGreen");
         brushlandLeft.init();
         brushlandLeft.read();

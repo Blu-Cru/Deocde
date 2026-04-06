@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.common.hardware;
 
-import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -14,11 +13,12 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     public BluBrushlandLabsColorSensor(String pin0, String pin1){
         this.pin0 = Globals.hwMap.get(DigitalChannel.class,pin0);
         this.pin1 = Globals.hwMap.get(DigitalChannel.class,pin1);
+        configurePinsForInput();
     }
 
     @Override
     public void init() {
-
+        configurePinsForInput();
     }
 
     @Override
@@ -45,6 +45,11 @@ public class BluBrushlandLabsColorSensor implements BluHardwareDevice{
     }
     public boolean getRawState2(){
         return state2;
+    }
+
+    private void configurePinsForInput() {
+        pin0.setMode(DigitalChannel.Mode.INPUT);
+        pin1.setMode(DigitalChannel.Mode.INPUT);
     }
 
     @Override
