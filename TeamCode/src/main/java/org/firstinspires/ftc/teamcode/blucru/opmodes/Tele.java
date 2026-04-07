@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
+import android.provider.Settings;
+
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -313,30 +315,6 @@ public class Tele extends BluLinearOpMode{
             }
         }
 
-        //relocalization TODO:Make this for adrucam
-        /*
-        if (driver1.pressedY()){
-            if (llTagDetector.validLLReads()){
-                gamepad2.rumble(200);
-                sixWheel.setPosition(Robot.getInstance().turretCam.getBotPosePoseHistory());
-            }
-            if(Globals.alliance == Alliance.RED) {
-                Globals.shootingGoalRPose = new Vector2d(Globals.OGshootingGoalRPose.getX(), Globals.OGshootingGoalRPose.getY());
-                Globals.turretTargetRedY = Globals.OGturretTargetRedY;
-                Globals.turretTargetRedX = Globals.OGturretTargetRedX;
-            }else {
-                Globals.shootingGoalLPose = new Vector2d(Globals.OGshootingGoalLPose.getX(), Globals.OGshootingGoalLPose.getY());
-                Globals.turretTargetBlueY = Globals.OGturretTargetBlueY;
-                Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
-            }
-        }
-
-         */
-        /*if (autoTagUpdating && llTagDetector.hasUpdatedPosition()){
-            if (llTagDetector.validLLReads()){
-                sixWheel.setPosition(llTagDetector.getLLBotPosePoseHistory());
-
-        }*/
 
         if (driver1.pressedY()){
             gamepad2.rumble(200);
@@ -357,13 +335,28 @@ public class Tele extends BluLinearOpMode{
                 Globals.turretTargetBlueX = Globals.OGturretTargetBlueX;
             }
         }
-        /*
-        if (driver2.pressedY()){
-            transfer.setAllUp();
+       // <----------- RELOCALIZIATION :))))) ALEX TRIED HIS BEST ----------->
+            if(Robot.getInstance().turretCam.computedBotposeThisLoop()) {
+            Pose2d tagPose = Robot.getInstance().turretCam.getBotPosePoseHistory();
+            if (tagPose != null && Robot.getInstance().turretCam.getBotpose() != null) {
+                // difference
+                double dx = tagPose.getX() - sixWheel.getPos().getX();
+                double dy = tagPose.getY() - sixWheel.getPos().getY();
+                double relocDist = Math.sqrt(dx * dx + dy * dy);
+
+                // Reject weird distances
+                if (relocDist < 15) {
+                    sixWheel.setPosition(tagPose);
+                    gamepad2.rumble(200);
+                    Globals.telemetry.addLine("Re-loc yay!");
+                } else {
+                    // Bad reading
+                    gamepad2.rumble(500);
+                    Globals.telemetry.addLine("Bad re-loc :( ");
+                }
+            }
         }
-        if (driver2.pressedTouchpad()){
-            transfer.setAllDown();
-        }*/
+
         if (driver2.pressedLeftTrigger()){
             Intake.offset += 5;
             Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;

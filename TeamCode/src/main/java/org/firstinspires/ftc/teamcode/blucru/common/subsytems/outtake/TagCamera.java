@@ -40,6 +40,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     VisionPortal portal;
     AprilTagDetection detection;
     boolean currentlySeeingGoodTags;
+    boolean computedBotposeThisLoop;
     boolean streaming;
     boolean exposureSet = false;  // one-shot flag for exposure init
     final double tagDistToMiddleShooter = 7.5;
@@ -126,6 +127,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
             currentlySeeingGoodTags = false;
+            computedBotposeThisLoop = false;
             detection = null;
 
             Globals.telemetry.addLine("Looking for tags");
@@ -187,6 +189,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 
                 botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                computedBotposeThisLoop = true;
                 if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) return;
                 Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
                 Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
@@ -240,6 +243,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
     public boolean detectedThisLoop(){
         return currentlySeeingGoodTags;
+    }
+    public boolean computedBotposeThisLoop(){
+        return computedBotposeThisLoop;
     }
     public Pose2d getBotPosePoseHistory() {
         Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,6 +24,9 @@ public class Octoquad implements RobotLocalizer{
     private Pose2d pose;
     private Pose2d vel;
 
+    private Pose2d prevpos;
+
+    private ElapsedTime timer;
     public Octoquad(String name){
         this(Globals.hwMap.get(OctoQuad.class, name));
     }
@@ -44,6 +48,8 @@ public class Octoquad implements RobotLocalizer{
         pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
         vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
         Robot.getInstance().positionHistory.add(pose, vel);
+        timer = new ElapsedTime();
+        prevpos = pose;
     }
 
     @Override
@@ -52,6 +58,20 @@ public class Octoquad implements RobotLocalizer{
         //dividing for unit conversion
         pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
         vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
+        //<-------- REJECT BAD READS :)( ------------>
+        if(Math.abs(timer.seconds()) > 0.001) {
+            double dx = pose.getX() - prevpos.getX();
+            double dy = pose.getY() - prevpos.getY();
+            double Dist = Math.sqrt(dx * dx + dy * dy);
+            double speed = Dist / timer.seconds();
+            timer.reset();
+            prevpos = pose;
+            if (speed > 90) {
+                Globals.telemetry.addLine("Sussy Octoquad! Speed: un-reasonable");
+
+            }
+            Globals.telemetry.addData("Speed", speed);
+        }
         Robot.getInstance().positionHistory.add(pose, vel);
         Log.i("POS", "Robot Pose: " + pose);
         Log.i("POS","Robot Heading: " + getHeading());
@@ -103,7 +123,7 @@ public class Octoquad implements RobotLocalizer{
      * */
     public void setPosition(double x, double y, double h){
         Globals.telemetry.addLine("Setting Pose");
-        octoquad.setLocalizerPose((int) (x * 25.4),(int) (y * 25.4),(float) h);
+        octoquad.setLocalizerPose((int) Math.round(x * 25.4),(int) Math.round(y * 25.4),(float) h);
         read();
     }
 
@@ -120,7 +140,8 @@ public class Octoquad implements RobotLocalizer{
 
     @Override
     public void setHeading(double heading) {
-        octoquad.setLocalizerPose((int) (pose.getX() * 25.4), (int) (pose.getY() * 25.4), (float) heading);
+        octoquad.setLocalizerPose((int) Math.round(pose.getX() * 25.4), (int) Math.round(pose.getY() * 25.4), (float) heading);
+        read();
     }
 
     @Override

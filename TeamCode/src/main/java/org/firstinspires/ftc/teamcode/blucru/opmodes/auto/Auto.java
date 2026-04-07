@@ -141,11 +141,11 @@ public class Auto extends BluLinearOpMode {
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_WITH_DETECTION) CurrentSelectedAuto = AUTOSTARTINGPOS.MTI_AUTO;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.MTI_AUTO) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
                     } else if (driver1.pressedDpadUp()) {
-                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR_WITH_DETECTION;
+                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) CurrentSelectedAuto = AUTOSTARTINGPOS.MTI_AUTO;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE_FSM) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_MOTIF;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
-                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_WITH_DETECTION) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR;
+                        else if(CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_WITH_DETECTION) CurrentSelectedAuto = AUTOSTARTINGPOS.ROOT_NEGATIVE_ONE_FSM;
                         else if(CurrentSelectedAuto == AUTOSTARTINGPOS.MTI_AUTO) CurrentSelectedAuto = AUTOSTARTINGPOS.FAR_WITH_DETECTION;
                     }
                     //telemetry.update();

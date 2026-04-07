@@ -22,7 +22,7 @@ public class PoseHistory {
         poseList.addFirst(new PoseMarker(pose, vel));
 
         //remove old poses
-        long currentTime = (long) (System.currentTimeMillis() * Math.pow(10, 6));
+        long currentTime = SystemClock.elapsedRealtimeNanos();
         while (!poseList.isEmpty() && currentTime - poseList.getLast().nanoTime > STORAGE_NANOSECONDS){
             poseList.removeLast();
         }
@@ -56,8 +56,8 @@ public class PoseHistory {
         double beforeMultiplier = (double) timeBefore / total;
         double afterMultiplier = (double) timeAfter / total;
 
-        Pose2d poseBeforeForInterpolation = new Pose2d(poseBefore.getX() * beforeMultiplier, poseBefore.getY() * beforeMultiplier, poseBefore.getH() * beforeMultiplier);
-        Pose2d poseAfterForInterpolation = new Pose2d(poseAfter.getX() * afterMultiplier, poseAfter.getY() * afterMultiplier, poseAfter.getH() * afterMultiplier);
+        Pose2d poseBeforeForInterpolation = new Pose2d(poseBefore.getX() * afterMultiplier, poseBefore.getY() * afterMultiplier, poseBefore.getH() * afterMultiplier);
+        Pose2d poseAfterForInterpolation = new Pose2d(poseAfter.getX() * beforeMultiplier, poseAfter.getY() * beforeMultiplier, poseAfter.getH() * beforeMultiplier);
 
         Pose2d interpolatedPose = new Pose2d(poseBeforeForInterpolation.vec().addNotInPlace(poseAfterForInterpolation.vec()), poseBeforeForInterpolation.getH() + poseAfterForInterpolation.getH());
 
