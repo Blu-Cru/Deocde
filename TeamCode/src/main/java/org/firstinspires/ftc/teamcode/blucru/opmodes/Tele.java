@@ -19,7 +19,6 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
@@ -126,7 +125,7 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                     new ElevatorDownCommand().schedule();
                 })
-                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper() || elevator.isFull(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
