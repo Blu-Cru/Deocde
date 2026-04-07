@@ -12,7 +12,7 @@ public class PoseMarker {
     private Pose2d pose, vel;
 
     public PoseMarker(Pose2d pose, Pose2d vel){
-        nanoTime = SystemClock.elapsedRealtimeNanos();
+        nanoTime = System.nanoTime();
         this.pose = pose;
         this.vel = vel;
     }
