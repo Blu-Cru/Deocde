@@ -10,10 +10,10 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
@@ -21,20 +21,20 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
+import java.util.concurrent.locks.Lock;
 
-public class farBLUEautoFSMwithBallDetection extends BaseAuto {
+@Autonomous
+public class farBlueAuto extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -107;
 
@@ -55,30 +55,18 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
         INTAKE_SPIKE,
         SHOOT_SPIKE,
         INTAKE_HP,
-        DRIVE_TO_SHOOT_HP,     // drives to shooting position (no turret/shoot)
+        SHOOT_HP,
         INTAKE_CYCLE,
-        DRIVE_TO_SHOOT_CYCLE,  // drives to shooting position (no turret/shoot)
-        VERIFY_TRANSFER,       // checks if transfer succeeded
-        RETRY_TRANSFER,        // retries the transfer sequence
-        AIM_AND_SHOOT,         // aims turret and shoots (runs after transfer verified)
+        SHOOT_CYCLE,
         PARK,
         IDLE
     }
 
+    StateMachine sm;
     Path currentPath;
     ElapsedTime matchTimer;
-    ElapsedTime retryTimer;       // tracks retry sequence duration
-    ElapsedTime aimShootTimer;    // tracks aim + shoot timing
-
     // Time threshold to start a new cycle (30s match - ~7s per cycle)
     final double CYCLE_TIME_THRESHOLD = 25.0;
-    // How long the retry sequence takes (spit + center + elevator down + wait + elevator up + middle)
-    final double RETRY_DURATION_SEC = 3.0;
-    // Time from aim to shoot
-    final double AIM_DURATION_SEC = 0.7;
-    // Time after shoot to let balls leave
-    final double SHOOT_WAIT_SEC = 0.4;
-
     boolean shouldReadColorSensors = false;
 
     public void initialize() {
@@ -108,23 +96,16 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
         intake.resetEncoder();
 
         matchTimer = new ElapsedTime();
-        retryTimer = new ElapsedTime();
-        aimShootTimer = new ElapsedTime();
 
         sm = new StateMachineBuilder()
-                // ========================
-                // PRELOAD: shoot preloaded balls
-                // ========================
                 .state(State.PRELOAD)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.INTAKE_SPIKE, () -> {
                     shouldReadColorSensors = true;
                     startPath(buildIntakeSpikePath());
                 })
 
-                // ========================
-                // INTAKE_SPIKE: drive to spike and intake
-                // ========================
                 .state(State.INTAKE_SPIKE)
+                // Transition if path completes normally
                 .transition(() -> currentPath != null && currentPath.isDone(), State.SHOOT_SPIKE, () -> {
                     shouldReadColorSensors = false;
                     startPath(buildShootSpikePath());
@@ -136,138 +117,63 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                     startPath(buildShootSpikePath());
                 })
 
-                // ========================
-                // SHOOT_SPIKE: drive to shoot position and shoot (has its own inline transfer)
-                // ========================
                 .state(State.SHOOT_SPIKE)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_HP, () -> {
-                            shouldReadColorSensors = true;
-                            startPath(buildIntakeHPPath());
-                        })
+                    shouldReadColorSensors = true;
+                    startPath(buildIntakeHPPath());
+                })
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
-                            startPath(buildParkPath());
-                        })
-
-                // ========================
-                // INTAKE_HP: drive to HP wall and intake
-                // FarAutoTransferCommand fires at the end of the path callback
-                // ========================
+                    startPath(buildParkPath());
+                })
                 .state(State.INTAKE_HP)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.DRIVE_TO_SHOOT_HP, () -> {
+                // Transition if path completes normally
+                .transition(() -> currentPath != null && currentPath.isDone(), State.SHOOT_HP, () -> {
                     shouldReadColorSensors = false;
-                    startPath(buildDriveToShootPath());
+                    startPath(buildShootHPPath());
                 })
-                .transition(() -> isTransferFull(), State.DRIVE_TO_SHOOT_HP, () -> {
-                    shouldReadColorSensors = false;
-                    stopIntakeAndPath();
-                    startPath(buildDriveToShootPath());
-                })
-
-                // ========================
-                // DRIVE_TO_SHOOT_HP: just drives to the shooting position, no turret commands
-                // When it arrives, go to VERIFY_TRANSFER to check if balls transferred
-                // ========================
-                .state(State.DRIVE_TO_SHOOT_HP)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.VERIFY_TRANSFER, () -> {
-                    // Read color sensors to check transfer status
-                    shouldReadColorSensors = true;
-                })
-
-                // ========================
-                // INTAKE_CYCLE: drive to detected ball position and intake
-                // FarAutoTransferCommand fires at the end of the path callback
-                // ========================
-                .state(State.INTAKE_CYCLE)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.DRIVE_TO_SHOOT_CYCLE, () -> {
-                    shouldReadColorSensors = false;
-                    startPath(buildDriveToShootCyclePath());
-                })
-                .transition(() -> isTransferFull(), State.DRIVE_TO_SHOOT_CYCLE, () -> {
+                // Transition early if transfer is full
+                .transition(() -> isTransferFull(), State.SHOOT_SPIKE, () -> {
                     shouldReadColorSensors = false;
                     stopIntakeAndPath();
-                    startPath(buildDriveToShootCyclePath());
+                    startPath(buildShootHPPath());
                 })
-
-                // ========================
-                // DRIVE_TO_SHOOT_CYCLE: just drives to shooting position, no turret commands
-                // ========================
-                .state(State.DRIVE_TO_SHOOT_CYCLE)
-                .transition(() -> currentPath != null && currentPath.isDone(), State.VERIFY_TRANSFER, () -> {
-                    shouldReadColorSensors = true;
-                })
-
-                // ========================
-                // VERIFY_TRANSFER: check if the balls made it into the turret
-                // This state runs for ONE frame — immediately transitions
-                // ========================
-                .state(State.VERIFY_TRANSFER)
-                // Transfer SUCCEEDED (no balls in elevator = they made it to turret)
-                .transition(() -> !hasBallsInElevator(), State.AIM_AND_SHOOT, () -> {
-                    // Transfer worked! Aim turret and shoot
-                    new SequentialCommandGroup(
-                            new ParallelizeIntakeCommand(),
-                            new TurnTurretToPosFieldCentricCommand(turretAngleFinal),
-                            new WaitCommand(600),
-                            new AutonomousShootCommand()
-                    ).schedule();
-                    aimShootTimer.reset();
-                })
-                // Transfer FAILED (balls still stuck in elevator)
-                .transition(() -> hasBallsInElevator(), State.RETRY_TRANSFER, () -> {
-                    // Retry: spit extra balls, center turret, drop elevator, try again
-                    new SequentialCommandGroup(
-                            new IntakeSpitCommand(),
-                            new CenterTurretCommand(),
-                            new ElevatorDownCommand(),
-                            new AllTransferDownCommand(),
-                            new WaitCommand(1000),
-                            new ParallelizeIntakeCommand(),
-                            new ElevatorUpCommand(),
-                            new WaitCommand(300),
-                            new ElevatorMiddleCommand(),
-                            new WaitCommand(150),
-                            new AllTransferMiddleCommand(),
-                            new SetHoodAngleCommand(hood)
-                    ).schedule();
-                    retryTimer.reset();
-                })
-
-                // ========================
-                // RETRY_TRANSFER: wait for retry sequence to complete, then aim & shoot
-                // ========================
-                .state(State.RETRY_TRANSFER)
-                .transition(() -> retryTimer.seconds() > RETRY_DURATION_SEC, State.AIM_AND_SHOOT, () -> {
-                    // Retry done — now aim turret and shoot
-                    new SequentialCommandGroup(
-                            new ParallelizeIntakeCommand(),
-                            new TurnTurretToPosFieldCentricCommand(turretAngleFinal),
-                            new WaitCommand(600),
-                            new AutonomousShootCommand()
-                    ).schedule();
-                    aimShootTimer.reset();
-                })
-
-                // ========================
-                // AIM_AND_SHOOT: aim turret, shoot, then immediately start next path
-                // The turret aim + shoot commands execute while the bot drives away
-                // ========================
-                .state(State.AIM_AND_SHOOT)
-                .transition(() -> aimShootTimer.seconds() > 0.9
+                .state(State.SHOOT_HP)
+                .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
                     shouldReadColorSensors = true;
                     updateIntakeXPosition();
                     startPath(buildIntakeCyclePath());
                 })
-                .transition(() -> aimShootTimer.seconds() > 0.9
+                .transition(() -> currentPath != null && currentPath.isDone()
+                        && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
+                    startPath(buildParkPath());
+                })
+                .state(State.INTAKE_CYCLE)
+                .transition(() -> currentPath != null && currentPath.isDone(), State.SHOOT_CYCLE, () -> {
+                    shouldReadColorSensors = false;
+                    startPath(buildShootCyclePath());
+                })
+                .transition(() -> isTransferFull(), State.SHOOT_CYCLE, () -> {
+                    shouldReadColorSensors = false;
+                    stopIntakeAndPath();
+                    startPath(buildShootCyclePath());
+                })
+
+                .state(State.SHOOT_CYCLE)
+                // Cycle if time permits
+                .transition(() -> currentPath != null && currentPath.isDone()
+                        && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
+                    updateIntakeXPosition();
+                    startPath(buildIntakeCyclePath());
+                })
+                // Park if time is running out
+                .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
                     startPath(buildParkPath());
                 })
 
-                // ========================
-                // PARK
-                // ========================
                 .state(State.PARK)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.IDLE, () -> {
                     currentPath = null;
@@ -300,16 +206,6 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
         sm.start();
     }
 
-    @Override
-    public Pose2d getStartPose() {
-        return null;
-    }
-
-    @Override
-    public StateMachine buildStateMachine() {
-        return null;
-    }
-
     public void periodic() {
         if (currentPath != null) {
             currentPath.run();
@@ -320,10 +216,6 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
         telemetry.addData("LL Clump X", ballDetector.getClumpFieldX());
         telemetry.addData("Intake X", pickupWallX);
     }
-
-    // ===========================
-    // HELPER METHODS
-    // ===========================
 
     private void startPath(Path path) {
         currentPath = path;
@@ -341,13 +233,14 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
     private void updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 20;
-            double maxX = 62;
-            pickupWallX = Range.clip(fieldX, minX, maxX);
+            double minX = 20; // x value the closest we would ever want to intake towards the gate
+            double maxX = 62; // max x value we would want to intake towards the wall
+            pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
         }
     }
 
     private boolean isTransferFull() {
+        // Only read color sensors during intake states to avoid I2C overhead
         if (!shouldReadColorSensors)
             return false;
 
@@ -359,24 +252,6 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                 ShooterMotifCoordinator.getMiddleColor() != BallColor.UNKNOWN &&
                 ShooterMotifCoordinator.getRightColor() != BallColor.UNKNOWN;
     }
-
-    /**
-     * Checks if there are balls still stuck in the elevator (transfer failed).
-     * Returns true if ANY color sensor detects a ball.
-     */
-    private boolean hasBallsInElevator() {
-        elevator.updateLeftBallColor();
-        elevator.updateMiddleBallColor();
-        elevator.updateRightBallColor();
-
-        return ShooterMotifCoordinator.getLeftColor() != BallColor.UNKNOWN ||
-                ShooterMotifCoordinator.getMiddleColor() != BallColor.UNKNOWN ||
-                ShooterMotifCoordinator.getRightColor() != BallColor.UNKNOWN;
-    }
-
-    // ===========================
-    // PATH BUILDERS
-    // ===========================
 
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
@@ -394,27 +269,33 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
     }
 
     private Path buildIntakeSpikePath() {
+        // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(63, -8),
+                        // INTAKE FIRST SET
                         new Point2d(37, -50)
                 }, 2000)
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                        new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                        new IntakeSpitCommand(),
-                        new WaitCommand(200),
-                        new ElevatorUpCommand(),
-                        new WaitCommand(200),
-                        new ElevatorMiddleCommand(),
-                        new WaitCommand(150),
-                        new AllTransferMiddleCommand(),
-                        new SetHoodAngleCommand(hood),
-                        new IntakeStopCommand(),
-                        new ParallelizeIntakeCommand(),
-                        new WaitCommand(200),
-                        new TurnTurretToPosCommand(-95)
+                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                            new IntakeSpitCommand(),
+                            new WaitCommand(200),
+                            new ElevatorUpCommand(),
+                            new WaitCommand(200),
+                            new ElevatorMiddleCommand(),
+                            new WaitCommand(150),
+                            new AllTransferMiddleCommand(),
+                            new SetHoodAngleCommand(hood),
+                            new IntakeStopCommand(),
+                            new ParallelizeIntakeCommand(),
+                            new WaitCommand(200),
+                            new LockOnGoalCommand()
+
+
+                            // new WaitCommand(2000),
+                            // new TurnTurretToPosCommand(102)
                     ).schedule();
                 })
                 .waitMilliseconds(0)
@@ -422,15 +303,17 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
     }
 
     private Path buildShootSpikePath() {
+        // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(40, -40),
                         new Point2d(45, -25),
                         shootingPoint
                 }, 2000)
-                .callback(() -> {
-                    new LockOnGoalCommand().schedule();
-                })
+                .waitMilliseconds(300)
+//                .callback(() -> {
+//                    new LockOnGoalCommand().schedule();
+//                })
                 .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -451,21 +334,35 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
                 .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
+                            new WaitCommand(600), //TODO: TUNE
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new FarAutoTransferCommand(hood, turretAnglePreaim)).schedule();
+                            new AutonomousTransferCommand(hood),
+                            new WaitCommand(700),
+                            new LockOnGoalCommand()
+                    ).schedule();
+
                 })
                 .waitMilliseconds(0)
                 .build();
     }
 
-    /** Drive-only path to shooting position (used after HP intake). No turret/shoot callbacks. */
-    private Path buildDriveToShootPath() {
+    private Path buildShootHPPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(-90, 500)
+                .addTurnTo(-90,500)
+                .waitMilliseconds(1000)
+//                .callback(() -> {
+//                    new LockOnGoalCommand().schedule();
+//                })
+                .waitMilliseconds(600)
+                .callback(() -> {
+                    new SequentialCommandGroup(
+                            new AutonomousShootCommand()).schedule();
+                })
+                .waitMilliseconds(300)
                 .build();
     }
 
@@ -473,26 +370,39 @@ public class farBLUEautoFSMwithBallDetection extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(pickupWallX, pickupWallY - 2)
+                        new Point2d(pickupWallX, pickupWallY-2)
                 }, 1200)
                 .waitMilliseconds(1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
+                            new WaitCommand(600), //TODO: TUNE
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new FarAutoTransferCommand(hood, turretAnglePreaim)).schedule();
+                            new AutonomousTransferCommand(hood),
+                            new WaitCommand(700),
+                            new LockOnGoalCommand()
+                    ).schedule();
                 })
                 .waitMilliseconds(0)
                 .build();
     }
 
-    /** Drive-only path to shooting position (used after cycle intake). No turret/shoot callbacks. */
-    private Path buildDriveToShootCyclePath() {
+    private Path buildShootCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(-90, 500)
+                .addTurnTo(-90,500)
+                .waitMilliseconds(1000)
+                .callback(() -> {
+                    new LockOnGoalCommand().schedule();
+                })
+                .waitMilliseconds(700)
+                .callback(() -> {
+                    new SequentialCommandGroup(
+                            new AutonomousShootCommand()).schedule();
+                })
+                .waitMilliseconds(300)
                 .build();
     }
 

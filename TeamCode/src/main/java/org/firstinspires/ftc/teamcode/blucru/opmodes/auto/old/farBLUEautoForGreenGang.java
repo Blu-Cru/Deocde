@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
+package org.firstinspires.ftc.teamcode.blucru.opmodes.auto.old;
 
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -20,11 +20,10 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
-import com.sfdev.assembly.state.StateMachine;
-import com.sfdev.assembly.state.StateMachineBuilder;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@Autonomous
-public class farBLUEauto extends BaseAuto {
+// @Autonomous
+public class farBLUEautoForGreenGang extends BluLinearOpMode {
     private boolean intakeTowardsGate = false; //Decides whether the bot intakes from human player zone or closer to the gate
     double turretAnglePreload = 102; //ROBOT CENTRIC: 102  FIELD CENTRIC: 168
     double turretAngleRest = 156; //Field centric angle increase = towards obelisk decrease = towards gate
@@ -32,7 +31,8 @@ public class farBLUEauto extends BaseAuto {
     double shootVeloMiddle = 1440;
     double shootVeloRight = 1430;
     Point2d shootingPoint = new Point2d(45, -9);
-    double hood = 45;
+
+    double hood = 49;
     double pickupWallX1 = 61;
     double pickupWallX2 = 62;
     double pickupWallX3=62;
@@ -45,10 +45,6 @@ public class farBLUEauto extends BaseAuto {
 //        pickupWallX3 = 45;
 //    }
     double pickupWallY = -62;
-
-    enum State {
-        RUNNING
-    }
 
     public class TestingPath extends SixWheelPIDPathBuilder {
 
@@ -149,10 +145,10 @@ public class farBLUEauto extends BaseAuto {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE THIRD SET
-                            new Point2d(61, -45),
-                            new Point2d(62.5,-55),
+                            new Point2d(45, -45),
+                            new Point2d(45,-55),
 
-                            new Point2d(63, pickupWallY)
+                            new Point2d(45, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -166,7 +162,7 @@ public class farBLUEauto extends BaseAuto {
                         ).schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(62, pickupWallY),
+                            new Point2d(45, pickupWallY),
                             // SHOOT THIRD SET
                             shootingPoint
                     }, 3000)
@@ -185,9 +181,9 @@ public class farBLUEauto extends BaseAuto {
                     .addPurePursuitPath(new Point2d[]{
                             shootingPoint,
                             // INTAKE FOURTH SET
-                            new Point2d(61, -45),
-                            new Point2d(62,-55),
-                            new Point2d(62, pickupWallY)
+                            new Point2d(45, -45),
+                            new Point2d(45,-55),
+                            new Point2d(45, pickupWallY)
                     }, 1200)
                     .waitMilliseconds(1000)
                     .callback(() -> {
@@ -200,7 +196,7 @@ public class farBLUEauto extends BaseAuto {
                         ).schedule();
                     })
                     .addPurePursuitPath(new Point2d[]{
-                            new Point2d(62, pickupWallY),
+                            new Point2d(45, pickupWallY),
                             // SHOOT FOURTH SET
                             shootingPoint
                     }, 3000)
@@ -226,25 +222,15 @@ public class farBLUEauto extends BaseAuto {
 
     Path currentPath;
 
-    @Override
-    public Pose2d getStartPose() {
-        return new Pose2d(63, -7, Math.toRadians(-90));
-    }
-
-    @Override
-    public StateMachine buildStateMachine() {
-        return new StateMachineBuilder()
-                .state(State.RUNNING)
-                .loop(() -> {
-                    if (currentPath != null) {
-                        currentPath.run();
-                    }
-                })
-                .build();
-    }
-
-    @Override
     public void initialize() {
+        robot.clear();
+        addSixWheel();
+        addIntake();
+        addElevator();
+        addShooter();
+        addTurret();
+        addTransfer();
+        addLLTagDetector();
         shooter.setHoodAngle(hood);
         shooter.write();
         elevator.setMiddle();
@@ -256,24 +242,20 @@ public class farBLUEauto extends BaseAuto {
         sixWheel.reset();
         sixWheel.write();
         intake.resetEncoder();
-        
-        super.initialize();
+
+
     }
 
-    @Override
     public void onStart() {
         shooter.shootWithVelocityIndependent(1510, 1520, 1490);
         turret.setAngle(-116);
-        sixWheel.setPosition(startPose);
         currentPath = new TestingPath().build().start();
+        sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
-
-        sm.setState(State.RUNNING);
-        sm.start();
     }
 
-    @Override
     public void periodic() {
-        sm.update();
+//        llTagDetector.read();
+        currentPath.run();
     }
 }

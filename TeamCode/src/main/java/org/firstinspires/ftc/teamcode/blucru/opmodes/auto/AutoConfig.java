@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
-import androidx.core.widget.AutoScrollHelper;
+import org.firstinspires.ftc.teamcode.blucru.opmodes.auto.old.farBLUEautoFSM;
 
 public abstract class AutoConfig {
     public enum AUTOS {
@@ -36,7 +36,7 @@ public abstract class AutoConfig {
         } else if (givenauto == AUTOS.ROOT_NEGATIVE_ONE_FSM){
             autoToReturn = new RootNegativeOneFSM();
         } else if (givenauto == AUTOS.BLUE_FAR_WITH_DETECTION) {
-            autoToReturn = new farBLUEautoFSMwithBallDetection();
+            autoToReturn = new failsafeFarBlueAuto();
         } else if (givenauto == AUTOS.BLUE_MTI_AUTO) {
             autoToReturn = new MtiAuto();
        }
