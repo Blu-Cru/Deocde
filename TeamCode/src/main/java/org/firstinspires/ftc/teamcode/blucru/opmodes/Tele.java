@@ -335,7 +335,7 @@ public class Tele extends BluLinearOpMode{
             }
         }
        // <----------- RELOCALIZIATION :))))) ALEX TRIED HIS BEST ----------->
-            if(Robot.getInstance().turretCam.computedBotposeThisLoop()) {
+            if(autoTagUpdating && Robot.getInstance().turretCam.computedBotposeThisLoop()) {
             Pose2d tagPose = Robot.getInstance().turretCam.getBotPosePoseHistory();
             if (tagPose != null && Robot.getInstance().turretCam.getBotpose() != null) {
                 // difference

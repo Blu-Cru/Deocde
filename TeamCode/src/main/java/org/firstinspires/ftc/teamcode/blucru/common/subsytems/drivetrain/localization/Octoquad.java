@@ -7,10 +7,6 @@ import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
-import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
@@ -18,6 +14,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class Octoquad implements RobotLocalizer{
     //TODO TUNE PER ROBOT
     public static double parallelYOffset = -138.5, perpXOffset = -94.05;
+    public static double MAX_REASONABLE_SPEED_IN_PER_SEC = 90.0;
+
     private OctoQuad octoquad;
     private double headingOffset;
 
@@ -45,8 +43,8 @@ public class Octoquad implements RobotLocalizer{
         octoquad.setAllLocalizerParameters(5,6,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) perpXOffset, (float) parallelYOffset, 1.02F,20);
 
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
-        pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
-        vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
+        pose = poseFromData(info);
+        vel = velFromData(info);
         Robot.getInstance().positionHistory.add(pose, vel);
         timer = new ElapsedTime();
         prevpos = pose;
@@ -55,23 +53,29 @@ public class Octoquad implements RobotLocalizer{
     @Override
     public void read() {
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
-        //dividing for unit conversion
-        pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
-        vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
-        //<-------- REJECT BAD READS :)( ------------>
-        if(Math.abs(timer.seconds()) > 0.001) {
-            double dx = pose.getX() - prevpos.getX();
-            double dy = pose.getY() - prevpos.getY();
-            double Dist = Math.sqrt(dx * dx + dy * dy);
-            double speed = Dist / timer.seconds();
-            timer.reset();
-            prevpos = pose;
-            if (speed > 90) {
-                Globals.telemetry.addLine("Sussy Octoquad! Speed: un-reasonable");
+        Pose2d candidatePose = poseFromData(info);
+        Pose2d candidateVel = velFromData(info);
 
+        //<-------- REJECT BAD READS :)( ------------>
+        double dt = timer.seconds();
+        timer.reset();
+        if (prevpos != null && dt > 0.001) {
+            double dx = candidatePose.getX() - prevpos.getX();
+            double dy = candidatePose.getY() - prevpos.getY();
+            double dist = Math.sqrt(dx * dx + dy * dy);
+            double speed = dist / dt;
+            if (speed > MAX_REASONABLE_SPEED_IN_PER_SEC) {
+                Globals.telemetry.addLine("Sussy Octoquad! Speed: un-reasonable");
+                Globals.telemetry.addData("Rejected Speed", speed);
+                Log.w("POS", "Rejected Octoquad pose jump at " + speed + " in/s: " + candidatePose);
+                return;
             }
             Globals.telemetry.addData("Speed", speed);
         }
+
+        pose = candidatePose;
+        vel = candidateVel;
+        prevpos = pose;
         Robot.getInstance().positionHistory.add(pose, vel);
         Log.i("POS", "Robot Pose: " + pose);
         Log.i("POS","Robot Heading: " + getHeading());
@@ -113,8 +117,8 @@ public class Octoquad implements RobotLocalizer{
      * */
     @Override
     public void setOffset(double x, double y, double h) {
-        octoquad.setLocalizerTcpOffsetMM_X((float) x);
-        octoquad.setLocalizerTcpOffsetMM_Y((float) y);
+        octoquad.setLocalizerTcpOffsetMM_X((float) (x * 25.4));
+        octoquad.setLocalizerTcpOffsetMM_Y((float) (y * 25.4));
         headingOffset = h;
     }
 
@@ -147,11 +151,21 @@ public class Octoquad implements RobotLocalizer{
     @Override
     public void telemetry(Telemetry telemetry) {
 
-        telemetry.addData("heading", pose.getH());
+        telemetry.addData("heading", getHeading());
 
     }
 
     public void reset(){
         octoquad.resetLocalizerAndCalibrateIMU();
+        timer.reset();
+        prevpos = pose;
+    }
+
+    private Pose2d poseFromData(OctoQuad.LocalizerDataBlock info) {
+        return new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
+    }
+
+    private Pose2d velFromData(OctoQuad.LocalizerDataBlock info) {
+        return new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
     }
 }

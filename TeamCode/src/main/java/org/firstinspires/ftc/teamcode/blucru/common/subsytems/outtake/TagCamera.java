@@ -13,6 +13,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.PoseMarker;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -138,11 +139,12 @@ public class TagCamera implements BluSubsystem, Subsystem {
             for (AprilTagDetection detect : detections) {
                 if (detect.ftcPose == null) continue;
                 captureTime = detect.frameAcquisitionNanoTime;
+                boolean usablePoseTag = detect.id == BLUE_GOAL_TAG_ID || detect.id == RED_GOAL_TAG_ID;
+
                 if (isAllianceGoalTag(detect)) {
                     currentlySeeingGoodTags = true;
                     detection = detect;
                     Globals.telemetry.addData("Detect ID", detect.id);
-                    break;
                 }
                 if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.GPP;
@@ -159,12 +161,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     break;
                 }
-                Pose2d tagPos = new Pose2d(0,0,0);
-                if (detect.id == 20){
-                    tagPos = TAG_20;
-                } else {
-                    tagPos = TAG_24;
-                }
+                if (!usablePoseTag) continue;
+
+                Pose2d tagPos = detect.id == BLUE_GOAL_TAG_ID ? TAG_20 : TAG_24;
                 Vector2d originToTag = tagPos.vec();
                 double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
                 double angle = cameraFieldHeading;
@@ -190,8 +189,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
                 botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 computedBotposeThisLoop = true;
-                if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) return;
-                Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+                PoseMarker poseAtCapture = Robot.getInstance().positionHistory.getPoseAtTime(captureTime);
+                if (poseAtCapture == null) return;
+                Vector2d oldVec = poseAtCapture.getPose().vec();
                 Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
                 // now that we know offsets we can assume we havent changed off that much
                 botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
@@ -208,9 +208,10 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 double rotatedOffsetX = turretOffsetX * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) - turretOffsetY * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 double rotatedOffsetY = turretOffsetX * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) + turretOffsetY * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
                 double robotFieldX = cameraFieldX - rotatedOffsetX;
-                double robotFieldY = cameraFieldY - rotatedOffsetY;
-                Robot.getInstance().sixWheelDrivetrain.setPosition(new Pose2d(robotFieldX, robotFieldY, Robot.getInstance().sixWheelDrivetrain.getPos().getH())
-                );*/
+                 double robotFieldY = cameraFieldY - rotatedOffsetY;
+                 Robot.getInstance().sixWheelDrivetrain.setPosition(new Pose2d(robotFieldX, robotFieldY, Robot.getInstance().sixWheelDrivetrain.getPos().getH())
+                 );*/
+                break;
             }
 
         }
@@ -248,7 +249,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         return computedBotposeThisLoop;
     }
     public Pose2d getBotPosePoseHistory() {
-        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        PoseMarker poseAtCapture = Robot.getInstance().positionHistory.getPoseAtTime(captureTime);
+        if (poseAtCapture == null || botpose == null) return null;
+        Vector2d oldVec = poseAtCapture.getPose().vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
         // now that we know offsets we can assume we havent changed off that much
         return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
