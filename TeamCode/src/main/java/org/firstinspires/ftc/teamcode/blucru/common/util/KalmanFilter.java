@@ -61,6 +61,8 @@ public class KalmanFilter {
     }*/
     public void setVal(double val){
         this.x = val;
+        this.x_previous = val;
+        this.lastinput = val;
     }
 
     public double get() {
