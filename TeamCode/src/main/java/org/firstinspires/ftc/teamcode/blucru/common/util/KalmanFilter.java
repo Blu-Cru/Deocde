@@ -1,17 +1,17 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 public class KalmanFilter {
-    static double x = 0; // your initial state
-    static double Q = 0.1; // your model covariance
-    static double R = 0.4; // your sensor covariance
-    static double P = 1; // your initial covariance guess
-    static double K = 1; // your initial Kalman gain guess
+    double x = 0; // your initial state
+    double Q = 0.1; // your model covariance
+    double R = 0.4; // your sensor covariance
+    double P = 1; // your initial covariance guess
+    double K = 1; // your initial Kalman gain guess
 
-    static double x_previous = x;
-    static double p_previous = P;
-    static double u = 0;
-    static double z = 0;
-    static double lastinput = 0;
+    double x_previous = x;
+    double p_previous = P;
+    double u = 0;
+    double z = 0;
+    double lastinput = 0;
 
     public KalmanFilter(double x, double Q, double R, double P, double K) {
         this.x = x;
