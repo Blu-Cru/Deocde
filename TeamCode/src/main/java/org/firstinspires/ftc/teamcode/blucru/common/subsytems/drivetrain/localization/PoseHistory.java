@@ -53,8 +53,8 @@ public class PoseHistory {
 
         long total = timeBefore + timeAfter;
 
-        double beforeMultiplier = (double) timeBefore / total;
-        double afterMultiplier = (double) timeAfter / total;
+        double afterMultiplier = (double) timeBefore / total;
+        double beforeMultiplier = (double) timeAfter / total;
 
         Pose2d poseBeforeForInterpolation = new Pose2d(poseBefore.getX() * beforeMultiplier, poseBefore.getY() * beforeMultiplier, poseBefore.getH() * beforeMultiplier);
         Pose2d poseAfterForInterpolation = new Pose2d(poseAfter.getX() * afterMultiplier, poseAfter.getY() * afterMultiplier, poseAfter.getH() * afterMultiplier);
