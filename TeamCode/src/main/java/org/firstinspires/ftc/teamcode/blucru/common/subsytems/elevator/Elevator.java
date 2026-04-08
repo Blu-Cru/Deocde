@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorSensor;
+import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluBrushlandLabsColorRangefinder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
@@ -22,17 +22,17 @@ public class Elevator implements BluSubsystem, Subsystem {
     public static double UP_POSITION_RIGHT = 0.57;
     public static double MIDDLE_POSITION_RIGHT = 0.48;
     public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.46;
-    private BluBrushlandLabsColorSensor leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
+    private BluBrushlandLabsColorRangefinder leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
             rightSensorTop;
 
     public Elevator() {
 
-        leftSensorBottom = new BluBrushlandLabsColorSensor("purpleLeftBottom", "greenLeftBottom");
-        leftSensorTop = new BluBrushlandLabsColorSensor("purpleLeftTop", "greenLeftTop");
-        middleSensorRight = new BluBrushlandLabsColorSensor("purpleMiddleRight", "greenMiddleRight");
-        middleSensorLeft = new BluBrushlandLabsColorSensor("purpleMiddleLeft","greenMiddleLeft");
-        rightSensorBottom = new BluBrushlandLabsColorSensor("purpleRightBottom", "greenRightBottom");
-        rightSensorTop = new BluBrushlandLabsColorSensor("purpleRightTop", "greenRightTop");
+        leftSensorBottom = new BluBrushlandLabsColorRangefinder("purpleLeftBottom", "greenLeftBottom");
+        leftSensorTop = new BluBrushlandLabsColorRangefinder("purpleLeftTop", "greenLeftTop");
+        middleSensorRight = new BluBrushlandLabsColorRangefinder("purpleMiddleRight", "greenMiddleRight");
+        middleSensorLeft = new BluBrushlandLabsColorRangefinder("purpleMiddleLeft","greenMiddleLeft");
+        rightSensorBottom = new BluBrushlandLabsColorRangefinder("purpleRightBottom", "greenRightBottom");
+        rightSensorTop = new BluBrushlandLabsColorRangefinder("purpleRightTop", "greenRightTop");
         elevatorServoLeft = new BluServo("elevatorLeft");
         elevatorServoRight = new BluServo("elevatorRight");
         setDown();
