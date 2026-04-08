@@ -11,10 +11,11 @@ import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
 @Config
 public class ConfigureColorRangefinder extends LinearOpMode {
 
-    static double purpleLowerBound;
-    static double purpleHigherBound;
-    static double greenLowerBound;
-    static double greenHigherBound;
+    static double purpleLowerBound = 160;
+    static double purpleHigherBound = 190;
+    static double greenLowerBound = 110;
+    static double greenHigherBound = 140;
+    static double distance = 10;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -23,10 +24,10 @@ public class ConfigureColorRangefinder extends LinearOpMode {
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
             pin1 --> green */
-        crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, 160 / 360.0 * 255, 190 / 360.0 * 255); // purple
+        crf.setPin0Digital(ColorRangefinder.DigitalMode.HSV, purpleLowerBound / 360.0 * 255, purpleLowerBound / 360.0 * 255); // purple
         crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, 10); // 10mm or closer requirement
-        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 110 / 360.0 * 255, 140 / 360.0 * 255); // green
-        crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, 10); // 10mm or closer requirement
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, greenLowerBound / 360.0 * 255, greenHigherBound / 360.0 * 255); // green
+        crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.HSV, distance); // 10mm or closer requirement
     }
 }
 

@@ -248,6 +248,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
         return computedBotposeThisLoop;
     }
     public Pose2d getBotPosePoseHistory() {
+        if (botpose == null) return null;
+        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) return null;
         Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
         // now that we know offsets we can assume we havent changed off that much

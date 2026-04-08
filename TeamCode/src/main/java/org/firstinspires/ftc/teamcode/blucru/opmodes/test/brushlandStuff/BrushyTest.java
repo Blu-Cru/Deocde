@@ -22,7 +22,6 @@ public class BrushyTest extends BluLinearOpMode {
         brushlandLeft.read();
         Log.i("BRUSHLANDS","PIN 0:" + brushlandLeft.getRawState1());
         Log.i("BRUSHLANDS","PIN 1:" + brushlandLeft.getRawState2());
-        //brushlandRight.read();
     }
 
     public void telemetry(){
