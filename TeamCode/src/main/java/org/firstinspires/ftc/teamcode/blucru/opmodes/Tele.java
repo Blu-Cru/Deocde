@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
 import android.provider.Settings;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -33,6 +36,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
+import java.util.LinkedList;
+
 @TeleOp (group = "a")
 
 public class Tele extends BluLinearOpMode{
@@ -44,6 +49,9 @@ public class Tele extends BluLinearOpMode{
     public int shot = 0;
     public boolean targetHit = false;
 
+    private static final int MAX_TRAIL_SIZE = 200;
+    private final LinkedList<double[]> poseTrail = new LinkedList<>();
+
     public enum State{
         IDLE,
         INTAKING,
@@ -51,6 +59,9 @@ public class Tele extends BluLinearOpMode{
         DRIVING_TO_SHOOT,
         INTAKING_FROM_ABOVE
     }
+
+    TelemetryPacket packet = new TelemetryPacket();
+    Canvas overlay = packet.fieldOverlay();
 
     @Override
     public void initialize(){
@@ -367,6 +378,28 @@ public class Tele extends BluLinearOpMode{
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
 //        }
+
+        // Add current position to breadcrumb trail
+        Pose2d currentPos = Robot.getInstance().sixWheelDrivetrain.getPos();
+        poseTrail.addLast(new double[]{currentPos.getX(), currentPos.getY()});
+        while (poseTrail.size() > MAX_TRAIL_SIZE) {
+            poseTrail.removeFirst();
+        }
+
+        // Draw breadcrumb trail
+        overlay.setStroke("gray");
+        overlay.setStrokeWidth(1);
+        for (double[] point : poseTrail) {
+            overlay.strokeCircle(point[0], point[1], 1.5);
+        }
+
+        overlay.setStrokeWidth(2);
+        overlay.setStroke("blue");
+        overlay.strokeCircle(currentPos.getX(), currentPos.getY(), 9);
+        double cos = Math.cos(currentPos.getH());
+        double sin = Math.sin(currentPos.getH());
+        overlay.strokeLine(currentPos.getX() + cos * 4.5, currentPos.getY() + sin * 4.5, currentPos.getX() + cos * 9, currentPos.getY() + sin * 9);
+        FtcDashboard.getInstance().sendTelemetryPacket(packet);
     }
 
     public void telemetry(){
