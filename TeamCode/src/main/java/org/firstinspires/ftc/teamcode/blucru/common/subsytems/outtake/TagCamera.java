@@ -131,7 +131,6 @@ public class TagCamera implements BluSubsystem, Subsystem {
             detection = null;
 
             Globals.telemetry.addLine("Looking for tags");
-            Globals.telemetry.addData("Desired Goal Tag ID", getAllianceGoalTagId());
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             if (!detections.isEmpty()) {
                 Globals.telemetry.addLine("Detected Tag");
@@ -164,7 +163,6 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 captureTime = goalDetection.frameAcquisitionNanoTime;
                 currentlySeeingGoodTags = true;
                 detection = goalDetection;
-                Globals.telemetry.addData("Detect ID", goalDetection.id);
                 updateBotposeFromGoalTag(goalDetection);
             }
 

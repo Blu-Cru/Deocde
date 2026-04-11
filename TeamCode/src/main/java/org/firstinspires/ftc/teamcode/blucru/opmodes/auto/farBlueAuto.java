@@ -76,8 +76,10 @@ public class farBlueAuto extends BluLinearOpMode {
         addElevator();
         addShooter();
         addTurret();
+        robot.addTurretCam();
         addTransfer();
         addBallDetector();
+
 
         //TODO: SWAP THE Y OFFSET BASED ON ALLIANCE. POSITIVE Y = TO THE LEFT. NEGATIVE Y = TO THE RIGHT.
         ballDetector.setCameraParameters(11.3, -6.5, 13.0, 15.0);
@@ -280,22 +282,11 @@ public class farBlueAuto extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new IntakeSpitCommand(),
-                            new WaitCommand(200),
-                            new ElevatorUpCommand(),
-                            new WaitCommand(200),
-                            new ElevatorMiddleCommand(),
-                            new WaitCommand(150),
-                            new AllTransferMiddleCommand(),
-                            new SetHoodAngleCommand(hood),
-                            new IntakeStopCommand(),
-                            new ParallelizeIntakeCommand(),
-                            new WaitCommand(200),
+                            new AutonomousTransferCommand(hood),
+                            new WaitCommand(800),
                             new LockOnGoalCommand()
 
 
-                            // new WaitCommand(2000),
-                            // new TurnTurretToPosCommand(102)
                     ).schedule();
                 })
                 .waitMilliseconds(0)
@@ -310,16 +301,12 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(45, -25),
                         shootingPoint
                 }, 2000)
-                .waitMilliseconds(300)
-//                .callback(() -> {
-//                    new LockOnGoalCommand().schedule();
-//                })
-                .waitMilliseconds(400)
+                .waitMilliseconds(800)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
                 })
-                .waitMilliseconds(300)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -330,14 +317,13 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(61, -45),
                         new Point2d(62, -55),
                         new Point2d(62, pickupWallY)
-                }, 1200)
-                .waitMilliseconds(300)
+                }, 1400)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(600), //TODO: TUNE
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                             new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
+                            new WaitCommand(800),
                             new LockOnGoalCommand()
                     ).schedule();
 
@@ -352,17 +338,13 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(-90,500)
-                .waitMilliseconds(1000)
-//                .callback(() -> {
-//                    new LockOnGoalCommand().schedule();
-//                })
-                .waitMilliseconds(600)
+                .addTurnTo(-90, 500)
+                .waitMilliseconds(800)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
                 })
-                .waitMilliseconds(300)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -370,9 +352,8 @@ public class farBlueAuto extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(pickupWallX, pickupWallY-2)
+                        new Point2d(pickupWallX, pickupWallY-3)
                 }, 1200)
-                .waitMilliseconds(1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(600), //TODO: TUNE
@@ -392,17 +373,13 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000)
-                .addTurnTo(-90,500)
-                .waitMilliseconds(1000)
-                .callback(() -> {
-                    new LockOnGoalCommand().schedule();
-                })
-                .waitMilliseconds(700)
+                .addTurnTo(-90, 500)
+                .waitMilliseconds(1200)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
                 })
-                .waitMilliseconds(300)
+                .waitMilliseconds(200)
                 .build();
     }
 

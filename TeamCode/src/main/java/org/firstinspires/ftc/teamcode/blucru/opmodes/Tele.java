@@ -217,11 +217,12 @@ public class Tele extends BluLinearOpMode{
 
     public void initializePeriodic(){
         telemetry.addLine( "TURN ON INTAKE: HOLD LEFT TRIGGER");
-        telemetry.addLine( "TURN OFF INTAKE: RELEASE LEFT TRIGGER");
         telemetry.addLine( "EJECT: HOLD RIGHT TRIGGER");
         telemetry.addLine("TRANSFER: LEFT BUMPER");
         telemetry.addLine("SHOOT: RIGHT BUMPER");
         telemetry.addLine("INTAKE FROM ABOVE: X");
+        telemetry.addLine("DRIVER 2 CONTROLS: TRANSFER: RIGHT BUMPER");
+
 
     }
 
