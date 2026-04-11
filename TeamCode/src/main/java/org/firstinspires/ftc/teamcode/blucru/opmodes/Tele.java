@@ -44,6 +44,8 @@ public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
     public boolean turreting = true;
+
+    public static boolean dashfield = true;
     public boolean autoTagUpdating = true;
     public int rumbleDur = 200;
     public int shot = 0;
@@ -386,20 +388,21 @@ public class Tele extends BluLinearOpMode{
             poseTrail.removeFirst();
         }
 
+        if(dashfield) {
         // Draw breadcrumb trail
         overlay.setStroke("gray");
         overlay.setStrokeWidth(1);
         for (double[] point : poseTrail) {
             overlay.strokeCircle(point[0], point[1], 1.5);
         }
-
-        overlay.setStrokeWidth(2);
-        overlay.setStroke("blue");
-        overlay.strokeCircle(currentPos.getX(), currentPos.getY(), 9);
-        double cos = Math.cos(currentPos.getH());
-        double sin = Math.sin(currentPos.getH());
-        overlay.strokeLine(currentPos.getX() + cos * 4.5, currentPos.getY() + sin * 4.5, currentPos.getX() + cos * 9, currentPos.getY() + sin * 9);
-        FtcDashboard.getInstance().sendTelemetryPacket(packet);
+            overlay.setStrokeWidth(2);
+            overlay.setStroke("blue");
+            overlay.strokeCircle(currentPos.getX(), currentPos.getY(), 9);
+            double cos = Math.cos(currentPos.getH());
+            double sin = Math.sin(currentPos.getH());
+            overlay.strokeLine(currentPos.getX() + cos * 4.5, currentPos.getY() + sin * 4.5, currentPos.getX() + cos * 9, currentPos.getY() + sin * 9);
+            FtcDashboard.getInstance().sendTelemetryPacket(packet);
+        }
     }
 
     public void telemetry(){
