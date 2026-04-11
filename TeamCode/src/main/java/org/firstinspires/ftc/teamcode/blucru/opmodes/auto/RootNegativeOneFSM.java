@@ -28,7 +28,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         double velo = 1230;
         double veloMiddle = 1230;
         double hood = 40;
-        double intakeCycleSimulatedVoltage = 13;
+        double intakeCycleSimulatedVoltage = 12.5;
 
         double GATE_CYCLE_TIME_THRESHOLD = 16;
         private Point2d shootingPose = new Point2d(5, -7);
@@ -208,7 +208,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 // small guide point for the turn
                                                 new Point2d(-10, -30),
                                                 new Point2d(7, -37),
-                                                new Point2d(13, -50),
+                                                new Point2d(10, -50),
                                                 new Point2d(13, -65),
                                 }, 3000)
 //                        .waitMilliseconds(500)
@@ -225,10 +225,10 @@ public class RootNegativeOneFSM extends BaseAuto {
 //                                .addTurnTo(-80, 300)
                                 .addPurePursuitPath(new Point2d[] {
                                                 new Point2d(13, -55),
-                                        new Point2d(5, -40),
+//                                        new Point2d(5, -40),
                                         shootingPose
                                 }, 1500, true)
-                                .waitUntil(()-> Robot.getInstance().turret.atTarget(), 400)
+                                .waitMilliseconds(500)
                                 .callback(() -> {
                                     new SequentialCommandGroup(
                                             new AutonomousShootCommand(false)
@@ -266,6 +266,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                 new Point2d(16, -52),
                                         shootingPose
                                 }, 2000, true)
+                                .waitMilliseconds(400)
                                 .callback(() -> new AutonomousShootCommand(false).schedule())
                                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 300)
                                 .build();
@@ -299,7 +300,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(16, -52),
                         shootingPose
                 }, 2000, true)
-                                .waitMilliseconds(400)
+                .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootCommand(false).schedule())
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 300)
                 .build();
@@ -329,7 +330,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                 .addPurePursuitPath(new Point2d[] {
                                         shootingPose,
                                                 new Point2d(-5, -34),
-                                                new Point2d(-10, -55)
+                                                new Point2d(-10, -58)
                                 }, 2000)
 //                                .waitMilliseconds(200)
                                 .callback(() -> {
@@ -340,7 +341,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                         new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
                                                         new AutonomousTransferCommand(hood),
                                                         new WaitCommand(700),
-                                                        new WaitCommand(400),//wait for the addturnto
+//                                                        new WaitCommand(400),//wait for the addturnto
                                                 new LockOnGoalCommand()).schedule();
                                 })
 //                                .waitMilliseconds(100)

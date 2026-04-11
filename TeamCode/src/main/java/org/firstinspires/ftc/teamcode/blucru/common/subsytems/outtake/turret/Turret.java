@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.seattlesolvers.solverslib.command.Subsystem;
 import com.seattlesolvers.solverslib.controller.PIDController;
 import com.qualcomm.robotcore.util.Range;
-import com.seattlesolvers.solverslib.controller.PIDFController;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
@@ -25,13 +24,12 @@ public class Turret implements BluSubsystem, Subsystem {
     private BluEncoder encoder;
     private PIDController controller;
     private PIDController controllerClose;  // PID controller for close-range (small errors)
-
-    private PIDFController tagController;
     Vector2d target;
     AprilTagProcessor tags;
     public double headingOffset = 0;
     private double position;
     private Double lastSetpoint = null;
+    private static final double TAG_CAMERA_FOCAL_LENGTH_PX = 563.115;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
     // Far PID (large errors)
@@ -43,9 +41,10 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kIClose = 0.008;
     public static double kDClose = 0.0009;
     
-    public static double kPTags = 0.00145;
-    public static double kITags = 0;
-    public static double kDTags = 0.0001;
+    public static double tagAngleGain = 1.0;
+    public static double tagAngleDeadband = 0.35;
+    public static double tagMaxCorrectionAngle = 12;
+    public static int tagOffsetSaveStableFrames = 3;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
@@ -54,7 +53,13 @@ public class Turret implements BluSubsystem, Subsystem {
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
     public static double locAutoAimAngleOffset = 3; // degrees
-    public static double tagAutoAimPixelOffset = 21; // pixels
+    public static double tagAutoAimPixelOffset = 0; // pixels
+    public static boolean useShotLineOffset = true;
+    public static double shotLineOffsetDeadbandIn = 0.0;
+    public static double shotLineBlueGainDegPerIn = 0.10;
+    public static double shotLineRedGainDegPerIn = 0.12;
+    public static double shotLineBlueMaxOffsetDeg = 5.0;
+    public static double shotLineRedMaxOffsetDeg = 5.0;
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     public static int TAG_DROPOUT_THRESHOLD = 20;
@@ -65,7 +70,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public static double distFromCenter = 72.35 / 25.4;
 
-    private double targetXTags = 0;
+    private int centeredTagFrames = 0;
     private enum LastAutoAimMode {
         TAG,
         LOC
@@ -86,7 +91,6 @@ public class Turret implements BluSubsystem, Subsystem {
         this.encoder = encoder;
         controller = new PIDController(kP, kI, kD);
         controllerClose = new PIDController(kPClose, kIClose, kDClose);
-        tagController = new PIDController(kPTags, kITags, kDTags);
         state = State.MANUAL;
         lastAutoAimMode = LastAutoAimMode.LOC;
         //dealing with camera
@@ -112,38 +116,37 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
-                Globals.telemetry.addData("Turret Offset", headingOffset);
-                Globals.telemetry.addData("detection", Robot.getInstance().turretCam.getDetection());
-                Globals.telemetry.addData("Auto-Aim Mode", lastAutoAimMode);
-                Globals.telemetry.addData("Tag Dropout Counter", tagDropoutCounter);
-
                 boolean tagAvailable = Robot.getInstance().turretCam.getDetection() != null
                         && (Robot.getInstance().turretCam.detectedThisLoop()
                             || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000);
 
                 if (tagAvailable) {
+                    if (lastAutoAimMode == LastAutoAimMode.LOC || tagDropoutCounter > 0) {
+                        controller.reset();
+                        controllerClose.reset();
+                        centeredTagFrames = 0;
+                    }
+
+                    if (lastAutoAimMode == LastAutoAimMode.LOC) {
+                        lastAutoAimMode = LastAutoAimMode.TAG;
+                    }
+
                     // Tag is visible — reset dropout counter and use camera-based aiming
                     tagDropoutCounter = 0;
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
-
-                    if (lastAutoAimMode == LastAutoAimMode.LOC) {
-                        Globals.telemetry.addLine("SWITCHING TO CAMERA");
-                        lastAutoAimMode = LastAutoAimMode.TAG;
-                        tagController.reset();
-                    }
                 } else if (lastAutoAimMode == LastAutoAimMode.TAG) {
                     // Tag was active but just dropped — use hysteresis before switching back
                     tagDropoutCounter++;
 
                     if (tagDropoutCounter < TAG_DROPOUT_THRESHOLD) {
-                        // Still within grace period: hold last tag-based power (coast)
-                        // Don't switch modes, don't reset controllers — just wait
-                        Globals.telemetry.addLine("TAG DROPOUT GRACE (" + tagDropoutCounter + "/" + TAG_DROPOUT_THRESHOLD + ")");
+                        // Brief camera dropouts are common; freeze the turret instead of
+                        // coasting on the last tag power command.
+                        holdTagDropout();
                     } else {
                         // Tag has been gone long enough — genuinely fall back to localization
-                        Globals.telemetry.addLine("SWITCHING TO LOCALIZATION");
                         lastAutoAimMode = LastAutoAimMode.LOC;
                         tagDropoutCounter = 0;
+                        centeredTagFrames = 0;
                         controller.reset();
                         controllerClose.reset();
                         localizationBasedAutoAim();
@@ -312,46 +315,107 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void  localizationBasedAutoAim(){
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
-        double targetFieldHeading = getFieldCentricTargetGoalAngle(robotPose);
-        double robotHeading = Math.toDegrees(robotPose.getH());
-        double theoreticalTurretAngle = getTurretAngleForFieldHeading(targetFieldHeading, robotHeading);
+        double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
+        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
         double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
 
-        position = correctedTurretAngle;
-
-        Globals.telemetry.addData("Target Field Heading", targetFieldHeading);
-        Globals.telemetry.addData("Target Turret Angle", theoreticalTurretAngle);
-        Globals.telemetry.addData("Corrected Turret Angle", correctedTurretAngle);
-        Globals.telemetry.addData("Current Turret Field Heading",
-                normalizeDegrees(robotHeading + getAngle() + 180));
+        position = normalizeDegrees(correctedTurretAngle + modeledTurretOffset);
 
         updateControlLoop();
     }
 
     public void tagBasedAutoAim(AprilTagDetection detection) {
-        double xDelta = detection.center.x - (320 - tagAutoAimPixelOffset);
-        Globals.telemetry.addData("Yaw Delta", xDelta);
-        servos.setPower(tagController.calculate(-xDelta, 0));
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double totalPixelOffset = tagAutoAimPixelOffset + getShotLinePixelOffset(robotPose);
+        double rawXDelta = detection.center.x - (320 - totalPixelOffset);
+        double angleError = Math.toDegrees(Math.atan2(rawXDelta, TAG_CAMERA_FOCAL_LENGTH_PX)) * tagAngleGain;
+        angleError = Range.clip(angleError, -tagMaxCorrectionAngle, tagMaxCorrectionAngle);
 
-        if (Math.abs(xDelta) < 5) {
-            saveTurretOffset(getAngle());
-            Globals.telemetry.addData("Heading Offset", headingOffset);
+        if (Math.abs(angleError) < tagAngleDeadband) {
+            angleError = 0;
         }
+
+        position = normalizeDegrees(getAngle() + angleError);
+        updateControlLoop();
+
+        if (angleError == 0) {
+            centeredTagFrames++;
+        } else {
+            centeredTagFrames = 0;
+        }
+
+        if (centeredTagFrames >= tagOffsetSaveStableFrames) {
+            saveTurretOffset(getAngle());
+        }
+    }
+
+    private void holdTagDropout() {
+        position = getAngle();
+        controller.reset();
+        controllerClose.reset();
+        centeredTagFrames = 0;
+        servos.setPower(0);
     }
 
     public void saveTurretOffset(double detectedAngle) {
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
-        double targetFieldHeading = getFieldCentricTargetGoalAngle(robotPose);
-        double robotHeading = Math.toDegrees(robotPose.getH());
-        double theoreticalTurretAngle = getTurretAngleForFieldHeading(targetFieldHeading, robotHeading);
+        double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
+        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
 
         // Store the learned correction in turret space so localization can keep tracking
         // the goal after the tag disappears.
-        headingOffset = normalizeDegrees(detectedAngle - theoreticalTurretAngle);
+        headingOffset = normalizeDegrees(detectedAngle - (theoreticalTurretAngle + modeledTurretOffset));
     }
 
     public double applyTurretOffset(double turretAngle) {
         return normalizeDegrees(turretAngle + headingOffset);
+    }
+
+    private double getTheoreticalTurretAngle(Pose2d robotPose) {
+        double targetFieldHeading = getFieldCentricTargetGoalAngle(robotPose);
+        double robotHeading = Math.toDegrees(robotPose.getH());
+        return getTurretAngleForFieldHeading(targetFieldHeading, robotHeading);
+    }
+
+    private Vector2d getTurretCenterPosition(Pose2d robotPose) {
+        Vector2d turretOffset = new Vector2d(-distFromCenter, 0).rotate(robotPose.getH());
+        return robotPose.vec().addNotInPlace(turretOffset);
+    }
+
+    private double getShotLineTurretOffset(Pose2d robotPose) {
+        if (!useShotLineOffset || robotPose == null) {
+            return 0;
+        }
+
+        boolean isBlue = Globals.alliance == Alliance.BLUE;
+        Vector2d turretCenter = getTurretCenterPosition(robotPose);
+        double rawDeviation = isBlue
+                ? turretCenter.getX() - turretCenter.getY()
+                : turretCenter.getX() + turretCenter.getY();
+
+        double oneSidedDeviation = Math.max(0, rawDeviation - shotLineOffsetDeadbandIn);
+        if (oneSidedDeviation <= 0) {
+            return 0;
+        }
+
+        double gain = isBlue ? shotLineBlueGainDegPerIn : shotLineRedGainDegPerIn;
+        double maxOffset = isBlue ? shotLineBlueMaxOffsetDeg : shotLineRedMaxOffsetDeg;
+        double offsetMagnitude = Range.clip(
+                oneSidedDeviation * gain,
+                0,
+                maxOffset
+        );
+
+        // Field testing on far blue showed the original sign assumption was
+        // inverted, so keep blue/red opposite but flipped from the first pass.
+        return isBlue ? -offsetMagnitude : offsetMagnitude;
+    }
+
+    private double getShotLinePixelOffset(Pose2d robotPose) {
+        double turretOffsetDeg = getShotLineTurretOffset(robotPose);
+
+        // Match the same sign convention used by the live pixel target.
+        return -TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(turretOffsetDeg));
     }
 
     private double normalizeDegrees(double angle) {
