@@ -43,7 +43,7 @@ public class SixWheelDriveBase implements BluSubsystem {
 
     private SixWheelDriveBase(BluMotor fl, BluMotor fr, BluMotor bl, BluMotor br) {
         dtMotors = new BluMotor[] { fl, fr, bl, br };
-        localizer = new Octoquad("octoquad");
+        localizer = new Pinpoint("pinpoint");
         dtState = State.IDLE;
     }
 
