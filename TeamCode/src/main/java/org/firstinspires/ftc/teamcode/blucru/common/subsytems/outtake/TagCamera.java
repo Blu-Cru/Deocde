@@ -131,86 +131,41 @@ public class TagCamera implements BluSubsystem, Subsystem {
             detection = null;
 
             Globals.telemetry.addLine("Looking for tags");
+            Globals.telemetry.addData("Desired Goal Tag ID", getAllianceGoalTagId());
             ArrayList<AprilTagDetection> detections = tags.getDetections();
             if (!detections.isEmpty()) {
                 Globals.telemetry.addLine("Detected Tag");
             }
+
+            AprilTagDetection goalDetection = null;
             for (AprilTagDetection detect : detections) {
                 if (detect.ftcPose == null) continue;
-                captureTime = detect.frameAcquisitionNanoTime;
-                if (isAllianceGoalTag(detect)) {
-                    currentlySeeingGoodTags = true;
-                    detection = detect;
-                    Globals.telemetry.addData("Detect ID", detect.id);
-                    break;
+                if (goalDetection == null && isAllianceGoalTag(detect)) {
+                    goalDetection = detect;
                 }
                 if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.GPP;
                     ShooterMotifCoordinator.setMotif(motifPattern);
-                    break;
+                    continue;
                 }
                 if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PGP;
                     ShooterMotifCoordinator.setMotif(motifPattern);
-                    break;
+                    continue;
                 }
                 if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PPG;
                     ShooterMotifCoordinator.setMotif(motifPattern);
-                    break;
+                    continue;
                 }
-                Pose2d tagPos = new Pose2d(0,0,0);
-                if (detect.id == 20){
-                    tagPos = TAG_20;
-                } else {
-                    tagPos = TAG_24;
-                }
-                Vector2d originToTag = tagPos.vec();
-                double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH() + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
-                double angle = cameraFieldHeading;
-                double dx = detect.ftcPose.x; // left/right relative to camera
-                double dy = detect.ftcPose.y; // forward/back relative to camera
-                Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
+            }
 
-                //Globals.telemetry.addData("Tag To Cam Cam Centric", tagToCamCamCentric);
-                Vector2d tagToCam = tagToCamCamCentric.rotate(-angle - Math.PI/2);
-                tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
-
-                //Globals.telemetry.addData("Tag To Cam", tagToCam);
-                Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter,0).rotate(cameraFieldHeading);
-                //Globals.telemetry.addData("Cam To Turret", camToTurret);
-
-
-                Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0).rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-
-                Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
-                //Globals.telemetry.addData("Tag To Robot", tagToRobot);
-
-                Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
-
-                botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                computedBotposeThisLoop = true;
-                if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) return;
-                Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
-                Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-                // now that we know offsets we can assume we havent changed off that much
-                botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
-                        Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                xFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), botposeOnTheMove.getX());
-                yFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getY(), botposeOnTheMove.getY());
-                //non-vector code
-                /*double camToTagFieldX = dx * Math.cos(angle) - dy * Math.sin(angle);
-                double camToTagFieldY = dx * Math.sin(angle) + dy * Math.cos(angle);
-                double cameraFieldX = tagFieldX - camToTagFieldX;
-                double cameraFieldY = tagFieldY - camToTagFieldY;
-                double turretOffsetX = 0.0;
-                double turretOffsetY = 0.0;
-                double rotatedOffsetX = turretOffsetX * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) - turretOffsetY * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                double rotatedOffsetY = turretOffsetX * Math.sin(Robot.getInstance().sixWheelDrivetrain.getPos().getH()) + turretOffsetY * Math.cos(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-                double robotFieldX = cameraFieldX - rotatedOffsetX;
-                double robotFieldY = cameraFieldY - rotatedOffsetY;
-                Robot.getInstance().sixWheelDrivetrain.setPosition(new Pose2d(robotFieldX, robotFieldY, Robot.getInstance().sixWheelDrivetrain.getPos().getH())
-                );*/
+            if (goalDetection != null) {
+                captureTime = goalDetection.frameAcquisitionNanoTime;
+                currentlySeeingGoodTags = true;
+                detection = goalDetection;
+                Globals.telemetry.addData("Detect ID", goalDetection.id);
+                updateBotposeFromGoalTag(goalDetection);
             }
 
         }
@@ -283,12 +238,49 @@ public class TagCamera implements BluSubsystem, Subsystem {
         return new Pose2d(xFilter.get(),yFilter.get(), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
     }
 
+    private void updateBotposeFromGoalTag(AprilTagDetection detect) {
+        Pose2d tagPos = detect.id == BLUE_GOAL_TAG_ID ? TAG_20 : TAG_24;
+        Vector2d originToTag = tagPos.vec();
+        double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH()
+                + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
+        double dx = detect.ftcPose.x; // left/right relative to camera
+        double dy = detect.ftcPose.y; // forward/back relative to camera
+        Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
+
+        Vector2d tagToCam = tagToCamCamCentric.rotate(-cameraFieldHeading - Math.PI / 2);
+        tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
+
+        Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter, 0).rotate(cameraFieldHeading);
+        Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0)
+                .rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+
+        Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
+        Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
+
+        botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+
+        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) {
+            return;
+        }
+
+        computedBotposeThisLoop = true;
+        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
+        botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
+                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        xFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), botposeOnTheMove.getX());
+        yFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getY(), botposeOnTheMove.getY());
+    }
+
     private boolean isAllianceGoalTag(AprilTagDetection detect) {
         if (detect == null) {
             return false;
         }
 
-        return (Globals.alliance == Alliance.BLUE && detect.id == BLUE_GOAL_TAG_ID)
-                || (Globals.alliance == Alliance.RED && detect.id == RED_GOAL_TAG_ID);
+        return detect.id == getAllianceGoalTagId();
+    }
+
+    private int getAllianceGoalTagId() {
+        return Globals.alliance == Alliance.BLUE ? BLUE_GOAL_TAG_ID : RED_GOAL_TAG_ID;
     }
 }
