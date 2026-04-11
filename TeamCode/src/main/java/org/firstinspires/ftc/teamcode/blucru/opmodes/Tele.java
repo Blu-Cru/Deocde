@@ -4,6 +4,7 @@ import android.provider.Settings;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
@@ -39,7 +40,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 import java.util.LinkedList;
 
 @TeleOp (group = "a")
-
+@Config
 public class Tele extends BluLinearOpMode{
 
     StateMachine sm;
