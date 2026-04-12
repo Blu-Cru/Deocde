@@ -15,7 +15,9 @@ public class ConfigureColorRangefinder extends LinearOpMode {
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
             pin1 --> green */
-        crf.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
+        crf.setLedBrightness(100);
+        crf.setPin0Analog(ColorRangefinder.AnalogMode.HSV); // no custom denominator
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.DISTANCE, 0, 100);
     }
 }
 
