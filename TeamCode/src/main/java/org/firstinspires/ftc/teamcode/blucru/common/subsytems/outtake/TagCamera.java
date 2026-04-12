@@ -8,10 +8,8 @@ import com.seattlesolvers.solverslib.geometry.Rotation2d;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
@@ -65,6 +63,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 // Intrinsics from arducam-ov9281.cameramodel (mrcal, 320x240), scaled 2x for 640x480
                 .setLensIntrinsics(563.115, 562.734, 312.667, 239.793)
                 .setSuppressCalibrationWarnings(true)
+                .setCameraPose(new Position(),new YawPitchRollAngles(AngleUnit.DEGREES,0,20, 0,0))
                 .build();
         // Decimation speeds up detection by downsampling internally
         // 2 = process at half res, good balance of speed vs range
@@ -224,7 +223,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         if (detection == null || detection.ftcPose == null){
             return 0;
         }
-        return detection.ftcPose.range * Math.cos(Math.toRadians(20)) + tagDistToMiddleShooter;
+        return detection.ftcPose.range + tagDistToMiddleShooter;
     }
 
     @Override
