@@ -200,6 +200,14 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void lockOnGoal() {
+        if (state != State.LOCK_ON_GOAL) {
+            controller.reset();
+            controllerClose.reset();
+            centeredTagFrames = 0;
+            tagDropoutCounter = 0;
+            lastAutoAimMode = LastAutoAimMode.LOC;
+        }
+
         state = State.LOCK_ON_GOAL;
     }
 
