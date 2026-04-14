@@ -35,7 +35,7 @@ public class Turret implements BluSubsystem, Subsystem {
     // Far PID (large errors)
     public static double kP = 0.023;
     public static double kI = 0.02;
-    public static double kD =   0.0018;
+        public static double kD =   0.0018;
     // Close PID (small errors) - tune these to reduce oscillation near target
     public static double kPClose = 0.012;
     public static double kIClose = 0.008;
@@ -56,7 +56,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
-    public static double shotLineBlueGainDegPerIn = 0.10;
+    public static double shotLineBlueGainDegPerIn = 0.12;
     public static double shotLineRedGainDegPerIn = 0.12;
     public static double shotLineBlueMaxOffsetDeg = 5.0;
     public static double shotLineRedMaxOffsetDeg = 5.0;
@@ -200,6 +200,14 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void lockOnGoal() {
+        if (state != State.LOCK_ON_GOAL) {
+            controller.reset();
+            controllerClose.reset();
+            centeredTagFrames = 0;
+            tagDropoutCounter = 0;
+            lastAutoAimMode = LastAutoAimMode.LOC;
+        }
+
         state = State.LOCK_ON_GOAL;
     }
 
