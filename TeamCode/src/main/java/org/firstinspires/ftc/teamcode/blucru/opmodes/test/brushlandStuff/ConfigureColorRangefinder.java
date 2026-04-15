@@ -16,8 +16,14 @@ public class ConfigureColorRangefinder extends LinearOpMode {
             pin0 --> purple
             pin1 --> green */
         crf.setLedBrightness(100);
-        crf.setPin0Analog(ColorRangefinder.AnalogMode.HSV); // no custom denominator
-        crf.setPin1Digital(ColorRangefinder.DigitalMode.DISTANCE, 0, 100);
+        /*
+        crf.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
+         */
+        crf.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,70, 120);
+        crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 10);
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.GREEN, 150, 200);
+        crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 10);
     }
 }
 

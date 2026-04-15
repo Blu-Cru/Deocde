@@ -23,12 +23,12 @@ public class AnalogBrushyTest extends BluLinearOpMode {
     @Override
     public void periodic(){
         pin0vol = pin0.getVoltage();
-        Log.i("AnalogBrushyTest", "Voltage: " + pin0vol + " Hue: " + (pin0vol / 3.3 * 255));
+        Log.i("AnalogBrushyTest", "Voltage: " + pin0vol + " Green: " + (pin0vol / 3.3 * 255));
     }
 
     @Override
     public void telemetry(){
         telemetry.addData("pin 0 voltage", pin0vol);
-        telemetry.addData("Hue", (pin0vol / 3.3 * 255));
+        telemetry.addData("Green", (pin0vol / 3.3 * 255));
     }
 }
