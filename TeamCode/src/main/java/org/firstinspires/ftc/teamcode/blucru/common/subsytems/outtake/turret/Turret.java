@@ -56,8 +56,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
-    public static double shotLineBlueGainDegPerIn = 0.12;
-    public static double shotLineRedGainDegPerIn = 0.12;
+    public static double shotLineBlueGainDegPerIn = 0.17;
+    public static double shotLineRedGainDegPerIn = 0.17;
     public static double shotLineBlueMaxOffsetDeg = 5.0;
     public static double shotLineRedMaxOffsetDeg = 5.0;
 
@@ -192,12 +192,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public void setFieldCentricPositionAutoAim(double targetHeading, double robotHeading, boolean switchState) {
         setAngle(getTurretAngleForFieldHeading(targetHeading, robotHeading), switchState);
     }
-
-    public void setFieldCentricPosition(double targetHeading, double robotHeading, double desiredHeading, boolean switchState) {
-        setAngle(270-targetHeading+robotHeading-desiredHeading, switchState);
-    }
-
-
 
     public void lockOnGoal() {
         if (state != State.LOCK_ON_GOAL) {
@@ -398,8 +392,8 @@ public class Turret implements BluSubsystem, Subsystem {
         boolean isBlue = Globals.alliance == Alliance.BLUE;
         Vector2d turretCenter = getTurretCenterPosition(robotPose);
         double rawDeviation = isBlue
-                ? turretCenter.getX() - turretCenter.getY()
-                : turretCenter.getX() + turretCenter.getY();
+                ? (turretCenter.getX() - turretCenter.getY()) * Math.sqrt(2) / 2.0
+                : (turretCenter.getX() + turretCenter.getY()) * Math.sqrt(2) / 2.0;
 
         double oneSidedDeviation = Math.max(0, rawDeviation - shotLineOffsetDeadbandIn);
         if (oneSidedDeviation <= 0) {
