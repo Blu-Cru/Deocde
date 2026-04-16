@@ -42,10 +42,10 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice {
     @Override
     public void write() {
         double correctedPower = Globals.getCorrectPower(power);
-        if (Math.abs(correctedPower - lastPower) > 0.005){
+        //if (Math.abs(correctedPower - lastPower) > 0.005){
             lastPower = correctedPower;
             super.setPower(correctedPower);
-        }
+        //}
     }
 
     @Override

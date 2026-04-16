@@ -41,7 +41,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kIClose = 0.008;
     public static double kDClose = 0.0009;
     
-    public static double tagAngleGain = 1.0;
+    public static double tagAngleGain = 1;
     public static double tagAngleDeadband = 0.35;
     public static double tagMaxCorrectionAngle = 12;
     public static int tagOffsetSaveStableFrames = 3;
@@ -56,8 +56,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
-    public static double shotLineBlueGainDegPerIn = 0.17;
-    public static double shotLineRedGainDegPerIn = 0.17;
+    public static double shotLineBlueGainDegPerIn = -0.2;
+    public static double shotLineRedGainDegPerIn = -0.195;
     public static double shotLineBlueMaxOffsetDeg = 5.0;
     public static double shotLineRedMaxOffsetDeg = 5.0;
 

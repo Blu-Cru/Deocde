@@ -36,7 +36,7 @@ import java.util.concurrent.locks.Lock;
 @Autonomous
 public class farBlueAuto extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -107;
+    double turretAnglePreaim = -113;
 
     // Turret angle to be set to once the bot reaches the shooting position
     double turretAngleFinal = 160; // Field centric angle increase = towards obelisk decrease = towards gate
@@ -47,7 +47,7 @@ public class farBlueAuto extends BluLinearOpMode {
 
     double hood = 49;
 
-    double pickupWallY = -62;
+    double pickupWallY = -64;
     double pickupWallX = 62; // default for hp
 
     enum State {
@@ -102,7 +102,8 @@ public class farBlueAuto extends BluLinearOpMode {
         sm = new StateMachineBuilder()
                 .state(State.PRELOAD)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.INTAKE_SPIKE, () -> {
-                    shouldReadColorSensors = true;
+                    //shouldReadColorSensors = true;
+                    shouldReadColorSensors = false;
                     startPath(buildIntakeSpikePath());
                 })
 
@@ -122,7 +123,8 @@ public class farBlueAuto extends BluLinearOpMode {
                 .state(State.SHOOT_SPIKE)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_HP, () -> {
-                    shouldReadColorSensors = true;
+                    //shouldReadColorSensors = true;
+                    shouldReadColorSensors = false;
                     startPath(buildIntakeHPPath());
                 })
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -144,7 +146,8 @@ public class farBlueAuto extends BluLinearOpMode {
                 .state(State.SHOOT_HP)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
-                    shouldReadColorSensors = true;
+                    //shouldReadColorSensors = true;
+                    shouldReadColorSensors = false;
                     updateIntakeXPosition();
                     startPath(buildIntakeCyclePath());
                 })
@@ -374,7 +377,7 @@ public class farBlueAuto extends BluLinearOpMode {
                         shootingPoint
                 }, 3000)
                 .addTurnTo(-90, 500)
-                .waitMilliseconds(1200)
+                .waitMilliseconds(900)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootCommand()).schedule();
