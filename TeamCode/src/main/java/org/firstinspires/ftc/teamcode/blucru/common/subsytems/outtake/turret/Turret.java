@@ -52,7 +52,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
-    public static double locAutoAimAngleOffset = 3; // degrees
+    public static double locAutoAimAngleOffset = 0; // degrees
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
