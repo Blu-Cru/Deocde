@@ -16,14 +16,18 @@ public class ConfigureColorRangefinder extends LinearOpMode {
             pin0 --> purple
             pin1 --> green */
         crf.setLedBrightness(100);
-        /*
+/*
         crf.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
-        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
-         */
-        crf.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,70, 120);
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 110, 150); <-- This is a ghost configure. I found that it's needed for pin 0 to work but this serves 0 purpose other than that.
+
+
+ */
+        crf.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,60, 140);
         crf.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 10);
-        crf.setPin1Digital(ColorRangefinder.DigitalMode.GREEN, 150, 200);
+        crf.setPin1Digital(ColorRangefinder.DigitalMode.GREEN, 160, 240);
         crf.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 10);
+
+
     }
 }
 
