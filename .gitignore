@@ -85,3 +85,4 @@ lint/tmp/
 #misc
 Misc/PurePursuitDebug/*.csv
 Misc/PurePursuitDebug/*.png
+/.vscode
