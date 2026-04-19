@@ -39,11 +39,11 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1430;
-    double shootVeloMiddle = 1440;
+    double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(45, -8);
+    Point2d shootingPoint = new Point2d(45, -7);
 
-    double hood = 49;
+    double hood = 50;
 
     double pickupWallY = -62;
     double pickupWallX = 61; // default for hp
