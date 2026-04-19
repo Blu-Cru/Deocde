@@ -56,7 +56,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
-    public static double shotLineBlueGainDegPerIn = -0.28;
+    public static double shotLineBlueGainDegPerIn = 0.33;
     public static double shotLineRedGainDegPerIn = -0.195;
     public static double shotLineBlueMaxOffsetDeg = 3.0;
     public static double shotLineRedMaxOffsetDeg = 3.0;

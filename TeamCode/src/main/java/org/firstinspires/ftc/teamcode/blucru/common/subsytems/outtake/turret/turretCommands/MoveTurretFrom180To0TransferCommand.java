@@ -7,7 +7,9 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 public class MoveTurretFrom180To0TransferCommand extends InstantCommand {
     public MoveTurretFrom180To0TransferCommand(){
         super(() -> {new SequentialCommandGroup(
-                new TurnTurretToPosCommand(180)
+                new TurnTurretToPosCommand(-90),
+                new WaitCommand(100),
+                new TurnTurretToPosCommand(0)
         ).schedule();});
     }
 }
