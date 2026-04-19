@@ -56,10 +56,10 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
-    public static double shotLineBlueGainDegPerIn = -0.2;
+    public static double shotLineBlueGainDegPerIn = -0.28;
     public static double shotLineRedGainDegPerIn = -0.195;
-    public static double shotLineBlueMaxOffsetDeg = 5.0;
-    public static double shotLineRedMaxOffsetDeg = 5.0;
+    public static double shotLineBlueMaxOffsetDeg = 3.0;
+    public static double shotLineRedMaxOffsetDeg = 3.0;
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     public static int TAG_DROPOUT_THRESHOLD = 20;

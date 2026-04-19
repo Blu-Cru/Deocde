@@ -6,13 +6,13 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 
 public class BluBrushlandLabsColorRangefinder implements BluHardwareDevice{
 
-    private DigitalChannel pin0, pin1;
+    private BluDigitalChannel pin0, pin1;
     private boolean state1;
     private boolean state2;
 
     public BluBrushlandLabsColorRangefinder(String pin0, String pin1){
-        this.pin0 = Globals.hwMap.get(DigitalChannel.class,pin0);
-        this.pin1 = Globals.hwMap.get(DigitalChannel.class,pin1);
+        this.pin0 = new BluDigitalChannel(pin0);
+        this.pin1 = new BluDigitalChannel(pin1);
         configurePinsForInput();
     }
 
@@ -23,6 +23,8 @@ public class BluBrushlandLabsColorRangefinder implements BluHardwareDevice{
 
     @Override
     public void read() {
+        pin0.read();
+        pin1.read();
         state1 = pin0.getState();
         state2 = pin1.getState();
     }
@@ -32,10 +34,10 @@ public class BluBrushlandLabsColorRangefinder implements BluHardwareDevice{
     }
 
     public boolean ballDetected(){
-        return state1 || state2;
+        return state2;
     }
     public boolean greenBall(){
-        return state2;
+        return state2 && !purpleBall();
     }
     public boolean purpleBall(){
         return state1;

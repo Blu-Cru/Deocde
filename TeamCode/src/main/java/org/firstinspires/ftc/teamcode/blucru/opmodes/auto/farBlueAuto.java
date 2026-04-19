@@ -36,7 +36,7 @@ import java.util.concurrent.locks.Lock;
 @Autonomous
 public class farBlueAuto extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -113;
+    double turretAnglePreaim = -117;
 
     // Turret angle to be set to once the bot reaches the shooting position
     double turretAngleFinal = 160; // Field centric angle increase = towards obelisk decrease = towards gate
@@ -47,8 +47,8 @@ public class farBlueAuto extends BluLinearOpMode {
 
     double hood = 49;
 
-    double pickupWallY = -64;
-    double pickupWallX = 62; // default for hp
+    double pickupWallY = -65;
+    double pickupWallX = 61; // default for hp
 
     enum State {
         PRELOAD,
@@ -65,7 +65,7 @@ public class farBlueAuto extends BluLinearOpMode {
     StateMachine sm;
     Path currentPath;
     ElapsedTime matchTimer;
-    // Time threshold to start a new cycle (30s match - ~7s per cycle)
+    // Time threshold to start a new cycle (30s match - ~5s per cycle)
     final double CYCLE_TIME_THRESHOLD = 25.0;
     boolean shouldReadColorSensors = false;
 
