@@ -52,7 +52,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
-    public static double locAutoAimAngleOffset = 3; // degrees
+    public static double locAutoAimAngleOffset = 0; // degrees
     public static double tagAutoAimPixelOffset = 0; // pixels
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
@@ -65,8 +65,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static int TAG_DROPOUT_THRESHOLD = 20;
     private int tagDropoutCounter = 0;
 
-    public static double MAX_ANGLE = 150;
-    public static double MIN_ANGLE = -150;
+    public static double MAX_ANGLE = 270;
+    public static double MIN_ANGLE = -270;
 
     public static double distFromCenter = 72.35 / 25.4;
 
@@ -190,7 +190,10 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void setFieldCentricPositionAutoAim(double targetHeading, double robotHeading, boolean switchState) {
-        setAngle(getTurretAngleForFieldHeading(targetHeading, robotHeading), switchState);
+        position = resolveTargetAngle(getTurretAngleForFieldHeading(targetHeading, robotHeading), getAngle());
+        if (switchState) {
+            state = State.PID;
+        }
     }
 
     public void lockOnGoal() {
@@ -234,9 +237,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public void updateControlLoop() {
         updatePID();
 
-        while (position > 180) position -= 360;
-        while (position <= -180) position += 360;
-
         position = Range.clip(position, MIN_ANGLE, MAX_ANGLE);
 
         double currentAngle = getAngle();
@@ -271,6 +271,9 @@ public class Turret implements BluSubsystem, Subsystem {
         }
     }
 
+    public void updateControlLoopNoWrapping() {
+        updateControlLoop();
+    }
 
     public double getAngle() {
         return -encoder.getCurrentPos() * (360.0 / TICKS_PER_REV);
@@ -308,7 +311,7 @@ public class Turret implements BluSubsystem, Subsystem {
         double dx = target.getX() - turretCenterX;
         double dy = target.getY() - turretCenterY;
 
-        return normalizeDegrees(Math.toDegrees(Math.atan2(dy, dx)));
+        return Math.toDegrees(Math.atan2(dy, dx));
     }
 
     public double getTurretAngleForFieldHeading(double targetHeading, double robotHeading) {
@@ -321,7 +324,7 @@ public class Turret implements BluSubsystem, Subsystem {
         double modeledTurretOffset = getShotLineTurretOffset(robotPose);
         double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
 
-        position = normalizeDegrees(correctedTurretAngle + modeledTurretOffset);
+        position = resolveTargetAngle(correctedTurretAngle + modeledTurretOffset, getAngle());
 
         updateControlLoop();
     }
@@ -337,7 +340,7 @@ public class Turret implements BluSubsystem, Subsystem {
             angleError = 0;
         }
 
-        position = normalizeDegrees(getAngle() + angleError);
+        position = getAngle() + angleError;
         updateControlLoop();
 
         if (angleError == 0) {
@@ -370,7 +373,31 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public double applyTurretOffset(double turretAngle) {
-        return normalizeDegrees(turretAngle + headingOffset);
+        return turretAngle + headingOffset;
+    }
+
+    private double resolveTargetAngle(double desiredAngle, double referenceAngle) {
+        double bestAngle = Double.NaN;
+        double bestError = Double.POSITIVE_INFINITY;
+
+        for (int turns = -2; turns <= 2; turns++) {
+            double candidate = desiredAngle + 360.0 * turns;
+            if (candidate < MIN_ANGLE || candidate > MAX_ANGLE) {
+                continue;
+            }
+
+            double error = Math.abs(candidate - referenceAngle);
+            if (error < bestError) {
+                bestError = error;
+                bestAngle = candidate;
+            }
+        }
+
+        if (!Double.isNaN(bestAngle)) {
+            return bestAngle;
+        }
+
+        return Range.clip(desiredAngle, MIN_ANGLE, MAX_ANGLE);
     }
 
     private double getTheoreticalTurretAngle(Pose2d robotPose) {
