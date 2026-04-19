@@ -237,6 +237,9 @@ public class Turret implements BluSubsystem, Subsystem {
     public void updateControlLoop() {
         updatePID();
 
+        if (position > MAX_ANGLE || position < MIN_ANGLE){
+            position = normalizeDegrees(position);
+        }
         position = Range.clip(position, MIN_ANGLE, MAX_ANGLE);
 
         double currentAngle = getAngle();
