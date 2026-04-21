@@ -329,10 +329,11 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         new Point2d(56, -55),
                         new Point2d(59, pickupWallY-1)
                 }, 1600)
+                .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new WaitCommand(600), //TODO: TUNE
+                            new WaitCommand(500), //TODO: TUNE
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
