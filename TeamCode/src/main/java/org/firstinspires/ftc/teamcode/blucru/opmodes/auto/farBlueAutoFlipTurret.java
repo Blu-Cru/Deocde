@@ -38,7 +38,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
     double turretAnglePreaim = -117;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double shootVeloLeft = 1430;
+    double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
     Point2d shootingPoint = new Point2d(45, -7);
@@ -200,7 +200,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
 
     public void onStart() {
         matchTimer.reset();
-        shooter.shootWithVelocityIndependent(1480, 1510, 1480);
+        shooter.shootWithVelocityIndependent(1470, 1510, 1480);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 

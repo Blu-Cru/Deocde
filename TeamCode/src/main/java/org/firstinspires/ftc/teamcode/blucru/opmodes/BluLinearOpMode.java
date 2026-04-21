@@ -139,6 +139,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             driver1.update();
             driver2.update();
 
+            Globals.updateVoltage(Robot.getInstance().getVoltage());
+
             periodic();
 
             if (manageRobotLoop) {
@@ -172,7 +174,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void initializePeriodic() {}
     public void onStart() {}
     public void periodic() throws InterruptedException {
-        Globals.updateVoltage(Robot.getInstance().getVoltage());
+
     }
 
     public void telemetry() {}
