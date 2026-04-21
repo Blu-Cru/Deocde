@@ -26,6 +26,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorU
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootReverseWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretFrom180To0TransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.tiltCommands.TiltCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -125,6 +127,14 @@ public class Tele extends BluLinearOpMode{
                     gamepad1.rumble(rumbleDur);
                     new ElevatorUpCommand().schedule();
                 })
+                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    if (Math.abs(turret.getAngle()) < 5){
+                        new MoveTurretTo180DegreeTransferCommand().schedule();
+                    } else {
+                        new MoveTurretFrom180To0TransferCommand().schedule();
+                    }
+                })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
@@ -137,6 +147,14 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                     new ElevatorDownCommand().schedule();
+                })
+                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
+                    gamepad1.rumble(rumbleDur);
+                    if (Math.abs(turret.getAngle()) < 5){
+                        new MoveTurretTo180DegreeTransferCommand().schedule();
+                    } else {
+                        new MoveTurretFrom180To0TransferCommand().schedule();
+                    }
                 })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper() || elevator.isFull(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
