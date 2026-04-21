@@ -8,22 +8,23 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
-import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorUpCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -31,24 +32,32 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-import java.util.concurrent.locks.Lock;
-
 @Autonomous
-public class farBlueAuto extends BluLinearOpMode {
+public class farBlueAutoChaseBalls extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -117;
 
     // Turret angle to be set to once the bot reaches the shooting position
-    double turretAngleFinal = 160; // Field centric angle increase = towards obelisk decrease = towards gate
-    double shootVeloLeft = 1440;
-    double shootVeloMiddle = 1440;
+    double shootVeloLeft = 1430;
+    double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(45, -9);
+    Point2d shootingPoint = new Point2d(45, -7);
 
-    double hood = 49;
+    double hood = 50;
 
-    double pickupWallY = -65;
+    double pickupWallY = -62;
     double pickupWallX = 61; // default for hp
+    double activeCyclePathX = pickupWallX;
+
+    private static final double PICKUP_MIN_X = 20;
+    private static final double PICKUP_MAX_X = 62;
+    private static final double LIVE_INTAKE_APPROACH_Y_OFFSET = 9;
+    private static final double LIVE_INTAKE_FINAL_Y_OFFSET = -3;
+    private static final double LIVE_INTAKE_COMMIT_Y_OFFSET = 6;
+    private static final double LIVE_INTAKE_REPLAN_THRESHOLD_IN = 1.5;
+    private static final double LIVE_INTAKE_REPLAN_COOLDOWN_MS = 120;
+
+    ElapsedTime liveIntakeReplanTimer;
 
     enum State {
         PRELOAD,
@@ -66,7 +75,7 @@ public class farBlueAuto extends BluLinearOpMode {
     Path currentPath;
     ElapsedTime matchTimer;
     // Time threshold to start a new cycle (30s match - ~5s per cycle)
-    final double CYCLE_TIME_THRESHOLD = 25.0;
+    final double CYCLE_TIME_THRESHOLD = 26.0;
     boolean shouldReadColorSensors = false;
 
     public void initialize() {
@@ -98,6 +107,7 @@ public class farBlueAuto extends BluLinearOpMode {
         intake.resetEncoder();
 
         matchTimer = new ElapsedTime();
+        liveIntakeReplanTimer = new ElapsedTime();
 
         sm = new StateMachineBuilder()
                 .state(State.PRELOAD)
@@ -148,8 +158,7 @@ public class farBlueAuto extends BluLinearOpMode {
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
                     //shouldReadColorSensors = true;
                     shouldReadColorSensors = false;
-                    updateIntakeXPosition();
-                    startPath(buildIntakeCyclePath());
+                    startCycleIntakePath();
                 })
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
@@ -170,8 +179,7 @@ public class farBlueAuto extends BluLinearOpMode {
                 // Cycle if time permits
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
-                    updateIntakeXPosition();
-                    startPath(buildIntakeCyclePath());
+                    startCycleIntakePath();
                 })
                 // Park if time is running out
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -202,7 +210,7 @@ public class farBlueAuto extends BluLinearOpMode {
 
     public void onStart() {
         matchTimer.reset();
-        shooter.shootWithVelocityIndependent(1490, 1520, 1490);
+        shooter.shootWithVelocityIndependent(1480, 1510, 1480);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 
@@ -216,10 +224,14 @@ public class farBlueAuto extends BluLinearOpMode {
             currentPath.run();
         }
         sm.update();
+        if (isActivelyDrivingTowardBalls()) {
+            updateLiveCycleIntakePath();
+        }
         telemetry.addData("State", sm.getState());
         telemetry.addData("Time", matchTimer.seconds());
         telemetry.addData("LL Clump X", ballDetector.getClumpFieldX());
         telemetry.addData("Intake X", pickupWallX);
+        telemetry.addData("Cycle Path X", activeCyclePathX);
     }
 
     private void startPath(Path path) {
@@ -235,13 +247,71 @@ public class farBlueAuto extends BluLinearOpMode {
         new FarAutoTransferCommand(hood, turretAnglePreaim).schedule();
     }
 
-    private void updateIntakeXPosition() {
-        if (ballDetector.hasValidClump()) {
-            double fieldX = ballDetector.getClumpFieldX();
-            double minX = 20; // x value the closest we would ever want to intake towards the gate
-            double maxX = 62; // max x value we would want to intake towards the wall
-            pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
+    private void startCycleIntakePath() {
+        updateIntakeXPosition();
+        activeCyclePathX = pickupWallX;
+        liveIntakeReplanTimer.reset();
+        startPath(buildIntakeCyclePath());
+    }
+
+    private boolean isActivelyDrivingTowardBalls() {
+        return sm != null
+                && sm.getState() == State.INTAKE_CYCLE
+                && currentPath != null
+                && !currentPath.isDone();
+    }
+
+    private void updateLiveCycleIntakePath() {
+        if (sm == null || sm.getState() != State.INTAKE_CYCLE || currentPath == null || currentPath.isDone()) {
+            return;
         }
+
+        Pose2d robotPose = sixWheel.getPos();
+        if (robotPose == null) {
+            return;
+        }
+
+        // Once we are committed into the wall lane, keep the active target frozen so
+        // the intake and the return path agree on the same X.
+        if (robotPose.getY() <= pickupWallY + LIVE_INTAKE_COMMIT_Y_OFFSET) {
+            pickupWallX = activeCyclePathX;
+            return;
+        }
+
+        Double detectedPickupX = getDetectedPickupX();
+        if (detectedPickupX == null) {
+            return;
+        }
+
+        pickupWallX = detectedPickupX;
+
+        if (Math.abs(pickupWallX - activeCyclePathX) < LIVE_INTAKE_REPLAN_THRESHOLD_IN) {
+            return;
+        }
+
+        if (liveIntakeReplanTimer.milliseconds() < LIVE_INTAKE_REPLAN_COOLDOWN_MS) {
+            return;
+        }
+
+        activeCyclePathX = pickupWallX;
+        startPath(buildLiveIntakeCyclePath(robotPose));
+        liveIntakeReplanTimer.reset();
+    }
+
+    private void updateIntakeXPosition() {
+        Double detectedPickupX = getDetectedPickupX();
+        if (detectedPickupX != null) {
+            pickupWallX = detectedPickupX;
+        }
+    }
+
+    private Double getDetectedPickupX() {
+        if (!ballDetector.hasValidClump()) {
+            return null;
+        }
+
+        double fieldX = ballDetector.getClumpFieldX();
+        return Range.clip(fieldX, PICKUP_MIN_X, PICKUP_MAX_X);
     }
 
     private boolean isTransferFull() {
@@ -267,9 +337,9 @@ public class farBlueAuto extends BluLinearOpMode {
                 .waitMilliseconds(1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootCommand()).schedule();
+                            new AutonomousShootFlipTurretCommand()).schedule();
                 })
-                .waitMilliseconds(1000)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -280,7 +350,7 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(63, -8),
                         // INTAKE FIRST SET
                         new Point2d(37, -50)
-                }, 2000)
+                }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -304,10 +374,9 @@ public class farBlueAuto extends BluLinearOpMode {
                         new Point2d(45, -25),
                         shootingPoint
                 }, 2000)
-                .waitMilliseconds(800)
+                .waitMilliseconds(600)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootCommand()).schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -317,9 +386,9 @@ public class farBlueAuto extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(61, -45),
-                        new Point2d(62, -55),
-                        new Point2d(62, pickupWallY)
+                        new Point2d(56, -45),
+                        new Point2d(58, -55),
+                        new Point2d(59, pickupWallY)
                 }, 1400)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -340,23 +409,51 @@ public class farBlueAuto extends BluLinearOpMode {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(62, pickupWallY),
                         shootingPoint
-                }, 3000)
-                .addTurnTo(-90, 500)
-                .waitMilliseconds(800)
+                }, 3000, true)
+                .addTurnTo(-85, 500)
+                .waitMilliseconds(600)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootCommand()).schedule();
+                            new AutonomousShootFlipTurretCommand()).schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
     }
 
     private Path buildIntakeCyclePath() {
+        return buildIntakeCyclePath(new Point2d[] {
+                shootingPoint,
+                new Point2d(activeCyclePathX, pickupWallY + LIVE_INTAKE_APPROACH_Y_OFFSET),
+                new Point2d(activeCyclePathX, pickupWallY + LIVE_INTAKE_FINAL_Y_OFFSET)
+        }, 1500);
+    }
+
+    private Path buildLiveIntakeCyclePath(Pose2d robotPose) {
+        Point2d startPoint = new Point2d(robotPose.getX(), robotPose.getY());
+        Point2d finalPoint = new Point2d(activeCyclePathX, pickupWallY + LIVE_INTAKE_FINAL_Y_OFFSET);
+        double distToFinal = Math.hypot(finalPoint.getX() - startPoint.getX(), finalPoint.getY() - startPoint.getY());
+        double maxTime = Range.clip(distToFinal * 35.0, 700.0, 1500.0);
+
+        Point2d[] pathPoints;
+        if (robotPose.getY() > pickupWallY + LIVE_INTAKE_APPROACH_Y_OFFSET) {
+            pathPoints = new Point2d[] {
+                    startPoint,
+                    new Point2d(activeCyclePathX, pickupWallY + LIVE_INTAKE_APPROACH_Y_OFFSET),
+                    finalPoint
+            };
+        } else {
+            pathPoints = new Point2d[] {
+                    startPoint,
+                    finalPoint
+            };
+        }
+
+        return buildIntakeCyclePath(pathPoints, maxTime);
+    }
+
+    private Path buildIntakeCyclePath(Point2d[] pathPoints, double maxTime) {
         return new SixWheelPIDPathBuilder()
-                .addPurePursuitPath(new Point2d[] {
-                        shootingPoint,
-                        new Point2d(pickupWallX, pickupWallY-3)
-                }, 1200)
+                .addPurePursuitPath(pathPoints, maxTime)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(600), //TODO: TUNE
@@ -373,14 +470,13 @@ public class farBlueAuto extends BluLinearOpMode {
     private Path buildShootCyclePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(pickupWallX, pickupWallY),
+                        new Point2d(activeCyclePathX, pickupWallY),
                         shootingPoint
-                }, 3000)
-                .addTurnTo(-90, 500)
-                .waitMilliseconds(900)
+                }, 3000, true)
+                .addTurnTo(-85, 500)
+                .waitMilliseconds(600)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootCommand()).schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -388,6 +484,13 @@ public class farBlueAuto extends BluLinearOpMode {
 
     private Path buildParkPath() {
         return new SixWheelPIDPathBuilder()
+                .addPurePursuitPath(new Point2d[]{
+                        shootingPoint,
+                        new Point2d(45,-9)
+                },100)
+                .callback(()->{
+                    new CenterTurretCommand().schedule();
+                })
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
                         new Point2d(58, -50)

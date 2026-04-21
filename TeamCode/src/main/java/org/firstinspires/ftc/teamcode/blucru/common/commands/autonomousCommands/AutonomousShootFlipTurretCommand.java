@@ -18,7 +18,7 @@ public class AutonomousShootFlipTurretCommand extends SequentialCommandGroup {
     public AutonomousShootFlipTurretCommand(){
         addCommands(
                 new AllTransferUpCommand(),
-                new WaitCommand(100),
+                new WaitCommand(200),
                 new IdleShooterCommand(),
                 new MoveTurretTo180DegreeTransferCommand(),
                 new ElevatorDownCommand(),
