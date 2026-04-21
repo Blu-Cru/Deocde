@@ -41,12 +41,13 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
     double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(45, -7);
+    Point2d shootingPoint = new Point2d(48, -9);
 
     double hood = 50;
 
-    double pickupWallY = -62;
+    double pickupWallY = -61;
     double pickupWallX = 61; // default for hp
+    private static final double CYCLE_HP_PATH_MIN_X = 54.0;
 
     enum State {
         PRELOAD,
@@ -146,8 +147,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
                     //shouldReadColorSensors = true;
                     shouldReadColorSensors = false;
-                    updateIntakeXPosition();
-                    startPath(buildIntakeCyclePath());
+                    startCycleIntakePath();
                 })
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() >= CYCLE_TIME_THRESHOLD, State.PARK, () -> {
@@ -168,8 +168,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 // Cycle if time permits
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
-                    updateIntakeXPosition();
-                    startPath(buildIntakeCyclePath());
+                    startCycleIntakePath();
                 })
                 // Park if time is running out
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -200,7 +199,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
 
     public void onStart() {
         matchTimer.reset();
-        shooter.shootWithVelocityIndependent(1470, 1510, 1480);
+        shooter.shootWithVelocityIndependent(1470, 1510, 1500);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 
@@ -233,13 +232,25 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         new FarAutoTransferCommand(hood, turretAnglePreaim).schedule();
     }
 
-    private void updateIntakeXPosition() {
+    private void startCycleIntakePath() {
+        boolean detectedPickupX = updateIntakeXPosition();
+        if (detectedPickupX && pickupWallX >= CYCLE_HP_PATH_MIN_X) {
+            startPath(buildIntakeHPPath());
+        } else {
+            startPath(buildIntakeCyclePath());
+        }
+    }
+
+    private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 20; // x value the closest we would ever want to intake towards the gate
+            double minX = 24; // x value the closest we would ever want to intake towards the gate
             double maxX = 62; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
+            return true;
         }
+
+        return false;
     }
 
     private boolean isTransferFull() {
@@ -262,7 +273,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         new Point2d(63, -7),
                         new Point2d(63, -8)
                 }, 100)
-                .waitMilliseconds(1500)
+                .waitMilliseconds(1700)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootFlipTurretCommand()).schedule();
@@ -299,7 +310,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(40, -40),
-                        new Point2d(45, -25),
+                        new Point2d(48, -25),
                         shootingPoint
                 }, 2000)
                 .waitMilliseconds(600)
@@ -314,14 +325,14 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(56, -45),
-                        new Point2d(58, -55),
-                        new Point2d(59, pickupWallY)
-                }, 1400)
+                        new Point2d(55, -45),
+                        new Point2d(56, -55),
+                        new Point2d(59, pickupWallY-1)
+                }, 1600)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new WaitCommand(600), //TODO: TUNE
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                            new WaitCommand(600), //TODO: TUNE
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
@@ -338,7 +349,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(-90, 500)
+                .addTurnTo(-80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -357,8 +368,8 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 }, 1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new WaitCommand(600), //TODO: TUNE
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                            new WaitCommand(600), //TODO: TUNE
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(700),
                             new LockOnGoalCommand()
@@ -374,7 +385,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(-90, 500)
+                .addTurnTo(-80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new AutonomousShootFlipTurretCommand().schedule();

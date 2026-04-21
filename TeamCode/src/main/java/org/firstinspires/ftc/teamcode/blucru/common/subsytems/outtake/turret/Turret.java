@@ -41,14 +41,15 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kIClose = 0.008;
     public static double kDClose = 0.0009;
     
-    public static double tagAngleGain = 1;
+    public static double tagAngleGain = 1.2;
     public static double tagAngleDeadband = 0.35;
     public static double tagMaxCorrectionAngle = 12;
+    public static double tagHandoffMaxTurretError = 20;
     public static int tagOffsetSaveStableFrames = 3;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
-    public static double errorThreshold = 50;  // Switch to close PID when error is below this (degrees)
+    public static double errorThreshold = 20;  // Switch to close PID when error is below this (degrees)
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
@@ -120,7 +121,7 @@ public class Turret implements BluSubsystem, Subsystem {
                         && (Robot.getInstance().turretCam.detectedThisLoop()
                             || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000);
 
-                if (tagAvailable) {
+                if (tagAvailable && isCloseEnoughForTagAim()) {
                     if (lastAutoAimMode == LastAutoAimMode.LOC || tagDropoutCounter > 0) {
                         controller.reset();
                         controllerClose.reset();
@@ -134,6 +135,16 @@ public class Turret implements BluSubsystem, Subsystem {
                     // Tag is visible — reset dropout counter and use camera-based aiming
                     tagDropoutCounter = 0;
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
+                } else if (tagAvailable) {
+                    if (lastAutoAimMode == LastAutoAimMode.TAG) {
+                        controller.reset();
+                        controllerClose.reset();
+                    }
+
+                    lastAutoAimMode = LastAutoAimMode.LOC;
+                    tagDropoutCounter = 0;
+                    centeredTagFrames = 0;
+                    localizationBasedAutoAim();
                 } else if (lastAutoAimMode == LastAutoAimMode.TAG) {
                     // Tag was active but just dropped — use hysteresis before switching back
                     tagDropoutCounter++;
@@ -323,11 +334,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void  localizationBasedAutoAim(){
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
-        double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
-        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
-        double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
-
-        position = resolveTargetAngle(correctedTurretAngle + modeledTurretOffset, getAngle());
+        position = getLocalizationAutoAimTarget(robotPose);
 
         updateControlLoop();
     }
@@ -377,6 +384,20 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public double applyTurretOffset(double turretAngle) {
         return turretAngle + headingOffset;
+    }
+
+    private boolean isCloseEnoughForTagAim() {
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double targetAngle = getLocalizationAutoAimTarget(robotPose);
+        return Math.abs(targetAngle - getAngle()) <= tagHandoffMaxTurretError;
+    }
+
+    private double getLocalizationAutoAimTarget(Pose2d robotPose) {
+        double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
+        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
+        double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
+
+        return resolveTargetAngle(correctedTurretAngle + modeledTurretOffset, getAngle());
     }
 
     private double resolveTargetAngle(double desiredAngle, double referenceAngle) {
