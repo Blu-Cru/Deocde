@@ -20,25 +20,24 @@ public class ConfigureColorRangefinder extends LinearOpMode {
         crfA.setLedBrightness(100);
         crfB.setLedBrightness(100);
 
-
-        crfA.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
+        /*
+        crfA.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
         crfA.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
 
-        crfB.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
+        crfB.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
         crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
         
-        /*
-        crfA.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,90, 150);
-        crfA.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-        crfA.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 150, 190);
-        crfA.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-
-        crfB.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,90, 150);
-        crfB.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-        crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 150, 190);
-        crfB.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-
          */
+        crfA.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,45, 85);
+        crfA.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+        crfA.setPin1Digital(ColorRangefinder.DigitalMode.GREEN,105, 165);
+        crfA.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+
+        crfB.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,49, 89);
+        crfB.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+        crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 140, 180);
+        crfB.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+
     }
 }
 
