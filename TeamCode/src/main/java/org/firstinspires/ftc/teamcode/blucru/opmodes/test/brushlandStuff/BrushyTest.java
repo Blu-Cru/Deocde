@@ -11,7 +11,6 @@ public class BrushyTest extends BluLinearOpMode {
 
     BluBrushlandLabsColorRangefinder colorA;
     BluBrushlandLabsColorRangefinder colorB;
-    BluBrushlandLabsColorRangefinder colorC;
 
     @Override
     public void initialize(){
@@ -23,10 +22,6 @@ public class BrushyTest extends BluLinearOpMode {
         colorB.init();
         colorB.read();
 
-        colorC = new BluBrushlandLabsColorRangefinder("ColorCPurple", "ColorCGreen");
-        colorC.init();
-        colorC.read();
-
         enableDash();
         // Since we can't modify BluLinearOpMode, we override robot.telemetry to do nothing
         robot.clear(); // Ensure no subsystems are added
@@ -36,10 +31,8 @@ public class BrushyTest extends BluLinearOpMode {
     public void periodic(){
         colorA.read();
         colorB.read();
-        colorC.read();
         Log.i("BrushyTest", "Color A Purple: " + colorA.purpleBall() + " Green: " + colorA.greenBall());
         Log.i("BrushyTest", "Color B Purple: " + colorB.purpleBall() + " Green: " + colorB.greenBall());
-        Log.i("BrushyTest", "Color C Purple: " + colorC.purpleBall() + " Green: " + colorC.greenBall());
     }
 
     @Override
@@ -50,8 +43,5 @@ public class BrushyTest extends BluLinearOpMode {
         telemetry.addData("purple B", colorB.purpleBall());
         telemetry.addData("green B", colorB.greenBall());
         telemetry.addData("raw state pin 1 B: ", colorB.getRawState2());
-        telemetry.addData("purple C", colorC.purpleBall());
-        telemetry.addData("green C", colorC.greenBall());
-        telemetry.addData("raw state pin 1 C: ", colorC.getRawState2());
     }
 }
