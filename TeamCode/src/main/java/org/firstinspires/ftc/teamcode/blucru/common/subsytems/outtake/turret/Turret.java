@@ -30,6 +30,13 @@ public class Turret implements BluSubsystem, Subsystem {
     private double position;
     private Double lastSetpoint = null;
     private static final double TAG_CAMERA_FOCAL_LENGTH_PX = 563.115;
+    private double lastControlError = 0;
+    private double lastControlPower = 0;
+    private double lastRobotHeadingVelDegPerSec = 0;
+    private double lastRobotTurnFeedForwardPower = 0;
+    private double lastGoalTrackingRateDegPerSec = 0;
+    private double lastGoalDistanceIn = 0;
+    private boolean lastUsingClosePid = false;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
     // Far PID (large errors)
@@ -44,12 +51,12 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double tagAngleGain = 1.2;
     public static double tagAngleDeadband = 0.35;
     public static double tagMaxCorrectionAngle = 12;
-    public static double tagHandoffMaxTurretError = 20;
+    public static double tagHandoffMaxTurretError = 30;
     public static int tagOffsetSaveStableFrames = 3;
 
     public static double acceptableError = 0.5;
     public static double powerClip = 1;
-    public static double errorThreshold = 20;  // Switch to close PID when error is below this (degrees)
+    public static double errorThreshold = 30;  // Switch to close PID when error is below this (degrees)
 
     // Tune these in Dashboard to offset the autoaim!
     // Positive offset = aim more right
@@ -61,6 +68,10 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double shotLineRedGainDegPerIn = -0.195;
     public static double shotLineBlueMaxOffsetDeg = 3.0;
     public static double shotLineRedMaxOffsetDeg = 3.0;
+    public static boolean useRobotTurnFeedForward = true;
+    public static double robotTurnFeedForwardPowerPerDegPerSec = 0.00135;
+    public static double robotTurnFeedForwardMaxPower = 0.45;
+    public static boolean useLocalizationDuringTagDropout = true;
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     public static int TAG_DROPOUT_THRESHOLD = 20;
@@ -150,9 +161,20 @@ public class Turret implements BluSubsystem, Subsystem {
                     tagDropoutCounter++;
 
                     if (tagDropoutCounter < TAG_DROPOUT_THRESHOLD) {
-                        // Brief camera dropouts are common; freeze the turret instead of
-                        // coasting on the last tag power command.
-                        holdTagDropout();
+                        if (tagDropoutCounter == 1) {
+                            controller.reset();
+                            controllerClose.reset();
+                        }
+
+                        centeredTagFrames = 0;
+
+                        if (useLocalizationDuringTagDropout) {
+                            // Bridge brief camera dropouts with localization so feedforward
+                            // can keep tracking while the robot is turning.
+                            localizationBasedAutoAim();
+                        } else {
+                            holdTagDropout();
+                        }
                     } else {
                         // Tag has been gone long enough — genuinely fall back to localization
                         lastAutoAimMode = LastAutoAimMode.LOC;
@@ -256,16 +278,20 @@ public class Turret implements BluSubsystem, Subsystem {
         double currentAngle = getAngle();
         double error = position - currentAngle;
         //Globals.telemetry.addData("Error", error);
+        lastControlError = error;
         
         // Select appropriate PID controller based on error magnitude
         PIDController activePID;
         if (Math.abs(error) < errorThreshold) {
             activePID = controllerClose;
+            lastUsingClosePid = true;
         } else {
             activePID = controller;
+            lastUsingClosePid = false;
         }
         
         double power = activePID.calculate(currentAngle, position);
+        power += getRobotTurnFeedForwardPower();
         power = Range.clip(power, -powerClip, powerClip);
 
         // software safety limits
@@ -278,8 +304,10 @@ public class Turret implements BluSubsystem, Subsystem {
 //        Globals.telemetry.addData("PID Output", power);
 
         if (Math.abs(error) > acceptableError) {
+            lastControlPower = power;
             servos.setPower(power);
         } else {
+            lastControlPower = 0;
             servos.setPower(0);
 //            Globals.telemetry.addLine("Turret At Setpoint");
         }
@@ -287,6 +315,57 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void updateControlLoopNoWrapping() {
         updateControlLoop();
+    }
+
+    private double getRobotTurnFeedForwardPower() {
+        if (Robot.getInstance().sixWheelDrivetrain == null) {
+            lastRobotHeadingVelDegPerSec = 0;
+            lastRobotTurnFeedForwardPower = 0;
+            lastGoalTrackingRateDegPerSec = 0;
+            lastGoalDistanceIn = 0;
+            return 0;
+        }
+
+        Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        Pose2d robotVel = Robot.getInstance().sixWheelDrivetrain.getVel();
+        lastRobotHeadingVelDegPerSec = Math.toDegrees(robotVel.getH());
+        lastGoalTrackingRateDegPerSec = getGoalTrackingRateDegPerSec(robotPose, robotVel);
+
+        if (state != State.LOCK_ON_GOAL || !useRobotTurnFeedForward) {
+            lastRobotTurnFeedForwardPower = 0;
+            return 0;
+        }
+
+        // Feed forward the rate that the turret target should move while tracking the field goal.
+        lastRobotTurnFeedForwardPower = Range.clip(
+                lastGoalTrackingRateDegPerSec
+                        * robotTurnFeedForwardPowerPerDegPerSec,
+                -robotTurnFeedForwardMaxPower,
+                robotTurnFeedForwardMaxPower
+        );
+        return lastRobotTurnFeedForwardPower;
+    }
+
+    private double getGoalTrackingRateDegPerSec(Pose2d robotPose, Pose2d robotVel) {
+        Vector2d turretCenter = getTurretCenterPosition(robotPose);
+        Vector2d goal = getGoalTarget();
+        double dx = goal.getX() - turretCenter.getX();
+        double dy = goal.getY() - turretCenter.getY();
+        double distSq = dx * dx + dy * dy;
+        lastGoalDistanceIn = Math.sqrt(distSq);
+
+        if (distSq < 1e-6) {
+            return -lastRobotHeadingVelDegPerSec;
+        }
+
+        double robotHeading = robotPose.getH();
+        double robotHeadingVel = robotVel.getH();
+        double turretVelX = robotVel.getX() + distFromCenter * Math.sin(robotHeading) * robotHeadingVel;
+        double turretVelY = robotVel.getY() - distFromCenter * Math.cos(robotHeading) * robotHeadingVel;
+        double goalBearingVel = (dy * turretVelX - dx * turretVelY) / distSq;
+        double turretTargetVel = goalBearingVel - robotHeadingVel;
+
+        return Math.toDegrees(turretTargetVel);
     }
 
     public double getAngle() {
@@ -306,13 +385,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public double getFieldCentricTargetGoalAngle(Pose2d robotPose) {
-        if(Globals.alliance == Alliance.RED){
-//            target = Globals.turretTargetRedPose;
-            target = new Vector2d(Globals.turretTargetRedX, Globals.turretTargetRedY);
-        }else{
-//            target = Globals.turretTargetBluePose;
-            target = new Vector2d(Globals.turretTargetBlueX, Globals.turretTargetBlueY);
-        }
+        target = getGoalTarget();
 
         Vector2d robotVec = robotPose.vec();
         double robotHeadingDeg = Math.toDegrees(robotPose.getH());
@@ -326,6 +399,16 @@ public class Turret implements BluSubsystem, Subsystem {
         double dy = target.getY() - turretCenterY;
 
         return Math.toDegrees(Math.atan2(dy, dx));
+    }
+
+    private Vector2d getGoalTarget() {
+        if(Globals.alliance == Alliance.RED){
+//            return Globals.turretTargetRedPose;
+            return new Vector2d(Globals.turretTargetRedX, Globals.turretTargetRedY);
+        }else{
+//            return Globals.turretTargetBluePose;
+            return new Vector2d(Globals.turretTargetBlueX, Globals.turretTargetBlueY);
+        }
     }
 
     public double getTurretAngleForFieldHeading(double targetHeading, double robotHeading) {

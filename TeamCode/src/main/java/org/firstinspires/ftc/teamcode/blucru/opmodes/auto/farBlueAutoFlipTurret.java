@@ -45,7 +45,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
 
     double hood = 50;
 
-    double pickupWallY = -61;
+    double pickupWallY = -62;
     double pickupWallX = 61; // default for hp
     private static final double CYCLE_HP_PATH_MIN_X = 54.0;
 
@@ -293,6 +293,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
+                            new WaitCommand(500),
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(800),
@@ -326,14 +327,14 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
                         new Point2d(55, -45),
-                        new Point2d(56, -55),
-                        new Point2d(59, pickupWallY-1)
+                        new Point2d(58, -55),
+                        new Point2d(60, pickupWallY-1)
                 }, 1600)
                 .waitMilliseconds(300)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new WaitCommand(500), //TODO: TUNE
+                            new WaitCommand(800), //TODO: TUNE
                             new AutonomousTransferCommand(hood),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
