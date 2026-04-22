@@ -35,7 +35,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Autonomous
 public class farBlueAutoFlipTurret extends BluLinearOpMode {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -117;
+    double turretAnglePreaim = -116;
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
