@@ -12,7 +12,6 @@ public class ConfigureColorRangefinder extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         ColorRangefinder crfA = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "ColorA"));
         ColorRangefinder crfB = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "ColorB"));
-        ColorRangefinder crfC = new ColorRangefinder(hardwareMap.get(RevColorSensorV3.class, "ColorC"));
         waitForStart();
         /* Using this example configuration, you can detect both artifact colors based on which pin is reading true:
             pin0 --> purple
@@ -20,31 +19,24 @@ public class ConfigureColorRangefinder extends LinearOpMode {
         
         crfA.setLedBrightness(100);
         crfB.setLedBrightness(100);
-        crfC.setLedBrightness(100);
 
-        /*crfA.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
+        /*
+        crfA.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
         crfA.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
 
-        crfB.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
+        crfB.setPin0Analog(ColorRangefinder.AnalogMode.GREEN);
         crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);
+        
+         */
+        crfA.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,45, 85);
+        crfA.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+        crfA.setPin1Digital(ColorRangefinder.DigitalMode.GREEN,105, 165);
+        crfA.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
 
-        crfC.setPin0Analog(ColorRangefinder.AnalogMode.HSV);
-        crfC.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 0, 20);*/
-
-        crfA.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,90, 150);
-        crfA.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-        crfA.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 150, 190);
-        crfA.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-
-        crfB.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,90, 150);
-        crfB.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-        crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 150, 190);
-        crfB.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-
-        crfC.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,90, 150);
-        crfC.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
-        crfC.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 150, 190);
-        crfC.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 8);
+        crfB.setPin0Digital(ColorRangefinder.DigitalMode.GREEN,49, 89);
+        crfB.setPin0DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
+        crfB.setPin1Digital(ColorRangefinder.DigitalMode.HSV, 140, 180);
+        crfB.setPin1DigitalMaxDistance(ColorRangefinder.DigitalMode.GREEN, 20);
 
     }
 }
