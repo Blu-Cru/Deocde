@@ -55,6 +55,9 @@ public class Elevator implements BluSubsystem, Subsystem {
         middlesensorBack.read();
         rightSensorRight.read();
         rightSensorLeft.read();
+        updateLeftBallColor();
+        updateMiddleBallColor();
+        updateRightBallColor();
     }
 
     @Override

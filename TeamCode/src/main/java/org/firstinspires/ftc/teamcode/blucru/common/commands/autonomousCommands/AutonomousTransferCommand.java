@@ -13,6 +13,26 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
 public class AutonomousTransferCommand extends InstantCommand {
+
+    public AutonomousTransferCommand(){
+        super(() -> {
+            new SequentialCommandGroup(
+                    new IntakeStopCommand(),
+//                    new WaitCommand(100),
+                    new IntakeSpitCommand(),
+                    new WaitCommand(300),
+                    new ElevatorUpCommand(),
+                    new IntakeStopCommand(),
+                    new ParallelizeIntakeCommand(),
+                    new WaitCommand(300),
+                    new ElevatorMiddleCommand(),
+                    new WaitCommand(150),
+                    new AllTransferMiddleCommand()
+            ).schedule();
+        });
+    }
+
+
     public AutonomousTransferCommand(double hood){
         super(() -> {
             new SequentialCommandGroup(

@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
@@ -262,9 +263,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         elevator.updateMiddleBallColor();
         elevator.updateRightBallColor();
 
-        return ShooterMotifCoordinator.getLeftColor() != BallColor.UNKNOWN &&
-                ShooterMotifCoordinator.getMiddleColor() != BallColor.UNKNOWN &&
-                ShooterMotifCoordinator.getRightColor() != BallColor.UNKNOWN;
+        return elevator.isFull();
     }
 
     private Path buildPreloadPath() {
@@ -295,8 +294,8 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(500),
-                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new AutonomousTransferCommand(hood),
+                            new AutoAimCommand(),
+                            new AutonomousTransferCommand(),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
 
@@ -334,9 +333,9 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                 .waitMilliseconds(0)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
+                            new AutoAimCommand(),
                             new WaitCommand(800), //TODO: TUNE
-                            new AutonomousTransferCommand(hood),
+                            new AutonomousTransferCommand(),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
                     ).schedule();
