@@ -136,7 +136,6 @@ public class failsafeFarBlueAuto extends BaseAuto {
                 })
 
                 // ========================
-                // SHOOT_SPIKE: drive to shoot position and shoot (has its own inline transfer)
                 // ========================
                 .state(State.SHOOT_SPIKE)
                 .transition(() -> currentPath != null && currentPath.isDone()

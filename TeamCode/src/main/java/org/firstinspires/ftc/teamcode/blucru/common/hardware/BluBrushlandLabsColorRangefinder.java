@@ -34,7 +34,7 @@ public class BluBrushlandLabsColorRangefinder implements BluHardwareDevice{
     }
 
     public boolean ballDetected(){
-        return state2;
+        return state2 || state1;
     }
     public boolean greenBall(){
         return state2 && !purpleBall();

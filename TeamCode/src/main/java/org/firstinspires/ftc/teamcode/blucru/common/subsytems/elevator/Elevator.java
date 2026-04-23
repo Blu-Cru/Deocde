@@ -22,17 +22,17 @@ public class Elevator implements BluSubsystem, Subsystem {
     public static double UP_POSITION_RIGHT = 0.57;
     public static double MIDDLE_POSITION_RIGHT = 0.48;
     public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.46;
-    private BluBrushlandLabsColorRangefinder leftSensorBottom, leftSensorTop, middleSensorRight, middleSensorLeft, rightSensorBottom,
-            rightSensorTop;
+    private BluBrushlandLabsColorRangefinder leftSensorRight, leftSensorLeft, middlesensorFront, middlesensorBack, rightSensorLeft,
+            rightSensorRight;
 
     public Elevator() {
 
-        leftSensorBottom = new BluBrushlandLabsColorRangefinder("purpleLeftBottom", "greenLeftBottom");
-        leftSensorTop = new BluBrushlandLabsColorRangefinder("purpleLeftTop", "greenLeftTop");
-        middleSensorRight = new BluBrushlandLabsColorRangefinder("purpleMiddleRight", "greenMiddleRight");
-        middleSensorLeft = new BluBrushlandLabsColorRangefinder("purpleMiddleLeft","greenMiddleLeft");
-        rightSensorBottom = new BluBrushlandLabsColorRangefinder("purpleRightBottom", "greenRightBottom");
-        rightSensorTop = new BluBrushlandLabsColorRangefinder("purpleRightTop", "greenRightTop");
+        leftSensorRight = new BluBrushlandLabsColorRangefinder("purpleLeftRight", "greenLeftRight");
+        leftSensorLeft = new BluBrushlandLabsColorRangefinder("purpleLeftLeft", "greenLeftLeft");
+        middlesensorFront = new BluBrushlandLabsColorRangefinder("purpleMiddleFront", "greenMiddleFront");
+        middlesensorBack = new BluBrushlandLabsColorRangefinder("purpleMiddleBack","greenMiddleBack");
+        rightSensorLeft = new BluBrushlandLabsColorRangefinder("purpleRightLeft", "greenRightLeft");
+        rightSensorRight = new BluBrushlandLabsColorRangefinder("purpleRightRight", "greenRightRight");
         elevatorServoLeft = new BluServo("elevatorLeft");
         elevatorServoRight = new BluServo("elevatorRight");
         setDown();
@@ -49,12 +49,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     public void read() {
         elevatorServoLeft.read();
         elevatorServoRight.read();
-        leftSensorTop.read();
-        leftSensorBottom.read();
-        middleSensorRight.read();
-        middleSensorLeft.read();
-        rightSensorTop.read();
-        rightSensorBottom.read();
+        leftSensorLeft.read();
+        leftSensorRight.read();
+        middlesensorFront.read();
+        middlesensorBack.read();
+        rightSensorRight.read();
+        rightSensorLeft.read();
     }
 
     @Override
@@ -83,16 +83,44 @@ public class Elevator implements BluSubsystem, Subsystem {
     }
 
     public boolean isFull(){
-        return (leftSensorBottom.ballDetected() || leftSensorTop.ballDetected())
-                && (rightSensorBottom.ballDetected() || rightSensorTop.ballDetected())
-                && (middleSensorLeft.ballDetected() || middleSensorRight.ballDetected());
+        return leftBallDetected() && middleBallDetected() && rightBallDetected();
+    }
+
+    public boolean leftBallDetected() {
+        return leftSensorRight.ballDetected() || leftSensorLeft.ballDetected();
+    }
+
+    public boolean middleBallDetected() {
+        return middlesensorBack.ballDetected() || middlesensorFront.ballDetected();
+    }
+
+    public boolean rightBallDetected() {
+        return rightSensorLeft.ballDetected() || rightSensorRight.ballDetected();
+    }
+
+    public BallColor getLeftBallColor() {
+        if (leftSensorLeft.greenBall() || leftSensorRight.greenBall()) return BallColor.GREEN;
+        if (leftSensorLeft.purpleBall() || leftSensorRight.purpleBall()) return BallColor.PURPLE;
+        return BallColor.UNKNOWN;
+    }
+
+    public BallColor getMiddleBallColor() {
+        if (middlesensorBack.greenBall() || middlesensorFront.greenBall()) return BallColor.GREEN;
+        if (middlesensorBack.purpleBall() || middlesensorFront.purpleBall()) return BallColor.PURPLE;
+        return BallColor.UNKNOWN;
+    }
+
+    public BallColor getRightBallColor() {
+        if (rightSensorRight.greenBall() || rightSensorLeft.greenBall()) return BallColor.GREEN;
+        if (rightSensorRight.purpleBall() || rightSensorLeft.purpleBall()) return BallColor.PURPLE;
+        return BallColor.UNKNOWN;
     }
 
     public void updateLeftBallColor() {
         BallColor targetColor = BallColor.UNKNOWN;
-        if (leftSensorTop.greenBall() || leftSensorBottom.greenBall()){
+        if (leftSensorLeft.greenBall() || leftSensorRight.greenBall()){
             targetColor = BallColor.GREEN;
-        } else if (leftSensorTop.purpleBall() || leftSensorBottom.purpleBall()){
+        } else if (leftSensorLeft.purpleBall() || leftSensorRight.purpleBall()){
             targetColor = BallColor.PURPLE;
         }
 
@@ -101,9 +129,9 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public void updateMiddleBallColor() {
         BallColor targetColor = BallColor.UNKNOWN;
-        if (middleSensorLeft.greenBall() || middleSensorRight.greenBall()){
+        if (middlesensorBack.greenBall() || middlesensorFront.greenBall()){
             targetColor = BallColor.GREEN;
-        } else if (middleSensorLeft.purpleBall() || middleSensorRight.purpleBall()){
+        } else if (middlesensorBack.purpleBall() || middlesensorFront.purpleBall()){
             targetColor = BallColor.PURPLE;
         }
 
@@ -112,9 +140,9 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     public void updateRightBallColor() {
         BallColor targetColor = BallColor.UNKNOWN;
-        if (rightSensorTop.greenBall() || rightSensorBottom.greenBall()){
+        if (rightSensorRight.greenBall() || rightSensorLeft.greenBall()){
             targetColor = BallColor.GREEN;
-        } else if (rightSensorTop.purpleBall() || rightSensorBottom.purpleBall()){
+        } else if (rightSensorRight.purpleBall() || rightSensorLeft.purpleBall()){
             targetColor = BallColor.PURPLE;
         }
 
