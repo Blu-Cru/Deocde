@@ -199,7 +199,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
 
     public void onStart() {
         matchTimer.reset();
-        shooter.shootWithVelocityIndependent(1470, 1510, 1500);
+        shooter.shootWithVelocityIndependent(1460, 1520, 1500);
         sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
         Globals.setAlliance(Alliance.BLUE);
 
@@ -287,6 +287,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(63, -8),
+                        new Point2d(47, -41),
                         // INTAKE FIRST SET
                         new Point2d(37, -50)
                 }, 1700)
@@ -330,7 +331,7 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
                         new Point2d(58, -55),
                         new Point2d(60, pickupWallY-1)
                 }, 1600)
-                .waitMilliseconds(300)
+                .waitMilliseconds(0)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
