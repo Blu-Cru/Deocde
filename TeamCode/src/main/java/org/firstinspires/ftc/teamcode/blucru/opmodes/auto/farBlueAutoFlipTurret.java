@@ -258,11 +258,6 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         // Only read color sensors during intake states to avoid I2C overhead
         if (!shouldReadColorSensors)
             return false;
-
-        elevator.updateLeftBallColor();
-        elevator.updateMiddleBallColor();
-        elevator.updateRightBallColor();
-
         return elevator.isFull();
     }
 
