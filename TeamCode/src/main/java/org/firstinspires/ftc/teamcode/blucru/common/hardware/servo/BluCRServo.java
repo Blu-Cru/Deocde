@@ -52,5 +52,7 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice {
     public void telemetry() {
         Telemetry telemetry = Globals.telemetry;
         telemetry.addLine(name + " Power: " + power);
+        telemetry.addLine(name + " CRServo Power: " + super.getPower());
+
     }
 }

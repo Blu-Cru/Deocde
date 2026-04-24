@@ -200,18 +200,24 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void setAngle(double angle) {
-        angle = -angle;
-        if (lastSetpoint == null || Math.abs(angle - lastSetpoint) > 1e-6) {
+        double resolvedAngle = resolveTargetAngle(-angle, getAngle());
+        if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
             controller.reset();
             controllerClose.reset();
-            lastSetpoint = angle;
+            lastSetpoint = resolvedAngle;
         }
-        position = angle;
+        position = resolvedAngle;
         state = State.PID;
     }
 
     public void setAngle(double angle, boolean switchState) {
-        position = angle;
+        double resolvedAngle = resolveTargetAngle(-angle, getAngle());
+        if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
+            controller.reset();
+            controllerClose.reset();
+            lastSetpoint = resolvedAngle;
+        }
+        position = resolvedAngle;
         if (switchState) {
             state = State.PID;
         }
