@@ -22,7 +22,6 @@ public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
     private double encoderIteration = 0;
     private BluEncoder encoder;
-    public BluDigitalChannel parallelSensor;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
     public static double ENCODER_PPR_INTAKE = 4000;
@@ -75,7 +74,6 @@ public class Intake implements BluSubsystem, Subsystem {
 
     public Intake(String motorName, String sensorName) {
         motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
-        parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(motorName);
         pid = new PDController(0.00033, 0.004);
         state = State.IDlE;
