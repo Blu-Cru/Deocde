@@ -8,7 +8,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelDrivetrainSetSimulatedBatteryVoltageCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
+
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -30,7 +30,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-import java.util.concurrent.locks.Lock;
+
 
 public class CloseAuto extends BaseAuto {
     double turretAngle = 142;
@@ -135,7 +135,7 @@ public class CloseAuto extends BaseAuto {
     public void onStart() {
         Globals.matchTime.reset();
         shooter.shootWithVelocityIndependent(900,950,900);
-        turret.setAngle(-8);
+        turret.setAngle(-2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
@@ -169,6 +169,20 @@ public class CloseAuto extends BaseAuto {
         new TurnOffShooterCommand().schedule();
     }
 
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs,
+                                                    double leftVel,
+                                                    double middleVel,
+                                                    double rightVel,
+                                                    Double hoodAngle) {
+        new SequentialCommandGroup(
+                new WaitCommand(delayBeforeTransferMs),
+                new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                hoodAngle == null
+                        ? new AutonomousTransferThenLockOnCommand()
+                        : new AutonomousTransferThenLockOnCommand(hoodAngle)
+        ).schedule();
+    }
+
     /**
      *
      * This path shoots the preloads
@@ -198,24 +212,19 @@ public class CloseAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         //purposely off
-                        new Point2d(-37, -38),
+                        new Point2d(-40, -41),
                         // small guide point for the turn
-                        new Point2d(-27.5, -33),
-                        new Point2d(-15, -25),
-                        new Point2d(0, -25),
+                        new Point2d(-27.5, -25),
+                        new Point2d(-15, -18),
+                        new Point2d(3, -18),
+                        new Point2d(10,-20),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
                         new Point2d(7, -57),
-                }, 2300)
+                }, 3000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, -55),
@@ -245,14 +254,7 @@ public class CloseAuto extends BaseAuto {
                         new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-//                            new AutoAimCommand(),
-                            new WaitCommand(400),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, -60),
@@ -278,14 +280,7 @@ public class CloseAuto extends BaseAuto {
                         new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
 
 //                .addTurnTo(-90,500)
@@ -325,14 +320,7 @@ public class CloseAuto extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, null);
                 })
 
                 .addPurePursuitPath(new Point2d[] {
@@ -361,14 +349,8 @@ public class CloseAuto extends BaseAuto {
 
                 }, 2000)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-                            new SetShooterVelocityIndependentCommand(velo-40, veloMiddle, velo-20),
-                            new AutonomousTransferCommand())
-                            .schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo - 40, veloMiddle, velo - 20, null);
                 })
-                .waitMilliseconds(1100)
-                .callback(() -> new LockOnGoalCommand().schedule())
 //                                .waitMilliseconds(100)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(32, -48),
