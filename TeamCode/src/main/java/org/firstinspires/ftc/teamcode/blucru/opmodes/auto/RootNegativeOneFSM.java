@@ -216,7 +216,8 @@ public class RootNegativeOneFSM extends BaseAuto {
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, -55),
-//                                        new Point2d(5, -40),
+                        new Point2d(15, -52),
+                        new Point2d(12,-30),
                         shootingPose
                 }, 1500, true)
                 .waitMilliseconds(500)
@@ -233,12 +234,12 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
-                        new Point2d(18, -45)
+                        new Point2d(14, -45)
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(18, -45),
-                        new Point2d(16.5, -50),
-                        new Point2d(11, -60)}, 700)
+                        new Point2d(14, -45),
+                        new Point2d(12.5, -50),
+                        new Point2d(9, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -265,12 +266,12 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
-                        new Point2d(18, -45)
+                        new Point2d(14, -45)
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(18, -45),
-                        new Point2d(16.5, -50),
-                        new Point2d(11, -60)}, 700)
+                        new Point2d(14, -45),
+                        new Point2d(12.5, -50),
+                        new Point2d(9, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
