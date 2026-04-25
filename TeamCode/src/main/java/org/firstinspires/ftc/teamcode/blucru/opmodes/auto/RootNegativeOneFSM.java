@@ -36,7 +36,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     double turretAngle = 142;
     double preAimTurretAngle = -120;
     double gateCyclePreAimAngle = -120;
-    double velo = 1230;
+    double velo = 1130;
     double veloMiddle = 1230;
     double hood = 40;
     double intakeCycleSimulatedVoltage = 12.5;
@@ -116,7 +116,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         addShooter();
         addTurret();
         addTransfer();
-        shooter.setHoodAngle(34);
+        shooter.setHoodAngle(26);
         shooter.write();
         elevator.setMiddle();
         elevator.write();
@@ -134,7 +134,7 @@ public class RootNegativeOneFSM extends BaseAuto {
 
     public void onStart() {
         Globals.matchTime.reset();
-        shooter.shootWithVelocityIndependent(1000,1050,1000);
+        shooter.shootWithVelocityIndependent(900,950,900);
         turret.setAngle(-8);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
@@ -178,7 +178,7 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-52, -54),
-                        new Point2d(-31, -32)
+                        new Point2d(-40, -41)
                 }, 1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -197,19 +197,22 @@ public class RootNegativeOneFSM extends BaseAuto {
     private Path buildSpikeMiddlePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-31, -32),
+                        //purposely off
+                        new Point2d(-37, -38),
                         // small guide point for the turn
+                        new Point2d(-27.5, -33),
                         new Point2d(-15, -25),
-                        new Point2d(8, -37),
-                        new Point2d(10, -50),
-                        new Point2d(7, -55),
+                        new Point2d(0, -25),
+                        new Point2d(12, -33),
+                        new Point2d(12, -46),
+                        new Point2d(7, -57),
                 }, 2300)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutoAimCommand(),
-//                            new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
-                            new AutonomousTransferCommand(),
+//                            new AutoAimCommand(),
+                            new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
+                            new AutonomousTransferCommand(hood),
                             new WaitCommand(700),
                             new LockOnGoalCommand()
                     ).schedule();
@@ -238,14 +241,15 @@ public class RootNegativeOneFSM extends BaseAuto {
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(14, -45),
-                        new Point2d(12.5, -50),
-                        new Point2d(9, -60)}, 700)
+                        new Point2d(13, -50),
+                        new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutoAimCommand(),
-//                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(),
+//                            new AutoAimCommand(),
+                            new WaitCommand(400),
+                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
+                            new AutonomousTransferCommand(hood),
                             new WaitCommand(700),
                             new LockOnGoalCommand()
                     ).schedule();
@@ -270,15 +274,15 @@ public class RootNegativeOneFSM extends BaseAuto {
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(14, -45),
-                        new Point2d(12.5, -50),
-                        new Point2d(9, -60)}, 700)
+                        new Point2d(13, -50),
+                        new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(400),
-                            new AutoAimCommand(),
-//                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(),
+//                            new AutoAimCommand(),
+                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
+                            new AutonomousTransferCommand(hood),
                             new WaitCommand(700),
                             new LockOnGoalCommand()
                     ).schedule();
@@ -319,12 +323,12 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(-6, -34),
                         new Point2d(-11, -58)
                 }, 1300)
-//                                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(400),
-                            new AutoAimCommand(),
-//                            new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
+//                            new AutoAimCommand(),
+                            new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
                             new AutonomousTransferCommand(),
                             new WaitCommand(700),
                             new LockOnGoalCommand()
