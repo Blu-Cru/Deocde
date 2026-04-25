@@ -9,6 +9,8 @@ import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.BallColor;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+
 @Config
 public class Elevator implements BluSubsystem, Subsystem {
     private BluServo elevatorServoLeft;
@@ -162,8 +164,7 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        //elevatorServoLeft.telemetry();
-        //elevatorServoRight.telemetry();
+        telemetry.addData("Elevator Full?", isFull());
     }
 
     @Override
