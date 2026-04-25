@@ -26,7 +26,7 @@ public class Auto extends BluLinearOpMode {
 
     enum AUTOSTARTINGPOS {
         CLOSE_AUTO,
-        FAR_BLUE_AUTO
+        FAR_AUTO
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
     AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_AUTO;
@@ -71,15 +71,15 @@ public class Auto extends BluLinearOpMode {
 
                     if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) {
                         telemetry.addLine("Close Auto <--");
-                        telemetry.addLine("Far Blue Auto");
-                    } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO) {
+                        telemetry.addLine("Far Auto");
+                    } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_AUTO) {
                         telemetry.addLine("Close Auto");
-                        telemetry.addLine("Far Blue Auto <--");
+                        telemetry.addLine("Far Auto <--");
                     }
 
                     if(driver1.pressedDpadDown() || driver1.pressedDpadUp()) {
                         if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) {
-                            CurrentSelectedAuto = AUTOSTARTINGPOS.FAR_BLUE_AUTO;
+                            CurrentSelectedAuto = AUTOSTARTINGPOS.FAR_AUTO;
                         } else {
                             CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_AUTO;
                         }
@@ -96,8 +96,13 @@ public class Auto extends BluLinearOpMode {
 
                     // Map selection to AutoConfig Enum
                     AutoConfig.AUTOS autoEnum = null;
-                    if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) autoEnum = AutoConfig.AUTOS.CLOSE_AUTO;
-                    else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO;
+                    if (CurrentSelectedAlliance == Alliance.BLUE) {
+                        if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) autoEnum = AutoConfig.AUTOS.BLUE_CLOSE_AUTO;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_AUTO) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO;
+                    } else {
+                        if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) autoEnum = AutoConfig.AUTOS.RED_CLOSE_AUTO;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_AUTO) autoEnum = AutoConfig.AUTOS.FAR_RED_AUTO;
+                    }
 
                     // Instantiate selected auto
                     autoToRun = AutoConfig.getAutoInstance(autoEnum);
