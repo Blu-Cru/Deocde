@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
@@ -169,6 +170,26 @@ public class RootNegativeOneFSM extends BaseAuto {
         new TurnOffShooterCommand().schedule();
     }
 
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs,
+                                                    double leftVel,
+                                                    double middleVel,
+                                                    double rightVel,
+                                                    Double hoodAngle) {
+        new SequentialCommandGroup(
+                new WaitCommand(delayBeforeTransferMs),
+                new InstantCommand(() -> {
+                    new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel).schedule();
+                    if (hoodAngle == null) {
+                        new AutonomousTransferCommand().schedule();
+                    } else {
+                        new AutonomousTransferCommand(hoodAngle).schedule();
+                    }
+                }),
+                new WaitCommand(700),
+                new InstantCommand(() -> new LockOnGoalCommand().schedule())
+        ).schedule();
+    }
+
     /**
      *
      * This path shoots the preloads
@@ -198,24 +219,18 @@ public class RootNegativeOneFSM extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         //purposely off
-                        new Point2d(-37, -38),
+                        new Point2d(-40, -41),
                         // small guide point for the turn
-                        new Point2d(-27.5, -33),
-                        new Point2d(-15, -25),
-                        new Point2d(0, -25),
+                        new Point2d(-27.5, -25),
+                        new Point2d(-15, -18),
+                        new Point2d(3, -18),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
                         new Point2d(7, -57),
                 }, 2300)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle,velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, -55),
@@ -245,14 +260,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-//                            new AutoAimCommand(),
-                            new WaitCommand(400),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, -60),
@@ -278,14 +286,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(10, -60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
 
 //                .addTurnTo(-90,500)
@@ -325,14 +326,7 @@ public class RootNegativeOneFSM extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-//                            new AutoAimCommand(),
-                            new SetShooterVelocityIndependentCommand(velo-120, veloMiddle-120, velo-120),
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, null);
                 })
 
                 .addPurePursuitPath(new Point2d[] {
@@ -361,14 +355,8 @@ public class RootNegativeOneFSM extends BaseAuto {
 
                 }, 2000)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(400),
-                            new SetShooterVelocityIndependentCommand(velo-40, veloMiddle, velo-20),
-                            new AutonomousTransferCommand())
-                            .schedule();
+                    scheduleVelocityTransferThenLockOn(400, velo - 40, veloMiddle, velo - 20, null);
                 })
-                .waitMilliseconds(1100)
-                .callback(() -> new LockOnGoalCommand().schedule())
 //                                .waitMilliseconds(100)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(32, -48),

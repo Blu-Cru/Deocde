@@ -128,6 +128,11 @@ public class Turret implements BluSubsystem, Subsystem {
                 break;
 
             case LOCK_ON_GOAL:
+                if (Robot.getInstance().turretCam == null) {
+                    localizationBasedAutoAim();
+                    break;
+                }
+
                 boolean tagAvailable = Robot.getInstance().turretCam.getDetection() != null
                         && (Robot.getInstance().turretCam.detectedThisLoop()
                             || Math.abs(System.nanoTime() - Robot.getInstance().turretCam.getDetection().frameAcquisitionNanoTime) < 55000000);
