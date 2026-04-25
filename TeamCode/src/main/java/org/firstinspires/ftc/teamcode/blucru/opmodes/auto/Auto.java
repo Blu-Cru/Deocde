@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@Autonomous(name = "Auto", group = "1")
+@Autonomous(name = "Auto", group = "norm")
 public class Auto extends BluLinearOpMode {
     public boolean selectedauto = false;
     public BaseAuto autoToRun;
