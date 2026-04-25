@@ -25,7 +25,6 @@ public class AutonomousTransferThenLockOnCommand extends SequentialCommandGroup 
 
     public AutonomousTransferThenLockOnCommand() {
         addCommands(
-                new IntakeStopCommand(),
                 new IntakeSpitCommand(),
                 new WaitCommand(300),
                 new ElevatorUpCommand(),
@@ -41,7 +40,6 @@ public class AutonomousTransferThenLockOnCommand extends SequentialCommandGroup 
 
     public AutonomousTransferThenLockOnCommand(double hood) {
         addCommands(
-                new IntakeStopCommand(),
                 new IntakeSpitCommand(),
                 new WaitCommand(300),
                 new ElevatorUpCommand(),

@@ -214,13 +214,16 @@ public class BlueCloseAuto extends BaseAuto {
                         new Point2d(-15, -18),
                         new Point2d(3, -18),
                         new Point2d(10,-20),
+                }, 2000)
+                .addPurePursuitPath(new Point2d[]{
+                        new Point2d(10,-20),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
-                        new Point2d(7, -57),
-                }, 3000)
+                        new Point2d(7, -57)
+                },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, -55),
@@ -325,7 +328,7 @@ public class BlueCloseAuto extends BaseAuto {
                         new Point2d(-16,-15)
                 }, 2000)
 //                                .addTurnTo(-30, 1000)
-                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(300)
                 .build();

@@ -62,6 +62,10 @@ public class Turret implements BluSubsystem, Subsystem {
     // Positive offset = aim more right
     public static double locAutoAimAngleOffset = 0; // degrees
     public static double tagAutoAimPixelOffset = 0; // pixels
+    public static double leftShotSweepTagOffsetPx = 18.0;
+    public static double middleShotSweepTagOffsetPx = 0.0;
+    public static double rightShotSweepTagOffsetPx = -18.0;
+    public static int goalSweepReadyFrames = 2;
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 0.0;
     public static double shotLineBlueGainDegPerIn = 0.33;
@@ -83,6 +87,15 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double distFromCenter = 72.35 / 25.4;
 
     private int centeredTagFrames = 0;
+    private boolean goalSweepEnabled = false;
+    private GoalSweepStage goalSweepStage = GoalSweepStage.MIDDLE_SHOT;
+
+    public enum GoalSweepStage {
+        LEFT_SHOT,
+        MIDDLE_SHOT,
+        RIGHT_SHOT
+    }
+
     private enum LastAutoAimMode {
         TAG,
         LOC
@@ -248,6 +261,17 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     public void lockOnGoal() {
+        disableGoalSweep();
+        enterLockOnGoal();
+    }
+
+    public void lockOnGoalWithSweep() {
+        enableGoalSweep();
+        setGoalSweepStage(GoalSweepStage.LEFT_SHOT);
+        enterLockOnGoal();
+    }
+
+    private void enterLockOnGoal() {
         if (state != State.LOCK_ON_GOAL) {
             resetControllers(getAngle());
             centeredTagFrames = 0;
@@ -256,6 +280,42 @@ public class Turret implements BluSubsystem, Subsystem {
         }
 
         state = State.LOCK_ON_GOAL;
+    }
+
+    public void enableGoalSweep() {
+        if (!goalSweepEnabled) {
+            goalSweepEnabled = true;
+            handleGoalSweepConfigChange();
+        }
+    }
+
+    public void disableGoalSweep() {
+        if (goalSweepEnabled || goalSweepStage != GoalSweepStage.MIDDLE_SHOT) {
+            goalSweepEnabled = false;
+            goalSweepStage = GoalSweepStage.MIDDLE_SHOT;
+            handleGoalSweepConfigChange();
+        }
+    }
+
+    public void setGoalSweepStage(GoalSweepStage stage) {
+        if (goalSweepStage != stage) {
+            goalSweepStage = stage;
+            handleGoalSweepConfigChange();
+        }
+    }
+
+    public boolean isGoalSweepLockedOnTag() {
+        return goalSweepEnabled
+                && state == State.LOCK_ON_GOAL
+                && lastAutoAimMode == LastAutoAimMode.TAG
+                && centeredTagFrames >= goalSweepReadyFrames;
+    }
+
+    private void handleGoalSweepConfigChange() {
+        centeredTagFrames = 0;
+        if (state == State.LOCK_ON_GOAL) {
+            resetControllers(getAngle());
+        }
     }
 
     public void toggleManual() {
@@ -441,7 +501,9 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void tagBasedAutoAim(AprilTagDetection detection) {
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
-        double totalPixelOffset = tagAutoAimPixelOffset + getShotLinePixelOffset(robotPose);
+        double totalPixelOffset = tagAutoAimPixelOffset
+                + getShotLinePixelOffset(robotPose)
+                + getGoalSweepPixelOffset();
         double rawXDelta = detection.center.x - (320 - totalPixelOffset);
         double angleError = Math.toDegrees(Math.atan2(rawXDelta, TAG_CAMERA_FOCAL_LENGTH_PX)) * tagAngleGain;
         angleError = Range.clip(angleError, -tagMaxCorrectionAngle, tagMaxCorrectionAngle);
@@ -570,6 +632,22 @@ public class Turret implements BluSubsystem, Subsystem {
         return -TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(turretOffsetDeg));
     }
 
+    private double getGoalSweepPixelOffset() {
+        if (!goalSweepEnabled) {
+            return 0;
+        }
+
+        switch (goalSweepStage) {
+            case LEFT_SHOT:
+                return leftShotSweepTagOffsetPx;
+            case RIGHT_SHOT:
+                return rightShotSweepTagOffsetPx;
+            case MIDDLE_SHOT:
+            default:
+                return middleShotSweepTagOffsetPx;
+        }
+    }
+
     private double normalizeDegrees(double angle) {
         while (angle > 180) {
             angle -= 360;
@@ -587,6 +665,7 @@ public class Turret implements BluSubsystem, Subsystem {
         encoder.telemetry();
         telemetry.addData("Target Pos", position);
         telemetry.addData("Turret State", state);
+        telemetry.addData("Goal Sweep", goalSweepEnabled ? goalSweepStage : "OFF");
     }
 
     @Override

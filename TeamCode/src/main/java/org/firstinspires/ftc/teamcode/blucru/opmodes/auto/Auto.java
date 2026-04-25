@@ -26,7 +26,8 @@ public class Auto extends BluLinearOpMode {
 
     enum AUTOSTARTINGPOS {
         CLOSE_AUTO,
-        FAR_BLUE_AUTO
+        FAR_BLUE_AUTO,
+        FAR_BLUE_AUTO_SWEEP
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
     AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_AUTO;
@@ -69,20 +70,15 @@ public class Auto extends BluLinearOpMode {
                     telemetry.addData("Alliance", CurrentSelectedAlliance);
                     telemetry.addLine("Press Right Bumper to Confirm Selection! >.<");
 
-                    if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) {
-                        telemetry.addLine("Close Auto <--");
-                        telemetry.addLine("Far Blue Auto");
-                    } else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO) {
-                        telemetry.addLine("Close Auto");
-                        telemetry.addLine("Far Blue Auto <--");
+                    for (AUTOSTARTINGPOS autoOption : AUTOSTARTINGPOS.values()) {
+                        telemetry.addLine(getAutoDisplayName(autoOption)
+                                + (autoOption == CurrentSelectedAuto ? " <--" : ""));
                     }
 
-                    if(driver1.pressedDpadDown() || driver1.pressedDpadUp()) {
-                        if(CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) {
-                            CurrentSelectedAuto = AUTOSTARTINGPOS.FAR_BLUE_AUTO;
-                        } else {
-                            CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_AUTO;
-                        }
+                    if (driver1.pressedDpadDown()) {
+                        CurrentSelectedAuto = cycleAutoSelection(1);
+                    } else if (driver1.pressedDpadUp()) {
+                        CurrentSelectedAuto = cycleAutoSelection(-1);
                     }
                     //telemetry.update();
                 })
@@ -98,6 +94,7 @@ public class Auto extends BluLinearOpMode {
                     AutoConfig.AUTOS autoEnum = null;
                     if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) autoEnum = AutoConfig.AUTOS.CLOSE_AUTO;
                     else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO;
+                    else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO_SWEEP;
 
                     // Instantiate selected auto
                     autoToRun = AutoConfig.getAutoInstance(autoEnum);
@@ -161,6 +158,25 @@ public class Auto extends BluLinearOpMode {
             } catch (Exception e) {
                 telemetry.addData("Error", e.getMessage());
             }
+        }
+    }
+
+    private AUTOSTARTINGPOS cycleAutoSelection(int delta) {
+        AUTOSTARTINGPOS[] values = AUTOSTARTINGPOS.values();
+        int nextIndex = (CurrentSelectedAuto.ordinal() + delta + values.length) % values.length;
+        return values[nextIndex];
+    }
+
+    private String getAutoDisplayName(AUTOSTARTINGPOS autoOption) {
+        switch (autoOption) {
+            case CLOSE_AUTO:
+                return "closeauto";
+            case FAR_BLUE_AUTO:
+                return "farblueauto";
+            case FAR_BLUE_AUTO_SWEEP:
+                return "farblueautosweep";
+            default:
+                return autoOption.name().toLowerCase();
         }
     }
 }
