@@ -42,13 +42,13 @@ public class Turret implements BluSubsystem, Subsystem {
     // Far PID (large errors)
     public static double kP = 0.023;
     public static double kI = 0.02;
-        public static double kD =   0.0018;
+        public static double kD =   0.0027;
     // Close PID (small errors) - tune these to reduce oscillation near target
     public static double kPClose = 0.012;
     public static double kIClose = 0.008;
     public static double kDClose = 0.0009;
     
-    public static double tagAngleGain = 1.2;
+    public static double tagAngleGain = 1;
     public static double tagAngleDeadband = 0.35;
     public static double tagMaxCorrectionAngle = 12;
     public static double tagHandoffMaxTurretError = 30;
