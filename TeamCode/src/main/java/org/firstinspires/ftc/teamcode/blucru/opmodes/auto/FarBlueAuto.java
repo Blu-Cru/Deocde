@@ -33,8 +33,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@Autonomous
-public class farBlueAutoFlipTurret extends BluLinearOpMode {
+public class FarBlueAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
     double turretAnglePreaim = -116;
 
@@ -62,13 +61,18 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         IDLE
     }
 
-    StateMachine sm;
     Path currentPath;
     ElapsedTime matchTimer;
     // Time threshold to start a new cycle (30s match - ~5s per cycle)
     final double CYCLE_TIME_THRESHOLD = 26.0;
     boolean shouldReadColorSensors = false;
 
+    @Override
+    public Pose2d getStartPose() {
+        return new Pose2d(63, -7, Math.toRadians(-90));
+    }
+
+    @Override
     public void initialize() {
         robot.clear();
         addSixWheel();
@@ -98,8 +102,12 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         intake.resetEncoder();
 
         matchTimer = new ElapsedTime();
+        super.initialize();
+    }
 
-        sm = new StateMachineBuilder()
+    @Override
+    public StateMachine buildStateMachine() {
+        return new StateMachineBuilder()
                 .state(State.PRELOAD)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.INTAKE_SPIKE, () -> {
                     //shouldReadColorSensors = true;
@@ -198,10 +206,11 @@ public class farBlueAutoFlipTurret extends BluLinearOpMode {
         telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
     }
 
+    @Override
     public void onStart() {
         matchTimer.reset();
         shooter.shootWithVelocityIndependent(1460, 1520, 1500);
-        sixWheel.setPosition(new Pose2d(63, -7, Math.toRadians(-90)));
+        sixWheel.setPosition(startPose);
         Globals.setAlliance(Alliance.BLUE);
 
         startPath(buildPreloadPath());
