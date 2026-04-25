@@ -32,7 +32,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 
 
-public class RootNegativeOneFSM extends BaseAuto {
+public class CloseAuto extends BaseAuto {
     double turretAngle = 142;
     double preAimTurretAngle = -120;
     double gateCyclePreAimAngle = -120;

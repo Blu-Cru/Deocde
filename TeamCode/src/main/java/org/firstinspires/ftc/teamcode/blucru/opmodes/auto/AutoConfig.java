@@ -1,18 +1,9 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
-import org.firstinspires.ftc.teamcode.blucru.opmodes.auto.old.farBLUEautoFSM;
-
 public abstract class AutoConfig {
     public enum AUTOS {
-        RED_CLOSE,
-        RED_FAR,
-        BLUE_CLOSE,
-        BLUE_FAR,
-        RED_CLOSE_MOTIF,
-        BLUE_CLOSE_MOTIF,
-        ROOT_NEGATIVE_ONE_FSM,
-        BLUE_FAR_WITH_DETECTION,
-        BLUE_MTI_AUTO
+        CLOSE_AUTO,
+        FAR_BLUE_AUTO
     }
 
     private static boolean isInitBusy = false;
@@ -21,25 +12,11 @@ public abstract class AutoConfig {
         isInitBusy = true;
         BaseAuto autoToReturn = null;
         
-        if (givenauto == AUTOS.BLUE_FAR) {
-            autoToReturn = new farBLUEautoFSM();
-        } else if (givenauto == AUTOS.BLUE_CLOSE) {
-            autoToReturn = new PPCloseBlueAuto();
-        } else if (givenauto == AUTOS.RED_FAR) {
-            autoToReturn = new farREDauto();
-        } else if (givenauto == AUTOS.RED_CLOSE) {
-            autoToReturn = new PPCloseRedAuto();
-        } else if (givenauto == AUTOS.RED_CLOSE_MOTIF) {
-            autoToReturn = new PPCloseRedAutoMotif();
-        } else if (givenauto == AUTOS.BLUE_CLOSE_MOTIF) {
-            autoToReturn = new PPCloseBlueAutoMotif();
-        } else if (givenauto == AUTOS.ROOT_NEGATIVE_ONE_FSM){
-            autoToReturn = new RootNegativeOneFSM();
-        } else if (givenauto == AUTOS.BLUE_FAR_WITH_DETECTION) {
-            autoToReturn = new failsafeFarBlueAuto();
-        } else if (givenauto == AUTOS.BLUE_MTI_AUTO) {
-            autoToReturn = new MtiAuto();
-       }
+        if (givenauto == AUTOS.CLOSE_AUTO){
+            autoToReturn = new CloseAuto();
+        } else if (givenauto == AUTOS.FAR_BLUE_AUTO) {
+            autoToReturn = new FarBlueAuto();
+        }
 
         // Simulating the end of synchronous instance creation for path generation.
         // Once this returns, it's immediately ready in Auto.java, so we mark it done.
