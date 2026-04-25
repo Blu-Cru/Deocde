@@ -6,9 +6,11 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.canvas.Canvas;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
@@ -52,6 +54,10 @@ public class Tele extends BluLinearOpMode{
     public int rumbleDur = 200;
     public int shot = 0;
     public boolean targetHit = false;
+
+    public static double ELEVATOR_FULL_DELAY_MS = 100;
+    public static int INTAKE_REVERSE_MS = 600;
+    private final ElapsedTime elevatorFullTimer = new ElapsedTime();
 
     private static final int MAX_TRAIL_SIZE = 200;
     private final LinkedList<double[]> poseTrail = new LinkedList<>();
@@ -140,6 +146,16 @@ public class Tele extends BluLinearOpMode{
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
+                .transition(this::elevatorStableFull, State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot = 0;
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> intake.setOut()),
+                            new WaitCommand(INTAKE_REVERSE_MS),
+                            new InstantCommand(() -> intake.setPID()),
+                            new TransferCommand(turreting)
+                    ).schedule();
+                })
 
                 .state(State.INTAKING_ELEVATED)
                 .loop(() -> {
@@ -156,15 +172,25 @@ public class Tele extends BluLinearOpMode{
                         new MoveTurretFrom180To0TransferCommand().schedule();
                     }
                 })
-                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper() || elevator.isFull(), State.DRIVING_TO_SHOOT, () -> {
+                .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
+                .transition(this::elevatorStableFull, State.DRIVING_TO_SHOOT, () -> {
+                    gamepad1.rumble(rumbleDur);
+                    shot = 0;
+                    new SequentialCommandGroup(
+                            new InstantCommand(() -> intake.setOut()),
+                            new WaitCommand(INTAKE_REVERSE_MS),
+                            new InstantCommand(() -> intake.setPID()),
+                            new TransferCommand(turreting)
+                    ).schedule();
+                })
                 .state(State.DRIVING_TO_SHOOT)
                 .transition(() -> driver1.pressedRightBumper(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);
-                    targetHit = false;
+                    targetHit =  false;
                     new ConditionalCommand(
                             new ShootBallsCommand(),
                             new ReturnCommand(),
@@ -427,6 +453,14 @@ public class Tele extends BluLinearOpMode{
     public void telemetry(){
         telemetry.addData("State", sm.getState());
         telemetry.addData("Pose History Length", robot.positionHistory.size());
+    }
+
+    private boolean elevatorStableFull() {
+        if (!elevator.isFull()) {
+            elevatorFullTimer.reset();
+            return false;
+        }
+        return elevatorFullTimer.milliseconds() > ELEVATOR_FULL_DELAY_MS;
     }
 
 }
