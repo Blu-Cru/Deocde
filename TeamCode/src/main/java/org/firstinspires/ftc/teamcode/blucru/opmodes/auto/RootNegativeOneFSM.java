@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
@@ -9,7 +8,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelDrivetrainSetSimulatedBatteryVoltageCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
@@ -21,7 +20,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
+
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -31,7 +30,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-import java.util.concurrent.locks.Lock;
+
 
 public class RootNegativeOneFSM extends BaseAuto {
     double turretAngle = 142;
@@ -136,7 +135,7 @@ public class RootNegativeOneFSM extends BaseAuto {
     public void onStart() {
         Globals.matchTime.reset();
         shooter.shootWithVelocityIndependent(900,950,900);
-        turret.setAngle(-8);
+        turret.setAngle(-2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
@@ -177,16 +176,10 @@ public class RootNegativeOneFSM extends BaseAuto {
                                                     Double hoodAngle) {
         new SequentialCommandGroup(
                 new WaitCommand(delayBeforeTransferMs),
-                new InstantCommand(() -> {
-                    new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel).schedule();
-                    if (hoodAngle == null) {
-                        new AutonomousTransferCommand().schedule();
-                    } else {
-                        new AutonomousTransferCommand(hoodAngle).schedule();
-                    }
-                }),
-                new WaitCommand(700),
-                new InstantCommand(() -> new LockOnGoalCommand().schedule())
+                new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                hoodAngle == null
+                        ? new AutonomousTransferThenLockOnCommand()
+                        : new AutonomousTransferThenLockOnCommand(hoodAngle)
         ).schedule();
     }
 
@@ -224,10 +217,11 @@ public class RootNegativeOneFSM extends BaseAuto {
                         new Point2d(-27.5, -25),
                         new Point2d(-15, -18),
                         new Point2d(3, -18),
+                        new Point2d(10,-20),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
                         new Point2d(7, -57),
-                }, 2300)
+                }, 3000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
