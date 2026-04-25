@@ -24,6 +24,12 @@ public class Point2d {
         this.y = y;
     }
 
+    public Point2d mirror(double offset) {
+        // Since X is length (audience to back) and Y is width (blue to red),
+        // we reflect across the X-axis (negate Y) to mirror Blue to Red!
+        return new Point2d(x, -y);
+    }
+
     public String toString(){
         return x + ", " + y;
     }
