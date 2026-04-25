@@ -324,15 +324,6 @@ public class Turret implements BluSubsystem, Subsystem {
         return state == State.PID && atTarget();
     }
 
-    public double getAngularVelocityDegPerSec() {
-        return -encoder.getVel() * (360.0 / TICKS_PER_REV);
-    }
-
-    public double getGoalSweepStageAngle(GoalSweepStage stage) {
-        double base = goalSweepBaseAngle != null ? goalSweepBaseAngle : getAngle();
-        return base + getGoalSweepAngleOffsetDeg(stage);
-    }
-
     private void handleGoalSweepConfigChange() {
         centeredTagFrames = 0;
         if (state == State.LOCK_ON_GOAL) {
