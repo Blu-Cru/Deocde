@@ -62,6 +62,9 @@ public class Turret implements BluSubsystem, Subsystem {
     // Positive offset = aim more right
     public static double locAutoAimAngleOffset = 0; // degrees
     public static double tagAutoAimPixelOffset = 0; // pixels
+    public static double leftShotSweepAngleOffsetDeg = -8.0;
+    public static double middleShotSweepAngleOffsetDeg = 0.0;
+    public static double rightShotSweepAngleOffsetDeg = 8.0;
     public static double leftShotSweepTagOffsetPx = 18.0;
     public static double middleShotSweepTagOffsetPx = 0.0;
     public static double rightShotSweepTagOffsetPx = -18.0;
@@ -89,6 +92,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private int centeredTagFrames = 0;
     private boolean goalSweepEnabled = false;
     private GoalSweepStage goalSweepStage = GoalSweepStage.MIDDLE_SHOT;
+    private Double goalSweepBaseAngle = null;
 
     public enum GoalSweepStage {
         LEFT_SHOT,
@@ -214,25 +218,11 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void setAngle(double angle) {
-        double resolvedAngle = resolveTargetAngle(-angle, getAngle());
-        if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
-            resetControllers(resolvedAngle);
-            lastSetpoint = resolvedAngle;
-        }
-        position = resolvedAngle;
-        state = State.PID;
+        setResolvedAngle(-angle, true);
     }
 
     public void setAngle(double angle, boolean switchState) {
-        double resolvedAngle = resolveTargetAngle(-angle, getAngle());
-        if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
-            resetControllers(resolvedAngle);
-            lastSetpoint = resolvedAngle;
-        }
-        position = resolvedAngle;
-        if (switchState) {
-            state = State.PID;
-        }
+        setResolvedAngle(-angle, switchState);
     }
 
     // Resets the PID controllers and primes them with one calculate() call so
@@ -293,6 +283,7 @@ public class Turret implements BluSubsystem, Subsystem {
         if (goalSweepEnabled || goalSweepStage != GoalSweepStage.MIDDLE_SHOT) {
             goalSweepEnabled = false;
             goalSweepStage = GoalSweepStage.MIDDLE_SHOT;
+            goalSweepBaseAngle = null;
             handleGoalSweepConfigChange();
         }
     }
@@ -309,6 +300,27 @@ public class Turret implements BluSubsystem, Subsystem {
                 && state == State.LOCK_ON_GOAL
                 && lastAutoAimMode == LastAutoAimMode.TAG
                 && centeredTagFrames >= goalSweepReadyFrames;
+    }
+
+    public void beginGoalSweep() {
+        enableGoalSweep();
+        goalSweepBaseAngle = getAngle();
+    }
+
+    public void aimGoalSweepStage(GoalSweepStage stage) {
+        setGoalSweepStage(stage);
+        enableGoalSweep();
+
+        if (goalSweepBaseAngle == null) {
+            goalSweepBaseAngle = getAngle();
+        }
+
+        double desiredAngle = goalSweepBaseAngle + getGoalSweepAngleOffsetDeg(stage);
+        setResolvedAngle(desiredAngle, true);
+    }
+
+    public boolean isGoalSweepStageAtTarget() {
+        return state == State.PID && atTarget();
     }
 
     private void handleGoalSweepConfigChange() {
@@ -504,13 +516,7 @@ public class Turret implements BluSubsystem, Subsystem {
         double totalPixelOffset = tagAutoAimPixelOffset
                 + getShotLinePixelOffset(robotPose)
                 + getGoalSweepPixelOffset();
-        double rawXDelta = detection.center.x - (320 - totalPixelOffset);
-        double angleError = Math.toDegrees(Math.atan2(rawXDelta, TAG_CAMERA_FOCAL_LENGTH_PX)) * tagAngleGain;
-        angleError = Range.clip(angleError, -tagMaxCorrectionAngle, tagMaxCorrectionAngle);
-
-        if (Math.abs(angleError) < tagAngleDeadband) {
-            angleError = 0;
-        }
+        double angleError = getTagAngleError(detection, totalPixelOffset);
 
         position = getAngle() + angleError;
         updateControlLoop();
@@ -561,28 +567,40 @@ public class Turret implements BluSubsystem, Subsystem {
         return resolveTargetAngle(correctedTurretAngle + modeledTurretOffset, getAngle());
     }
 
+    private double getTagAngleError(AprilTagDetection detection, double totalPixelOffset) {
+        double rawXDelta = detection.center.x - (320 - totalPixelOffset);
+        double angleError = Math.toDegrees(Math.atan2(rawXDelta, TAG_CAMERA_FOCAL_LENGTH_PX)) * tagAngleGain;
+        angleError = Range.clip(angleError, -tagMaxCorrectionAngle, tagMaxCorrectionAngle);
+
+        if (Math.abs(angleError) < tagAngleDeadband) {
+            angleError = 0;
+        }
+
+        return angleError;
+    }
+
     private double resolveTargetAngle(double desiredAngle, double referenceAngle) {
-        double bestAngle = Double.NaN;
-        double bestError = Double.POSITIVE_INFINITY;
-
-        for (int turns = -2; turns <= 2; turns++) {
-            double candidate = desiredAngle + 360.0 * turns;
-            if (candidate < MIN_ANGLE || candidate > MAX_ANGLE) {
-                continue;
-            }
-
-            double error = Math.abs(candidate - referenceAngle);
-            if (error < bestError) {
-                bestError = error;
-                bestAngle = candidate;
-            }
+        // If the requested target is already within the legal turret range,
+        // keep it exactly as requested and do not wrap to a "closer" 360-equivalent.
+        if (desiredAngle >= MIN_ANGLE && desiredAngle <= MAX_ANGLE) {
+            return desiredAngle;
         }
 
-        if (!Double.isNaN(bestAngle)) {
-            return bestAngle;
+        double wrappedAngle = desiredAngle;
+
+        while (wrappedAngle > MAX_ANGLE) {
+            wrappedAngle -= 360.0;
         }
 
-        return Range.clip(desiredAngle, MIN_ANGLE, MAX_ANGLE);
+        while (wrappedAngle < MIN_ANGLE) {
+            wrappedAngle += 360.0;
+        }
+
+        if (wrappedAngle >= MIN_ANGLE && wrappedAngle <= MAX_ANGLE) {
+            return wrappedAngle;
+        }
+
+        return Range.clip(wrappedAngle, MIN_ANGLE, MAX_ANGLE);
     }
 
     private double getTheoreticalTurretAngle(Pose2d robotPose) {
@@ -637,7 +655,11 @@ public class Turret implements BluSubsystem, Subsystem {
             return 0;
         }
 
-        switch (goalSweepStage) {
+        return getGoalSweepPixelOffsetForStage(goalSweepStage);
+    }
+
+    private double getGoalSweepPixelOffsetForStage(GoalSweepStage stage) {
+        switch (stage) {
             case LEFT_SHOT:
                 return leftShotSweepTagOffsetPx;
             case RIGHT_SHOT:
@@ -645,6 +667,30 @@ public class Turret implements BluSubsystem, Subsystem {
             case MIDDLE_SHOT:
             default:
                 return middleShotSweepTagOffsetPx;
+        }
+    }
+
+    private double getGoalSweepAngleOffsetDeg(GoalSweepStage stage) {
+        switch (stage) {
+            case LEFT_SHOT:
+                return leftShotSweepAngleOffsetDeg;
+            case RIGHT_SHOT:
+                return rightShotSweepAngleOffsetDeg;
+            case MIDDLE_SHOT:
+            default:
+                return middleShotSweepAngleOffsetDeg;
+        }
+    }
+
+    private void setResolvedAngle(double desiredAngle, boolean switchState) {
+        double resolvedAngle = resolveTargetAngle(desiredAngle, getAngle());
+        if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
+            resetControllers(resolvedAngle);
+            lastSetpoint = resolvedAngle;
+        }
+        position = resolvedAngle;
+        if (switchState) {
+            state = State.PID;
         }
     }
 

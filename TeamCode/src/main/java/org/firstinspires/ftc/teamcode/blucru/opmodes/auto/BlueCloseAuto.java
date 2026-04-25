@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
@@ -32,8 +33,8 @@ public class BlueCloseAuto extends BaseAuto {
     double turretAngle = 142;
     double preAimTurretAngle = -120;
     double gateCyclePreAimAngle = -120;
-    double velo = 1130;
-    double veloMiddle = 1230;
+    double velo = 1170;
+    double veloMiddle = 1270;
     double hood = 40;
     double intakeCycleSimulatedVoltage = 12.5;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
@@ -130,8 +131,8 @@ public class BlueCloseAuto extends BaseAuto {
 
     public void onStart() {
         Globals.matchTime.reset();
-        shooter.shootWithVelocityIndependent(900,950,900);
-        turret.setAngle(-2);
+        shooter.shootWithVelocityIndependent(925,950,925);
+        turret.setAngle(2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
@@ -171,8 +172,8 @@ public class BlueCloseAuto extends BaseAuto {
                                                     double rightVel,
                                                     Double hoodAngle) {
         new SequentialCommandGroup(
-                new WaitCommand(delayBeforeTransferMs),
                 new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                new WaitCommand(delayBeforeTransferMs),
                 hoodAngle == null
                         ? new AutonomousTransferThenLockOnCommand()
                         : new AutonomousTransferThenLockOnCommand(hoodAngle)
@@ -198,12 +199,6 @@ public class BlueCloseAuto extends BaseAuto {
                 .build();
     }
 
-    /**
-     *
-     * This path is to get the middle spike without opening the gate and then shoot
-     * them
-     *
-     */
     private Path buildSpikeMiddlePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -213,10 +208,10 @@ public class BlueCloseAuto extends BaseAuto {
                         new Point2d(-27.5, -25),
                         new Point2d(-15, -18),
                         new Point2d(3, -18),
-                        new Point2d(10,-20),
-                }, 2000)
+                        new Point2d(10,-23),
+                }, 2300)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(10,-20),
+                        new Point2d(10,-23),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
                         new Point2d(7, -57)
@@ -261,9 +256,9 @@ public class BlueCloseAuto extends BaseAuto {
                         new Point2d(12,-30),
                         shootingPose
                 }, 2000, true)
-                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootFlipTurretCommand().schedule())
-                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -293,10 +288,12 @@ public class BlueCloseAuto extends BaseAuto {
                 .callback(() -> new SequentialCommandGroup(
                         new AllTransferUpCommand(),
                         new WaitCommand(200),
-                        new IdleShooterCommand(),
-                        new MoveTurretTo180DegreeTransferCommand(),
-                        new ElevatorDownCommand(),
-                        new AllTransferDownCommand(),
+                        new ParallelCommandGroup(
+                                new IdleShooterCommand(),
+                                new MoveTurretTo180DegreeTransferCommand(),
+                                new ElevatorDownCommand(),
+                                new AllTransferDownCommand()
+                        ),
                         new WaitCommand(200),//shorter wait, balls are close
                         new IntakeStartCommand()
                 ).schedule())
@@ -319,7 +316,7 @@ public class BlueCloseAuto extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, null);
+                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 30.0);
                 })
 
                 .addPurePursuitPath(new Point2d[] {

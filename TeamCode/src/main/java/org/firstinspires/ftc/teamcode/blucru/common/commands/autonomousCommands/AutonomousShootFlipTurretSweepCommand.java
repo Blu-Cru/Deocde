@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 @Config
 public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGroup {
 
-    public static int tagLockTimeoutMs = 300;
+    public static int turretMoveTimeoutMs = 400;
     public static int settleBeforeShotMs = 40;
     public static int shotDetectTimeoutMs = 500;
     public static int postShotPauseMs = 120;
@@ -37,7 +37,7 @@ public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGrou
         addCommands(
                 new InstantCommand(() -> {
                     Robot.getInstance().shooter.resetShotCounter();
-                    Robot.getInstance().turret.lockOnGoalWithSweep();
+                    Robot.getInstance().turret.beginGoalSweep();
                 }),
                 buildSweepShotStep(
                         Turret.GoalSweepStage.LEFT_SHOT,
@@ -70,10 +70,10 @@ public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGrou
                                                       Command fireCommand,
                                                       int expectedShots) {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> Robot.getInstance().turret.setGoalSweepStage(stage)),
+                new InstantCommand(() -> Robot.getInstance().turret.aimGoalSweepStage(stage)),
                 new TimedWaitUntilCommand(
-                        tagLockTimeoutMs,
-                        () -> Robot.getInstance().turret.isGoalSweepLockedOnTag()
+                        turretMoveTimeoutMs,
+                        () -> Robot.getInstance().turret.isGoalSweepStageAtTarget()
                 ),
                 new WaitCommand(settleBeforeShotMs),
                 fireCommand,
