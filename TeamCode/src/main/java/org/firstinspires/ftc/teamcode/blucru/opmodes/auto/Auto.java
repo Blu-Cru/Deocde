@@ -6,14 +6,16 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.TimedTelemetry;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-
 
 @Autonomous(name = "Auto", group = "1")
 public class Auto extends BluLinearOpMode {
     public boolean selectedauto = false;
     public BaseAuto autoToRun;
+    public TimedTelemetry timedTelemetry;
 
     enum State {
         ALLIANCE_PICK,
@@ -25,16 +27,17 @@ public class Auto extends BluLinearOpMode {
     }
 
     enum AUTOSTARTINGPOS {
-        CLOSE_AUTO,
-        FAR_BLUE_AUTO,
-        FAR_BLUE_AUTO_SWEEP
+        CLOSE,
+        FAR,
+        FAR_SWEEP
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
-    AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE_AUTO;
+    AUTOSTARTINGPOS CurrentSelectedAuto = AUTOSTARTINGPOS.CLOSE;
     StateMachine sm;
 
     @Override
     public void initialize() {
+        timedTelemetry = new TimedTelemetry(telemetry);
         robot.clear();
         robot.addTurretCam();
         addSixWheel();
@@ -92,9 +95,19 @@ public class Auto extends BluLinearOpMode {
 
                     // Map selection to AutoConfig Enum
                     AutoConfig.AUTOS autoEnum = null;
-                    if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_AUTO) autoEnum = AutoConfig.AUTOS.CLOSE_AUTO;
-                    else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO;
-                    else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_AUTO_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_BLUE_AUTO_SWEEP;
+                    if (CurrentSelectedAlliance == Alliance.BLUE) {
+                        if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_BLUE;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_BLUE;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_BLUE_SWEEP;
+                    } else {
+                        // RED ALLIANCE
+                        if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_RED;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_RED;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) {
+                            autoEnum = AutoConfig.AUTOS.FAR_RED; // No red sweep yet, fallback to Far Red
+                            timedTelemetry.addLine("Red Sweep doesn't exist yet! Falling back to Far Red!", 2000);    
+                        }
+                    }
 
                     // Instantiate selected auto
                     autoToRun = AutoConfig.getAutoInstance(autoEnum);
@@ -116,7 +129,6 @@ public class Auto extends BluLinearOpMode {
                         autoToRun.llTagDetector = Auto.this.llTagDetector;
                         autoToRun.driver1 = Auto.this.driver1;
                         autoToRun.driver2 = Auto.this.driver2;
-
                         autoToRun.initialize();
                     }
                 })
@@ -140,6 +152,9 @@ public class Auto extends BluLinearOpMode {
         if (sm != null) sm.update();
         if (autoToRun != null) {
             autoToRun.initializePeriodic();
+        }
+        if (timedTelemetry != null) {
+            timedTelemetry.draw();
         }
     }
 
@@ -172,12 +187,12 @@ public class Auto extends BluLinearOpMode {
 
     private String getAutoDisplayName(AUTOSTARTINGPOS autoOption) {
         switch (autoOption) {
-            case CLOSE_AUTO:
-                return "closeauto";
-            case FAR_BLUE_AUTO:
-                return "farblueauto";
-            case FAR_BLUE_AUTO_SWEEP:
-                return "farblueautosweep";
+            case CLOSE:
+                return "Close Auto";
+            case FAR:
+                return "Far Auto";
+            case FAR_SWEEP:
+                return "Far Auto Sweep";
             default:
                 return autoOption.name().toLowerCase();
         }
