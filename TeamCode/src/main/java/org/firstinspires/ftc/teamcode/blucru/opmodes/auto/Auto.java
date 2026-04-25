@@ -138,6 +138,9 @@ public class Auto extends BluLinearOpMode {
     @Override
     public void initializePeriodic() {
         if (sm != null) sm.update();
+        if (autoToRun != null) {
+            autoToRun.initializePeriodic();
+        }
     }
 
     public void onStart() {

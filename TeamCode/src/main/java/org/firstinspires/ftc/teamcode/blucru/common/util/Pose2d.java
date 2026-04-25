@@ -57,7 +57,7 @@ public class Pose2d {
         return mirror(141.5);
     }
     public Pose2d mirror(double offset) {
-        return new Pose2d(x, offset-y, -h);
+        return new Pose2d(x, offset - y, -h);
     }
     public String toString(){
         return "(" + x + ", " + y + ", " + h + ")";
