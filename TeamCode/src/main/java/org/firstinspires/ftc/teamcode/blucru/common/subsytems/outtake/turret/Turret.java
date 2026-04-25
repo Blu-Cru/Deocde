@@ -134,8 +134,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
                 if (tagAvailable && isCloseEnoughForTagAim()) {
                     if (lastAutoAimMode == LastAutoAimMode.LOC || tagDropoutCounter > 0) {
-                        controller.reset();
-                        controllerClose.reset();
+                        resetControllers(getAngle());
                         centeredTagFrames = 0;
                     }
 
@@ -148,8 +147,7 @@ public class Turret implements BluSubsystem, Subsystem {
                     tagBasedAutoAim(Robot.getInstance().turretCam.getDetection());
                 } else if (tagAvailable) {
                     if (lastAutoAimMode == LastAutoAimMode.TAG) {
-                        controller.reset();
-                        controllerClose.reset();
+                        resetControllers(getAngle());
                     }
 
                     lastAutoAimMode = LastAutoAimMode.LOC;
@@ -162,8 +160,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
                     if (tagDropoutCounter < TAG_DROPOUT_THRESHOLD) {
                         if (tagDropoutCounter == 1) {
-                            controller.reset();
-                            controllerClose.reset();
+                            resetControllers(getAngle());
                         }
 
                         centeredTagFrames = 0;
@@ -180,8 +177,7 @@ public class Turret implements BluSubsystem, Subsystem {
                         lastAutoAimMode = LastAutoAimMode.LOC;
                         tagDropoutCounter = 0;
                         centeredTagFrames = 0;
-                        controller.reset();
-                        controllerClose.reset();
+                        resetControllers(getAngle());
                         localizationBasedAutoAim();
                     }
                 } else {
@@ -202,8 +198,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void setAngle(double angle) {
         double resolvedAngle = resolveTargetAngle(-angle, getAngle());
         if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
-            controller.reset();
-            controllerClose.reset();
+            resetControllers(resolvedAngle);
             lastSetpoint = resolvedAngle;
         }
         position = resolvedAngle;
@@ -213,14 +208,26 @@ public class Turret implements BluSubsystem, Subsystem {
     public void setAngle(double angle, boolean switchState) {
         double resolvedAngle = resolveTargetAngle(-angle, getAngle());
         if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
-            controller.reset();
-            controllerClose.reset();
+            resetControllers(resolvedAngle);
             lastSetpoint = resolvedAngle;
         }
         position = resolvedAngle;
         if (switchState) {
             state = State.PID;
         }
+    }
+
+    // Resets the PID controllers and primes them with one calculate() call so
+    // their internal lastTimeStamp/period are seeded before the next real PID
+    // step. Without priming, the first calculate() after reset() goes through
+    // setSetPoint() which divides by stale period and can leave the output
+    // saturated for the first loop tick after a setpoint change.
+    private void resetControllers(double targetAngle) {
+        controller.reset();
+        controllerClose.reset();
+        double currentAngle = getAngle();
+        controller.calculate(currentAngle, targetAngle);
+        controllerClose.calculate(currentAngle, targetAngle);
     }
 
     public void setPower(double power) {
@@ -237,8 +244,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     public void lockOnGoal() {
         if (state != State.LOCK_ON_GOAL) {
-            controller.reset();
-            controllerClose.reset();
+            resetControllers(getAngle());
             centeredTagFrames = 0;
             tagDropoutCounter = 0;
             lastAutoAimMode = LastAutoAimMode.LOC;
@@ -455,8 +461,7 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private void holdTagDropout() {
         position = getAngle();
-        controller.reset();
-        controllerClose.reset();
+        resetControllers(position);
         centeredTagFrames = 0;
         servos.setPower(0);
     }
