@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeSpitC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalSweepCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 
 /**
@@ -51,6 +52,21 @@ public class AutonomousTransferThenLockOnCommand extends SequentialCommandGroup 
                 new AllTransferMiddleCommand(),
                 new SetHoodAngleCommand(hood),
                 new LockOnGoalCommand()
+        );
+    }
+    public AutonomousTransferThenLockOnCommand(double hood, boolean sweep) {
+        addCommands(
+                new IntakeSpitCommand(),
+                new WaitCommand(300),
+                new ElevatorUpCommand(),
+                new IntakeStopCommand(),
+                new ParallelizeIntakeCommand(),
+                new WaitCommand(200),
+                new ElevatorMiddleCommand(),
+                new WaitCommand(150),
+                new AllTransferMiddleCommand(),
+                new SetHoodAngleCommand(hood),
+                new LockOnGoalSweepCommand()
         );
     }
 }

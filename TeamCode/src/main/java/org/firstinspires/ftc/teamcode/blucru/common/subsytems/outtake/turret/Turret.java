@@ -62,9 +62,9 @@ public class Turret implements BluSubsystem, Subsystem {
     // Positive offset = aim more right
     public static double locAutoAimAngleOffset = 0; // degrees
     public static double tagAutoAimPixelOffset = 0; // pixels
-    public static double leftShotSweepAngleOffsetDeg = -8.0;
+    public static double leftShotSweepAngleOffsetDeg = -6.0;
     public static double middleShotSweepAngleOffsetDeg = 0.0;
-    public static double rightShotSweepAngleOffsetDeg = 8.0;
+    public static double rightShotSweepAngleOffsetDeg = 6.0;
     public static double leftShotSweepTagOffsetPx = 18.0;
     public static double middleShotSweepTagOffsetPx = 0.0;
     public static double rightShotSweepTagOffsetPx = -18.0;
@@ -305,6 +305,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public void beginGoalSweep() {
         enableGoalSweep();
         goalSweepBaseAngle = getAngle();
+        aimGoalSweepStage(GoalSweepStage.LEFT_SHOT);
     }
 
     public void aimGoalSweepStage(GoalSweepStage stage) {

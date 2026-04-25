@@ -21,9 +21,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 @Config
 public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGroup {
 
-    public static int turretMoveTimeoutMs = 400;
+    public static int turretMoveTimeoutMs = 300;
     public static int settleBeforeShotMs = 40;
-    public static int shotDetectTimeoutMs = 500;
+    public static int shotDetectTimeoutMs = 200;
     public static int postShotPauseMs = 120;
     public static int intakeRestartWaitMs = 400;
 
