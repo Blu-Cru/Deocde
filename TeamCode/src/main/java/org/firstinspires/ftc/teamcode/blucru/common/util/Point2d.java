@@ -24,6 +24,14 @@ public class Point2d {
         this.y = y;
     }
 
+    public Point2d mirror() {
+        return mirror(141.5);
+    }
+    
+    public Point2d mirror(double offset) {
+        return new Point2d(x, offset - y);
+    }
+
     public String toString(){
         return x + ", " + y;
     }

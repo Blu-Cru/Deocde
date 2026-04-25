@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
 public abstract class AutoConfig {
     public enum AUTOS {
-        CLOSE_AUTO,
-        FAR_BLUE_AUTO,
-        FAR_BLUE_AUTO_SWEEP
+        CLOSE_BLUE,
+        FAR_BLUE,
+        FAR_BLUE_SWEEP,
+        CLOSE_RED,
+        FAR_RED
     }
 
     private static boolean isInitBusy = false;
@@ -13,12 +15,16 @@ public abstract class AutoConfig {
         isInitBusy = true;
         BaseAuto autoToReturn = null;
         
-        if (givenauto == AUTOS.CLOSE_AUTO){
-            autoToReturn = new BlueCloseAuto();
-        } else if (givenauto == AUTOS.FAR_BLUE_AUTO) {
+        if (givenauto == AUTOS.CLOSE_BLUE){
+            autoToReturn = new CloseBlueAuto();
+        } else if (givenauto == AUTOS.FAR_BLUE) {
             autoToReturn = new FarBlueAuto();
-        } else if (givenauto == AUTOS.FAR_BLUE_AUTO_SWEEP) {
+        } else if (givenauto == AUTOS.FAR_BLUE_SWEEP) {
             autoToReturn = new FarBlueAutoSweep();
+        } else if (givenauto == AUTOS.CLOSE_RED) {
+            autoToReturn = new CloseRedAuto();
+        } else if (givenauto == AUTOS.FAR_RED) {
+            autoToReturn = new FarRedAuto();
         }
 
         // Simulating the end of synchronous instance creation for path generation.

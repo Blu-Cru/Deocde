@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+
 /**
  * This class is for 2d poses. It is heavily based off Roadrunner's Pose2d class
  * */
@@ -51,6 +53,12 @@ public class Pose2d {
         return Math.sqrt(Math.pow(pose2d.getX() - this.getX(),2) + Math.pow(pose2d.getY() - this.getY(),2));
     }
 
+    public Pose2d mirror() {
+        return mirror(141.5);
+    }
+    public Pose2d mirror(double offset) {
+        return new Pose2d(x, offset - y, -h);
+    }
     public String toString(){
         return "(" + x + ", " + y + ", " + h + ")";
     }
