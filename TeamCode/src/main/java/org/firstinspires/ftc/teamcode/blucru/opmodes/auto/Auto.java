@@ -8,14 +8,15 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
-import org.firstinspires.ftc.teamcode.blucru.common.util.TimedTelemetry;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 @Autonomous(name = "Auto", group = "1")
 public class Auto extends BluLinearOpMode {
     public boolean selectedauto = false;
     public BaseAuto autoToRun;
-    public TimedTelemetry timedTelemetry;
+    public ElapsedTime errorTimer = new ElapsedTime();
+    public boolean showError = false;
 
     enum State {
         ALLIANCE_PICK,
@@ -37,7 +38,6 @@ public class Auto extends BluLinearOpMode {
 
     @Override
     public void initialize() {
-        timedTelemetry = new TimedTelemetry(telemetry);
         robot.clear();
         robot.addTurretCam();
         addSixWheel();
@@ -105,7 +105,8 @@ public class Auto extends BluLinearOpMode {
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_RED;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) {
                             autoEnum = AutoConfig.AUTOS.FAR_RED; // No red sweep yet, fallback to Far Red
-                            timedTelemetry.addLine("Red Sweep doesn't exist yet! Falling back to Far Red!", 2000);    
+                            showError = true;
+                            errorTimer.reset();
                         }
                     }
 
@@ -137,6 +138,9 @@ public class Auto extends BluLinearOpMode {
                 .state(State.INITIALIZED)
                 .loop(() -> {
                     telemetry.addLine("Paths Built!");
+                    if (showError && errorTimer.milliseconds() < 2000) {
+                        telemetry.addLine("Red Sweep doesn't exist yet! Falling back to Far Red!");
+                    }
                     telemetry.addLine("Initalized!");
                     telemetry.addLine("Congrats, do a dance!");
                     //telemetry.update();
@@ -152,9 +156,6 @@ public class Auto extends BluLinearOpMode {
         if (sm != null) sm.update();
         if (autoToRun != null) {
             autoToRun.initializePeriodic();
-        }
-        if (timedTelemetry != null) {
-            timedTelemetry.draw();
         }
     }
 
