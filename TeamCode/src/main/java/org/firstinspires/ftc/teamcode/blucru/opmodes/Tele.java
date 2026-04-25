@@ -42,7 +42,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
 import java.util.LinkedList;
 
-@TeleOp (group = "a")
+@TeleOp (group = "norm")
 
 public class Tele extends BluLinearOpMode{
 
