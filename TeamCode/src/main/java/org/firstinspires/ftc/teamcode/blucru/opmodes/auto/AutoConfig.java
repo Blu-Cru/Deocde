@@ -13,7 +13,7 @@ public abstract class AutoConfig {
         BaseAuto autoToReturn = null;
         
         if (givenauto == AUTOS.CLOSE_AUTO){
-            autoToReturn = new CloseAuto();
+            autoToReturn = new BlueCloseAuto();
         } else if (givenauto == AUTOS.FAR_BLUE_AUTO) {
             autoToReturn = new FarBlueAuto();
         }
