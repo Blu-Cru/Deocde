@@ -49,6 +49,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
     Pose2d botposeOnTheMove;
     Pose2d kalmanFilteredBotpose;
     KalmanFilter xFilter, yFilter;
+    double lastFilterX, lastFilterY;
     final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toDegrees(0));
     final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toDegrees(0));
 
@@ -85,8 +86,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
         kalmanFilteredBotpose = null;
         detection = null;
 
-        xFilter = new KalmanFilter(0, 0.7,0.5,0.01,1);
-        yFilter = new KalmanFilter(0, 0.7,0.5,0.01,1);
+        xFilter = new KalmanFilter(0, 0.7, 0.5, 0.01);
+        yFilter = new KalmanFilter(0, 0.7, 0.5, 0.01);
     }
 
     /**
@@ -110,8 +111,11 @@ public class TagCamera implements BluSubsystem, Subsystem {
     @Override
     public void init() {
         read();
-        xFilter.setVal(Robot.getInstance().sixWheelDrivetrain.getPos().getX());
-        yFilter.setVal(Robot.getInstance().sixWheelDrivetrain.getPos().getY());
+        Pose2d pos = Robot.getInstance().sixWheelDrivetrain.getPos();
+        xFilter.setVal(pos.getX());
+        yFilter.setVal(pos.getY());
+        lastFilterX = pos.getX();
+        lastFilterY = pos.getY();
     }
 
     @Override
@@ -265,8 +269,12 @@ public class TagCamera implements BluSubsystem, Subsystem {
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
         botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
                 Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-        xFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getX(), botposeOnTheMove.getX());
-        yFilter.update(Robot.getInstance().sixWheelDrivetrain.getPos().getY(), botposeOnTheMove.getY());
+        double curX = Robot.getInstance().sixWheelDrivetrain.getPos().getX();
+        double curY = Robot.getInstance().sixWheelDrivetrain.getPos().getY();
+        xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());
+        yFilter.update(curY - lastFilterY, botposeOnTheMove.getY());
+        lastFilterX = curX;
+        lastFilterY = curY;
     }
 
     private boolean isAllianceGoalTag(AprilTagDetection detect) {
