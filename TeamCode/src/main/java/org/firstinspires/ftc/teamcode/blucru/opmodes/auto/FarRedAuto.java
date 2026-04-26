@@ -8,14 +8,13 @@ import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
@@ -23,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = 116; // TODO: Change for Red
+    double turretAnglePreaim = -244; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -185,13 +184,13 @@ public class FarRedAuto extends BaseAuto {
 
     @Override
     public void initializePeriodic() {
-        turret.read();
-        if (driver1.pressedA()) {
-            turret.setAngle(turretAnglePreaim);
-        }
-        turret.write();
-        telemetry.addLine("--- INIT ---");
-        telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
+//        turret.read();
+//        if (driver1.pressedA()) {
+//            turret.setAngle(turretAnglePreaim);
+//        }
+//        turret.write();
+//        telemetry.addLine("--- INIT ---");
+//        telemetry.addLine("Press A to set turret to Pre-Aim (116)");
     }
 
     @Override
@@ -260,10 +259,13 @@ public class FarRedAuto extends BaseAuto {
 
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
-                .addPurePursuitPath(new Point2d[] {
-                        new Point2d(63, -7).mirror(),
-                        new Point2d(63, -8).mirror()
-                }, 100)
+                .addMappedPurePursuitPath(new Point2d[] {
+                        new Point2d(63, -7),
+                        new Point2d(63, -8)
+                }, 50)
+                .callback(()->{
+                    new TurnTurretToPosCommand(turretAnglePreaim).schedule();
+                })
                 .waitMilliseconds(1700)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -284,15 +286,7 @@ public class FarRedAuto extends BaseAuto {
                 }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(500),
-                            new AutoAimCommand(),
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(800),
-                            new LockOnGoalCommand()
-
-
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(500, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -324,14 +318,7 @@ public class FarRedAuto extends BaseAuto {
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutoAimCommand(),
-                            new WaitCommand(800),
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(800),
-                            new LockOnGoalCommand()
-                    ).schedule();
-
+                    scheduleVelocityTransferThenLockOn(800, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -346,8 +333,7 @@ public class FarRedAuto extends BaseAuto {
                 .addTurnTo(80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()).schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -361,13 +347,7 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY-3).mirror()
                 }, 1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new WaitCommand(600), //TODO: TUNE
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            new LockOnGoalCommand()
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(600, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -402,5 +382,19 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(58, -50).mirror()
                 }, 5000)
                 .build();
+    }
+
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs,
+                                                    double leftVel,
+                                                    double middleVel,
+                                                    double rightVel,
+                                                    Double hoodAngle) {
+        new SequentialCommandGroup(
+                new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                new WaitCommand(delayBeforeTransferMs),
+                hoodAngle == null
+                        ? new AutonomousTransferThenLockOnCommand()
+                        : new AutonomousTransferThenLockOnCommand(hoodAngle)
+        ).schedule();
     }
 }
