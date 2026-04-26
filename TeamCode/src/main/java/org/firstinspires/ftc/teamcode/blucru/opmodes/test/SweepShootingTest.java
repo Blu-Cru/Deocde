@@ -59,7 +59,7 @@ public class SweepShootingTest extends BluLinearOpMode {
     public boolean targetHit = false;
 
     public static double SHOT_DELAY_MS = 50;
-    public static double SWEEP_FIRE_TIMEOUT_MS = 600;
+    public static double SWEEP_FIRE_TIMEOUT_MS = 200;
     public static double RIGHT_SHOT_TOLERANCE_DEG = 1.0;
 
     private static final int MAX_TRAIL_SIZE = 200;
@@ -446,22 +446,22 @@ public class SweepShootingTest extends BluLinearOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shooter.resetShotCounter()),
                 new InstantCommand(() -> turret.beginGoalSweep()),
-                new TimedWaitUntilCommand(300, () -> turret.isGoalSweepStageAtTarget()),
+                new TimedWaitUntilCommand(200, () -> turret.isGoalSweepStageAtTarget()),
                 new LeftTransferUpCommand(),
-                new TimedWaitUntilCommand(250, () -> shooter.hasShot(1)),
+                new TimedWaitUntilCommand(50, () -> shooter.hasShot(1)),
                 new InstantCommand(() -> turret.aimGoalSweepStage(Turret.GoalSweepStage.RIGHT_SHOT)),
                 new TimedWaitUntilCommand(
                         SWEEP_FIRE_TIMEOUT_MS,
                         () -> predictedReachedSweepStage(Turret.GoalSweepStage.MIDDLE_SHOT)
                 ),
                 new MiddleTransferUpCommand(),
-                new TimedWaitUntilCommand(250, () -> shooter.hasShot(2)),
+                new TimedWaitUntilCommand(50, () -> shooter.hasShot(2)),
                 new TimedWaitUntilCommand(
-                        300,
+                        200,
                         () -> nearSweepStage(Turret.GoalSweepStage.RIGHT_SHOT, RIGHT_SHOT_TOLERANCE_DEG)
                 ),
                 new RightTransferUpCommand(),
-                new TimedWaitUntilCommand(250, () -> shooter.hasShot(3)),
+                new TimedWaitUntilCommand(50, () -> shooter.hasShot(3)),
                 new WaitCommand(150),
                 new InstantCommand(() -> turret.disableGoalSweep()),
                 new CenterTurretCommand(),
