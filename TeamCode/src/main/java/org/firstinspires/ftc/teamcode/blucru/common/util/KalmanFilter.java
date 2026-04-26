@@ -1,74 +1,59 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
+/**
+ * 1D scalar Kalman filter, PID-style. Per loop call:
+ *   filter.update(u, z);
+ *   double estimate = filter.get();
+ *
+ *   u = control input / predicted change in state since the last update (delta)
+ *   z = sensor measurement of the state
+ *
+ * For pure smoothing with no model, pass u = 0.
+ */
 public class KalmanFilter {
-    double x = 0; // your initial state
-    double Q = 0.1; // your model covariance
-    double R = 0.4; // your sensor covariance
-    double P = 1; // your initial covariance guess
-    double K = 1; // your initial Kalman gain guess
+    private double Q; // process (model) noise covariance
+    private double R; // sensor noise covariance
+    private double P; // state covariance estimate
+    private double K; // last Kalman gain
+    private double x; // state estimate
 
-    double x_previous = x;
-    double p_previous = P;
-    double u = 0;
-    double z = 0;
-    double lastinput = 0;
+    public KalmanFilter(double Q, double R) {
+        this(0, Q, R, 1);
+    }
 
-    public KalmanFilter(double x, double Q, double R, double P, double K) {
+    public KalmanFilter(double x, double Q, double R, double P) {
         this.x = x;
         this.Q = Q;
         this.R = R;
         this.P = P;
-        this.K = K;
+        this.K = 1;
     }
-    public void update(double firstInput, double secondInput) {
-        double predictedinput = firstInput-lastinput;
-        u = predictedinput; // The delta
-        x = x_previous + u;
 
-        P = p_previous + Q;
+    public double update(double u, double z) {
+        // Predict
+        x = x + u;
+        P = P + Q;
 
-        K = P/(P + R);
-
-        z = secondInput; // The known current input
-
+        // Correct
+        K = P / (P + R);
         x = x + K * (z - x);
-
         P = (1 - K) * P;
 
-        x_previous = x;
-        p_previous = P;
-        lastinput = firstInput;
-    }
-
-    /*public void update(double input, double givenlastinput) {
-        double predictedinput = input-givenlastinput;
-        u = predictedinput; // The delta
-        x = x_previous + u;
-
-        P = p_previous + Q;
-
-        K = P/(P + R);
-
-        z = input; // The known current input
-
-        x = x + K * (z - x);
-
-        P = (1 - K) * P;
-
-        x_previous = x;
-        p_previous = P;
-        lastinput = input;
-    }*/
-    public void setVal(double val){
-        this.x = val;
-        this.x_previous = val;
-        this.lastinput = val;
-    }
-
-    public double get() {
         return x;
     }
-    public double getUncertainty() {
-        return P;
+
+    public double update(double z) {
+        return update(0, z);
     }
+
+    public void setVal(double val) {
+        this.x = val;
+    }
+
+    public void setQ(double Q) { this.Q = Q; }
+    public void setR(double R) { this.R = R; }
+
+    public double get() { return x; }
+    public double getUncertainty() { return P; }
+    public double getGain() { return K; }
 }
