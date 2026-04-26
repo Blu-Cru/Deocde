@@ -199,13 +199,13 @@ public class FarBlueAuto extends BaseAuto {
 
     @Override
     public void initializePeriodic() {
-        turret.read();
-        if (driver1.pressedA()) {
-            turret.setAngle(turretAnglePreaim);
-        }
-        turret.write();
-        telemetry.addLine("--- INIT ---");
-        telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
+//        turret.read();
+//        if (driver1.pressedA()) {
+//            turret.setAngle(turretAnglePreaim);
+//        }
+//        turret.write();
+//        telemetry.addLine("--- INIT ---");
+//        telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
     }
 
     @Override
@@ -277,7 +277,10 @@ public class FarBlueAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(63, -7),
                         new Point2d(63, -8)
-                }, 100)
+                }, 50)
+                .callback(()->{
+                    new TurnTurretToPosCommand(turretAnglePreaim).schedule();
+                })
                 .waitMilliseconds(1700)
                 .callback(() -> {
                     new SequentialCommandGroup(
