@@ -57,6 +57,13 @@ public abstract class BluLinearOpMode extends LinearOpMode {
      */
     protected boolean manageRobotLoop = true;
 
+    /**
+     * If true, BluLinearOpMode will NOT auto-call robot.telemetry(telemetry).
+     * The opmode's telemetry() override is responsible for printing all
+     * subsystem telemetry itself (with whatever layout it wants).
+     */
+    protected boolean manageTelemetry = false;
+
     // ===============================
     // GAMEPADS
     // ===============================
@@ -151,7 +158,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
             if (reportTelemetry) {
                 telemetry();
-                robot.telemetry(telemetry);
+                if (!manageTelemetry) {
+                    robot.telemetry(telemetry);
+                }
             }
             double[] loopTimes = getLoopTimes();
             telemetry.addData("Loop (ms)", loopTimes[0]);

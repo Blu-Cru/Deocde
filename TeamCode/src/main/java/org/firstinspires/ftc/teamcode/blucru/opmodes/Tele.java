@@ -78,6 +78,7 @@ public class Tele extends BluLinearOpMode{
     @Override
     public void initialize(){
         reportTelemetry = true;
+        manageTelemetry = true;
         robot.clear();
         addSixWheel();
         robot.addTurretCam();
@@ -468,8 +469,50 @@ public class Tele extends BluLinearOpMode{
     }
 
     public void telemetry(){
+        Pose2d pose = sixWheel.getPos();
+
+        telemetry.addLine("======== ROBOT ========");
         telemetry.addData("State", sm.getState());
-        telemetry.addData("Pose History Length", robot.positionHistory.size());
+        telemetry.addData("Alliance", Globals.alliance);
+        telemetry.addData("Pose", "(%.1f, %.1f, %.1f°)",
+                pose.getX(), pose.getY(), Math.toDegrees(pose.getH()));
+        telemetry.addData("Voltage", "%.2f V", Globals.voltage);
+        telemetry.addData("Pose History", robot.positionHistory.size());
+        telemetry.addData("Subsystems", robot.getAmountOfSubsystems());
+        telemetry.addData("Auto Tag Update", autoTagUpdating);
+        telemetry.addData("Brushlands", usingBrushlands);
+        telemetry.addData("Turreting", turreting);
+        telemetry.addData("Shot", shot);
+        telemetry.addData("Target Hit", targetHit);
+
+        section("DRIVETRAIN");
+        sixWheel.telemetry(telemetry);
+
+        section("INTAKE");
+        intake.telemetry(telemetry);
+
+        section("ELEVATOR");
+        elevator.telemetry(telemetry);
+
+        section("TRANSFER");
+        transfer.telemetry(telemetry);
+
+        section("SHOOTER");
+        shooter.telemetry(telemetry);
+
+        section("TURRET");
+        turret.telemetry(telemetry);
+
+        section("TILT");
+        tilt.telemetry(telemetry);
+
+        section("TURRET CAM");
+        robot.turretCam.telemetry(telemetry);
+    }
+
+    private void section(String name) {
+        telemetry.addLine("");
+        telemetry.addLine("---- " + name + " ----");
     }
 
     private boolean elevatorStableFull() {
