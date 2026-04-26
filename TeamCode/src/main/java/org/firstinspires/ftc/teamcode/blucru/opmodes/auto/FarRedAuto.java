@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = 116; // TODO: Change for Red
+    double turretAnglePreaim = -244; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -259,7 +259,7 @@ public class FarRedAuto extends BaseAuto {
 
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
-                .addPurePursuitPath(new Point2d[] {
+                .addMappedPurePursuitPath(new Point2d[] {
                         new Point2d(63, -7),
                         new Point2d(63, -8)
                 }, 50)
