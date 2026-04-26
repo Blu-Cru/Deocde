@@ -52,6 +52,7 @@ public class Tele extends BluLinearOpMode{
 
     public static boolean dashfield = true;
     public boolean autoTagUpdating = true;
+    private boolean usingBrushlands = true;
     public int rumbleDur = 200;
     public int shot = 0;
     public boolean targetHit = false;
@@ -431,8 +432,12 @@ public class Tele extends BluLinearOpMode{
             Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;
         }
 
-        if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){
-            new TiltCommand().schedule();
+        //if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){
+          //  new TiltCommand().schedule();
+        //}
+
+        if (driver2.pressedLeftStickButton() || driver2.pressedRightStickButton()){
+                usingBrushlands = !usingBrushlands;
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
@@ -472,7 +477,7 @@ public class Tele extends BluLinearOpMode{
             elevatorFullTimer.reset();
             return false;
         }
-        return elevatorFullTimer.milliseconds() > ELEVATOR_FULL_DELAY_MS;
+        return elevatorFullTimer.milliseconds() > ELEVATOR_FULL_DELAY_MS && usingBrushlands;
     }
 
 }
