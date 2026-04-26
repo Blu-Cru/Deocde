@@ -84,8 +84,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static int TAG_DROPOUT_THRESHOLD = 20;
     private int tagDropoutCounter = 0;
 
-    public static double MAX_ANGLE = 270;
-    public static double MIN_ANGLE = -270;
+    public static double MAX_ANGLE = 300;
+    public static double MIN_ANGLE = -300;
 
     public static double distFromCenter = 72.35 / 25.4;
 
@@ -589,27 +589,27 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     private double resolveTargetAngle(double desiredAngle, double referenceAngle) {
-        // If the requested target is already within the legal turret range,
-        // keep it exactly as requested and do not wrap to a "closer" 360-equivalent.
-        if (desiredAngle >= MIN_ANGLE && desiredAngle <= MAX_ANGLE) {
-            return desiredAngle;
+        double bestAngle = Double.NaN;
+        double bestDistance = Double.POSITIVE_INFINITY;
+
+        for (int k = -2; k <= 2; k++) {
+            double candidate = desiredAngle + 360.0 * k;
+            if (candidate < MIN_ANGLE || candidate > MAX_ANGLE) {
+                continue;
+            }
+
+            double distance = Math.abs(candidate - referenceAngle);
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                bestAngle = candidate;
+            }
         }
 
-        double wrappedAngle = desiredAngle;
-
-        while (wrappedAngle > MAX_ANGLE) {
-            wrappedAngle -= 360.0;
+        if (!Double.isNaN(bestAngle)) {
+            return bestAngle;
         }
 
-        while (wrappedAngle < MIN_ANGLE) {
-            wrappedAngle += 360.0;
-        }
-
-        if (wrappedAngle >= MIN_ANGLE && wrappedAngle <= MAX_ANGLE) {
-            return wrappedAngle;
-        }
-
-        return Range.clip(wrappedAngle, MIN_ANGLE, MAX_ANGLE);
+        return Range.clip(desiredAngle, MIN_ANGLE, MAX_ANGLE);
     }
 
     private double getTheoreticalTurretAngle(Pose2d robotPose) {
