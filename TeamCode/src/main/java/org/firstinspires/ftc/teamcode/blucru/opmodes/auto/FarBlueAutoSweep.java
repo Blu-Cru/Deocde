@@ -287,7 +287,7 @@ public class FarBlueAutoSweep extends BaseAuto {
                         new Point2d(48, -25),
                         shootingPoint
                 }, 2000)
-                .waitMilliseconds(600)
+                .waitMilliseconds(200)
                 .callback(() -> {
                     new AutonomousShootFlipTurretSweepCommand().schedule();
                 })
@@ -319,7 +319,7 @@ public class FarBlueAutoSweep extends BaseAuto {
                         shootingPoint
                 }, 3000, true)
                 .addTurnTo(-80, 500)
-                .waitMilliseconds(600)
+                .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutonomousShootFlipTurretSweepCommand()).schedule();
@@ -349,7 +349,7 @@ public class FarBlueAutoSweep extends BaseAuto {
                         shootingPoint
                 }, 3000, true)
                 .addTurnTo(-80, 500)
-                .waitMilliseconds(600)
+                .waitMilliseconds(200)
                 .callback(() -> {
                     new AutonomousShootFlipTurretSweepCommand().schedule();
                 })

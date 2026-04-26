@@ -305,7 +305,6 @@ public class Turret implements BluSubsystem, Subsystem {
     public void beginGoalSweep() {
         enableGoalSweep();
         goalSweepBaseAngle = getAngle();
-        aimGoalSweepStage(GoalSweepStage.LEFT_SHOT);
     }
 
     public void aimGoalSweepStage(GoalSweepStage stage) {

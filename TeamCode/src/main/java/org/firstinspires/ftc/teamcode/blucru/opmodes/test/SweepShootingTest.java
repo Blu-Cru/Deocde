@@ -442,7 +442,12 @@ public class SweepShootingTest extends BluLinearOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shooter.resetShotCounter()),
                 new InstantCommand(() -> turret.beginGoalSweep()),
-                buildSweepShotStep(Turret.GoalSweepStage.LEFT_SHOT, new LeftTransferUpCommand(), 1),
+                new WaitCommand(40),
+                new LeftTransferUpCommand(),
+                new TimedWaitUntilCommand(
+                        500,
+                        () -> shooter.hasShot(1)
+                ),
                 buildSweepShotStep(Turret.GoalSweepStage.MIDDLE_SHOT, new MiddleTransferUpCommand(), 2),
                 buildSweepShotStep(Turret.GoalSweepStage.RIGHT_SHOT, new RightTransferUpCommand(), 3),
                 new WaitCommand(400),
