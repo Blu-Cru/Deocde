@@ -263,7 +263,11 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(63, 8)
                 }, 50)
                 .callback(()->{
-                    new TurnTurretToPosCommand(turretAnglePreaim).schedule();
+                    new SequentialCommandGroup(
+                            new TurnTurretToPosCommand(-160),
+                            new WaitCommand(400),
+                            new TurnTurretToPosCommand(turretAnglePreaim)
+                    ).schedule();
                 })
                 .waitMilliseconds(1700)
                 .callback(() -> {

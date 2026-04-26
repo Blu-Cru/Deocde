@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -132,7 +134,7 @@ public class CloseRedAuto extends BaseAuto {
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
-        Globals.setAlliance(Alliance.BLUE);
+        Globals.setAlliance(Alliance.RED);
         sm.setState(State.PRELOAD);
         sm.start();
     }
@@ -189,7 +191,20 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1000)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()).schedule();
+                            new AllTransferUpCommand(),
+                            new WaitCommand(200),
+                            // Run shooter idle and turret flip simultaneously — removes 2 scheduler
+                            // ticks of delay before the turret starts turning.
+                            new ParallelCommandGroup(
+                                    new IdleShooterCommand(),
+                                    new TurnTurretToPosCommand(-90),
+                                    new ElevatorDownCommand(),
+                                    new AllTransferDownCommand()
+                            ),
+                            new WaitCommand(200),
+                            new MoveTurretTo180DegreeTransferCommand(),
+                            new WaitCommand(400),
+                            new IntakeStartCommand()).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
                 .build();
