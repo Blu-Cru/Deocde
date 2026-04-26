@@ -99,7 +99,7 @@ public class Globals {
         return angle * reflect;
     }
     public static Vector2d mapPoint(Vector2d point) {
-        return mapVector(point.getX(), point.getY());
+        return mapVector(point.getX(), -point.getY());
     }
     // Assuming Point2d has .x and .y fields or getX()/getY() methods
     public static Point2d mapPoint(Point2d point) {
