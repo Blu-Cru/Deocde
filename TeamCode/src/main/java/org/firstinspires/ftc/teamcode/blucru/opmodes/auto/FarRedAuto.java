@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -116; // TODO: Change for Red
+    double turretAnglePreaim = 116; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -33,7 +33,7 @@ public class FarRedAuto extends BaseAuto {
 
     double hood = 50;
 
-    double pickupWallY = -62; // TODO: Change for Red
+    double pickupWallY = 62; // TODO: Change for Red
     double pickupWallX = 61; // TODO: Change for Red
     private static final double CYCLE_HP_PATH_MIN_X = 54.0; // TODO: Change for Red
 
@@ -73,8 +73,8 @@ public class FarRedAuto extends BaseAuto {
         addBallDetector();
 
 
-        //TODO: SWAP THE Y OFFSET BASED ON ALLIANCE. POSITIVE Y = TO THE LEFT. NEGATIVE Y = TO THE RIGHT.
-        ballDetector.setCameraParameters(11.3, -6.5, 13.0, 15.0);
+        //TODO: SWAP THE Y OFFSET BASED ON ALLIANCE. POSITIVE Y = TO THE LEFT. NEGATIVE Y = TO THE RIGHT. already done for red
+        ballDetector.setCameraParameters(11.3, 6.5, 13.0, 15.0);
         ballDetector.activate();
 
         shooter.setHoodAngle(hood);
@@ -242,8 +242,8 @@ public class FarRedAuto extends BaseAuto {
     private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 24; // TODO: Change for Red // x value the closest we would ever want to intake towards the gate
-            double maxX = 62; // TODO: Change for Red // max x value we would want to intake towards the wall
+            double minX = 24; // x value the closest we would ever want to intake towards the gate
+            double maxX = 62; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
             return true;
         }
@@ -326,7 +326,7 @@ public class FarRedAuto extends BaseAuto {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new AutoAimCommand(),
-                            new WaitCommand(800), //TODO: TUNE
+                            new WaitCommand(800),
                             new AutonomousTransferCommand(),
                             new WaitCommand(800),
                             new LockOnGoalCommand()
@@ -343,7 +343,7 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(62, pickupWallY).mirror(),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(-80, 500)
+                .addTurnTo(80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new SequentialCommandGroup(
@@ -379,7 +379,7 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY).mirror(),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(-80, 500)
+                .addTurnTo(80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new AutonomousShootFlipTurretCommand().schedule();

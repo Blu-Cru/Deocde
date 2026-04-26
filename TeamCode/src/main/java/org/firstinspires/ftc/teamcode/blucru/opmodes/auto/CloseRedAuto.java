@@ -279,7 +279,6 @@ public class CloseRedAuto extends BaseAuto {
                     scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
 
-//                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, -60).mirror(),
                         new Point2d(15, -52).mirror(),
@@ -324,7 +323,6 @@ public class CloseRedAuto extends BaseAuto {
 //                        new Point2d(-6, -19).mirror(),
                         new Point2d(-16,-15).mirror()
                 }, 2000)
-//                                .addTurnTo(-30, 1000)
                 .waitMilliseconds(200)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(300)
