@@ -34,9 +34,8 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                         new MoveTurretTo180DegreeTransferCommand(),
                         ()-> Robot.getInstance().turret.getAngle() < -170
                 ),
-                new CenterTurretCommand(),
                 new AutoAimCommand(),
-                new WaitCommand(100),
+                new WaitCommand(30),
                 new ElevatorUpCommand(),
                 new WaitCommand(400),
                 new ElevatorMiddleCommand(),
