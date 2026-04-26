@@ -66,7 +66,7 @@ public class Globals {
     public static Pose2d mapPose(double x, double y, double heading) {
         y = y * reflect;
         heading = heading * reflect;
-        return new Pose2d(x, y, heading % (2 * Math.PI));
+        return new Pose2d(x, y, heading %    (2 * Math.PI));
     }
 
     // 2. Returns CUSTOM Pose2d from existing Custom Pose

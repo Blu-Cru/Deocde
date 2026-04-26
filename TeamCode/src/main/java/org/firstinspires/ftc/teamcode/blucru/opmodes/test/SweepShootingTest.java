@@ -176,7 +176,7 @@ public class SweepShootingTest extends BluLinearOpMode {
                     new ConditionalCommand(
                             buildSweepShootAllCommand(),
                             new ReturnCommand(),
-                            () -> (shot == 0)
+                            () -> (shot == 0 && sixWheel.getPos().getX() > 0)
                     ).schedule();
                 })
                 .transition(() -> driver1.pressedDpadLeft(), State.DRIVING_TO_SHOOT, () -> {
