@@ -156,8 +156,7 @@ public class FarBlueAuto extends BaseAuto {
                 .state(State.SHOOT_HP)
                 .transition(() -> currentPath != null && currentPath.isDone()
                         && matchTimer.seconds() < CYCLE_TIME_THRESHOLD, State.INTAKE_CYCLE, () -> {
-                    //shouldReadColorSensors = true;
-                    shouldReadColorSensors = false;
+                    shouldReadColorSensors = true;
                     startCycleIntakePath();
                 })
                 .transition(() -> currentPath != null && currentPath.isDone()
@@ -240,8 +239,7 @@ public class FarBlueAuto extends BaseAuto {
         if (currentPath != null) {
             currentPath.endSixWheel();
         }
-        new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight).schedule();
-        new FarAutoTransferCommand(hood, turretAnglePreaim).schedule();
+        scheduleVelocityTransferThenLockOn(0, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
     }
 
     private void startCycleIntakePath() {
