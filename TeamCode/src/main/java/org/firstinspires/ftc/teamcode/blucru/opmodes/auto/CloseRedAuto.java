@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
@@ -33,7 +34,7 @@ public class CloseRedAuto extends BaseAuto {
     double veloMiddle = 1230;
     double hood = 40;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
-    private Point2d shootingPose = new Point2d(4, 10);
+    private Point2d shootingPose = new Point2d(4, 8);
 
     enum State {
         PRELOAD, MIDDLE_SPIKE, FIRST_GATE_CYCLE, GATE_CYCLE, CLOSE_SPIKE,
@@ -126,12 +127,12 @@ public class CloseRedAuto extends BaseAuto {
 
     public void onStart() {
         Globals.matchTime.reset();
-        shooter.shootWithVelocityIndependent(900,950,900);
-        turret.setAngle(-2); // TODO: Change for Red
+        shooter.shootWithVelocityIndependent(925,950,925);
+        turret.setAngle(2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
-        Globals.setAlliance(Alliance.RED);
+        Globals.setAlliance(Alliance.BLUE);
         sm.setState(State.PRELOAD);
         sm.start();
     }
@@ -167,14 +168,19 @@ public class CloseRedAuto extends BaseAuto {
                                                     double rightVel,
                                                     Double hoodAngle) {
         new SequentialCommandGroup(
-                new WaitCommand(delayBeforeTransferMs),
                 new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                new WaitCommand(delayBeforeTransferMs),
                 hoodAngle == null
                         ? new AutonomousTransferThenLockOnCommand()
                         : new AutonomousTransferThenLockOnCommand(hoodAngle)
         ).schedule();
     }
-    
+
+    /**
+     *
+     * This path shoots the preloads
+     *
+     */
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -182,7 +188,8 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(-40, 41)
                 }, 1000)
                 .callback(() -> {
-                        new AutonomousShootFlipTurretCommand().schedule();
+                    new SequentialCommandGroup(
+                            new AutonomousShootFlipTurretCommand()).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
                 .build();
@@ -194,17 +201,20 @@ public class CloseRedAuto extends BaseAuto {
                         //purposely off
                         new Point2d(-40, 41),
                         // small guide point for the turn
-                        new Point2d(-27.5, 25),
-                        new Point2d(-15, 18),
-                        new Point2d(3, 18),
-                        new Point2d(10,20),
+                        new Point2d(-27.5, 35),
+                        new Point2d(-15, 30),
+                        new Point2d(3, 20),
+                        new Point2d(10,25),
+                }, 2300)
+                .addPurePursuitPath(new Point2d[]{
+                        new Point2d(10,25),
                         new Point2d(12, 33),
                         new Point2d(12, 46),
-                        new Point2d(7, 57),
-                }, 3000)
+                        new Point2d(7, 57)
+                },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, 55),
@@ -214,7 +224,9 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1500, true)
                 .waitMilliseconds(500)
                 .callback(() -> {
-                    new AutonomousShootFlipTurretCommand().schedule();
+                    new SequentialCommandGroup(
+                            new AutonomousShootFlipTurretCommand()
+                    ).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
                 .build();
@@ -240,9 +252,9 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(12,30),
                         shootingPose
                 }, 2000, true)
-                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootFlipTurretCommand().schedule())
-                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -261,6 +273,7 @@ public class CloseRedAuto extends BaseAuto {
                     scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
                 })
 
+//                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, 60),
                         new Point2d(15, 52),
@@ -271,10 +284,12 @@ public class CloseRedAuto extends BaseAuto {
                 .callback(() -> new SequentialCommandGroup(
                         new AllTransferUpCommand(),
                         new WaitCommand(200),
-                        new IdleShooterCommand(),
-                        new MoveTurretTo180DegreeTransferCommand(),
-                        new ElevatorDownCommand(),
-                        new AllTransferDownCommand(),
+                        new ParallelCommandGroup(
+                                new IdleShooterCommand(),
+                                new MoveTurretTo180DegreeTransferCommand(),
+                                new ElevatorDownCommand(),
+                                new AllTransferDownCommand()
+                        ),
                         new WaitCommand(200),//shorter wait, balls are close
                         new IntakeStartCommand()
                 ).schedule())
@@ -282,6 +297,12 @@ public class CloseRedAuto extends BaseAuto {
                 .build();
     }
 
+
+    /**
+     *
+     * This path grabs the close spikes
+     *
+     */
     private Path buildSpikeClosePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -291,7 +312,7 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, null);
+                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 30.0);
                 })
 
                 .addPurePursuitPath(new Point2d[] {
@@ -299,22 +320,18 @@ public class CloseRedAuto extends BaseAuto {
 //                        new Point2d(-6, -19),
                         new Point2d(-16,15)
                 }, 2000)
-                .waitMilliseconds(200)
+//                                .addTurnTo(-30, 1000)
+                .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(300)
                 .build();
     }
 
-    private Path buildParkPath() {
-        return new SixWheelPIDPathBuilder()
-                .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16,15),
-                        new Point2d(9, 19)
-                }, 5000)
-                .build();
-    }
-
-
+    /**
+     *
+     * This path grabs and shoots the far spikes
+     *
+     */
     private Path buildSpikeFarPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -334,6 +351,15 @@ public class CloseRedAuto extends BaseAuto {
                 .waitUntil(()-> Robot.getInstance().turret.atTarget(), 500)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(200)
+                .build();
+    }
+
+    private Path buildParkPath() {
+        return new SixWheelPIDPathBuilder()
+                .addPurePursuitPath(new Point2d[] {
+                        new Point2d(-16,15),
+                        new Point2d(9, 19)
+                }, 5000)
                 .build();
     }
 }
