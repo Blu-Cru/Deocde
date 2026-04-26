@@ -243,7 +243,7 @@ public class CloseRedAuto extends BaseAuto {
                             new AutonomousShootFlipTurretCommand()
                     ).schedule();
                 })
-                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
+                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
                 .build();
     }
 
