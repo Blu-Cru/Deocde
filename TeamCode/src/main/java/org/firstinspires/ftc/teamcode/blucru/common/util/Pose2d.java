@@ -53,7 +53,7 @@ public class Pose2d {
         return Math.sqrt(Math.pow(pose2d.getX() - this.getX(),2) + Math.pow(pose2d.getY() - this.getY(),2));
     }
 
-    public Pose2d mirror(double offset) {
+    public Pose2d mirror() {
         return new Pose2d(x, -y, -h);
     }
     public String toString(){
