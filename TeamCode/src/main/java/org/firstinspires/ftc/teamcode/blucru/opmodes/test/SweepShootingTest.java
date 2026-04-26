@@ -58,6 +58,9 @@ public class SweepShootingTest extends BluLinearOpMode {
     public int shot = 0;
     public boolean targetHit = false;
 
+    public static double SHOT_DELAY_MS = 50;
+    public static double SWEEP_FIRE_TIMEOUT_MS = 600;
+
     private static final int MAX_TRAIL_SIZE = 200;
     private final LinkedList<double[]> poseTrail = new LinkedList<>();
 
@@ -442,14 +445,21 @@ public class SweepShootingTest extends BluLinearOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shooter.resetShotCounter()),
                 new InstantCommand(() -> turret.beginGoalSweep()),
+                new TimedWaitUntilCommand(400, () -> turret.isGoalSweepStageAtTarget()),
                 new WaitCommand(40),
                 new LeftTransferUpCommand(),
+                new TimedWaitUntilCommand(500, () -> shooter.hasShot(1)),
+                new InstantCommand(() -> turret.aimGoalSweepStage(Turret.GoalSweepStage.RIGHT_SHOT)),
                 new TimedWaitUntilCommand(
-                        500,
-                        () -> shooter.hasShot(1)
+                        SWEEP_FIRE_TIMEOUT_MS,
+                        () -> predictedReachedSweepStage(Turret.GoalSweepStage.MIDDLE_SHOT)
                 ),
-                buildSweepShotStep(Turret.GoalSweepStage.MIDDLE_SHOT, new MiddleTransferUpCommand(), 2),
-                buildSweepShotStep(Turret.GoalSweepStage.RIGHT_SHOT, new RightTransferUpCommand(), 3),
+                new MiddleTransferUpCommand(),
+                new TimedWaitUntilCommand(500, () -> shooter.hasShot(2)),
+                new TimedWaitUntilCommand(400, () -> turret.isGoalSweepStageAtTarget()),
+                new WaitCommand(40),
+                new RightTransferUpCommand(),
+                new TimedWaitUntilCommand(500, () -> shooter.hasShot(3)),
                 new WaitCommand(400),
                 new InstantCommand(() -> turret.disableGoalSweep()),
                 new CenterTurretCommand(),
@@ -460,20 +470,14 @@ public class SweepShootingTest extends BluLinearOpMode {
         );
     }
 
-    private Command buildSweepShotStep(Turret.GoalSweepStage stage, Command fireCommand, int expectedShots) {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> turret.aimGoalSweepStage(stage)),
-                new TimedWaitUntilCommand(
-                        400,
-                        () -> turret.isGoalSweepStageAtTarget()
-                ),
-                new WaitCommand(40),
-                fireCommand,
-                new TimedWaitUntilCommand(
-                        500,
-                        () -> shooter.hasShot(expectedShots)
-                )
-        );
+    private boolean predictedReachedSweepStage(Turret.GoalSweepStage stage) {
+        double currentAngle = turret.getAngle();
+        double omegaDegPerSec = turret.getAngularVelocityDegPerSec();
+        double predicted = currentAngle + omegaDegPerSec * (SHOT_DELAY_MS / 1000.0);
+        double target = turret.getGoalSweepStageAngle(stage);
+        boolean sweepingPositive =
+                Turret.rightShotSweepAngleOffsetDeg > Turret.leftShotSweepAngleOffsetDeg;
+        return sweepingPositive ? (predicted >= target) : (predicted <= target);
     }
 
     private Command getTransferUpCommand(Turret.GoalSweepStage stage) {
