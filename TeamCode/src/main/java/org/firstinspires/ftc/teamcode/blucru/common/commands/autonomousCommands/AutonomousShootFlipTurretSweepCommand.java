@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -21,10 +20,12 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferC
 @Config
 public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGroup {
 
-    public static int turretMoveTimeoutMs = 200;
-    public static int settleBeforeShotMs = 30;
+    public static double shotDelayMs = 50;
+    public static int turretMoveTimeoutMs = 300;
+    public static int sweepFireTimeoutMs = 600;
+    public static double rightShotToleranceDeg = 1.0;
     public static int shotDetectTimeoutMs = 150;
-    public static int postShotPauseMs = 120;
+    public static int postShotPauseMs = 150;
     public static int intakeRestartWaitMs = 400;
 
     public AutonomousShootFlipTurretSweepCommand() {
@@ -39,21 +40,33 @@ public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGrou
                     Robot.getInstance().shooter.resetShotCounter();
                     Robot.getInstance().turret.beginGoalSweep();
                 }),
-                new WaitCommand(settleBeforeShotMs),
+                new TimedWaitUntilCommand(
+                        turretMoveTimeoutMs,
+                        () -> Robot.getInstance().turret.isGoalSweepStageAtTarget()
+                ),
                 new LeftTransferUpCommand(),
                 new TimedWaitUntilCommand(
                         shotDetectTimeoutMs,
                         () -> Robot.getInstance().shooter.hasShot(1)
                 ),
-                buildSweepShotStep(
-                        Turret.GoalSweepStage.MIDDLE_SHOT,
-                        new MiddleTransferUpCommand(),
-                        2
+                new InstantCommand(() -> Robot.getInstance().turret.aimGoalSweepStage(Turret.GoalSweepStage.RIGHT_SHOT)),
+                new TimedWaitUntilCommand(
+                        sweepFireTimeoutMs,
+                        () -> predictedReachedSweepStage(Turret.GoalSweepStage.MIDDLE_SHOT)
                 ),
-                buildSweepShotStep(
-                        Turret.GoalSweepStage.RIGHT_SHOT,
-                        new RightTransferUpCommand(),
-                        3
+                new MiddleTransferUpCommand(),
+                new TimedWaitUntilCommand(
+                        shotDetectTimeoutMs,
+                        () -> Robot.getInstance().shooter.hasShot(2)
+                ),
+                new TimedWaitUntilCommand(
+                        turretMoveTimeoutMs,
+                        () -> nearSweepStage(Turret.GoalSweepStage.RIGHT_SHOT, rightShotToleranceDeg)
+                ),
+                new RightTransferUpCommand(),
+                new TimedWaitUntilCommand(
+                        shotDetectTimeoutMs,
+                        () -> Robot.getInstance().shooter.hasShot(3)
                 ),
                 new WaitCommand(postShotPauseMs),
                 new InstantCommand(() -> Robot.getInstance().turret.disableGoalSweep()),
@@ -67,21 +80,23 @@ public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGrou
         );
     }
 
-    private SequentialCommandGroup buildSweepShotStep(Turret.GoalSweepStage stage,
-                                                      Command fireCommand,
-                                                      int expectedShots) {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> Robot.getInstance().turret.aimGoalSweepStage(stage)),
-                new TimedWaitUntilCommand(
-                        turretMoveTimeoutMs,
-                        () -> Robot.getInstance().turret.isGoalSweepStageAtTarget()
-                ),
-                new WaitCommand(settleBeforeShotMs),
-                fireCommand,
-                new TimedWaitUntilCommand(
-                        shotDetectTimeoutMs,
-                        () -> Robot.getInstance().shooter.hasShot(expectedShots)
-                )
-        );
+    private boolean predictedReachedSweepStage(Turret.GoalSweepStage stage) {
+        double currentAngle = Robot.getInstance().turret.getAngle();
+        double omegaDegPerSec = Robot.getInstance().turret.getAngularVelocityDegPerSec();
+        double predicted = currentAngle + omegaDegPerSec * (shotDelayMs / 1000.0);
+        double target = Robot.getInstance().turret.getGoalSweepStageAngle(stage);
+        boolean sweepingPositive =
+                Turret.rightShotSweepAngleOffsetDeg > Turret.leftShotSweepAngleOffsetDeg;
+        return sweepingPositive ? (predicted >= target) : (predicted <= target);
+    }
+
+    private boolean nearSweepStage(Turret.GoalSweepStage stage, double toleranceDeg) {
+        double currentAngle = Robot.getInstance().turret.getAngle();
+        double target = Robot.getInstance().turret.getGoalSweepStageAngle(stage);
+        boolean sweepingPositive =
+                Turret.rightShotSweepAngleOffsetDeg > Turret.leftShotSweepAngleOffsetDeg;
+        return sweepingPositive
+                ? (currentAngle >= target - toleranceDeg)
+                : (currentAngle <= target + toleranceDeg);
     }
 }
