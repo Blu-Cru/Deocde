@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.ReturnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TimedWaitUntilCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.GoalSweepShootAllCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ParallelizeIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
@@ -58,8 +59,6 @@ public class SweepShootingTest extends BluLinearOpMode {
     public int shot = 0;
     public boolean targetHit = false;
 
-    public static double SHOT_DELAY_MS = 50;
-    public static double SWEEP_FIRE_TIMEOUT_MS = 200;
     public static double RIGHT_SHOT_TOLERANCE_DEG = 1.0;
 
     private static final int MAX_TRAIL_SIZE = 200;
@@ -443,53 +442,14 @@ public class SweepShootingTest extends BluLinearOpMode {
     }
 
     private Command buildSweepShootAllCommand() {
-        return new SequentialCommandGroup(
-                new InstantCommand(() -> shooter.resetShotCounter()),
-                new InstantCommand(() -> turret.beginGoalSweep()),
-                new TimedWaitUntilCommand(300, () -> turret.isGoalSweepStageAtTarget()),
-                new LeftTransferUpCommand(),
-                new TimedWaitUntilCommand(200, () -> shooter.hasShot(1)),
-                new InstantCommand(() -> turret.aimGoalSweepStage(Turret.GoalSweepStage.RIGHT_SHOT)),
-                new TimedWaitUntilCommand(
-                        SWEEP_FIRE_TIMEOUT_MS,
-                        () -> predictedReachedSweepStage(Turret.GoalSweepStage.MIDDLE_SHOT)
-                ),
-                new MiddleTransferUpCommand(),
-                new TimedWaitUntilCommand(200, () -> shooter.hasShot(2)),
-                new TimedWaitUntilCommand(
-                        200,
-                        () -> nearSweepStage(Turret.GoalSweepStage.RIGHT_SHOT, RIGHT_SHOT_TOLERANCE_DEG)
-                ),
-                new RightTransferUpCommand(),
-                new TimedWaitUntilCommand(200, () -> shooter.hasShot(3)),
+        return new GoalSweepShootAllCommand(
                 new WaitCommand(150),
-                new InstantCommand(() -> turret.disableGoalSweep()),
                 new CenterTurretCommand(),
                 new IdleShooterCommand(),
                 new WaitCommand(200),
                 new AllTransferDownCommand(),
                 new ResetForIntakeCommand()
         );
-    }
-
-    private boolean predictedReachedSweepStage(Turret.GoalSweepStage stage) {
-        double currentAngle = turret.getAngle();
-        double omegaDegPerSec = turret.getAngularVelocityDegPerSec();
-        double predicted = currentAngle + omegaDegPerSec * (SHOT_DELAY_MS / 1000.0);
-        double target = turret.getGoalSweepStageAngle(stage);
-        boolean sweepingPositive =
-                Turret.rightShotSweepAngleOffsetDeg > Turret.leftShotSweepAngleOffsetDeg;
-        return sweepingPositive ? (predicted >= target) : (predicted <= target);
-    }
-
-    private boolean nearSweepStage(Turret.GoalSweepStage stage, double toleranceDeg) {
-        double currentAngle = turret.getAngle();
-        double target = turret.getGoalSweepStageAngle(stage);
-        boolean sweepingPositive =
-                Turret.rightShotSweepAngleOffsetDeg > Turret.leftShotSweepAngleOffsetDeg;
-        return sweepingPositive
-                ? (currentAngle >= target - toleranceDeg)
-                : (currentAngle <= target + toleranceDeg);
     }
 
     private Command getTransferUpCommand(Turret.GoalSweepStage stage) {

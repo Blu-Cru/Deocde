@@ -30,8 +30,8 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                 new ParallelizeIntakeCommand(),
                 new AllTransferDownCommand(),
                 new ConditionalCommand(
-                        new CenterTurretCommand(),
                         new MoveTurretTo180DegreeTransferCommand(),
+                        new CenterTurretCommand(),
                         ()-> Robot.getInstance().turret.getAngle() < -170
                 ),
                 new AutoAimCommand(),
