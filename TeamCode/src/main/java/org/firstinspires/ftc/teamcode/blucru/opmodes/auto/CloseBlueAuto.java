@@ -205,13 +205,13 @@ public class CloseBlueAuto extends BaseAuto {
                         //purposely off
                         new Point2d(-40, -41),
                         // small guide point for the turn
-                        new Point2d(-27.5, -25),
-                        new Point2d(-15, -18),
-                        new Point2d(3, -18),
-                        new Point2d(10,-23),
+                        new Point2d(-27.5, -35),
+                        new Point2d(-15, -30),
+                        new Point2d(3, -20),
+                        new Point2d(10,-25),
                 }, 2300)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(10,-23),
+                        new Point2d(10,-25),
                         new Point2d(12, -33),
                         new Point2d(12, -46),
                         new Point2d(7, -57)
