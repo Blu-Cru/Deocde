@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class ShooterAutoAimTuning extends BluLinearOpMode {
     public static double angle = 0;
 

@@ -27,7 +27,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 
-@TeleOp (group = "a")
+//@TeleOp (group = "a")
 
 public class AutoAimTest extends BluLinearOpMode{
 

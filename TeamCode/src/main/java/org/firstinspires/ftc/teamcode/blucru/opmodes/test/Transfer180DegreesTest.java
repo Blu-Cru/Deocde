@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorU
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretFrom180To0TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp
+//@TeleOp
 public class Transfer180DegreesTest extends BluLinearOpMode {
 
     public void initialize(){
