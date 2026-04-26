@@ -12,6 +12,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
@@ -297,15 +298,7 @@ public class FarBlueAuto extends BaseAuto {
                 }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(500),
-                            new AutoAimCommand(),
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(800),
-                            getGoalLockCommand()
-
-
-                    ).schedule();
+                    scheduleVelocityTransferThenLockOn(500, shootVeloLeft,shootVeloMiddle,shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -321,7 +314,7 @@ public class FarBlueAuto extends BaseAuto {
                 }, 2000)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    getGoalShootCommand().schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(2000)
                 .build();
@@ -337,14 +330,7 @@ public class FarBlueAuto extends BaseAuto {
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutoAimCommand(),
-                            new WaitCommand(800), //TODO: TUNE
-                            new AutonomousTransferCommand(),
-                            new WaitCommand(800),
-                            getGoalLockCommand()
-                    ).schedule();
-
+                    scheduleVelocityTransferThenLockOn(800, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -360,7 +346,7 @@ public class FarBlueAuto extends BaseAuto {
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            getGoalShootCommand()).schedule();
+                            new AutonomousShootFlipTurretCommand()).schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -374,13 +360,7 @@ public class FarBlueAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY-3)
                 }, 1500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new SetShooterVelocityIndependentCommand(shootVeloLeft, shootVeloMiddle, shootVeloRight),
-                            new WaitCommand(600), //TODO: TUNE
-                            new AutonomousTransferCommand(hood),
-                            new WaitCommand(700),
-                            getGoalLockCommand()
-                    ).schedule();
+                        scheduleVelocityTransferThenLockOn(600, shootVeloLeft,shootVeloMiddle,shootVeloRight,hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -395,7 +375,7 @@ public class FarBlueAuto extends BaseAuto {
                 .addTurnTo(-80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    getGoalShootCommand().schedule();
+                    new AutonomousShootCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -417,11 +397,25 @@ public class FarBlueAuto extends BaseAuto {
                 .build();
     }
 
-    protected Command getGoalLockCommand() {
-        return new LockOnGoalCommand();
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs,
+                                                    double leftVel,
+                                                    double middleVel,
+                                                    double rightVel,
+                                                    Double hoodAngle) {
+        new SequentialCommandGroup(
+                new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                new WaitCommand(delayBeforeTransferMs),
+                hoodAngle == null
+                        ? new AutonomousTransferThenLockOnCommand()
+                        : new AutonomousTransferThenLockOnCommand(hoodAngle)
+        ).schedule();
     }
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs) {
+        new SequentialCommandGroup(
+                new AutoAimCommand(),
+                new WaitCommand(delayBeforeTransferMs),
+                new AutonomousTransferThenLockOnCommand()
 
-    protected Command getGoalShootCommand() {
-        return new AutonomousShootFlipTurretCommand();
+        ).schedule();
     }
 }
