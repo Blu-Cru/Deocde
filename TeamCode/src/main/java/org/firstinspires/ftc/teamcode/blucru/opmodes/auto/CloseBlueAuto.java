@@ -38,7 +38,7 @@ public class CloseBlueAuto extends BaseAuto {
     double hood = 40;
     double intakeCycleSimulatedVoltage = 12.5;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
-    private Point2d shootingPose = new Point2d(4, -10);
+    private Point2d shootingPose = new Point2d(4, -12);
 
     enum State {
         PRELOAD, MIDDLE_SPIKE, FIRST_GATE_CYCLE, GATE_CYCLE, CLOSE_SPIKE,
