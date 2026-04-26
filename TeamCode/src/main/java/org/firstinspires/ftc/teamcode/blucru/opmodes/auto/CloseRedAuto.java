@@ -29,13 +29,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 
 public class CloseRedAuto extends BaseAuto {
-    double turretAngle = -142; // TODO: Change for Red
-    double preAimTurretAngle = 120; // TODO: Change for Red
-    double gateCyclePreAimAngle = 120; // TODO: Change for Red
     double velo = 1130;
     double veloMiddle = 1230;
     double hood = 40;
-    double intakeCycleSimulatedVoltage = 12.5;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
     private Point2d shootingPose = new Point2d(4, -10).mirror();
 
@@ -178,12 +174,7 @@ public class CloseRedAuto extends BaseAuto {
                         : new AutonomousTransferThenLockOnCommand(hoodAngle)
         ).schedule();
     }
-
-    /**
-     *
-     * This path shoots the preloads
-     *
-     */
+    
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -191,19 +182,12 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(-40, -41).mirror()
                 }, 1000)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()).schedule();
+                        new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
                 .build();
     }
 
-    /**
-     *
-     * This path is to get the middle spike without opening the gate and then shoot
-     * them
-     *
-     */
     private Path buildSpikeMiddlePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -230,9 +214,7 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1500, true)
                 .waitMilliseconds(500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()
-                    ).schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
                 .build();
@@ -300,12 +282,6 @@ public class CloseRedAuto extends BaseAuto {
                 .build();
     }
 
-
-    /**
-     *
-     * This path grabs the close spikes
-     *
-     */
     private Path buildSpikeClosePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -329,11 +305,16 @@ public class CloseRedAuto extends BaseAuto {
                 .build();
     }
 
-    /**
-     *
-     * This path grabs and shoots the far spikes
-     *
-     */
+    private Path buildParkPath() {
+        return new SixWheelPIDPathBuilder()
+                .addPurePursuitPath(new Point2d[] {
+                        new Point2d(-16,-15).mirror(),
+                        new Point2d(9, -19).mirror()
+                }, 5000)
+                .build();
+    }
+
+
     private Path buildSpikeFarPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
@@ -353,15 +334,6 @@ public class CloseRedAuto extends BaseAuto {
                 .waitUntil(()-> Robot.getInstance().turret.atTarget(), 500)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(200)
-                .build();
-    }
-
-    private Path buildParkPath() {
-        return new SixWheelPIDPathBuilder()
-                .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16,-15).mirror(),
-                        new Point2d(9, -19).mirror()
-                }, 5000)
                 .build();
     }
 }
