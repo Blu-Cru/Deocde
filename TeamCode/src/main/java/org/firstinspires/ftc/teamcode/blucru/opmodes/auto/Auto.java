@@ -29,6 +29,7 @@ public class Auto extends BluLinearOpMode {
 
     enum AUTOSTARTINGPOS {
         CLOSE,
+        CLOSE_MOTIF,
         FAR,
         FAR_SWEEP
     }
@@ -99,11 +100,13 @@ public class Auto extends BluLinearOpMode {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_BLUE;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_BLUE;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_BLUE_SWEEP;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.CLOSE_BLUE_MOTIF;
                     } else {
                         // RED ALLIANCE
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_RED;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_RED;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_RED_SWEEP;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.CLOSE_RED_MOTIF;
                     }
 
                     // Instantiate selected auto
@@ -190,6 +193,8 @@ public class Auto extends BluLinearOpMode {
                 return "Far Auto";
             case FAR_SWEEP:
                 return "Far Auto Sweep";
+            case CLOSE_MOTIF:
+                return "Close Motif Auto";
             default:
                 return autoOption.name().toLowerCase();
         }

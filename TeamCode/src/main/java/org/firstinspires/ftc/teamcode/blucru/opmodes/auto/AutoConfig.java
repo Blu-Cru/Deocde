@@ -7,7 +7,9 @@ public abstract class AutoConfig {
         FAR_BLUE_SWEEP,
         CLOSE_RED,
         FAR_RED,
-        FAR_RED_SWEEP
+        FAR_RED_SWEEP,
+        CLOSE_BLUE_MOTIF,
+        CLOSE_RED_MOTIF
     }
 
     private static boolean isInitBusy = false;
@@ -28,6 +30,10 @@ public abstract class AutoConfig {
             autoToReturn = new FarRedAuto();
         } else if (givenauto == AUTOS.FAR_RED_SWEEP) {
             autoToReturn = new FarRedAutoSweep();
+        } else if (givenauto == AUTOS.CLOSE_BLUE_MOTIF) {
+            autoToReturn = new CloseBlueAutoMotif();
+        } else if (givenauto == AUTOS.CLOSE_RED_MOTIF) {
+            autoToReturn = new CloseBlueAutoMotif();
         }
 
         // Simulating the end of synchronous instance creation for path generation.
