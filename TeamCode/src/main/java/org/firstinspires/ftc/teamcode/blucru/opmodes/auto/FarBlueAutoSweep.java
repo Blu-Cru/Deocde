@@ -24,7 +24,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
-public class FarBlueAutoSweep extends BaseAuto {
+public class
+
+FarBlueAutoSweep extends BaseAuto {
     double turretAnglePreaim = -116;
 
     double shootVeloLeft = 1420;
