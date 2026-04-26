@@ -16,6 +16,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ReturnCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.ShootBallsCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TimedWaitUntilCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
@@ -174,7 +175,7 @@ public class SweepShootingTest extends BluLinearOpMode {
                     targetHit = false;
                     new ConditionalCommand(
                             buildSweepShootAllCommand(),
-                            new ReturnCommand(),
+                            new ShootBallsCommand(),
                             () -> (shot == 0 && sixWheel.getPos().getX() > 0)
                     ).schedule();
                 })
