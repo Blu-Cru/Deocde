@@ -103,11 +103,7 @@ public class Auto extends BluLinearOpMode {
                         // RED ALLIANCE
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_RED;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_RED;
-                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) {
-                            autoEnum = AutoConfig.AUTOS.FAR_RED; // No red sweep yet, fallback to Far Red
-                            showError = true;
-                            errorTimer.reset();
-                        }
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_RED_SWEEP;
                     }
 
                     // Instantiate selected auto

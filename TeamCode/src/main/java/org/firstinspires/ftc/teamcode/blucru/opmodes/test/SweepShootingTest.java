@@ -157,7 +157,7 @@ public class SweepShootingTest extends BluLinearOpMode {
                 })
                 .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () -> {
                     gamepad1.rumble(rumbleDur);
-                    if (Math.abs(turret.getAngle()) < 5) {
+                    if (Math.abs(turret.getAngle()) < -5) {
                         new MoveTurretTo180DegreeTransferCommand().schedule();
                     } else {
                         new MoveTurretFrom180To0TransferCommand().schedule();
@@ -446,22 +446,22 @@ public class SweepShootingTest extends BluLinearOpMode {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> shooter.resetShotCounter()),
                 new InstantCommand(() -> turret.beginGoalSweep()),
-                new TimedWaitUntilCommand(200, () -> turret.isGoalSweepStageAtTarget()),
+                new TimedWaitUntilCommand(300, () -> turret.isGoalSweepStageAtTarget()),
                 new LeftTransferUpCommand(),
-                new TimedWaitUntilCommand(50, () -> shooter.hasShot(1)),
+                new TimedWaitUntilCommand(200, () -> shooter.hasShot(1)),
                 new InstantCommand(() -> turret.aimGoalSweepStage(Turret.GoalSweepStage.RIGHT_SHOT)),
                 new TimedWaitUntilCommand(
                         SWEEP_FIRE_TIMEOUT_MS,
                         () -> predictedReachedSweepStage(Turret.GoalSweepStage.MIDDLE_SHOT)
                 ),
                 new MiddleTransferUpCommand(),
-                new TimedWaitUntilCommand(50, () -> shooter.hasShot(2)),
+                new TimedWaitUntilCommand(200, () -> shooter.hasShot(2)),
                 new TimedWaitUntilCommand(
                         200,
                         () -> nearSweepStage(Turret.GoalSweepStage.RIGHT_SHOT, RIGHT_SHOT_TOLERANCE_DEG)
                 ),
                 new RightTransferUpCommand(),
-                new TimedWaitUntilCommand(50, () -> shooter.hasShot(3)),
+                new TimedWaitUntilCommand(200, () -> shooter.hasShot(3)),
                 new WaitCommand(150),
                 new InstantCommand(() -> turret.disableGoalSweep()),
                 new CenterTurretCommand(),
