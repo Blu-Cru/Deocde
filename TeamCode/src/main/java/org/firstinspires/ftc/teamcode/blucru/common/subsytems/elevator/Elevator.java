@@ -163,8 +163,19 @@ public class Elevator implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
+        telemetry.addData("LEFT slot",   label(getLeftBallColor()));
+        telemetry.addData("MIDDLE slot", label(getMiddleBallColor()));
+        telemetry.addData("RIGHT slot",  label(getRightBallColor()));
         telemetry.addData("Elevator Full?", isFull());
+
     }
+
+    private String label(BallColor c) {
+        if (c == BallColor.GREEN) return "GREEN";
+        if (c == BallColor.PURPLE) return "PURPLE";
+        return "NONE";
+    }
+
 
     @Override
     public void reset() {
