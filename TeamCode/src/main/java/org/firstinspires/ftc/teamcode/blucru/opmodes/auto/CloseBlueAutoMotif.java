@@ -35,6 +35,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
     double velo = 1115;
     double veloMiddle = 1130;
     boolean alreadySignalledPattern;
+    double hood = 34;
 
     enum State {
         PRELOAD,
@@ -84,7 +85,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngle(34);
+        shooter.setHoodAngle(hood);
         shooter.write();
         elevator.setMiddle();
         elevator.write();
@@ -169,12 +170,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(100),
-                            new ReadBallColorsCommand(), // Read all color sensors at once
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new WaitCommand(400),
-                            new AutonomousTransferThenLockOnCommand(34)).schedule();
+                    scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
                 })
                 .waitMilliseconds(50)
                 .addTurnTo(-90, 5000)
@@ -189,9 +185,9 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootWithMotifCommand()).schedule();
+                            new AutonomousShootCommand()).schedule();
                 })
-                .waitUntil(() -> shooter.hasShot(3), 2000)
+                .waitUntil(() -> shooter.hasShot(3), 200)
                 .build();
     }
 
@@ -205,13 +201,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 }, 2000)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(100),
-                            new ReadBallColorsCommand(), // Read all color sensors at once
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new WaitCommand(400),
-                            new AutonomousTransferThenLockOnCommand(34)).schedule();
-
+                    scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
                 })
                 .waitMilliseconds(50)
 
@@ -242,13 +232,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(500)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(100),
-                            new ReadBallColorsCommand(), // Read all color sensors at once
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new WaitCommand(400),
-                            new AutonomousTransferThenLockOnCommand(34)).schedule();
-
+                    scheduleVelocityTransferThenLockOn(500, velo,veloMiddle,velo,hood);
                 })
                 .waitMilliseconds(400)
                 .addPurePursuitPath(new Point2d[] {
@@ -282,12 +266,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 }, 3000)
                 .waitMilliseconds(500)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new WaitCommand(100),
-                            new ReadBallColorsCommand(), // Read all color sensors at once
-                            new SetShooterVelocityIndependentCommand(velo, veloMiddle, velo),
-                            new WaitCommand(400),
-                            new AutonomousTransferThenLockOnCommand(34)).schedule();
+                    scheduleVelocityTransferThenLockOn(500, velo,veloMiddle,velo, hood);
 
                 })
                 .waitMilliseconds(400)
@@ -311,5 +290,17 @@ public class CloseBlueAutoMotif extends BaseAuto {
     }
 
 
-
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs,
+                                                    double leftVel,
+                                                    double middleVel,
+                                                    double rightVel,
+                                                    Double hoodAngle) {
+        new SequentialCommandGroup(
+                new SetShooterVelocityIndependentCommand(leftVel, middleVel, rightVel),
+                new WaitCommand(delayBeforeTransferMs),
+                hoodAngle == null
+                        ? new AutonomousTransferThenLockOnCommand()
+                        : new AutonomousTransferThenLockOnCommand(hoodAngle)
+        ).schedule();
+    }
 }
