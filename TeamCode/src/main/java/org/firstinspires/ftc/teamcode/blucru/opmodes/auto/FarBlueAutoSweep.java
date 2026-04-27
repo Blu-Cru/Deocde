@@ -176,13 +176,12 @@ FarBlueAutoSweep extends BaseAuto {
 
     @Override
     public void initializePeriodic() {
-//        turret.read();
-//        if (driver1.pressedA()) {
-//            turret.setAngle(turretAnglePreaim);
-//        }
-//        turret.write();
-//        telemetry.addLine("--- INIT ---");
-//        telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
+        turret.read();
+        if (driver1.pressedA()) {
+            turret.setAngle(turretAnglePreaim);
+       }
+       turret.write();
+      telemetry.addLine("Press A to set turret to Pre-Aim (-116)");
     }
 
     @Override
@@ -202,8 +201,10 @@ FarBlueAutoSweep extends BaseAuto {
             currentPath.run();
         }
         sm.update();
-        telemetry.addData("State", sm.getState());
-        telemetry.addData("Time", matchTimer.seconds());
+    }
+
+    @Override
+    public void autoTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         telemetry.addData("LL Clump X", ballDetector.getClumpFieldX());
         telemetry.addData("Intake X", pickupWallX);
     }

@@ -7,7 +7,10 @@ import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
@@ -39,6 +42,7 @@ public class Auto extends BluLinearOpMode {
 
     @Override
     public void initialize() {
+        manageTelemetry = true;
         robot.clear();
         robot.addTurretCam();
         addSixWheel();
@@ -177,6 +181,71 @@ public class Auto extends BluLinearOpMode {
                 telemetry.addData("Error", e.getMessage());
             }
         }
+    }
+
+    @Override
+    public void telemetry() {
+        if (!selectedauto || autoToRun == null) {
+            return; // selection UI handles its own telemetry during init
+        }
+
+        // Read live subsystem refs from the singleton because autoToRun.initialize()
+        // does robot.clear() + re-add, which leaves Auto.this.X pointing at orphans.
+        Robot r = Robot.getInstance();
+
+        telemetry.addLine("======== AUTO ========");
+        telemetry.addData("Selected", autoToRun.getClass().getSimpleName());
+        telemetry.addData("Alliance", Globals.alliance);
+        telemetry.addData("Match Time", "%.2f s", Globals.matchTime.seconds());
+        if (autoToRun.sm != null) {
+            telemetry.addData("State", autoToRun.sm.getState());
+        }
+        autoToRun.autoTelemetry(telemetry);
+
+        telemetry.addLine();
+        telemetry.addLine("======== ROBOT ========");
+        if (r.sixWheelDrivetrain != null) {
+            Pose2d pose = r.sixWheelDrivetrain.getPos();
+            telemetry.addData("Pose", "(%.1f, %.1f, %.1f°)",
+                    pose.getX(), pose.getY(), Math.toDegrees(pose.getH()));
+        }
+        telemetry.addData("Voltage", "%.2f V", Globals.voltage);
+        telemetry.addData("Pose History", r.positionHistory.size());
+        telemetry.addData("Subsystems", r.getAmountOfSubsystems());
+
+        if (r.sixWheelDrivetrain != null) {
+            section("DRIVETRAIN");
+            r.sixWheelDrivetrain.telemetry(telemetry);
+        }
+        if (r.intake != null) {
+            section("INTAKE");
+            r.intake.telemetry(telemetry);
+        }
+        if (r.elevator != null) {
+            section("ELEVATOR");
+            r.elevator.telemetry(telemetry);
+        }
+        if (r.transfer != null) {
+            section("TRANSFER");
+            r.transfer.telemetry(telemetry);
+        }
+        if (r.shooter != null) {
+            section("SHOOTER");
+            r.shooter.telemetry(telemetry);
+        }
+        if (r.turret != null) {
+            section("TURRET");
+            r.turret.telemetry(telemetry);
+        }
+        if (r.turretCam != null) {
+            section("TURRET CAM");
+            r.turretCam.telemetry(telemetry);
+        }
+    }
+
+    private void section(String name) {
+        telemetry.addLine("");
+        telemetry.addLine("---- " + name + " ----");
     }
 
     private AUTOSTARTINGPOS cycleAutoSelection(int delta) {

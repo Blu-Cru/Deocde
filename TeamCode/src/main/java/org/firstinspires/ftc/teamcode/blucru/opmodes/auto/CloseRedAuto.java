@@ -146,9 +146,7 @@ public class CloseRedAuto extends BaseAuto {
         }
         if (sm != null) {
             sm.update();
-            telemetry.addData("State", sm.getState());
         }
-        telemetry.addData("Time", Globals.matchTime.seconds());
     }
 
     private void startPath(Path path) {

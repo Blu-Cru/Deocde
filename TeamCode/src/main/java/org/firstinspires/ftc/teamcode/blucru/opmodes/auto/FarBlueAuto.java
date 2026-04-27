@@ -224,8 +224,10 @@ public class FarBlueAuto extends BaseAuto {
             currentPath.run();
         }
         sm.update();
-        telemetry.addData("State", sm.getState());
-        telemetry.addData("Time", matchTimer.seconds());
+    }
+
+    @Override
+    public void autoTelemetry(org.firstinspires.ftc.robotcore.external.Telemetry telemetry) {
         telemetry.addData("LL Clump X", ballDetector.getClumpFieldX());
         telemetry.addData("Intake X", pickupWallX);
     }

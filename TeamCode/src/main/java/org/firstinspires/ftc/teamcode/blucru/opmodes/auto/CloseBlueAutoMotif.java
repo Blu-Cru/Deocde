@@ -124,14 +124,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
         }
         if (sm != null) {
             sm.update();
-            telemetry.addData("State", sm.getState());
         }
-        telemetry.addData("Time", Globals.matchTime.seconds());
-    }
-
-    @Override
-    public void telemetry() {
-        telemetry.addData("State", sm.getState());
     }
 
     private void startPath(Path path) {
