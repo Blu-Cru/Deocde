@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopC
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosFieldCentricCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -30,8 +32,6 @@ import com.sfdev.assembly.state.StateMachineBuilder;
  * Close Blue Auto with Motif Scoring Support.
  */
 public class CloseBlueAutoMotif extends BaseAuto {
-    double turretAngle = 150; ////field centric, decrease = more towards gate, increase = towards obelisk
-    double nonFieldCentricTurretAngle = -87;
     double velo = 1115;
     double veloMiddle = 1130;
     boolean alreadySignalledPattern;
@@ -55,28 +55,27 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .state(State.PRELOAD)
                 .transition(() -> currentPath != null && currentPath.isDone(), State.FIRST_SET,
                         () -> {
-                            startPath(preloadPath());
+                            startPath(firstSetPath());
                         })
 
                 .state(State.FIRST_SET)
                 // Transition if path completes normally
                 .transition(() -> currentPath != null && currentPath.isDone(), State.SECOND_SET, () -> {
-                    startPath(firstSetPath());
+                    startPath(secondSetPath());
                 })
 
                 .state(State.SECOND_SET)
                 .transition(() -> currentPath != null && currentPath.isDone(),
                         State.THIRD_SET, () -> {
-                            startPath(secondSetPath());
+                            startPath(thirdSetPath());
                         })
                 .state(State.THIRD_SET)
                 .transition(() -> currentPath != null && currentPath.isDone(),
                         State.HP_SET, () -> {
-                    startPath(thirdSetPath());
+                    startPath(hpSetPath());
                 })
                 .state(State.HP_SET)
                 .onEnter(() -> {
-                    startPath(hpSetPath());
                 })
                 .build();
     }
@@ -120,7 +119,19 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void periodic() {
-        sm.update();
+        if (currentPath != null) {
+            currentPath.run();
+        }
+        if (sm != null) {
+            sm.update();
+            telemetry.addData("State", sm.getState());
+        }
+        telemetry.addData("Time", Globals.matchTime.seconds());
+    }
+
+    @Override
+    public void telemetry() {
+        telemetry.addData("State", sm.getState());
     }
 
     private void startPath(Path path) {
@@ -143,21 +154,24 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(-40, -41)
                 }, 1000)
                 .callback(() -> {
-                    new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()).schedule();
+                    new AutonomousShootCommand(25).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
-                .addTurnTo(-90,5000)
+                .addTurnTo(-25,5000)
                 .build();
     }
 
     private Path firstSetPath(){
         return new SixWheelPIDPathBuilder()
+                .callback(() -> {
+                    new SequentialCommandGroup(
+                            new WaitCommand(200),
+                            new CenterTurretCommand()
+                    ).schedule();
+                })
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16, -19),
-                        new Point2d(-14, -37),
-                        new Point2d(-14, -47),
-                        new Point2d(-14,-60)
+                        new Point2d(-40, -41),
+                        new Point2d(-14, -45)
                 }, 2000)
 
                 // Transfer - Wait for stillness, read colors, then transfer
@@ -170,10 +184,10 @@ public class CloseBlueAutoMotif extends BaseAuto {
                             new AutonomousTransferThenLockOnCommand(34)).schedule();
                 })
                 .waitMilliseconds(50)
-
+                .addTurnTo(-90, 5000)
                 // HEAD BACK
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-14, -57), // was (-10, 50)
+                        new Point2d(-14, -45), // was (-10, 50)
                         new Point2d(-14, -35), // was (-10, 17)
                         new Point2d(-5, -14)
                 }, 2000)
@@ -267,14 +281,13 @@ public class CloseBlueAutoMotif extends BaseAuto {
     private Path hpSetPath(){
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16, -19), // was (-10, 17)
+                        new Point2d(-16, -19),
                         new Point2d(10, -20),
-                        new Point2d(40, -25), // was (37, 46)
+                        new Point2d(40, -25),
+                        new Point2d(57, -40),
                         new Point2d(63,-60)
-                }, 1100)
-                .addTurnTo(-31, 500)
+                }, 3000)
                 .waitMilliseconds(500)
-                // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(100),
@@ -287,9 +300,10 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(400)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(63, -60),
-                        new Point2d(58, -50),
+                        new Point2d(59, -50),
+                        new Point2d(30,-30),
                         new Point2d(-16, -19) // was (-10, 17)
-                }, 1200)
+                }, 3000)
                 //.waitMilliseconds(1000)
                 .waitMilliseconds(200)
                 // SHOOT THIRD SET - Use motif-aware anti-jam shooting
