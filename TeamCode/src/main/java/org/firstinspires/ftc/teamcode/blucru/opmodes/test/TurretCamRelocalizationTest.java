@@ -19,13 +19,14 @@ public class TurretCamRelocalizationTest extends BluLinearOpMode {
             sixWheel.setPosition(new Pose2d(0, 0, 0));
             turret.resetEncoder();
         }
-        telemetry.addData("Turret Cam Pose", robot.turretCam.getBotpose());
+        telemetry.addData("Turret Cam Pose Raw", robot.turretCam.getBotpose());
+        telemetry.addData("Turret Cam Pose Kalman", robot.turretCam.getBotpose());
         try{
             wait(10);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         };
-        //telemetry.addData("Turret Cam Pose Pose History", robot.turretCam.getBotPosePoseHistory());
+        telemetry.addData("Turret Cam Pose Pose History", robot.turretCam.getBotPosePoseHistory());
     }
 
 }
