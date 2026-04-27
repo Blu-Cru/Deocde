@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
 /**
- * 1D scalar Kalman filter, PID-style. Per loop call:
+ * 1D scalar Kalman filter, Per loop call:
  *   filter.update(u, z);
  *   double estimate = filter.get();
  *
