@@ -25,7 +25,7 @@ public class AutonomousShootFlipTurretSweepCommand extends SequentialCommandGrou
                         new MoveTurretTo180DegreeTransferCommand(),
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand(),
-                        new WaitCommand(intakeRestartWaitMs),
+                        new WaitForTurretNearTargetCommand(),
                         new IntakeStartCommand()
                 )
         );

@@ -27,7 +27,7 @@ public class AutonomousShootFlipTurretCommand extends SequentialCommandGroup {
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand()
                 ),
-                new WaitCommand(400),
+                new WaitForTurretNearTargetCommand(),
                 new IntakeStartCommand(),
                 new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())
         );

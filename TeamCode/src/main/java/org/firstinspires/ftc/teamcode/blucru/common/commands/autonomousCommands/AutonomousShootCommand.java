@@ -26,7 +26,7 @@ public class AutonomousShootCommand extends InstantCommand {
                         //new WaitCommand(200),
                         new ElevatorDownCommand(),
                         new AllTransferDownCommand(),
-                        new WaitCommand(200),
+                        new WaitForTurretNearTargetCommand(),
 //                        new WaitCommand(300),
                         new IntakeStartCommand(),
                         new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())
@@ -47,7 +47,7 @@ public class AutonomousShootCommand extends InstantCommand {
                             //new WaitCommand(200),
                             new ElevatorDownCommand(),
                             new AllTransferDownCommand(),
-                            new WaitCommand(400),
+                            new WaitForTurretNearTargetCommand(),
 //                        new WaitCommand(300),
                             new IntakeStartCommand(),
                             new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())

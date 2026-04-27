@@ -20,10 +20,10 @@ public class AutonomousShootAntiJamCommand extends InstantCommand {
                         new WaitCommand(300),
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
-                        new WaitCommand(400),
-                        new IntakeStartCommand(),
                         new ElevatorMiddleCommand(),
-                        new AllTransferDownCommand()
+                        new AllTransferDownCommand(),
+                        new WaitForTurretNearTargetCommand(),
+                        new IntakeStartCommand()
                 ).schedule();}
         );
     }

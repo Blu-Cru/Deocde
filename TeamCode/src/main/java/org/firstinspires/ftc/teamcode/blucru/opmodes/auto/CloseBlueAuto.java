@@ -9,6 +9,7 @@ import com.sfdev.assembly.state.StateMachineBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.WaitForTurretNearTargetCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
@@ -292,7 +293,7 @@ public class CloseBlueAuto extends BaseAuto {
                                 new ElevatorDownCommand(),
                                 new AllTransferDownCommand()
                         ),
-                        new WaitCommand(200),//shorter wait, balls are close
+                        new WaitForTurretNearTargetCommand(),
                         new IntakeStartCommand()
                 ).schedule())
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)

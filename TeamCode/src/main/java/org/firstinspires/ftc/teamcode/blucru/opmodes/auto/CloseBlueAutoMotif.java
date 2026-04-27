@@ -32,10 +32,10 @@ import com.sfdev.assembly.state.StateMachineBuilder;
  * Close Blue Auto with Motif Scoring Support.
  */
 public class CloseBlueAutoMotif extends BaseAuto {
-    double velo = 1115;
-    double veloMiddle = 1130;
+    double velo = 1170;
+    double veloMiddle = 1270;
     boolean alreadySignalledPattern;
-    double hood = 34;
+    double hood = 40;
 
     enum State {
         PRELOAD,
@@ -44,6 +44,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
         THIRD_SET,
         HP_SET
     }
+    private Point2d shootingPose = new Point2d(4, -8);
 
     @Override
     public Pose2d getStartPose() {
@@ -85,7 +86,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void initialize() {
-        shooter.setHoodAngle(hood);
+        shooter.setHoodAngle(26);
         shooter.write();
         elevator.setMiddle();
         elevator.write();
@@ -106,8 +107,8 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void onStart() {
-        shooter.shootWithVelocity(1120); // orig 850 before switching to triple shot
-        turret.setAngle(7);
+        shooter.shootWithVelocityIndependent(925,950,925);
+        turret.setAngle(2);
         llTagDetector.switchToMotif();
         sixWheel.setPosition(startPose);
         currentPath = preloadPath();
@@ -159,18 +160,18 @@ public class CloseBlueAutoMotif extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new WaitCommand(200),
+                            new WaitCommand(400),
                             new CenterTurretCommand()
                     ).schedule();
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-40, -41),
-                        new Point2d(-14, -45)
+                        new Point2d(-14, -47)
                 }, 2000)
-
+                .waitMilliseconds(500)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
+                    scheduleVelocityTransferThenLockOn(800,velo, veloMiddle,velo,hood);
                 })
                 .waitMilliseconds(50)
                 .addTurnTo(-90, 5000)
@@ -178,14 +179,16 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-14, -45), // was (-10, 50)
                         new Point2d(-14, -35), // was (-10, 17)
-                        new Point2d(-5, -14)
+                        shootingPose
                 }, 2000)
                 .addTurnTo(-90, 1000)
                 // SHOOT FIRST SET - Use motif-aware shooting
                 .waitMilliseconds(200)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootCommand()).schedule();
+                            new AutonomousShootCommand(),
+                            new WaitCommand(200),
+                            new CenterTurretCommand()).schedule();
                 })
                 .waitUntil(() -> shooter.hasShot(3), 200)
                 .build();
@@ -195,21 +198,24 @@ public class CloseBlueAutoMotif extends BaseAuto {
     private Path secondSetPath(){
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-5, -14),
-                        new Point2d(6, -30),
-                        new Point2d(10, -60)
+                        shootingPose,
+                        new Point2d(10,-25),
+                        new Point2d(12, -33),
+                        new Point2d(12, -46),
+                        new Point2d(7, -59),
                 }, 2000)
+                .waitMilliseconds(50)
+
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
                 })
-                .waitMilliseconds(50)
 
                 // HEAD BACK
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10, -60), // was (12.5, 46)
-                        new Point2d(-16, -19) // was (-10, 17)
-                }, 2000)
+                        shootingPose
+                }, 2000, true)
                 .waitMilliseconds(400)
 
                 // SHOOT SECOND SET - Use motif-aware shooting
@@ -224,12 +230,11 @@ public class CloseBlueAutoMotif extends BaseAuto {
     private Path thirdSetPath(){
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16, -19), // was (-10, 17)
+                        shootingPose, // was (-10, 17)
                         new Point2d(10, -30),
-                        new Point2d(38, -47) // was (37, 46)
+                        new Point2d(32, -46),
+                        new Point2d(39, -52),
                 }, 1100)
-                .addTurnTo(-31, 500)
-                .waitMilliseconds(500)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(500, velo,veloMiddle,velo,hood);
@@ -238,7 +243,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(36, -45),
                         new Point2d(10, -30),
-                        new Point2d(-16, -19) // was (-10, 17)
+                        shootingPose // was (-10, 17)
                 }, 1200)
                 //.waitMilliseconds(1000)
                 .waitUntil(() -> turret.atTarget(),750)
@@ -257,8 +262,9 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     private Path hpSetPath(){
         return new SixWheelPIDPathBuilder()
+                .addTurnTo(0, 500)
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16, -19),
+                        shootingPose,
                         new Point2d(10, -20),
                         new Point2d(40, -25),
                         new Point2d(57, -40),
@@ -274,7 +280,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(63, -60),
                         new Point2d(59, -50),
                         new Point2d(30,-30),
-                        new Point2d(-16, -19) // was (-10, 17)
+                        shootingPose // was (-10, 17)
                 }, 3000)
                 //.waitMilliseconds(1000)
                 .waitMilliseconds(200)

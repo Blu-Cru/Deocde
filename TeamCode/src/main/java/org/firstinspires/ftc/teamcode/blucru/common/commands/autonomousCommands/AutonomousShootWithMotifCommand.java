@@ -52,10 +52,9 @@ public class AutonomousShootWithMotifCommand extends InstantCommand {
                     new TimedWaitUntilCommand(1600,() -> Robot.getInstance().shooter.hasShot(3)),
                     new IdleShooterCommand(),
                     new CenterTurretCommand(),
-                    new WaitCommand(100),
                     new ElevatorDownCommand(),
                     new AllTransferDownCommand(),
-                    new WaitCommand(300),
+                    new WaitForTurretNearTargetCommand(),
                     new IntakeStartCommand(),
                     new InstantCommand(() -> Robot.getInstance().shooter.resetShotCounter())
             ).schedule();
