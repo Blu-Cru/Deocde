@@ -37,7 +37,6 @@ public class SixWheelPIDPathBuilder {
     }
 
     public SixWheelPIDPathBuilder waitUntil(java.util.function.BooleanSupplier condition, double timeoutMs) {
-        if (segments.isEmpty()) throw new IllegalStateException("waitUntil() requires at least one prior segment");
         segments.add(new WaitUntilSegment(segments.get(segments.size() - 1), condition, timeoutMs));
         return this;
     }
@@ -102,7 +101,6 @@ public class SixWheelPIDPathBuilder {
      */
     public SixWheelPIDPathBuilder waitMilliseconds(double milliseconds){
         //run a wait segment with the last position
-        if (segments.isEmpty()) throw new IllegalStateException("waitMilliseconds() requires at least one prior segment");
         segments.add(new WaitSegment(segments.get(segments.size() - 1), milliseconds));
         return this;
     }

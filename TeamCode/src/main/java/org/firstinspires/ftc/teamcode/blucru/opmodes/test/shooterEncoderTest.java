@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 //@TeleOp(group = "test")
-public class ShooterEncoderTest extends BluLinearOpMode {
+public class shooterEncoderTest extends BluLinearOpMode {
 
     @Override
     public void initialize() {

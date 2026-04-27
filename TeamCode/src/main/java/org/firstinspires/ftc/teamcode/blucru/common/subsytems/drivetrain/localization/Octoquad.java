@@ -45,8 +45,8 @@ public class Octoquad implements RobotLocalizer{
         octoquad.setAllLocalizerParameters(5,6,(float) (2000/(32 * Math.PI)),(float) (2000/(32 * Math.PI)),(float) perpXOffset, (float) parallelYOffset, 1.02F,20);
 
         OctoQuad.LocalizerDataBlock info = octoquad.readLocalizerData();
-        pose = new Pose2d(info.posX_mm / 25.4, info.posY_mm / 25.4, info.heading_rad);
-        vel = new Pose2d(info.velX_mmS / 25.4, info.velY_mmS / 25.4, info.velHeading_radS);
+        pose = new Pose2d(info.posX_mm, info.posY_mm, info.heading_rad);
+        vel = new Pose2d(info.velX_mmS, info.velY_mmS, info.velHeading_radS);
         Robot.getInstance().positionHistory.add(pose, vel);
         timer = new ElapsedTime();
         prevpos = pose;
