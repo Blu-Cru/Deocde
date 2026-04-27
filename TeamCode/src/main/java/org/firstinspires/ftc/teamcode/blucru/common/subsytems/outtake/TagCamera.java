@@ -48,6 +48,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     Pose2d botpose;
     Pose2d botposeOnTheMove;
     Pose2d kalmanFilteredBotpose;
+    public static  double xQ = 0.7, xR = 0.5, xP = 0.01;
+    public static  double yQ = 0.7, yR = 0.5, yP = 0.01;
     KalmanFilter xFilter, yFilter;
     double lastFilterX, lastFilterY;
     final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toDegrees(0));
@@ -86,8 +88,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
         kalmanFilteredBotpose = null;
         detection = null;
 
-        xFilter = new KalmanFilter(0, 0.7, 0.5, 0.01);
-        yFilter = new KalmanFilter(0, 0.7, 0.5, 0.01);
+        xFilter = new KalmanFilter(0, xQ, xR, xP);
+        yFilter = new KalmanFilter(0, yQ, yR, yP);
     }
 
     /**

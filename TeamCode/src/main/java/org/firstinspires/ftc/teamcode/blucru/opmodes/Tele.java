@@ -81,13 +81,13 @@ public class Tele extends BluLinearOpMode{
         manageTelemetry = true;
         robot.clear();
         addSixWheel();
+        addTurret();
         robot.addTurretCam();
         //addLLTagDetector();
         addIntake();
         addElevator();
         addTransfer();
         addShooter();
-        addTurret();
         addTilt();
         CommandScheduler.getInstance().reset();
         enableDash();
