@@ -175,7 +175,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-40, -41),
-                        new Point2d(-14, -47)
+                        new Point2d(-14, -50)
                 }, 2000)
                 .waitMilliseconds(500)
                 // Transfer - Wait for stillness, read colors, then transfer
@@ -187,7 +187,8 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 // HEAD BACK
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-14, -45), // was (-10, 50)
-                        new Point2d(-14, -35), // was (-10, 17)
+                        new Point2d(-14, -35),
+                        new Point2d(4, -15),
                         shootingPose
                 }, 2000)
 //                .addTurnTo(-90, 1000)
@@ -241,7 +242,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(10, -30),
                         new Point2d(32, -46),
                         new Point2d(39, -52),
-                }, 1100)
+                }, 1400)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .waitMilliseconds(400)
                 .callback(() -> {
@@ -252,7 +253,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(36, -45),
 //                        new Point2d(10, -30),
                         shootingPose // was (-10, 17)
-                }, 1200)
+                }, 1400)
                 //.waitMilliseconds(1000)
                 .waitUntil(() -> turret.atTarget(),750)
                 //small time for settling
@@ -286,8 +287,6 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(400)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(63, -60),
-                        new Point2d(59, -50),
-                        new Point2d(30,-30),
                         shootingPose // was (-10, 17)
                 }, 3000,true)
                 //.waitMilliseconds(1000)

@@ -31,6 +31,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootReverseWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretFrom180To0TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.tiltCommands.TiltCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -181,7 +182,11 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
                     gamepad1.rumble(rumbleDur);
                     if (Math.abs(turret.getAngle()) < 5){
-                        new MoveTurretTo180DegreeTransferCommand().schedule();
+                        new SequentialCommandGroup(
+                                new TurnTurretToPosCommand(-90),
+                                new WaitCommand(200),
+                                new MoveTurretTo180DegreeTransferCommand()
+                        ).schedule();
                     } else {
                         new MoveTurretFrom180To0TransferCommand().schedule();
                     }
