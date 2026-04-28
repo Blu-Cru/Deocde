@@ -207,8 +207,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
     public Pose2d getBotPosePoseHistory() {
         if (botpose == null) return null;
-        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) return null;
-        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Pose2d poseAtCapture = getRobotPoseAtCapture();
+        if (poseAtCapture == null) return null;
+        Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
         // now that we know offsets we can assume we havent changed off that much
         return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
@@ -244,8 +245,13 @@ public class TagCamera implements BluSubsystem, Subsystem {
     private void updateBotposeFromGoalTag(AprilTagDetection detect) {
         Pose2d tagPos = detect.id == BLUE_GOAL_TAG_ID ? TAG_20 : TAG_24;
         Vector2d originToTag = tagPos.vec();
-        double cameraFieldHeading = Robot.getInstance().sixWheelDrivetrain.getPos().getH()
-                + Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
+        Pose2d poseAtCapture = getRobotPoseAtCapture();
+        Pose2d currentPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double robotHeadingAtCapture = poseAtCapture != null ? poseAtCapture.getH() : currentPose.getH();
+        // Turret.getAngle() is already sign-inverted relative to the encoder, so the
+        // camera's field heading needs the opposite contribution here.
+        double cameraFieldHeading = robotHeadingAtCapture
+                - Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
         double dx = detect.ftcPose.x; // left/right relative to camera
         double dy = detect.ftcPose.y; // forward/back relative to camera
         Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
@@ -255,28 +261,39 @@ public class TagCamera implements BluSubsystem, Subsystem {
 
         Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter, 0).rotate(cameraFieldHeading);
         Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0)
-                .rotate(Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+                .rotate(robotHeadingAtCapture);
 
         Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
         Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 
-        botpose = new Pose2d(originToRobot, Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        botpose = new Pose2d(originToRobot, robotHeadingAtCapture);
 
-        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) {
+        if (poseAtCapture == null) {
             return;
         }
 
         computedBotposeThisLoop = true;
-        Vector2d oldVec = Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose().vec();
+        Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-        botposeOnTheMove = new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
-                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
-        double curX = Robot.getInstance().sixWheelDrivetrain.getPos().getX();
-        double curY = Robot.getInstance().sixWheelDrivetrain.getPos().getY();
+        botposeOnTheMove = new Pose2d(currentPose.vec().addNotInPlace(offset), currentPose.getH());
+        double curX = currentPose.getX();
+        double curY = currentPose.getY();
         xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());
         yFilter.update(curY - lastFilterY, botposeOnTheMove.getY());
         lastFilterX = curX;
         lastFilterY = curY;
+    }
+
+    private Pose2d getRobotPoseAtCapture() {
+        if (captureTime == 0) {
+            return null;
+        }
+
+        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) {
+            return null;
+        }
+
+        return Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose();
     }
 
     private boolean isAllianceGoalTag(AprilTagDetection detect) {
