@@ -46,7 +46,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
         THIRD_SET,
         HP_SET
     }
-    private Point2d shootingPose = new Point2d(4, -8);
+    private Point2d shootingPose = new Point2d(0, -10);
 
     @Override
     public Pose2d getStartPose() {
@@ -177,7 +177,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(-40, -41),
                         new Point2d(-14, -50)
                 }, 2000)
-                .waitMilliseconds(500)
+                .waitMilliseconds(300)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
@@ -188,7 +188,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-14, -45), // was (-10, 50)
                         new Point2d(-14, -35),
-                        new Point2d(4, -15),
+                        new Point2d(-2, -15),
                         shootingPose
                 }, 2000)
 //                .addTurnTo(-90, 1000)
