@@ -129,6 +129,10 @@ public class CloseBlueAutoMotif extends BaseAuto {
         }
     }
 
+    public void telemetry(){
+        telemetry.addData("Motif", ShooterMotifCoordinator.getMotif());
+    }
+
     private void startPath(Path path) {
         currentPath = path;
         currentPath.start();
@@ -171,7 +175,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(500)
                 // Transfer - Wait for stillness, read colors, then transfer
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(800,velo, veloMiddle,velo,hood);
+                    scheduleVelocityTransferThenLockOn(500,velo, veloMiddle,velo,hood);
                 })
                 .waitMilliseconds(50)
                 .addTurnTo(-90, 5000)
@@ -183,12 +187,10 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 }, 2000)
                 .addTurnTo(-90, 1000)
                 // SHOOT FIRST SET - Use motif-aware shooting
-                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootCommand(),
-                            new WaitCommand(200),
-                            new CenterTurretCommand()).schedule();
+                            new AutonomousShootFlipTurretCommand()).schedule();
                 })
                 .waitUntil(() -> shooter.hasShot(3), 200)
                 .build();
@@ -242,7 +244,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .waitMilliseconds(400)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(36, -45),
-                        new Point2d(10, -30),
+//                        new Point2d(10, -30),
                         shootingPose // was (-10, 17)
                 }, 1200)
                 //.waitMilliseconds(1000)
@@ -262,12 +264,11 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     private Path hpSetPath(){
         return new SixWheelPIDPathBuilder()
-                .addTurnTo(0, 500)
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
                         new Point2d(10, -20),
-                        new Point2d(40, -25),
-                        new Point2d(57, -40),
+                        new Point2d(30, -45),
+                        new Point2d(52, -55),
                         new Point2d(63,-60)
                 }, 3000)
                 .waitMilliseconds(500)
@@ -281,7 +282,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(59, -50),
                         new Point2d(30,-30),
                         shootingPose // was (-10, 17)
-                }, 3000)
+                }, 3000,true)
                 //.waitMilliseconds(1000)
                 .waitMilliseconds(200)
                 // SHOOT THIRD SET - Use motif-aware anti-jam shooting
