@@ -33,6 +33,9 @@ import java.util.concurrent.TimeUnit;
 public class TagCamera implements BluSubsystem, Subsystem {
     private static final int BLUE_GOAL_TAG_ID = 20;
     private static final int RED_GOAL_TAG_ID = 24;
+    private static final int MOTIF_GPP_TAG_ID = 21;
+    private static final int MOTIF_PGP_TAG_ID = 22;
+    private static final int MOTIF_PPG_TAG_ID = 23;
 
     AprilTagProcessor tags;
     VisionPortal portal;
@@ -52,8 +55,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
     public static  double yQ = 0.7, yR = 0.5, yP = 0.01;
     KalmanFilter xFilter, yFilter;
     double lastFilterX, lastFilterY;
-    final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toDegrees(0));
-    final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toDegrees(0));
+    // Tag heading is the field-frame yaw of the tag's surface normal, in radians.
+    final Pose2d TAG_20 = new Pose2d(-58, -58, 0);
+    final Pose2d TAG_24 = new Pose2d(-58, 58, 0);
 
 
     public TagCamera(){
@@ -147,17 +151,17 @@ public class TagCamera implements BluSubsystem, Subsystem {
                 if (goalDetection == null && isAllianceGoalTag(detect)) {
                     goalDetection = detect;
                 }
-                if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_GPP_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.GPP;
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     continue;
                 }
-                if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_PGP_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PGP;
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     continue;
                 }
-                if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_PPG_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PPG;
                     ShooterMotifCoordinator.setMotif(motifPattern);
                     continue;
@@ -209,11 +213,12 @@ public class TagCamera implements BluSubsystem, Subsystem {
         if (botpose == null) return null;
         Pose2d poseAtCapture = getRobotPoseAtCapture();
         if (poseAtCapture == null) return null;
+        Pose2d currentPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-        // now that we know offsets we can assume we havent changed off that much
-        return new Pose2d(Robot.getInstance().sixWheelDrivetrain.getPos().vec().addNotInPlace(offset),
-                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+        double headingOffset = normalizeAngle(botpose.getH() - poseAtCapture.getH());
+        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
+        return new Pose2d(currentPose.vec().addNotInPlace(offset), currentObservedHeading);
     }
 
     public Pose2d getBotpose(){
@@ -243,15 +248,36 @@ public class TagCamera implements BluSubsystem, Subsystem {
     }
 
     private void updateBotposeFromGoalTag(AprilTagDetection detect) {
+        // Defense in depth: never allow motif tags (or anything other than the alliance
+        // goal tag) to drive a botpose update.
+        if (detect.id != BLUE_GOAL_TAG_ID && detect.id != RED_GOAL_TAG_ID) {
+            return;
+        }
+
         Pose2d tagPos = detect.id == BLUE_GOAL_TAG_ID ? TAG_20 : TAG_24;
         Vector2d originToTag = tagPos.vec();
         Pose2d poseAtCapture = getRobotPoseAtCapture();
         Pose2d currentPose = Robot.getInstance().sixWheelDrivetrain.getPos();
-        double robotHeadingAtCapture = poseAtCapture != null ? poseAtCapture.getH() : currentPose.getH();
-        // Turret.getAngle() is already sign-inverted relative to the encoder, so the
-        // camera's field heading needs the opposite contribution here.
-        double cameraFieldHeading = robotHeadingAtCapture
-                - Math.toRadians(Robot.getInstance().turret.getAngle()) + Math.PI;
+        double odoHeadingAtCapture = poseAtCapture != null ? poseAtCapture.getH() : currentPose.getH();
+
+        // Derive the camera's field heading directly from the tag observation rather
+        // than trusting odometry. ftcPose.yaw is the tag's apparent rotation in the
+        // camera frame: 0 means the camera looks straight down the tag's normal, so
+        // the camera's field heading is (tag normal direction + PI). Sign of yaw
+        // assumed to match standard FTC convention (positive = tag rotated CCW in
+        // image); flip the sign in front of observedTagYawRad if reloc heading
+        // converges in the wrong direction during testing.
+        double observedTagYawRad = Math.toRadians(detect.ftcPose.yaw);
+        double cameraFieldHeading = tagPos.getH() + Math.PI - observedTagYawRad;
+
+        // Camera lives on the turret. Robot heading falls out of the camera heading
+        // by undoing the turret offset used elsewhere in this subsystem
+        // (cameraFieldHeading = robotHeading - turretRad + PI in the original model).
+        // Normalize the turret angle first so wraps past ±180° don't accumulate
+        // float-precision error through the rotation math below.
+        double turretRad = normalizeAngle(Math.toRadians(Robot.getInstance().turret.getAngle()));
+        double observedRobotHeading = normalizeAngle(cameraFieldHeading + turretRad - Math.PI);
+
         double dx = detect.ftcPose.x; // left/right relative to camera
         double dy = detect.ftcPose.y; // forward/back relative to camera
         Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
@@ -260,13 +286,15 @@ public class TagCamera implements BluSubsystem, Subsystem {
         tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
 
         Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter, 0).rotate(cameraFieldHeading);
+        // Use the heading we just observed for the turret-to-robot rigid offset so
+        // a wrong odometry heading doesn't poison the XY reloc.
         Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0)
-                .rotate(robotHeadingAtCapture);
+                .rotate(observedRobotHeading);
 
         Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
         Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
 
-        botpose = new Pose2d(originToRobot, robotHeadingAtCapture);
+        botpose = new Pose2d(originToRobot, observedRobotHeading);
 
         if (poseAtCapture == null) {
             return;
@@ -275,13 +303,21 @@ public class TagCamera implements BluSubsystem, Subsystem {
         computedBotposeThisLoop = true;
         Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-        botposeOnTheMove = new Pose2d(currentPose.vec().addNotInPlace(offset), currentPose.getH());
+        double headingOffset = normalizeAngle(observedRobotHeading - odoHeadingAtCapture);
+        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
+        botposeOnTheMove = new Pose2d(
+                currentPose.vec().addNotInPlace(offset),
+                currentObservedHeading);
         double curX = currentPose.getX();
         double curY = currentPose.getY();
         xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());
         yFilter.update(curY - lastFilterY, botposeOnTheMove.getY());
         lastFilterX = curX;
         lastFilterY = curY;
+    }
+
+    private static double normalizeAngle(double angleRad) {
+        return Math.atan2(Math.sin(angleRad), Math.cos(angleRad));
     }
 
     private Pose2d getRobotPoseAtCapture() {
