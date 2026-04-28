@@ -59,6 +59,8 @@ public class Tele extends BluLinearOpMode{
 
     public static double ELEVATOR_FULL_DELAY_MS = 100;
     public static int INTAKE_REVERSE_MS = 600;
+    public static double RELOC_MAX_DIST_IN = 36.0;
+    public static double RELOC_MAX_HEADING_DEG = 25.0;
     private final ElapsedTime elevatorFullTimer = new ElapsedTime();
 
     private static final int MAX_TRAIL_SIZE = 200;
@@ -407,22 +409,30 @@ public class Tele extends BluLinearOpMode{
             }
         }
        // <----------- RELOCALIZIATION :))))) ALEX TRIED HIS BEST ----------->
-            if(Robot.getInstance().turretCam.computedBotposeThisLoop()) {
+        // Tag camera only emits botpose for the alliance goal tag, but bail out loudly
+        // if alliance never got set so we can see why reloc isn't firing.
+        if (!Robot.getInstance().turretCam.computedBotposeThisLoop()) {
+            Globals.telemetry.addData("Reloc", "no botpose (alliance=%s)", Globals.alliance);
+        } else {
             Pose2d tagPose = Robot.getInstance().turretCam.getBotPosePoseHistory();
-            if (tagPose != null && Robot.getInstance().turretCam.getBotpose() != null) {
-                // difference
-                double dx = tagPose.getX() - sixWheel.getPos().getX();
-                double dy = tagPose.getY() - sixWheel.getPos().getY();
+            Pose2d rawBotpose = Robot.getInstance().turretCam.getBotpose();
+            if (tagPose != null && rawBotpose != null) {
+                Pose2d odoPose = sixWheel.getPos();
+                double dx = tagPose.getX() - odoPose.getX();
+                double dy = tagPose.getY() - odoPose.getY();
                 double relocDist = Math.sqrt(dx * dx + dy * dy);
+                double dh = Math.atan2(
+                        Math.sin(tagPose.getH() - odoPose.getH()),
+                        Math.cos(tagPose.getH() - odoPose.getH()));
 
-                // Reject weird distances
-                if (relocDist < 15) {
-                    // Vision can correct XY here, but drivetrain heading should stay on odometry/IMU.
-                    sixWheel.setXY(tagPose.vec());
+                Globals.telemetry.addData("Reloc dist (in)", "%.1f", relocDist);
+                Globals.telemetry.addData("Reloc heading err (deg)", "%.1f", Math.toDegrees(dh));
+
+                if (relocDist < RELOC_MAX_DIST_IN && Math.abs(dh) < Math.toRadians(RELOC_MAX_HEADING_DEG)) {
+                    sixWheel.setPosition(new Pose2d(tagPose.vec(), tagPose.getH()));
                     gamepad2.rumble(200);
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
-                    // Bad reading
                     gamepad2.rumble(500);
                     Globals.telemetry.addLine("Bad re-loc :( ");
                 }
