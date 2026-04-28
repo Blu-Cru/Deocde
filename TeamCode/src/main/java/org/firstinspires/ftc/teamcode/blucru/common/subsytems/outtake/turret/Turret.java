@@ -728,7 +728,8 @@ public class Turret implements BluSubsystem, Subsystem {
         encoder.telemetry();
         telemetry.addData("Target Pos", position);
         telemetry.addData("Turret State", state);
-        telemetry.addData("Goal Sweep", goalSweepEnabled ? goalSweepStage : "OFF");
+//        telemetry.addData("Goal Sweep", goalSweepEnabled ? goalSweepStage : "OFF");
+        telemetry.addData("Auto Aim Mode: ", lastAutoAimMode);
     }
 
     @Override
