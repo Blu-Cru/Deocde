@@ -129,6 +129,10 @@ public class CloseBlueAutoMotif extends BaseAuto {
         }
     }
 
+    public void telemetry(){
+        telemetry.addData("Motif", ShooterMotifCoordinator.getMotif());
+    }
+
     private void startPath(Path path) {
         currentPath = path;
         currentPath.start();
