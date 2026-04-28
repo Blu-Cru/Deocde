@@ -218,11 +218,11 @@ public class Turret implements BluSubsystem, Subsystem {
 
 
     public void setAngle(double angle) {
-        setResolvedAngle(-angle, true);
+        setDirectAngle(-angle, true);
     }
 
     public void setAngle(double angle, boolean switchState) {
-        setResolvedAngle(-angle, switchState);
+        setDirectAngle(-angle, switchState);
     }
 
     // Resets the PID controllers and primes them with one calculate() call so
@@ -692,6 +692,15 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private void setResolvedAngle(double desiredAngle, boolean switchState) {
         double resolvedAngle = resolveTargetAngle(desiredAngle, getAngle());
+        setTargetAngle(resolvedAngle, switchState);
+    }
+
+    private void setDirectAngle(double desiredAngle, boolean switchState) {
+        double clippedAngle = Range.clip(desiredAngle, MIN_ANGLE, MAX_ANGLE);
+        setTargetAngle(clippedAngle, switchState);
+    }
+
+    private void setTargetAngle(double resolvedAngle, boolean switchState) {
         if (lastSetpoint == null || Math.abs(resolvedAngle - lastSetpoint) > 1e-6) {
             resetControllers(resolvedAngle);
             lastSetpoint = resolvedAngle;
