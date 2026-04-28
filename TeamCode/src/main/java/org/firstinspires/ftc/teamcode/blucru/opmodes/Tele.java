@@ -417,7 +417,8 @@ public class Tele extends BluLinearOpMode{
 
                 // Reject weird distances
                 if (relocDist < 15) {
-                    sixWheel.setPosition(tagPose);
+                    // Vision can correct XY here, but drivetrain heading should stay on odometry/IMU.
+                    sixWheel.setXY(tagPose.vec());
                     gamepad2.rumble(200);
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
