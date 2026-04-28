@@ -88,6 +88,8 @@ public class CloseBlueAutoMotif extends BaseAuto {
 
     @Override
     public void initialize() {
+        addAutoSubsystems(false);
+        addLLTagDetector();
         shooter.setHoodAngle(26);
         shooter.write();
         elevator.setMiddle();

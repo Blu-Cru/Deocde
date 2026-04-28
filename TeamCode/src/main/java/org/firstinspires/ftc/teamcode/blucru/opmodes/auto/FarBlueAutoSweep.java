@@ -64,15 +64,7 @@ FarBlueAutoSweep extends BaseAuto {
 
     @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        robot.addTurretCam();
-        addTransfer();
-        addBallDetector();
+        addAutoSubsystems(true);
 
         ballDetector.setCameraParameters(11.3, -6.5, 13.0, 15.0);
         ballDetector.activate();

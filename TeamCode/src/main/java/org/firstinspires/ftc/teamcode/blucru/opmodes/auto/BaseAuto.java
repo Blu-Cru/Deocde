@@ -28,4 +28,19 @@ public abstract class BaseAuto extends BluLinearOpMode {
         sm = buildStateMachine();
         startPose = getStartPose();
     }
+
+    protected void addAutoSubsystems(boolean includeBallDetector) {
+        robot.clear();
+        addSixWheel();
+        addIntake();
+        addElevator();
+        addShooter();
+        addTurret();
+        robot.addTurretCam();
+        addTransfer();
+
+        if (includeBallDetector) {
+            addBallDetector();
+        }
+    }
 }

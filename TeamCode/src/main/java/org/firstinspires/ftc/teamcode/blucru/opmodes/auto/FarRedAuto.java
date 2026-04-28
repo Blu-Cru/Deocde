@@ -61,15 +61,7 @@ public class FarRedAuto extends BaseAuto {
 
     @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        robot.addTurretCam();
-        addTransfer();
-        addBallDetector();
+        addAutoSubsystems(true);
 
 
         //TODO: SWAP THE Y OFFSET BASED ON ALLIANCE. POSITIVE Y = TO THE LEFT. NEGATIVE Y = TO THE RIGHT. already done for red

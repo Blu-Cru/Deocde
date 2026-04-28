@@ -44,14 +44,6 @@ public class Auto extends BluLinearOpMode {
     public void initialize() {
         manageTelemetry = true;
         robot.clear();
-        robot.addTurretCam();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
-        addLLTagDetector();
 
         sm = new StateMachineBuilder()
                 .state(State.ALLIANCE_PICK)
@@ -134,6 +126,7 @@ public class Auto extends BluLinearOpMode {
                         autoToRun.driver1 = Auto.this.driver1;
                         autoToRun.driver2 = Auto.this.driver2;
                         autoToRun.initialize();
+                        robot.init();
                     }
                 })
                 .transition(() -> !AutoConfig.InitBusy(), State.INITIALIZED)
@@ -189,8 +182,8 @@ public class Auto extends BluLinearOpMode {
             return; // selection UI handles its own telemetry during init
         }
 
-        // Read live subsystem refs from the singleton because autoToRun.initialize()
-        // does robot.clear() + re-add, which leaves Auto.this.X pointing at orphans.
+        // Read live subsystem refs from the singleton because the selected auto owns
+        // the active subsystem set.
         Robot r = Robot.getInstance();
 
         telemetry.addLine("======== AUTO ========");

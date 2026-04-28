@@ -106,13 +106,7 @@ public class CloseRedAuto extends BaseAuto {
 
     @Override
     public void initialize() {
-        robot.clear();
-        addSixWheel();
-        addIntake();
-        addElevator();
-        addShooter();
-        addTurret();
-        addTransfer();
+        addAutoSubsystems(false);
         shooter.setHoodAngle(26);
         shooter.write();
         elevator.setMiddle();
