@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator;
 
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;

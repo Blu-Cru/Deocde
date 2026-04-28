@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 
-import com.arcrobotics.ftclib.command.Command;
+import com.seattlesolvers.solverslib.command.Command;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;

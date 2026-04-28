@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.util;
 
-import com.arcrobotics.ftclib.controller.PIDController;
+import com.seattlesolvers.solverslib.controller.PIDController;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.ejml.dense.block.VectorOps_DDRB;

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
 
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;

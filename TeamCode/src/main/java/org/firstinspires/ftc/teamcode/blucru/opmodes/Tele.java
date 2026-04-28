@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ReturnCommand;
