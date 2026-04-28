@@ -2,79 +2,179 @@ package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
 
 import android.util.Size;
 
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
+import com.seattlesolvers.solverslib.geometry.Rotation2d;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterAutoAimInterpolation;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.KalmanFilter;
 import org.firstinspires.ftc.teamcode.blucru.common.util.MotifPattern;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.ExposureControl;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.controls.GainControl;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class TagCamera implements BluSubsystem, Subsystem {
+    private static final int BLUE_GOAL_TAG_ID = 20;
+    private static final int RED_GOAL_TAG_ID = 24;
+    private static final int MOTIF_GPP_TAG_ID = 21;
+    private static final int MOTIF_PGP_TAG_ID = 22;
+    private static final int MOTIF_PPG_TAG_ID = 23;
 
     AprilTagProcessor tags;
     VisionPortal portal;
     AprilTagDetection detection;
     boolean currentlySeeingGoodTags;
+    boolean computedBotposeThisLoop;
     boolean streaming;
-    final double tagDistToMiddleShooter = 8;
+    boolean exposureSet = false;  // one-shot flag for exposure init
+    final double tagDistToMiddleShooter = 7.5;
+    final double turretCenterToLocPoint = -72.35/25.4;
+    long captureTime;
     MotifPattern motifPattern;
+    Pose2d botpose;
+    Pose2d botposeOnTheMove;
+    Pose2d kalmanFilteredBotpose;
+    public static  double xQ = 0.7, xR = 0.5, xP = 0.01;
+    public static  double yQ = 0.7, yR = 0.5, yP = 0.01;
+    KalmanFilter xFilter, yFilter;
+    double lastFilterX, lastFilterY;
+    // Tag heading is the field-frame yaw of the tag's surface normal, in radians.
+    final Pose2d TAG_20 = new Pose2d(-58, -58, 0);
+    final Pose2d TAG_24 = new Pose2d(-58, 58, 0);
+
+
     public TagCamera(){
-        //int[] viewId = VisionPortal.makeMultiPortalView(1, VisionPortal.MultiPortalLayout.VERTICAL);
+
         tags = new AprilTagProcessor.Builder()
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setDrawAxes(false)
                 .setDrawTagID(false)
                 .setDrawTagOutline(false)
-                .setLensIntrinsics(549.641,549.651,317.108,236.644)
+                // Intrinsics from arducam-ov9281.cameramodel (mrcal, 320x240), scaled 2x for 640x480
+                .setLensIntrinsics(563.115, 562.734, 312.667, 239.793)
+                .setSuppressCalibrationWarnings(true)
+                .setCameraPose(new Position(),new YawPitchRollAngles(AngleUnit.DEGREES,0,20, 0,0))
                 .build();
+        // Decimation speeds up detection by downsampling internally
+        // 2 = process at half res, good balance of speed vs range
+        tags.setDecimation(2);
+
         portal = new VisionPortal.Builder()
                 .setCamera(Globals.hwMap.get(WebcamName.class, "autoaim cam"))
                 .enableLiveView(false)
                 .addProcessor(tags)
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .setAutoStartStreamOnBuild(true)
                 .build();
         motifPattern = MotifPattern.UNKNOWN;
+        streaming = true;
+        captureTime = 0;
+        botpose = null;
+        botposeOnTheMove = null;
+        kalmanFilteredBotpose = null;
+        detection = null;
+
+        xFilter = new KalmanFilter(0, xQ, xR, xP);
+        yFilter = new KalmanFilter(0, yQ, yR, yP);
+    }
+
+    /**
+     * Call after the camera has started streaming to lock exposure.
+     * Low exposure (6ms) eliminates motion blur when the turret is rotating.
+     */
+    public void setManualExposure(int exposureMs, int gain) {
+        // Wait for camera to be streaming
+        if (portal.getCameraState() != VisionPortal.CameraState.STREAMING) return;
+
+        ExposureControl exposureControl = portal.getCameraControl(ExposureControl.class);
+        if (exposureControl.getMode() != ExposureControl.Mode.Manual) {
+            exposureControl.setMode(ExposureControl.Mode.Manual);
+        }
+        exposureControl.setExposure(exposureMs, TimeUnit.MILLISECONDS);
+
+        GainControl gainControl = portal.getCameraControl(GainControl.class);
+        gainControl.setGain(gain);
     }
 
     @Override
     public void init() {
         read();
+        Pose2d pos = Robot.getInstance().sixWheelDrivetrain.getPos();
+        xFilter.setVal(pos.getX());
+        yFilter.setVal(pos.getY());
+        lastFilterX = pos.getX();
+        lastFilterY = pos.getY();
     }
 
     @Override
     public void read() {
-        currentlySeeingGoodTags = false;
+        // One-shot: lock exposure the first time camera is streaming
+        if (!exposureSet && portal.getCameraState() == VisionPortal.CameraState.STREAMING) {
+            setManualExposure(7, 1);
+
+            exposureSet = true;
+        }
+
         //using streaming first because it is a lot easier to get
         if (streaming && portal.getProcessorEnabled(tags)) {
+            currentlySeeingGoodTags = false;
+            computedBotposeThisLoop = false;
+            detection = null;
+
+            Globals.telemetry.addLine("Looking for tags");
             ArrayList<AprilTagDetection> detections = tags.getDetections();
+            if (!detections.isEmpty()) {
+                Globals.telemetry.addLine("Detected Tag");
+            }
+
+            AprilTagDetection goalDetection = null;
             for (AprilTagDetection detect : detections) {
-                if ((detect.id == 20 && Globals.alliance == Alliance.BLUE)
-                        || (detect.id == 24 && Globals.alliance == Alliance.RED)) {
-                    currentlySeeingGoodTags = true;
-                    detection = detect;
-                    break;
+                if (detect.ftcPose == null) continue;
+                if (goalDetection == null && isAllianceGoalTag(detect)) {
+                    goalDetection = detect;
                 }
-                if (detect.id == 21 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_GPP_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.GPP;
-                    break;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
+                    continue;
                 }
-                if (detect.id == 22 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_PGP_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PGP;
-                    break;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
+                    continue;
                 }
-                if (detect.id == 23 && motifPattern == MotifPattern.UNKNOWN){
+                if (detect.id == MOTIF_PPG_TAG_ID && motifPattern == MotifPattern.UNKNOWN){
                     motifPattern = MotifPattern.PPG;
-                    break;
+                    ShooterMotifCoordinator.setMotif(motifPattern);
+                    continue;
                 }
             }
+
+            if (goalDetection != null) {
+                captureTime = goalDetection.frameAcquisitionNanoTime;
+                currentlySeeingGoodTags = true;
+                detection = goalDetection;
+                updateBotposeFromGoalTag(goalDetection);
+            }
+
         }
     }
 
@@ -106,6 +206,24 @@ public class TagCamera implements BluSubsystem, Subsystem {
     public boolean detectedThisLoop(){
         return currentlySeeingGoodTags;
     }
+    public boolean computedBotposeThisLoop(){
+        return computedBotposeThisLoop;
+    }
+    public Pose2d getBotPosePoseHistory() {
+        if (botpose == null) return null;
+        Pose2d poseAtCapture = getRobotPoseAtCapture();
+        if (poseAtCapture == null) return null;
+        Pose2d currentPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        Vector2d oldVec = poseAtCapture.vec();
+        Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
+        double headingOffset = normalizeAngle(botpose.getH() - poseAtCapture.getH());
+        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
+        return new Pose2d(currentPose.vec().addNotInPlace(offset), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
+
+    public Pose2d getBotpose(){
+        return botpose;
+    }
     public double getTagDistToMiddleShooter(){
         return tagDistToMiddleShooter;
     }
@@ -113,8 +231,116 @@ public class TagCamera implements BluSubsystem, Subsystem {
         return motifPattern;
     }
 
+    public double getDistance(){
+        if (detection == null || detection.ftcPose == null){
+            return 0;
+        }
+        return detection.ftcPose.range + tagDistToMiddleShooter;
+    }
+
     @Override
     public void reset() {
         disable();
+    }
+
+    public Pose2d getKalmanFilteredBotpose() {
+        return new Pose2d(xFilter.get(),yFilter.get(), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
+    }
+
+    private void updateBotposeFromGoalTag(AprilTagDetection detect) {
+        // Defense in depth: never allow motif tags (or anything other than the alliance
+        // goal tag) to drive a botpose update.
+        if (detect.id != BLUE_GOAL_TAG_ID && detect.id != RED_GOAL_TAG_ID) {
+            return;
+        }
+
+        Pose2d tagPos = detect.id == BLUE_GOAL_TAG_ID ? TAG_20 : TAG_24;
+        Vector2d originToTag = tagPos.vec();
+        Pose2d poseAtCapture = getRobotPoseAtCapture();
+        Pose2d currentPose = Robot.getInstance().sixWheelDrivetrain.getPos();
+        double odoHeadingAtCapture = poseAtCapture != null ? poseAtCapture.getH() : currentPose.getH();
+
+        // Derive the camera's field heading directly from the tag observation rather
+        // than trusting odometry. ftcPose.yaw is the tag's apparent rotation in the
+        // camera frame: 0 means the camera looks straight down the tag's normal, so
+        // the camera's field heading is (tag normal direction + PI). Sign of yaw
+        // assumed to match standard FTC convention (positive = tag rotated CCW in
+        // image); flip the sign in front of observedTagYawRad if reloc heading
+        // converges in the wrong direction during testing.
+        double observedTagYawRad = Math.toRadians(detect.ftcPose.yaw);
+        double cameraFieldHeading = tagPos.getH() + Math.PI - observedTagYawRad;
+
+        // Camera lives on the turret. Robot heading falls out of the camera heading
+        // by undoing the turret offset used elsewhere in this subsystem
+        // (cameraFieldHeading = robotHeading - turretRad + PI in the original model).
+        // Normalize the turret angle first so wraps past ±180° don't accumulate
+        // float-precision error through the rotation math below.
+        double turretRad = normalizeAngle(Math.toRadians(Robot.getInstance().turret.getAngle()));
+        double observedRobotHeading = normalizeAngle(cameraFieldHeading + turretRad - Math.PI);
+
+        double dx = detect.ftcPose.x; // left/right relative to camera
+        double dy = detect.ftcPose.y; // forward/back relative to camera
+        Vector2d tagToCamCamCentric = new Vector2d(dx, dy);
+
+        Vector2d tagToCam = tagToCamCamCentric.rotate(-cameraFieldHeading - Math.PI / 2);
+        tagToCam = new Vector2d(tagToCam.getX() * -1, tagToCam.getY());
+
+        Vector2d camToTurret = new Vector2d(-tagDistToMiddleShooter, 0).rotate(cameraFieldHeading);
+        // Use the heading we just observed for the turret-to-robot rigid offset so
+        // a wrong odometry heading doesn't poison the XY reloc.
+        Vector2d turretToRobot = new Vector2d(turretCenterToLocPoint, 0)
+                .rotate(observedRobotHeading);
+
+        Vector2d tagToRobot = tagToCam.addNotInPlace(camToTurret).addNotInPlace(turretToRobot);
+        Vector2d originToRobot = originToTag.addNotInPlace(tagToRobot);
+
+        botpose = new Pose2d(originToRobot, observedRobotHeading);
+
+        if (poseAtCapture == null) {
+            return;
+        }
+
+        computedBotposeThisLoop = true;
+        Vector2d oldVec = poseAtCapture.vec();
+        Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
+        double headingOffset = normalizeAngle(observedRobotHeading - odoHeadingAtCapture);
+        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
+        botposeOnTheMove = new Pose2d(
+                currentPose.vec().addNotInPlace(offset),
+                currentObservedHeading);
+        double curX = currentPose.getX();
+        double curY = currentPose.getY();
+        xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());
+        yFilter.update(curY - lastFilterY, botposeOnTheMove.getY());
+        lastFilterX = curX;
+        lastFilterY = curY;
+    }
+
+    private static double normalizeAngle(double angleRad) {
+        return Math.atan2(Math.sin(angleRad), Math.cos(angleRad));
+    }
+
+    private Pose2d getRobotPoseAtCapture() {
+        if (captureTime == 0) {
+            return null;
+        }
+
+        if (Robot.getInstance().positionHistory.getPoseAtTime(captureTime) == null) {
+            return null;
+        }
+
+        return Robot.getInstance().positionHistory.getPoseAtTime(captureTime).getPose();
+    }
+
+    private boolean isAllianceGoalTag(AprilTagDetection detect) {
+        if (detect == null) {
+            return false;
+        }
+
+        return detect.id == getAllianceGoalTagId();
+    }
+
+    private int getAllianceGoalTagId() {
+        return Globals.alliance == Alliance.BLUE ? BLUE_GOAL_TAG_ID : RED_GOAL_TAG_ID;
     }
 }

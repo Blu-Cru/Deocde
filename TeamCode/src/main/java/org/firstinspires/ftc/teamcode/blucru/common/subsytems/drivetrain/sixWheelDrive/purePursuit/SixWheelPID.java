@@ -159,9 +159,9 @@ public class SixWheelPID {
         }
         lastHeadingOutput = headingVel;
 
-        Globals.telemetry.addData("Robot Heading", robotHeading);
+        /*Globals.telemetry.addData("Robot Heading", robotHeading);
         Globals.telemetry.addData("Turn Req", turnReq);
-        Globals.telemetry.addData("Delta Angle", deltaAngle);
+        Globals.telemetry.addData("Delta Angle", deltaAngle);*/
 
         return headingVel;
     }
@@ -220,8 +220,8 @@ public class SixWheelPID {
             deltaAngle += 360;
         }
 
-        Globals.telemetry.addData("Target Heading Control", targetHeadingDegrees);
-        Globals.telemetry.addData("Delta Angle to Target", deltaAngle);
+        /*Globals.telemetry.addData("Target Heading Control", targetHeadingDegrees);
+        Globals.telemetry.addData("Delta Angle to Target", deltaAngle);*/
 
         double headingVel = rTurnTo.calculate(deltaAngle, -angleVel);
 

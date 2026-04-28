@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class TurretAngleCalculator {
 
     public static void calculateFieldCentricTurretAngle(double robotX, double robotY, double robotHeadingDeg){
-        Turret turret = new Turret(null, null, null);
+        Turret turret = new Turret(null, null, null,null);
         double turretAngle =  turret.getFieldCentricTargetGoalAngle(new Pose2d(robotX, robotY, robotHeadingDeg));
         System.out.println(String.format("For Robot Pose (%f, %f, %f), Turrent Target Angle is %f", robotX, robotY, robotHeadingDeg, turretAngle));
     }

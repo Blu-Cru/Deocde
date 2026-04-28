@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter;
 
-import com.arcrobotics.ftclib.command.Command;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.Command;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -18,7 +18,7 @@ public class ShooterMotifCoordinator {
         private static HashMap<String, Command> mapper;
         private static BallColor leftColor, middleColor, rightColor;
         private static MotifPattern motif;
-        private static int waits = 600;
+        private static int waits = 500;
         static {
                 mapper = new HashMap<>();
                 mapper.put("RED_PURPLE_PURPLE_GREEN_PPG", new SequentialCommandGroup(
@@ -119,6 +119,7 @@ public class ShooterMotifCoordinator {
                                 new WaitCommand(waits),
                                 new RightTransferUpCommand(),
                                 new MiddleTransferUpCommand()));
+                motif = MotifPattern.UNKNOWN;
         }
 
         public static Command getOrderToShoot(Alliance alliance) {

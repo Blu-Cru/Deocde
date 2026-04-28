@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.UnnormalizedAngleUnit
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.PIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.GoBildaPinpointDriver;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp
+//@TeleOp
 public class ControlHubIMUvsPinpointTest extends BluLinearOpMode {
     private IMU controlHubImu;
     private GoBildaPinpointDriver pinpoint;

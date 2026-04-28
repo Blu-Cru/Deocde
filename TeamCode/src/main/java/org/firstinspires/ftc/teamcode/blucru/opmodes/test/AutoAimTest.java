@@ -1,13 +1,13 @@
 
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import com.arcrobotics.ftclib.command.CommandScheduler;
-import com.arcrobotics.ftclib.command.SequentialCommandGroup;
-import com.arcrobotics.ftclib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
+import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
-import com.arcrobotics.ftclib.command.ConditionalCommand;
+import com.seattlesolvers.solverslib.command.ConditionalCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.commands.IdleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.ResetForIntakeCommand;
@@ -19,9 +19,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.UnshootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.RetransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetLeftHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetMiddleHoodAngleCommand;
-import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetRightHoodAngleCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootReverseWithVelocityCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -30,7 +28,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Vector2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@TeleOp (group = "a")
+//@TeleOp (group = "a")
 
 public class AutoAimTest extends BluLinearOpMode {
 
@@ -77,9 +75,7 @@ public class AutoAimTest extends BluLinearOpMode {
                             new ElevatorMiddleCommand(),
                             new WaitCommand(200),
                             new AllTransferMiddleCommand(),
-                            new SetLeftHoodAngleCommand(26),
-                            new SetMiddleHoodAngleCommand(26),
-                            new SetRightHoodAngleCommand(26),
+                            new SetHoodAngleCommand(26),
                             new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })

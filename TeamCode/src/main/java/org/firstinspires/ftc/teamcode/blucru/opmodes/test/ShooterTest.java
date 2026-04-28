@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
@@ -9,7 +10,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOnShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@TeleOp(group = "test")
+@TeleOp(group = "test")
 public class ShooterTest extends BluLinearOpMode {
     enum State{
         IDLE,

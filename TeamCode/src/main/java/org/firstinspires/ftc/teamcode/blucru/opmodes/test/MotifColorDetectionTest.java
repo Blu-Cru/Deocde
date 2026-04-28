@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp
+//@TeleOp
 public class MotifColorDetectionTest extends BluLinearOpMode {
 
     public void initialize(){

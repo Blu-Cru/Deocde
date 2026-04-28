@@ -12,18 +12,24 @@ public class PurePursuitSegment implements PathSegment {
     Point2d[] path;
     double startTime;
     double maxTime;
+    Boolean reverse = null;
 
     public PurePursuitSegment(Point2d[] path, double maxTime) {
         this.path = path;
         this.maxTime = maxTime;
     }
 
+    public PurePursuitSegment(Point2d[] path, double maxTime, boolean reverse) {
+        this(path, maxTime);
+        this.reverse = reverse;
+    }
+
     @Override
     public boolean isDone() {
-        Globals.telemetry.addData("Last Point", path[path.length - 1]);
+        //Globals.telemetry.addData("Last Point", path[path.length - 1]);
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         double dist = robotPose.getDistTo(new Pose2d(path[path.length - 1].getX(), path[path.length - 1].getY(), 0));
-        Globals.telemetry.addData("Dist", dist);
+        //Globals.telemetry.addData("Dist", dist);
 
         return dist < SixWheelDrive.END_TOLERANCE;
     }
@@ -31,7 +37,7 @@ public class PurePursuitSegment implements PathSegment {
     @Override
     public void startSegment() {
         startTime = System.currentTimeMillis();
-        Robot.getInstance().sixWheelDrivetrain.followPath(path);
+        Robot.getInstance().sixWheelDrivetrain.followPath(path, reverse);
     }
 
     @Override

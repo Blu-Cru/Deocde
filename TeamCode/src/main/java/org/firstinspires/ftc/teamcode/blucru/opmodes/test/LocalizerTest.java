@@ -11,6 +11,7 @@ public class LocalizerTest extends BluLinearOpMode {
     public void initialize() {
         robot.clear();
         addSixWheel();
+        sixWheel.localizer.reset();
     }
 
     public void onStart(){

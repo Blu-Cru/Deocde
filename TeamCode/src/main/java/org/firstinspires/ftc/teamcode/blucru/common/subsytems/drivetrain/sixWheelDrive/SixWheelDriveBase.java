@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluMotor;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Octoquad;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.RobotLocalizer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.localization.Pinpoint;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.purePursuit.PurePursuitComputer;
@@ -21,7 +22,7 @@ public class SixWheelDriveBase implements BluSubsystem {
 
     private BluMotor[] dtMotors;
 
-    RobotLocalizer localizer;
+    public RobotLocalizer localizer;
 
     public enum State {
         IDLE,
@@ -74,7 +75,6 @@ public class SixWheelDriveBase implements BluSubsystem {
         dtMotors[2].setPower(powers[0]);
         dtMotors[1].setPower(powers[1]);
         dtMotors[3].setPower(powers[1]);
-        Globals.telemetry.addData("Powers", Arrays.toString(powers));
     }
 
     public void makeMotorsBeInBrake() {
@@ -108,7 +108,7 @@ public class SixWheelDriveBase implements BluSubsystem {
          */
         localizer.telemetry(telemetry);
         telemetry.addData("pos", localizer.getPose());
-        telemetry.addData("Brake Mode", dtMotors[0].getZeroPowerBehavior());
+        //telemetry.addData("Brake Mode", dtMotors[0].getZeroPowerBehavior());
     }
 
     @Override

@@ -3,27 +3,31 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
+import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class ShooterAutoAimTuning extends BluLinearOpMode {
-    public static double leftAngle = 0;
-    public static double rightAngle = 0;
-    public static double middleAngle = 0;
+    public static double angle = 0;
 
-    public static double turretAngle = 20;
+    public static double turretAngle = 0;
 
     public static double leftVel = 0;
     public static double middleVel = 0;
     public static double rightVel = 0;
 
     public void initialize(){
+        robot.clear();
         addShooter();
         addSixWheel();
-        //addLLTagDetector();
         addTransfer();
         addTurret();
+        robot.addTurretCam();
+        telemetry.addLine("" + robot.turretCam.getTagDistToMiddleShooter());
         turret.resetEncoder();
+        Globals.alliance = Alliance.BLUE;
     }
 
     public void periodic(){
@@ -34,9 +38,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         }
 
         if (driver1.pressedA()){
-            shooter.setLeftHoodAngle(leftAngle);
-            shooter.setMiddleHoodAngle(middleAngle);
-            shooter.setRightHoodAngle(rightAngle);
+            shooter.setHoodAngle(angle);
         }
 
         if (driver1.pressedY()){
@@ -65,6 +67,7 @@ public class ShooterAutoAimTuning extends BluLinearOpMode {
         if (driver1.pressedDpadUp()){
             transfer.setAllMiddle();
         }
+        if (robot.turretCam.getDetection() != null) telemetry.addData("Dist", robot.turretCam.getDistance());
     }
 
 }

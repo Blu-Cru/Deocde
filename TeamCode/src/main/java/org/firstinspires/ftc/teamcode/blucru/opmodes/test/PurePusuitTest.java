@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.PurePursuitSegment;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-@TeleOp
+//@TeleOp
 public class PurePusuitTest extends BluLinearOpMode {
     Path currentPath;
     @Override

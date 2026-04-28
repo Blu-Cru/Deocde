@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.command.Subsystem;
+import com.seattlesolvers.solverslib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
@@ -22,11 +22,9 @@ public class Intake implements BluSubsystem, Subsystem {
     private BluMotor motor;
     private double encoderIteration = 0;
     private BluEncoder encoder;
-    public BluDigitalChannel parallelSensor;
-    public boolean jammed;
     public static double JAM_CURRENT_THRESHOLD = 9800; // milliamps, adjust as needed
     public static double NOMINAL_VOLTAGE = 12.0;
-    public static double ENCODER_PPR_INTAKE = 145.090909091;
+    public static double ENCODER_PPR_INTAKE = 4000;
     public static double curr = 0;
     public static double offset = 0;
     boolean armsParallel;
@@ -76,11 +74,9 @@ public class Intake implements BluSubsystem, Subsystem {
 
     public Intake(String motorName, String sensorName) {
         motor = new BluMotor(motorName, DcMotorSimple.Direction.REVERSE, DcMotor.ZeroPowerBehavior.BRAKE);
-        parallelSensor = new BluDigitalChannel(sensorName);
         encoder = new BluEncoder(motorName);
-        pid = new PDController(0.01, 0.002);
+        pid = new PDController(0.00033, 0.004);
         state = State.IDlE;
-        jammed = false;
     }
 
     public void setPID(){
@@ -107,9 +103,6 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void write() {
-        if (jammed){
-            motor.setPower(-1);
-        } else {
             switch(state){
                 case IN:
                     armsParallel = false;
@@ -149,8 +142,8 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (error >  quarter) error -= half;
                         if (error < -quarter) error += half;
 
-                        armsParallel = Math.abs(error) < 2;
-                        withinRange = Math.abs(error) < 5;
+                        armsParallel = Math.abs(error) < 20;
+                        withinRange = Math.abs(error) < 50;
 
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
@@ -158,7 +151,7 @@ public class Intake implements BluSubsystem, Subsystem {
 //                        //resetEncoder();
 //                        armsParallel = true;
 //                    }
-            }
+
         }
 
         motor.write();
@@ -167,10 +160,10 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        motor.telemetry();
+       /* motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
         telemetry.addData("Power", motor.getPower());
-        telemetry.addData("State", state);
+        telemetry.addData("Intake State", state);*/
     }
 
     @Override
