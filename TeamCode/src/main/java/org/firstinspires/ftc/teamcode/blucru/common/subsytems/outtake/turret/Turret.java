@@ -458,8 +458,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
         double robotHeading = robotPose.getH();
         double robotHeadingVel = robotVel.getH();
-        double turretVelX = robotVel.getX() + distFromCenter * Math.sin(robotHeading) * robotHeadingVel;
-        double turretVelY = robotVel.getY() - distFromCenter * Math.cos(robotHeading) * robotHeadingVel;
+        double turretVelX = robotVel.getX() - distFromCenter * Math.sin(robotHeading) * robotHeadingVel;
+        double turretVelY = robotVel.getY() + distFromCenter * Math.cos(robotHeading) * robotHeadingVel;
         double goalBearingVel = (dy * turretVelX - dx * turretVelY) / distSq;
         double turretTargetVel = goalBearingVel - robotHeadingVel;
 
@@ -619,7 +619,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     private Vector2d getTurretCenterPosition(Pose2d robotPose) {
-        Vector2d turretOffset = new Vector2d(-distFromCenter, 0).rotate(robotPose.getH());
+        Vector2d turretOffset = new Vector2d(distFromCenter, 0).rotate(robotPose.getH());
         return robotPose.vec().addNotInPlace(turretOffset);
     }
 
