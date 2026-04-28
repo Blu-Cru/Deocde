@@ -219,9 +219,9 @@ public class Turret implements BluSubsystem, Subsystem {
         double robotHeadingDeg = Math.toDegrees(robotPose.getH());
 
         double turretCenterX =
-                robotVec.getX() - distFromCenter * Math.cos(Math.toRadians(robotHeadingDeg));
+                robotVec.getX() + distFromCenter * Math.cos(Math.toRadians(robotHeadingDeg));
         double turretCenterY =
-                robotVec.getY() - distFromCenter * Math.sin(Math.toRadians(robotHeadingDeg));
+                robotVec.getY() + distFromCenter * Math.sin(Math.toRadians(robotHeadingDeg));
 
         double dx = target.getX() - turretCenterX;
         double dy = target.getY() - turretCenterY;
