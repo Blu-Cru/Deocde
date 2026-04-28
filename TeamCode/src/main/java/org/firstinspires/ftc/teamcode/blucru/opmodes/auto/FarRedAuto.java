@@ -380,7 +380,10 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(45,9)
                 },100)
                 .callback(()->{
-                    new CenterTurretCommand().schedule();
+                    new SequentialCommandGroup(
+                            new TurnTurretToPosCommand(-90),
+                            new CenterTurretCommand()
+                    ).schedule();
                 })
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,

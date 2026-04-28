@@ -70,7 +70,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double rightShotSweepTagOffsetPx = -18.0;
     public static int goalSweepReadyFrames = 2;
     public static boolean useShotLineOffset = true;
-    public static double shotLineOffsetDeadbandIn = 0.0;
+    public static double shotLineOffsetDeadbandIn = 5.0;
     public static double shotLineBlueGainDegPerIn = 0.33;
     public static double shotLineRedGainDegPerIn = -0.32;
     public static double shotLineBlueMaxOffsetDeg = 3.0;
@@ -642,14 +642,14 @@ public class Turret implements BluSubsystem, Subsystem {
         double gain = isBlue ? shotLineBlueGainDegPerIn : shotLineRedGainDegPerIn;
         double maxOffset = isBlue ? shotLineBlueMaxOffsetDeg : shotLineRedMaxOffsetDeg;
         double offsetMagnitude = Range.clip(
-                oneSidedDeviation * gain,
+                Math.abs(oneSidedDeviation * gain),
                 0,
                 maxOffset
         );
 
-        // Field testing on far blue showed the original sign assumption was
-        // inverted, so keep blue/red opposite but flipped from the first pass.
-        return isBlue ? -offsetMagnitude : offsetMagnitude;
+        // rawDeviation already selects the active shot-line side per alliance,
+        // so the turret correction direction stays the same after mirroring.
+        return -offsetMagnitude;
     }
 
     private double getShotLinePixelOffset(Pose2d robotPose) {

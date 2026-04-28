@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.auto;
 
+import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.ParallelCommandGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -20,7 +21,9 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferUpCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -325,7 +328,19 @@ public class CloseBlueAuto extends BaseAuto {
                 }, 2000)
 //                                .addTurnTo(-30, 1000)
                 .waitMilliseconds(400)
-                .callback(() -> new AutonomousShootCommand().schedule())
+                .callback(() -> {
+                    new SequentialCommandGroup(
+                            new AllTransferUpCommand(),
+                            new WaitCommand(200),
+                            new IdleShooterCommand(),
+                            new TurnTurretToPosCommand(-90),
+                            new WaitCommand(400),
+                            new CenterTurretCommand(),
+                            //new WaitCommand(200),
+                            new ElevatorDownCommand(),
+                            new AllTransferDownCommand()
+                    ).schedule();
+                })
                 .waitMilliseconds(300)
                 .build();
     }

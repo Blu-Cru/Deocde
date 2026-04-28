@@ -21,6 +21,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
 
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferDownCommand;
@@ -201,7 +202,7 @@ public class CloseRedAuto extends BaseAuto {
                                     new AllTransferDownCommand()
                             ),
                             new WaitCommand(200),
-                            new MoveTurretTo180DegreeTransferCommand(),
+                            new CenterTurretCommand(),
                             new WaitForTurretNearTargetCommand(),
                             new IntakeStartCommand()).schedule();
                 })
@@ -239,7 +240,7 @@ public class CloseRedAuto extends BaseAuto {
                 .waitMilliseconds(500)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()
+                            new AutonomousShootCommand()
                     ).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
@@ -267,7 +268,7 @@ public class CloseRedAuto extends BaseAuto {
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(400)
-                .callback(() -> new AutonomousShootFlipTurretCommand().schedule())
+                .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(200)
                 .build();
     }
@@ -300,7 +301,7 @@ public class CloseRedAuto extends BaseAuto {
                         new WaitCommand(200),
                         new ParallelCommandGroup(
                                 new IdleShooterCommand(),
-                                new MoveTurretTo180DegreeTransferCommand(),
+                                new CenterTurretCommand(),
                                 new ElevatorDownCommand(),
                                 new AllTransferDownCommand()
                         ),
