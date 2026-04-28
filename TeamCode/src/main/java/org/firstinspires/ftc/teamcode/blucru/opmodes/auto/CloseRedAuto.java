@@ -229,7 +229,7 @@ public class CloseRedAuto extends BaseAuto {
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(100, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, 55),
@@ -259,7 +259,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10, 60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, 60),
@@ -267,7 +267,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(12,30),
                         shootingPose
                 }, 2000, true)
-                .waitMilliseconds(400)
+                .waitMilliseconds(500)
                 .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(200)
                 .build();
@@ -285,7 +285,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10, 60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
 
 //                .addTurnTo(-90,500)
@@ -295,7 +295,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(12,30),
                         shootingPose
                 }, 2000, true)
-                .waitMilliseconds(200)
+                .waitMilliseconds(400)
                 .callback(() -> new SequentialCommandGroup(
                         new AllTransferUpCommand(),
                         new WaitCommand(200),
@@ -327,7 +327,7 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 30.0);
+                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 35.0);
                 })
 
                 .addPurePursuitPath(new Point2d[] {
