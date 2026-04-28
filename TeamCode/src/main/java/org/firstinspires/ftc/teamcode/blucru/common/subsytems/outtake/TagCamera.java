@@ -273,7 +273,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         // Camera lives on the turret. Robot heading falls out of the camera heading
         // by undoing the turret offset used elsewhere in this subsystem
         // (cameraFieldHeading = robotHeading - turretRad + PI in the original model).
-        double turretRad = Math.toRadians(Robot.getInstance().turret.getAngle());
+        // Normalize the turret angle first so wraps past ±180° don't accumulate
+        // float-precision error through the rotation math below.
+        double turretRad = normalizeAngle(Math.toRadians(Robot.getInstance().turret.getAngle()));
         double observedRobotHeading = normalizeAngle(cameraFieldHeading + turretRad - Math.PI);
 
         double dx = detect.ftcPose.x; // left/right relative to camera
