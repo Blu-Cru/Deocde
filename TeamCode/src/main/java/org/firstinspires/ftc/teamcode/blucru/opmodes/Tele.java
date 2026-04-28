@@ -62,6 +62,9 @@ public class Tele extends BluLinearOpMode{
     public static int INTAKE_REVERSE_MS = 600;
     public static double RELOC_MAX_DIST_IN = 36.0;
     public static double RELOC_MAX_HEADING_DEG = 25.0;
+    public static double RELOC_BLEND_ALPHA = 0.15;
+    public static double RELOC_DEADBAND_IN = 0.5;
+    public static double RELOC_DEADBAND_DEG = 0.75;
     private final ElapsedTime elevatorFullTimer = new ElapsedTime();
 
     private static final int MAX_TRAIL_SIZE = 200;
@@ -434,11 +437,22 @@ public class Tele extends BluLinearOpMode{
                 Globals.telemetry.addData("Reloc heading err (deg)", "%.1f", Math.toDegrees(dh));
 
                 if (relocDist < RELOC_MAX_DIST_IN && Math.abs(dh) < Math.toRadians(RELOC_MAX_HEADING_DEG)) {
-                    sixWheel.setPosition(new Pose2d(tagPose.vec(), tagPose.getH()));
-                    gamepad2.rumble(200);
+                    // Blend toward observation instead of snapping. Snapping every
+                    // frame fed the turret a new pose, which moved the camera, which
+                    // produced a new pose -> oscillation. With alpha ~ 0.15 the
+                    // correction converges in a few frames without fighting auto-aim.
+                    boolean xyBeyondDeadband = relocDist > RELOC_DEADBAND_IN;
+                    boolean hBeyondDeadband = Math.abs(dh) > Math.toRadians(RELOC_DEADBAND_DEG);
+                    if (xyBeyondDeadband || hBeyondDeadband) {
+                        double newX = odoPose.getX() + RELOC_BLEND_ALPHA * dx;
+                        double newY = odoPose.getY() + RELOC_BLEND_ALPHA * dy;
+                        double newH = odoPose.getH() + RELOC_BLEND_ALPHA * dh;
+                        // Normalize heading
+                        newH = Math.atan2(Math.sin(newH), Math.cos(newH));
+                        sixWheel.setPosition(new Pose2d(newX, newY, newH));
+                    }
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
-                    gamepad2.rumble(500);
                     Globals.telemetry.addLine("Bad re-loc :( ");
                 }
             }
