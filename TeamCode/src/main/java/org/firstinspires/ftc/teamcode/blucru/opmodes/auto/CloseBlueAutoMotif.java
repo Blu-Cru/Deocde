@@ -185,7 +185,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(-14, -35), // was (-10, 17)
                         shootingPose
                 }, 2000)
-                .addTurnTo(-90, 1000)
+//                .addTurnTo(-90, 1000)
                 // SHOOT FIRST SET - Use motif-aware shooting
                 .waitMilliseconds(400)
                 .callback(() -> {
@@ -238,6 +238,7 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(39, -52),
                 }, 1100)
                 // Transfer - Wait for stillness, read colors, then transfer
+                .waitMilliseconds(400)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(500, velo,veloMiddle,velo,hood);
                 })
@@ -269,7 +270,8 @@ public class CloseBlueAutoMotif extends BaseAuto {
                         new Point2d(10, -20),
                         new Point2d(30, -45),
                         new Point2d(52, -55),
-                        new Point2d(63,-60)
+                        new Point2d(59,-62),
+                        new Point2d(63,-62)
                 }, 3000)
                 .waitMilliseconds(500)
                 .callback(() -> {
