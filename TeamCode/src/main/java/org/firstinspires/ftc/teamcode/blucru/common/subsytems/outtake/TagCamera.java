@@ -218,7 +218,7 @@ public class TagCamera implements BluSubsystem, Subsystem {
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
         double headingOffset = normalizeAngle(botpose.getH() - poseAtCapture.getH());
         double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
-        return new Pose2d(currentPose.vec().addNotInPlace(offset), currentObservedHeading);
+        return new Pose2d(currentPose.vec().addNotInPlace(offset), Robot.getInstance().sixWheelDrivetrain.getPos().getH());
     }
 
     public Pose2d getBotpose(){
