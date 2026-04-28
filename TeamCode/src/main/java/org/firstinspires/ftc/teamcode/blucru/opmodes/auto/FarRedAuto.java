@@ -381,7 +381,8 @@ public class FarRedAuto extends BaseAuto {
                 },100)
                 .callback(()->{
                     new SequentialCommandGroup(
-                            new TurnTurretToPosCommand(-90),
+                            new TurnTurretToPosCommand(-150),
+                            new WaitCommand(300),
                             new CenterTurretCommand()
                     ).schedule();
                 })
