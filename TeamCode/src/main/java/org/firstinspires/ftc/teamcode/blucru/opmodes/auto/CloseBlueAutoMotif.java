@@ -5,6 +5,7 @@ import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootWithMotifCommand;
@@ -129,7 +130,8 @@ public class CloseBlueAutoMotif extends BaseAuto {
         }
     }
 
-    public void telemetry(){
+    @Override
+    public void autoTelemetry(Telemetry telemetry){
         telemetry.addData("Motif", ShooterMotifCoordinator.getMotif());
     }
 
