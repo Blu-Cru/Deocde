@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.ShooterMotifCoordinator;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
@@ -167,7 +168,9 @@ public class CloseBlueAutoMotif extends BaseAuto {
                 .callback(() -> {
                     new SequentialCommandGroup(
                             new WaitCommand(400),
-                            new CenterTurretCommand()
+                            new CenterTurretCommand(),
+                            new WaitCommand(100),
+                            new IntakeStartCommand()
                     ).schedule();
                 })
                 .addPurePursuitPath(new Point2d[] {
