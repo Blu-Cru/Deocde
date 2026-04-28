@@ -52,7 +52,7 @@ public class Tele extends BluLinearOpMode{
     public boolean turreting = true;
 
     public static boolean dashfield = true;
-    public boolean autoTagUpdating = true;
+    public boolean autoTagUpdating = false;
     private boolean usingBrushlands = true;
     public int rumbleDur = 200;
     public int shot = 0;
@@ -61,10 +61,8 @@ public class Tele extends BluLinearOpMode{
     public static double ELEVATOR_FULL_DELAY_MS = 100;
     public static int INTAKE_REVERSE_MS = 600;
     public static double RELOC_MAX_DIST_IN = 36.0;
-    public static double RELOC_MAX_HEADING_DEG = 25.0;
     public static double RELOC_BLEND_ALPHA = 0.15;
     public static double RELOC_DEADBAND_IN = 0.5;
-    public static double RELOC_DEADBAND_DEG = 0.75;
     private final ElapsedTime elevatorFullTimer = new ElapsedTime();
 
     private static final int MAX_TRAIL_SIZE = 200;
@@ -417,9 +415,13 @@ public class Tele extends BluLinearOpMode{
             }
         }
        // <----------- RELOCALIZIATION :))))) ALEX TRIED HIS BEST ----------->
-        // Tag camera only emits botpose for the alliance goal tag, but bail out loudly
-        // if alliance never got set so we can see why reloc isn't firing.
-        if (!Robot.getInstance().turretCam.computedBotposeThisLoop()) {
+        // Toggle (driver1 Y) gates reloc; defaults off so it can't move the turret
+        // aim until you opt in. Heading reloc removed -- only XY is corrected, so
+        // the turret continues to lean entirely on odometry/IMU heading.
+        Globals.telemetry.addData("Reloc enabled", autoTagUpdating);
+        if (!autoTagUpdating) {
+            // skip
+        } else if (!Robot.getInstance().turretCam.computedBotposeThisLoop()) {
             Globals.telemetry.addData("Reloc", "no botpose (alliance=%s)", Globals.alliance);
         } else {
             Pose2d tagPose = Robot.getInstance().turretCam.getBotPosePoseHistory();
@@ -429,27 +431,16 @@ public class Tele extends BluLinearOpMode{
                 double dx = tagPose.getX() - odoPose.getX();
                 double dy = tagPose.getY() - odoPose.getY();
                 double relocDist = Math.sqrt(dx * dx + dy * dy);
-                double dh = Math.atan2(
-                        Math.sin(tagPose.getH() - odoPose.getH()),
-                        Math.cos(tagPose.getH() - odoPose.getH()));
 
                 Globals.telemetry.addData("Reloc dist (in)", "%.1f", relocDist);
-                Globals.telemetry.addData("Reloc heading err (deg)", "%.1f", Math.toDegrees(dh));
 
-                if (relocDist < RELOC_MAX_DIST_IN && Math.abs(dh) < Math.toRadians(RELOC_MAX_HEADING_DEG)) {
-                    // Blend toward observation instead of snapping. Snapping every
-                    // frame fed the turret a new pose, which moved the camera, which
-                    // produced a new pose -> oscillation. With alpha ~ 0.15 the
-                    // correction converges in a few frames without fighting auto-aim.
-                    boolean xyBeyondDeadband = relocDist > RELOC_DEADBAND_IN;
-                    boolean hBeyondDeadband = Math.abs(dh) > Math.toRadians(RELOC_DEADBAND_DEG);
-                    if (xyBeyondDeadband || hBeyondDeadband) {
+                if (relocDist < RELOC_MAX_DIST_IN) {
+                    if (relocDist > RELOC_DEADBAND_IN) {
+                        // Blend toward observation instead of snapping. With alpha ~ 0.15
+                        // the correction converges in a few frames without fighting auto-aim.
                         double newX = odoPose.getX() + RELOC_BLEND_ALPHA * dx;
                         double newY = odoPose.getY() + RELOC_BLEND_ALPHA * dy;
-                        double newH = odoPose.getH() + RELOC_BLEND_ALPHA * dh;
-                        // Normalize heading
-                        newH = Math.atan2(Math.sin(newH), Math.cos(newH));
-                        sixWheel.setPosition(new Pose2d(newX, newY, newH));
+                        sixWheel.setXY(new Vector2d(newX, newY));
                     }
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
