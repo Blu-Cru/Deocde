@@ -641,22 +641,21 @@ public class Turret implements BluSubsystem, Subsystem {
 
         double gain = isBlue ? shotLineBlueGainDegPerIn : shotLineRedGainDegPerIn;
         double maxOffset = isBlue ? shotLineBlueMaxOffsetDeg : shotLineRedMaxOffsetDeg;
-        double offsetMagnitude = Range.clip(
-                Math.abs(oneSidedDeviation * gain),
-                0,
+        // Respect the sign of the gain to allow independent left/right tuning per alliance
+        return Range.clip(
+                oneSidedDeviation * gain,
+                -maxOffset,
                 maxOffset
         );
-
-        // rawDeviation already selects the active shot-line side per alliance,
-        // so the turret correction direction stays the same after mirroring.
-        return -offsetMagnitude;
     }
 
     private double getShotLinePixelOffset(Pose2d robotPose) {
         double turretOffsetDeg = getShotLineTurretOffset(robotPose);
 
         // Match the same sign convention used by the live pixel target.
-        return -TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(turretOffsetDeg));
+        // A positive turretOffsetDeg should result in a positive pixel offset
+        // so that Localization and Tag aim correct in the same direction.
+        return TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(turretOffsetDeg));
     }
 
     private double getGoalSweepPixelOffset() {
