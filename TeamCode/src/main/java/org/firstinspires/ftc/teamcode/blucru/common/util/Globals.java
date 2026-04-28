@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Globals {
     public static HardwareMap hwMap;
     public static Telemetry telemetry;
+    public static MultipleTelemetry multiTelemetry;
     public static double voltage = 13.0;
     public static Alliance alliance = RED;
     public static double leftGoalX = -58;
@@ -31,10 +32,14 @@ public class Globals {
 
     public static Vector2d lineVector = new Vector2d(3,4);
 
-    public static double turretTargetRedX = -66;
-    public static double turretTargetRedY = 66;
+    public static Vector2d goalTagPoseBlue = new Vector2d(-58.3928021693, -55.628136098);
+    public static Vector2d goalTagPoseRed = new Vector2d(-58.3928021693, 55.628136098);
 
-    public static double turretTargetBlueX = -66;
+    public static Vector2d turretTargetRedPose = new Vector2d(-66, 53);
+    public static double turretTargetRedX = -65;
+    public static double turretTargetRedY = 65;
+
+    public static double turretTargetBlueX = -65;
     public static double turretTargetBlueY = -66;
 
     public static double OGturretTargetRedX = -65;
@@ -66,7 +71,7 @@ public class Globals {
     public static Pose2d mapPose(double x, double y, double heading) {
         y = y * reflect;
         heading = heading * reflect;
-        return new Pose2d(x, y, heading %    (2 * Math.PI));
+        return new Pose2d(x, y, heading % (2 * Math.PI));
     }
 
     // 2. Returns CUSTOM Pose2d from existing Custom Pose
@@ -99,7 +104,7 @@ public class Globals {
         return angle * reflect;
     }
     public static Vector2d mapPoint(Vector2d point) {
-        return mapVector(point.getX(), -point.getY());
+        return mapVector(point.getX(), point.getY());
     }
     // Assuming Point2d has .x and .y fields or getX()/getY() methods
     public static Point2d mapPoint(Point2d point) {

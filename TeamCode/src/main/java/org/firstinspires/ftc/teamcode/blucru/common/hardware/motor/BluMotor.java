@@ -59,10 +59,10 @@ public class BluMotor extends DcMotorImplEx implements BluHardwareDevice {
 
     @Override
     public void write() {
-        double correctedPower = Globals.getCorrectPower(power * multiplier);
-        if (Math.abs(correctedPower - lastPower) > 0.005){
-            lastPower = correctedPower;
-            super.setPower(correctedPower);
+        if (Math.abs(power - lastPower) > 0.005){
+            //power has changed
+            lastPower = power * multiplier;
+            super.setPower(Globals.getCorrectPower(power * multiplier));
         }
     }
 

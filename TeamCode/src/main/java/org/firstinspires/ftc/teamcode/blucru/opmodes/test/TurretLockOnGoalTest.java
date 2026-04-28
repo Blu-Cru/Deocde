@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
@@ -12,18 +11,11 @@ public class TurretLockOnGoalTest extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
         addSixWheel();
-        robot.addTurretCam();
-        //addLLTagDetector();
-        addIntake();
-        addElevator();
-        addTransfer();
-        addShooter();
         addTurret();
-        addTilt();
-        enableDash();
+        addShooter();
     }
 
-    public void periodic() throws InterruptedException {
+    public void periodic(){
         if (gamepad1.a){
             turret.lockOnGoal();
         }
@@ -40,6 +32,5 @@ public class TurretLockOnGoalTest extends BluLinearOpMode {
         if (driver1.pressedLeftBumper()){
             Globals.setAlliance(Alliance.BLUE);
         }
-        //Thread.sleep(10);
     }
 }

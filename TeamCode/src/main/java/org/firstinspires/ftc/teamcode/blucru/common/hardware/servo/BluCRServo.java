@@ -41,18 +41,15 @@ public class BluCRServo extends CRServoImpl implements BluHardwareDevice {
 
     @Override
     public void write() {
-        double correctedPower = Globals.getCorrectPower(power);
-        //if (Math.abs(correctedPower - lastPower) > 0.005){
-            lastPower = correctedPower;
-            super.setPower(correctedPower);
-        //}
+        if (Math.abs(power - lastPower) > 0.005){
+            lastPower = power;
+            super.setPower(power);
+        }
     }
 
     @Override
     public void telemetry() {
         Telemetry telemetry = Globals.telemetry;
         telemetry.addLine(name + " Power: " + power);
-        telemetry.addLine(name + " CRServo Power: " + super.getPower());
-
     }
 }

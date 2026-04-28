@@ -22,7 +22,6 @@ out/
 
 # Gradle files
 .gradle/
-.gradle-user-home/
 build/
 
 # Local configuration file (sdk path, etc)
@@ -85,4 +84,3 @@ lint/tmp/
 #misc
 Misc/PurePursuitDebug/*.csv
 Misc/PurePursuitDebug/*.png
-/.vscode

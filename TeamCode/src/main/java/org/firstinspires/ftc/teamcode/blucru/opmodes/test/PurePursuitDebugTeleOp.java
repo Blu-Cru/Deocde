@@ -25,7 +25,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  * Left/Right Sticks - Manual drive when not following path
  */
 @Config
-//@TeleOp(name = "PurePursuit Debug", group = "test")
+@TeleOp(name = "PurePursuit Debug", group = "test")
 public class PurePursuitDebugTeleOp extends BluLinearOpMode {
 
     // Dashboard-configurable parameters

@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.seattlesolvers.solverslib.command.Subsystem;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,8 +20,6 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     private double drivePower;
     private Point2d[] path;
     private Double targetHeading; // Target heading for turnTo command
-    private Boolean forceReverse = null; // Forced driving direction (null = auto)
-    private Double simulatedBatteryVoltage;
     private PurePursuitComputer computer;
 
     // Look-ahead distance: larger = smoother but wider turns, smaller = tighter but
@@ -37,7 +35,6 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         drivePower = 1;
         path = null;
         targetHeading = null;
-        simulatedBatteryVoltage = null;
         computer = new PurePursuitComputer();
         pid = new SixWheelPID();
     }
@@ -71,9 +68,8 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
                 }
 
                 double[] powers = computer.computeRotAndXY(path, localizer.getPose(), localizer.getVel(),
-                        LOOK_AHEAD_DIST, pid, forceReverse);
-                double driveScale = getSimulatedBatteryScale();
-                drive(powers[0] * driveScale, -powers[1] * driveScale); // Negate rotation to match TURN convention
+                        LOOK_AHEAD_DIST, pid);
+                drive(powers[0], -powers[1]); // Negate rotation to match TURN convention
                 break;
             case TURN:
                 // Turn in place to target heading
@@ -123,7 +119,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
 //        double multiplier = Math.min(1, Math.pow((Globals.voltage / 12.5), 2));
 //        double multiplier = 1;
-        double multiplier = Math.min(1, (Globals.voltage / 12.5));
+          double multiplier = Math.min(1, (Globals.voltage / 12.5));
 
 
         if (Math.abs(x) <= tol) {
@@ -156,35 +152,9 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
         return drivePower;
     }
 
-    public void setSimulatedBatteryVoltage(Double simulatedBatteryVoltage) {
-        this.simulatedBatteryVoltage = simulatedBatteryVoltage;
-    }
-
-    public void clearSimulatedBatteryVoltage() {
-        simulatedBatteryVoltage = null;
-    }
-
-    private double getSimulatedBatteryScale() {
-        if (simulatedBatteryVoltage == null) {
-            return 1.0;
-        }
-
-        double rawVoltage = Robot.getInstance().getRawVoltage();
-        if (rawVoltage <= 0) {
-            return 1.0;
-        }
-
-        return Math.min(1.0, simulatedBatteryVoltage / rawVoltage);
-    }
-
     public void followPath(Point2d[] path) {
-        followPath(path, null);
-    }
-
-    public void followPath(Point2d[] path, Boolean reverse) {
         this.path = path;
         this.targetHeading = null;
-        this.forceReverse = reverse;
         computer.resetLastFoundIndex();
         pid.resetBackwardsDrivingState();
         dtState = State.PID;
@@ -192,7 +162,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Turn in place to a target heading
-     *
+     * 
      * @param headingDegrees Target heading in degrees (0 = right, 90 = up, 180 =
      *                       left, -90 = down)
      */
@@ -204,7 +174,7 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
 
     /**
      * Check if the turn is complete
-     *
+     * 
      * @return true if robot is within HEADING_TOLERANCE of target heading
      */
     public boolean isTurnComplete() {
@@ -227,7 +197,6 @@ public class SixWheelDrive extends SixWheelDriveBase implements Subsystem {
     }
 
     public void switchToIdle() {
-        clearSimulatedBatteryVoltage();
         drive(0, 0);
         dtState = State.IDLE;
     }

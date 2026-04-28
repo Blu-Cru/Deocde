@@ -40,7 +40,4 @@ public class BluDigitalChannel implements BluHardwareDevice{
     public boolean getState(){
         return state;
     }
-    public void setMode(DigitalChannel.Mode mode){
-        channel.setMode(mode);
-    }
 }

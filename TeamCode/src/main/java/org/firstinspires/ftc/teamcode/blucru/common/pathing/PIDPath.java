@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 import android.util.Log;
 
-import com.seattlesolvers.solverslib.command.Command;
+import com.arcrobotics.ftclib.command.Command;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;

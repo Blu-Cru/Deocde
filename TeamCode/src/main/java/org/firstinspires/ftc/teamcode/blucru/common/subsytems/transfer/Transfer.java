@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer;
 
-import com.seattlesolvers.solverslib.command.Subsystem;
+import com.arcrobotics.ftclib.command.Subsystem;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.BluColorSensor;
@@ -109,12 +109,12 @@ public class Transfer implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-        telemetry.addData("Left transfer state: ", leftState);
-        telemetry.addData("Middle transfer state: ", middleState);
-        telemetry.addData("Right transfer state: ", rightState);
+//        telemetry.addData("Left transfer state: ", leftState);
+//        telemetry.addData("Middle transfer state: ", middleState);
+//        telemetry.addData("Right transfer state: ", rightState);
 
         for(TransferServo servo : transferServos){
-            servo.telemetry();
+//            servo.telemetry();
         }
     }
 

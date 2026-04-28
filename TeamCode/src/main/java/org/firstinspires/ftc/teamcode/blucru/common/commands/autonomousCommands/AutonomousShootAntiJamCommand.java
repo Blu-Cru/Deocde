@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands;
 
-import com.seattlesolvers.solverslib.command.InstantCommand;
-import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
-import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+import com.arcrobotics.ftclib.command.WaitCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
@@ -20,10 +20,10 @@ public class AutonomousShootAntiJamCommand extends InstantCommand {
                         new WaitCommand(300),
                         new IdleShooterCommand(),
                         new CenterTurretCommand(),
+                        new WaitCommand(400),
+                        new IntakeStartCommand(),
                         new ElevatorMiddleCommand(),
-                        new AllTransferDownCommand(),
-                        new WaitForTurretNearTargetCommand(),
-                        new IntakeStartCommand()
+                        new AllTransferDownCommand()
                 ).schedule();}
         );
     }

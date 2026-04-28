@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@TeleOp(name = "Shooter Reverse Test", group = "test")
+@TeleOp(name = "Shooter Reverse Test", group = "test")
 public class ShooterReverseTestOpMode extends BluLinearOpMode {
 
     private boolean revVelActive = false;

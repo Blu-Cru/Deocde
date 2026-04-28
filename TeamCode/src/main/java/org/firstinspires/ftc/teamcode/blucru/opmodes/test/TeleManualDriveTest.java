@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes.test;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
-//@TeleOp(group =  "test")
+@TeleOp(group =  "test")
 public class TeleManualDriveTest extends BluLinearOpMode {
     @Override
     public void initialize(){

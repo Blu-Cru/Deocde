@@ -6,12 +6,14 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.BluSubsystem;
 
 public class ShooterPod implements BluSubsystem {
     private BluMotorWithEncoder shooter;
+    private Hood hood;
     private ShooterVelocityPID pid;
     private double power;
     private double targetVel;
     private final double idlePower = 0.3;
-    public ShooterPod(BluMotorWithEncoder shooter, ShooterVelocityPID pid){
+    public ShooterPod(BluMotorWithEncoder shooter, Hood hood, ShooterVelocityPID pid){
         this.shooter = shooter;
+        this.hood = hood;
         this.pid = pid;
     }
 
@@ -19,14 +21,17 @@ public class ShooterPod implements BluSubsystem {
     @Override
     public void init() {
         shooter.init();
+        hood.init();
     }
 
     public void read(){
         shooter.read();
+        hood.read();
     }
 
     public void write(){
         shooter.write();
+        hood.write();
     }
 
     @Override
@@ -73,6 +78,14 @@ public class ShooterPod implements BluSubsystem {
 
     public double getTargetPower(){
         return power;
+    }
+
+    public void setHoodAngle(double angle){
+        hood.setShooterAngle(angle);
+    }
+
+    public double getAngle(){
+        return hood.getHoodAngle();
     }
 
     public double getPowerToGoToVel(){

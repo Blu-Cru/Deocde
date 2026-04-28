@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuild
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-//@Autonomous(name = "Test LineToX Only", group = "TEST")
+@Autonomous(name = "Test LineToX Only", group = "TEST")
 public class TestLineToXOnlyAuto extends BluLinearOpMode {
 
     private Path currentPath;
