@@ -24,6 +24,7 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
 
     public static double vel = 900;
     public static double angle = 40;
+    public static double flippedTransferAngleThreshold = 170;
 
     public TransferCommand(boolean turreting) {
         super( () -> {new SequentialCommandGroup(
@@ -32,7 +33,7 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                 new ConditionalCommand(
                         new MoveTurretTo180DegreeTransferCommand(),
                         new CenterTurretCommand(),
-                        ()-> Robot.getInstance().turret.getAngle() < -170
+                        TransferCommand::turretShouldTransferFlipped
                 ),
                 new AutoAimCommand(),
                 new WaitCommand(30),
@@ -49,5 +50,13 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                 ).schedule();
         }
         );
+    }
+
+    private static boolean turretShouldTransferFlipped() {
+        double currentAngle = Robot.getInstance().turret.getAngle();
+        double targetAngle = Robot.getInstance().turret.getTargetPosition();
+
+        return Math.abs(currentAngle) > flippedTransferAngleThreshold
+                || Math.abs(targetAngle) > flippedTransferAngleThreshold;
     }
 }
