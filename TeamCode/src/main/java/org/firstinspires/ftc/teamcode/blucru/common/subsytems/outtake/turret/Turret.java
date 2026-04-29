@@ -48,7 +48,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double kIClose = 0.008;
     public static double kDClose = 0.0009;
     
-    public static double tagAngleGain = 1;
+    public static double tagAngleGain = 1.1;
     public static double tagAngleDeadband = 0.35;
     public static double tagMaxCorrectionAngle = 12;
     public static double tagHandoffMaxTurretError = 30;
@@ -71,8 +71,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public static int goalSweepReadyFrames = 2;
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 5.0;
-    public static double shotLineBlueGainDegPerIn = 0.33;
-    public static double shotLineRedGainDegPerIn = -0.32;
+    public static double shotLineBlueGainDegPerIn = 0.115;
+    public static double shotLineRedGainDegPerIn = -0.115;
     public static double shotLineBlueMaxOffsetDeg = 3.0;
     public static double shotLineRedMaxOffsetDeg = 3.0;
     public static boolean useRobotTurnFeedForward = true;

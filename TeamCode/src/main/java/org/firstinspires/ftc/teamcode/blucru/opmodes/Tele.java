@@ -58,8 +58,8 @@ public class Tele extends BluLinearOpMode{
     public int shot = 0;
     public boolean targetHit = false;
 
-    public static double ELEVATOR_FULL_DELAY_MS = 100;
-    public static int INTAKE_REVERSE_MS = 600;
+    public static double ELEVATOR_FULL_DELAY_MS = 50;
+    public static int INTAKE_REVERSE_MS = 300;
     public static double RELOC_MAX_DIST_IN = 36.0;
     public static double RELOC_BLEND_ALPHA = 0.15;
     public static double RELOC_DEADBAND_IN = 0.5;
@@ -450,8 +450,9 @@ public class Tele extends BluLinearOpMode{
         }
 
         if (driver2.pressedLeftTrigger()){
-            Intake.offset += 5;
-            Intake.offset = ((Intake.offset + 90) % 180 + 180) % 180 - 90;
+            telemetry.addLine("offset increasing");
+            Intake.offset += 100;
+            Intake.offset = ((Intake.offset + 1000) % 2000 + 2000) % 2000 - 1000;
         }
 
         //if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){

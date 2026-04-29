@@ -138,6 +138,7 @@ public class Intake implements BluSubsystem, Subsystem {
                         if (curr < -quarter) curr += half;
 
                         double error = curr - offset;
+                        Globals.telemetry.addData("intake error", error);
                         error %= half;
                         if (error >  quarter) error -= half;
                         if (error < -quarter) error += half;
@@ -160,10 +161,11 @@ public class Intake implements BluSubsystem, Subsystem {
 
     @Override
     public void telemetry(Telemetry telemetry) {
-       /* motor.telemetry();
+        motor.telemetry();
         telemetry.addData("Pos", encoder.getCurrentPos());
         telemetry.addData("Power", motor.getPower());
-        telemetry.addData("Intake State", state);*/
+        telemetry.addData("Offset",offset);
+        telemetry.addData("Intake State", state);
     }
 
     @Override

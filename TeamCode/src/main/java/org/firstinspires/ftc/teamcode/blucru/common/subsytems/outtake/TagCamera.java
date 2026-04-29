@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
 
+import android.provider.DocumentsContract;
 import android.util.Size;
 
 import com.seattlesolvers.solverslib.command.Subsystem;
@@ -56,8 +57,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     KalmanFilter xFilter, yFilter;
     double lastFilterX, lastFilterY;
     // Tag heading is the field-frame yaw of the tag's surface normal, in radians.
-    final Pose2d TAG_20 = new Pose2d(-58, -58, 0);
-    final Pose2d TAG_24 = new Pose2d(-58, 58, 0);
+    final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toRadians(54));
+    final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toRadians(-54));
 
 
     public TagCamera(){
@@ -303,11 +304,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         computedBotposeThisLoop = true;
         Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-        double headingOffset = normalizeAngle(observedRobotHeading - odoHeadingAtCapture);
-        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
         botposeOnTheMove = new Pose2d(
                 currentPose.vec().addNotInPlace(offset),
-                currentObservedHeading);
+                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
         double curX = currentPose.getX();
         double curY = currentPose.getY();
         xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());

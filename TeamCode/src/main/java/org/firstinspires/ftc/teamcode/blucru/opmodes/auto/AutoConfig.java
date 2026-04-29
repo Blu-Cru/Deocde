@@ -33,7 +33,7 @@ public abstract class AutoConfig {
         } else if (givenauto == AUTOS.CLOSE_BLUE_MOTIF) {
             autoToReturn = new CloseBlueAutoMotif();
         } else if (givenauto == AUTOS.CLOSE_RED_MOTIF) {
-            autoToReturn = new CloseBlueAutoMotif();
+            autoToReturn = new CloseRedAutoMotif();
         }
 
         // Simulating the end of synchronous instance creation for path generation.
