@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -244; // TODO: Change for Red
+    double turretAnglePreaim = -250; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;

@@ -219,7 +219,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10,25),
                         new Point2d(12, 33),
                         new Point2d(12, 46),
-                        new Point2d(7, 57)
+                        new Point2d(7, 58)
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
