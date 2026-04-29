@@ -462,8 +462,13 @@ public class Tele extends BluLinearOpMode{
           //  new TiltCommand().schedule();
         //}
 
-        if (driver2.pressedLeftStickButton() || driver2.pressedRightStickButton()){
+        if (driver2.pressedLeftStickButton()){
                 usingBrushlands = !usingBrushlands;
+        }
+
+        //toggle
+        if (driver2.pressedRightStickButton()){
+            turret.useShotLineOffset = !turret.useShotLineOffset;
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
