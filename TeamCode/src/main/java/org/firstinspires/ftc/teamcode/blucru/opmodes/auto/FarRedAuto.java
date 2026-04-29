@@ -281,7 +281,7 @@ public class FarRedAuto extends BaseAuto {
                         // INTAKE FIRST SET
                         new Point2d(36, 49)
                 }, 1700)
-                .waitMilliseconds(200)
+//                .waitMilliseconds(200)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(500, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
@@ -297,7 +297,7 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(47, 24),
                         shootingPoint
                 }, 2000)
-                .waitMilliseconds(600)
+                .waitMilliseconds(800)
                 .callback(() -> {
                     new AutonomousShootCommand().schedule();
                 })
@@ -340,7 +340,7 @@ public class FarRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(pickupWallX, pickupWallY-9),
+                        new Point2d(pickupWallX+2, pickupWallY-9),
                         new Point2d(pickupWallX, pickupWallY+3)
                 }, 1500)
                 .callback(() -> {
