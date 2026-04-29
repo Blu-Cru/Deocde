@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake;
 
+import android.provider.DocumentsContract;
 import android.util.Size;
 
 import com.seattlesolvers.solverslib.command.Subsystem;
@@ -303,11 +304,9 @@ public class TagCamera implements BluSubsystem, Subsystem {
         computedBotposeThisLoop = true;
         Vector2d oldVec = poseAtCapture.vec();
         Vector2d offset = botpose.vec().subtractNotInPlace(oldVec);
-        double headingOffset = normalizeAngle(observedRobotHeading - odoHeadingAtCapture);
-        double currentObservedHeading = normalizeAngle(currentPose.getH() + headingOffset);
         botposeOnTheMove = new Pose2d(
                 currentPose.vec().addNotInPlace(offset),
-                currentObservedHeading);
+                Robot.getInstance().sixWheelDrivetrain.getPos().getH());
         double curX = currentPose.getX();
         double curY = currentPose.getY();
         xFilter.update(curX - lastFilterX, botposeOnTheMove.getX());
