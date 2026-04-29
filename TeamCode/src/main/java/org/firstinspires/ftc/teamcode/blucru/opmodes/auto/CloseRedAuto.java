@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
@@ -38,7 +39,7 @@ public class CloseRedAuto extends BaseAuto {
     double veloMiddle = 1230;
     double hood = 40;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
-    private Point2d shootingPose = new Point2d(1.76, 7.58);
+    private Point2d shootingPose = new Point2d(-4, 12);
 
     enum State {
         PRELOAD, MIDDLE_SPIKE, FIRST_GATE_CYCLE, GATE_CYCLE, CLOSE_SPIKE,
@@ -171,6 +172,13 @@ public class CloseRedAuto extends BaseAuto {
                         : new AutonomousTransferThenLockOnCommand(hoodAngle)
         ).schedule();
     }
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs) {
+        new SequentialCommandGroup(
+                new WaitCommand(delayBeforeTransferMs),
+                new AutonomousTransferThenLockOnCommand(),
+                new AutoAimCommand()
+        ).schedule();
+    }
 
     /**
      *
@@ -214,12 +222,12 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(-14.65, 30.02),
                         new Point2d(3.07, 19.55),
                         new Point2d(10.21,24.36),
-                }, 2300)
+                }, 2000)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(10.21,24.36),
                         new Point2d(12.42, 32.30),
                         new Point2d(12.76, 45.30),
-                        new Point2d(8.09, 57.43)
+                        new Point2d(8.09, 56.43)
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
@@ -245,18 +253,18 @@ public class CloseRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
-                        new Point2d(14.74, 44.24)
+                        new Point2d(14.74-1, 44.24)
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(14.74, 44.24),
-                        new Point2d(13.87, 49.27),
-                        new Point2d(11.22, 62.34)}, 700)
+                        new Point2d(14.74-1, 44.24),
+                        new Point2d(13.87-1, 49.27),
+                        new Point2d(11.22-1, 62.34)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(10.22, 62.37),
+                        new Point2d(11.22-1, 62.37),
                         new Point2d(15.92, 51.22),
                         new Point2d(12.34,29.30),
                         shootingPose
@@ -271,12 +279,12 @@ public class CloseRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
-                        new Point2d(14.74, 44.24)
+                        new Point2d(14.74-1, 44.24)
                 }, 1000)
                 .addPurePursuitPath(new Point2d[]{
-                        new Point2d(14.74, 44.24),
-                        new Point2d(13.87, 49.27),
-                        new Point2d(11.22, 62.34)}, 700)
+                        new Point2d(14.74-1, 44.24),
+                        new Point2d(13.87-1, 49.27),
+                        new Point2d(11.22-1, 62.34)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
@@ -284,7 +292,7 @@ public class CloseRedAuto extends BaseAuto {
 
 //                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(10.22, 62.37),
+                        new Point2d(11.22-1, 62.37),
                         new Point2d(15.92, 51.22),
                         new Point2d(12.34,29.30),
                         shootingPose
@@ -317,22 +325,22 @@ public class CloseRedAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         shootingPose,
                         new Point2d(-5.55, 33.78),
-                        new Point2d(-9.91, 57.91)
+                        new Point2d(-9.91, 59.91)
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 35.0);
+                    scheduleVelocityTransferThenLockOn(400);
                 })
 
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-13.99, 55.01),
+                        new Point2d(-9.91, 59.91),
 //                        new Point2d(-6, -19),
-                        new Point2d(-16.05,15.05)
+                        new Point2d(-16.05,20),
                 }, 2000)
 //                                .addTurnTo(-30, 1000)
-                .waitMilliseconds(400)
+                .waitMilliseconds(700)
                 .callback(() -> new AutonomousShootCommand().schedule())
-                .waitMilliseconds(300)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -366,8 +374,8 @@ public class CloseRedAuto extends BaseAuto {
     private Path buildParkPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(-16.05,15.05),
-                        new Point2d(9.05, 18.39)
+                        new Point2d(-16.05,20),
+                        new Point2d(-16, 60)
                 }, 5000)
                 .build();
     }
