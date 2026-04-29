@@ -196,7 +196,7 @@ public class CloseRedAuto extends BaseAuto {
                                     new AllTransferDownCommand()
                             ),
                             new WaitCommand(200),
-                            new MoveTurretTo180DegreeTransferCommand(),
+                            new CenterTurretCommand(),
                             new WaitForTurretNearTargetCommand(),
                             new IntakeStartCommand()).schedule();
                 })
@@ -207,7 +207,9 @@ public class CloseRedAuto extends BaseAuto {
     private Path buildSpikeMiddlePath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
+                        //purposely off
                         new Point2d(-40, 41),
+                        // small guide point for the turn
                         new Point2d(-27.5, 35),
                         new Point2d(-15, 30),
                         new Point2d(3, 20),
@@ -221,7 +223,7 @@ public class CloseRedAuto extends BaseAuto {
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(100, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(12, 55),
@@ -231,7 +233,9 @@ public class CloseRedAuto extends BaseAuto {
                 }, 1500, true)
                 .waitMilliseconds(500)
                 .callback(() -> {
-                        new AutonomousShootFlipTurretCommand().schedule();
+                    new SequentialCommandGroup(
+                            new AutonomousShootCommand()
+                    ).schedule();
                 })
                 .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
                 .build();
@@ -249,7 +253,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10, 60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(9, 60),
@@ -258,7 +262,7 @@ public class CloseRedAuto extends BaseAuto {
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(500)
-                .callback(() -> new AutonomousShootFlipTurretCommand().schedule())
+                .callback(() -> new AutonomousShootCommand().schedule())
                 .waitMilliseconds(200)
                 .build();
     }
@@ -275,7 +279,7 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10, 60)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
 
 //                .addTurnTo(-90,500)
@@ -291,7 +295,7 @@ public class CloseRedAuto extends BaseAuto {
                         new WaitCommand(200),
                         new ParallelCommandGroup(
                                 new IdleShooterCommand(),
-                                new MoveTurretTo180DegreeTransferCommand(),
+                                new CenterTurretCommand(),
                                 new ElevatorDownCommand(),
                                 new AllTransferDownCommand()
                         ),
