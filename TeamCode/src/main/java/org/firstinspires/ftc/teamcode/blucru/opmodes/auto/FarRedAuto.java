@@ -30,13 +30,13 @@ public class FarRedAuto extends BaseAuto {
     double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(48, 9);
+    Point2d shootingPoint = new Point2d(47, 8);
 
     double hood = 50;
 
-    double pickupWallY = 64; // TODO: Change for Red
-    double pickupWallX = 61; // TODO: Change for Red
-    private static final double CYCLE_HP_PATH_MIN_X = 54.0; // TODO: Change for Red
+    double pickupWallY = 63; // TODO: Change for Red
+    double pickupWallX = 60; // TODO: Change for Red
+    private static final double CYCLE_HP_PATH_MIN_X = 53.0; // TODO: Change for Red
 
     enum State {
         PRELOAD,
@@ -58,7 +58,7 @@ public class FarRedAuto extends BaseAuto {
 
     @Override
     public Pose2d getStartPose() {
-        return new Pose2d(63, 7, Math.toRadians(90));
+        return new Pose2d(62, 6, Math.PI / 2);
     }
 
     @Override
@@ -236,8 +236,8 @@ public class FarRedAuto extends BaseAuto {
     private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 24; // x value the closest we would ever want to intake towards the gate
-            double maxX = 62; // max x value we would want to intake towards the wall
+            double minX = 23; // x value the closest we would ever want to intake towards the gate
+            double maxX = 61; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
             return true;
         }
@@ -255,8 +255,8 @@ public class FarRedAuto extends BaseAuto {
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(63, 7),
-                        new Point2d(63, 8)
+                        new Point2d(62, 6),
+                        new Point2d(62, 7)
                 }, 50)
                 .callback(()->{
                     new SequentialCommandGroup(
@@ -276,10 +276,10 @@ public class FarRedAuto extends BaseAuto {
         // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(63, 8),
-                        new Point2d(47, 41),
+                        new Point2d(62, 7),
+                        new Point2d(46, 40),
                         // INTAKE FIRST SET
-                        new Point2d(37, 50)
+                        new Point2d(36, 49)
                 }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
@@ -293,8 +293,8 @@ public class FarRedAuto extends BaseAuto {
         // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(40, 40),
-                        new Point2d(48, 25),
+                        new Point2d(39, 39),
+                        new Point2d(47, 24),
                         shootingPoint
                 }, 2000)
                 .waitMilliseconds(600)
@@ -309,9 +309,9 @@ public class FarRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(57, 45),
-                        new Point2d(60, 55),
-                        new Point2d(61, pickupWallY)
+                        new Point2d(56, 44),
+                        new Point2d(59, 54),
+                        new Point2d(60, pickupWallY)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
@@ -324,7 +324,7 @@ public class FarRedAuto extends BaseAuto {
     private Path buildShootHPPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(62, pickupWallY),
+                        new Point2d(61, pickupWallY),
                         shootingPoint
                 }, 3000, true)
                 .addTurnTo(90, 250)
@@ -369,7 +369,7 @@ public class FarRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
                         shootingPoint,
-                        new Point2d(45,9)
+                        new Point2d(44,8)
                 },100)
                 .callback(()->{
                     new SequentialCommandGroup(
@@ -380,7 +380,7 @@ public class FarRedAuto extends BaseAuto {
                 })
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(58, 50)
+                        new Point2d(57, 49)
                 }, 5000)
                 .build();
     }
