@@ -57,8 +57,8 @@ public class TagCamera implements BluSubsystem, Subsystem {
     KalmanFilter xFilter, yFilter;
     double lastFilterX, lastFilterY;
     // Tag heading is the field-frame yaw of the tag's surface normal, in radians.
-    final Pose2d TAG_20 = new Pose2d(-58, -58, 0);
-    final Pose2d TAG_24 = new Pose2d(-58, 58, 0);
+    final Pose2d TAG_20 = new Pose2d(-58, -58, Math.toRadians(54));
+    final Pose2d TAG_24 = new Pose2d(-58, 58, Math.toRadians(-54));
 
 
     public TagCamera(){

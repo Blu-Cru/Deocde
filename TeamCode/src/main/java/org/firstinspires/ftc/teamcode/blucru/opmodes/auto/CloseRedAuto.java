@@ -34,11 +34,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 
 public class CloseRedAuto extends BaseAuto {
-    double velo = 1130;
+    double velo = 1170;
     double veloMiddle = 1230;
     double hood = 40;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
-    private Point2d shootingPose = new Point2d(4, 8);
+    private Point2d shootingPose = new Point2d(2, 8);
 
     enum State {
         PRELOAD, MIDDLE_SPIKE, FIRST_GATE_CYCLE, GATE_CYCLE, CLOSE_SPIKE,
@@ -125,7 +125,7 @@ public class CloseRedAuto extends BaseAuto {
 
     public void onStart() {
         Globals.matchTime.reset();
-        shooter.shootWithVelocityIndependent(925,950,925);
+        shooter.shootWithVelocityIndependent(925,950,950);
         turret.setAngle(2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
@@ -250,13 +250,13 @@ public class CloseRedAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(14, 45),
                         new Point2d(13, 50),
-                        new Point2d(10, 60)}, 700)
+                        new Point2d(10, 63)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(9, 60),
+                        new Point2d(9, 63),
                         new Point2d(15, 52),
                         new Point2d(12,30),
                         shootingPose
@@ -276,7 +276,7 @@ public class CloseRedAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(14, 45),
                         new Point2d(13, 50),
-                        new Point2d(10, 60)}, 700)
+                        new Point2d(10, 63)}, 700)
                 .waitUntil(() -> elevator.isFull(),1500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(300, velo, veloMiddle, velo, hood);
@@ -284,7 +284,7 @@ public class CloseRedAuto extends BaseAuto {
 
 //                .addTurnTo(-90,500)
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(9, 60),
+                        new Point2d(9, 63),
                         new Point2d(15, 52),
                         new Point2d(12,30),
                         shootingPose
