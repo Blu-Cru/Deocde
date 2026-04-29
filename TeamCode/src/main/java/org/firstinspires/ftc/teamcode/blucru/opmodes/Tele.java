@@ -119,6 +119,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
+                    gamepad2.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
@@ -161,6 +162,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
+                    gamepad2.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
@@ -196,6 +198,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
+                    gamepad2.rumble(rumbleDur);
                     shot = 0;
                     new TransferCommand(turreting).schedule();
                 })
