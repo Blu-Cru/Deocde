@@ -72,7 +72,7 @@ public class Turret implements BluSubsystem, Subsystem {
     public static boolean useShotLineOffset = true;
     public static double shotLineOffsetDeadbandIn = 5.0;
     public static double shotLineBlueGainDegPerIn = 0.115;
-    public static double shotLineRedGainDegPerIn = -0.115;
+    public static double shotLineRedGainDegPerIn = -0.17;
     public static double shotLineBlueMaxOffsetDeg = 3.0;
     public static double shotLineRedMaxOffsetDeg = 3.0;
     public static boolean useRobotTurnFeedForward = true;

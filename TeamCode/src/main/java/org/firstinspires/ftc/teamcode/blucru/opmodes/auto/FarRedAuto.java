@@ -7,6 +7,7 @@ import com.seattlesolvers.solverslib.command.WaitCommand;
 import com.sfdev.assembly.state.StateMachine;
 import com.sfdev.assembly.state.StateMachineBuilder;
 
+import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousShootFlipTurretCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.AutonomousTransferThenLockOnCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.commands.autonomousCommands.FarAutoTransferCommand;
@@ -14,6 +15,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.pathing.Path;
 import org.firstinspires.ftc.teamcode.blucru.common.pathing.SixWheelPIDPathBuilder;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.CenterTurretCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.LockOnGoalCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Alliance;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
@@ -22,7 +24,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -250; // TODO: Change for Red
+    double turretAnglePreaim = 116; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -32,7 +34,7 @@ public class FarRedAuto extends BaseAuto {
 
     double hood = 50;
 
-    double pickupWallY = 62; // TODO: Change for Red
+    double pickupWallY = 64; // TODO: Change for Red
     double pickupWallX = 61; // TODO: Change for Red
     private static final double CYCLE_HP_PATH_MIN_X = 54.0; // TODO: Change for Red
 
@@ -191,7 +193,7 @@ public class FarRedAuto extends BaseAuto {
         shooter.shootWithVelocityIndependent(1460, 1520, 1500);
         sixWheel.setPosition(startPose);
         Globals.setAlliance(Alliance.RED);
-
+        turret.useShotLineOffset = false;
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
         sm.start();
@@ -258,15 +260,13 @@ public class FarRedAuto extends BaseAuto {
                 }, 50)
                 .callback(()->{
                     new SequentialCommandGroup(
-                            new TurnTurretToPosCommand(-160),
-                            new WaitCommand(400),
-                            new TurnTurretToPosCommand(turretAnglePreaim)
+                            new LockOnGoalCommand()
                     ).schedule();
                 })
                 .waitMilliseconds(1700)
                 .callback(() -> {
                     new SequentialCommandGroup(
-                            new AutonomousShootFlipTurretCommand()).schedule();
+                            new AutonomousShootCommand()).schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -299,7 +299,7 @@ public class FarRedAuto extends BaseAuto {
                 }, 2000)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new AutonomousShootFlipTurretCommand().schedule();
+                    new AutonomousShootCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -309,9 +309,9 @@ public class FarRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(55, 45),
-                        new Point2d(58, 55),
-                        new Point2d(60, pickupWallY+1)
+                        new Point2d(57, 45),
+                        new Point2d(60, 55),
+                        new Point2d(61, pickupWallY)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
@@ -327,10 +327,10 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(62, pickupWallY),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(80, 500)
+                .addTurnTo(90, 250)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new AutonomousShootFlipTurretCommand().schedule();
+                    new AutonomousShootCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -356,10 +356,10 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY),
                         shootingPoint
                 }, 3000, true)
-                .addTurnTo(80, 500)
+                .addTurnTo(90, 250)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new AutonomousShootFlipTurretCommand().schedule();
+                    new AutonomousShootCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -373,9 +373,9 @@ public class FarRedAuto extends BaseAuto {
                 },100)
                 .callback(()->{
                     new SequentialCommandGroup(
-                            new TurnTurretToPosCommand(-150),
-                            new WaitCommand(300),
-                            new CenterTurretCommand()
+//                            new TurnTurretToPosCommand(-150),
+//                            new WaitCommand(300),
+//                            new CenterTurretCommand()
                     ).schedule();
                 })
                 .addPurePursuitPath(new Point2d[] {
