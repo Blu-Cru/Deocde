@@ -213,7 +213,7 @@ public class CloseBlueAuto extends BaseAuto {
                         new Point2d(-15.95, -28.63),
                         new Point2d(2.35, -19.18),
                         new Point2d(9.19,-24.39),
-                }, 2300)
+                }, 2000)
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(9.19,-24.39),
                         new Point2d(10.95, -32.45),
@@ -222,7 +222,7 @@ public class CloseBlueAuto extends BaseAuto {
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10.28, -54.44),
@@ -236,7 +236,8 @@ public class CloseBlueAuto extends BaseAuto {
                             new AutonomousShootFlipTurretCommand()
                     ).schedule();
                 })
-                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
+                .waitMilliseconds(300)
+//                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 500)
                 .build();
     }
 
@@ -378,7 +379,7 @@ public class CloseBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-16.49,-13.61),
-                        new Point2d(8.37, -18.37)
+                        new Point2d(-16.49, -30)
                 }, 5000)
                 .build();
     }
