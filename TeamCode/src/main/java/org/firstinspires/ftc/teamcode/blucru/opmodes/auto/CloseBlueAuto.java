@@ -263,7 +263,7 @@ public class CloseBlueAuto extends BaseAuto {
                 }, 2000, true)
                 .waitMilliseconds(400)
                 .callback(() -> new AutonomousShootFlipTurretCommand().schedule())
-                .waitMilliseconds(200)
+                .waitMilliseconds(300)
                 .build();
     }
 
@@ -302,7 +302,7 @@ public class CloseBlueAuto extends BaseAuto {
                         new WaitForTurretNearTargetCommand(),
                         new IntakeStartCommand()
                 ).schedule())
-                .waitUntil(() -> Robot.getInstance().shooter.hasShot(3), 200)
+                .waitMilliseconds(300)
                 .build();
     }
 
