@@ -227,14 +227,14 @@ public class CloseRedAuto extends BaseAuto {
                         new Point2d(10.21,24.36),
                         new Point2d(12.42, 32.30),
                         new Point2d(12.76, 45.30),
-                        new Point2d(8.09, 56.43)
+                        new Point2d(12, 56.43)
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
                     scheduleVelocityTransferThenLockOn(100, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(13.00, 54.29),
+                        new Point2d(12, 56.29),
                         new Point2d(15.92, 51.22),
                         new Point2d(12.34,29.30),
                         shootingPose
