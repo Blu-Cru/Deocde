@@ -128,7 +128,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .state(State.INTAKING)
                 .loop(() -> {
-                    if (gamepad1.left_trigger > 0.2){
+                    if (gamepad1.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){
                         intake.setIn();
                     } else if (gamepad1.right_trigger > 0.2){
                         intake.setOut();
@@ -304,13 +304,15 @@ public class Tele extends BluLinearOpMode{
 
         //Shooter
         if(driver2.pressedTouchpad()){
-            gamepad2.rumble(350);
-            shooter.redAlliance = true;
-            Globals.setAlliance(Alliance.RED);
-        } else if(driver2.pressedRightTrigger()){
-            gamepad2.rumble(350);
-            shooter.redAlliance = false;
-            Globals.setAlliance(Alliance.BLUE);
+            if (Globals.alliance == Alliance.BLUE) {
+                gamepad2.rumble(350);
+                shooter.redAlliance = true;
+                Globals.setAlliance(Alliance.RED);
+            } else {
+                gamepad2.rumble(350);
+                shooter.redAlliance = false;
+                Globals.setAlliance(Alliance.BLUE);
+            }
         }
 
         if(shooter.targetHit() == true && targetHit == false){
