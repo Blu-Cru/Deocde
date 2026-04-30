@@ -30,11 +30,12 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
         super( () -> {new SequentialCommandGroup(
                 new ParallelizeIntakeCommand(),
                 new AllTransferDownCommand(),
-                new ConditionalCommand(
-                        new MoveTurretTo180DegreeTransferCommand(),
-                        new CenterTurretCommand(),
-                        TransferCommand::turretShouldTransferFlipped
-                ),
+//                new ConditionalCommand(
+//                        new MoveTurretTo180DegreeTransferCommand(),
+//                        new CenterTurretCommand(),
+//                        TransferCommand::turretShouldTransferFlipped
+//                ),
+                new CenterTurretCommand(),
                 new AutoAimCommand(),
                 new WaitCommand(30),
                 new ElevatorUpCommand(),

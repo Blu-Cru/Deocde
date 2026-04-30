@@ -129,7 +129,7 @@ public class Tele extends BluLinearOpMode{
                 })
                 .state(State.INTAKING)
                 .loop(() -> {
-                    if (gamepad1.left_trigger > 0.2){
+                    if (gamepad1.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){
                         intake.setIn();
                     } else if (gamepad1.right_trigger > 0.2){
                         intake.setOut();
@@ -152,14 +152,14 @@ public class Tele extends BluLinearOpMode{
                             new ShootReverseWithVelocityCommand(350)
                     ).schedule();
                 })
-                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
-                    gamepad1.rumble(rumbleDur);
-                    if (Math.abs(turret.getAngle()) < 5){
-                        new MoveTurretTo180DegreeTransferCommand().schedule();
-                    } else {
-                        new MoveTurretFrom180To0TransferCommand().schedule();
-                    }
-                })
+//                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
+//                    gamepad1.rumble(rumbleDur);
+//                    if (Math.abs(turret.getAngle()) < 5){
+//                        new MoveTurretTo180DegreeTransferCommand().schedule();
+//                    } else {
+//                        new MoveTurretFrom180To0TransferCommand().schedule();
+//                    }
+//                })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     gamepad2.rumble(rumbleDur);
@@ -184,18 +184,18 @@ public class Tele extends BluLinearOpMode{
                 .transition(() -> gamepad1.right_trigger < 0.2, State.INTAKING, () ->{
                     new ElevatorDownCommand().schedule();
                 })
-                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
-                    gamepad1.rumble(rumbleDur);
-                    if (Math.abs(turret.getAngle()) < 5){
-                        new SequentialCommandGroup(
-                                new TurnTurretToPosCommand(-90),
-                                new WaitCommand(200),
-                                new MoveTurretTo180DegreeTransferCommand()
-                        ).schedule();
-                    } else {
-                        new MoveTurretFrom180To0TransferCommand().schedule();
-                    }
-                })
+//                .transition(() -> driver1.pressedDpadDown(), State.INTAKING, () ->{
+//                    gamepad1.rumble(rumbleDur);
+//                    if (Math.abs(turret.getAngle()) < 5){
+//                        new SequentialCommandGroup(
+//                                new TurnTurretToPosCommand(-90),
+//                                new WaitCommand(200),
+//                                new MoveTurretTo180DegreeTransferCommand()
+//                        ).schedule();
+//                    } else {
+//                        new MoveTurretFrom180To0TransferCommand().schedule();
+//                    }
+//                })
                 .transition(() -> driver1.pressedLeftBumper() || driver2.pressedRightBumper(), State.DRIVING_TO_SHOOT, () -> {
                     gamepad1.rumble(rumbleDur);
                     gamepad2.rumble(rumbleDur);
@@ -307,13 +307,15 @@ public class Tele extends BluLinearOpMode{
 
         //Shooter
         if(driver2.pressedTouchpad()){
-            gamepad2.rumble(350);
-            shooter.redAlliance = true;
-            Globals.setAlliance(Alliance.RED);
-        } else if(driver2.pressedRightTrigger()){
-            gamepad2.rumble(350);
-            shooter.redAlliance = false;
-            Globals.setAlliance(Alliance.BLUE);
+            if (Globals.alliance == Alliance.BLUE) {
+                gamepad2.rumble(350);
+                shooter.redAlliance = true;
+                Globals.setAlliance(Alliance.RED);
+            } else {
+                gamepad2.rumble(350);
+                shooter.redAlliance = false;
+                Globals.setAlliance(Alliance.BLUE);
+            }
         }
 
         if(shooter.targetHit() == true && targetHit == false){
