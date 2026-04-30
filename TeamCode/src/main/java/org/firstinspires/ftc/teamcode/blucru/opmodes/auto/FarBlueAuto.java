@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 public class FarBlueAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -116;
+    double turretAnglePreaim = -117;
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -48,7 +48,7 @@ public class FarBlueAuto extends BaseAuto {
     double hood = 50;
 
     double pickupWallY = -62;
-    double pickupWallX = 60; // default for hp
+    double pickupWallX = 61; // default for hp
     private static final double CYCLE_HP_PATH_MIN_X = 53.0;
 
     enum State {
@@ -293,7 +293,7 @@ public class FarBlueAuto extends BaseAuto {
                 }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(500, shootVeloLeft,shootVeloMiddle,shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft,shootVeloMiddle,shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -311,7 +311,7 @@ public class FarBlueAuto extends BaseAuto {
                 .callback(() -> {
                     new AutonomousShootFlipTurretCommand().schedule();
                 })
-                .waitMilliseconds(2000)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -319,13 +319,13 @@ public class FarBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(54, -45),
-                        new Point2d(57, -55),
-                        new Point2d(59, pickupWallY-1)
+                        new Point2d(56, -45),
+                        new Point2d(59, -55),
+                        new Point2d(61, pickupWallY-1)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(800, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -355,7 +355,7 @@ public class FarBlueAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY-3)
                 }, 1500)
                 .callback(() -> {
-                        scheduleVelocityTransferThenLockOn(600, shootVeloLeft,shootVeloMiddle,shootVeloRight,hood);
+                        scheduleVelocityTransferThenLockOn(400, shootVeloLeft,shootVeloMiddle,shootVeloRight,hood);
                 })
                 .waitMilliseconds(0)
                 .build();

@@ -193,7 +193,6 @@ public class FarRedAuto extends BaseAuto {
         shooter.shootWithVelocityIndependent(1460, 1520, 1500);
         sixWheel.setPosition(startPose);
         Globals.setAlliance(Alliance.RED);
-        turret.useShotLineOffset = false;
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
         sm.start();
@@ -283,7 +282,7 @@ public class FarRedAuto extends BaseAuto {
                 }, 1700)
 //                .waitMilliseconds(200)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(500, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -311,11 +310,11 @@ public class FarRedAuto extends BaseAuto {
                         shootingPoint,
                         new Point2d(56, 44),
                         new Point2d(59, 54),
-                        new Point2d(60, pickupWallY)
+                        new Point2d(61, pickupWallY)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(800, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -344,7 +343,7 @@ public class FarRedAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY+3)
                 }, 1500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(600, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
