@@ -345,10 +345,10 @@ public class Tele extends BluLinearOpMode{
         //Turret
 
         //auto-aim
-        if (driver2.pressedLeftBumper() && turreting) {
+        if (driver2.pressedDpadUp() && turreting) {
             gamepad2.rumble(1000);
             turreting = false;
-        } else if (driver2.pressedLeftBumper() && !turreting) {
+        } else if (driver2.pressedDpadUp() && !turreting) {
             gamepad2.rumble(1000);
             turreting = true;
         }
