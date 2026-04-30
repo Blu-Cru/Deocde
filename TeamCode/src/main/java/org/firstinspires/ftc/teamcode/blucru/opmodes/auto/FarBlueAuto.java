@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
 public class FarBlueAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = -117;
+    double turretAnglePreaim = -116;
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -271,7 +271,7 @@ public class FarBlueAuto extends BaseAuto {
                         new Point2d(62, -8)
                 }, 50)
                 .callback(()->{
-                    new TurnTurretToPosCommand(turretAnglePreaim).schedule();
+                    new LockOnGoalCommand().schedule();
                 })
                 .waitMilliseconds(1700)
                 .callback(() -> {
@@ -319,13 +319,13 @@ public class FarBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(56, -45),
-                        new Point2d(59, -55),
-                        new Point2d(61, pickupWallY-1)
+                        new Point2d(57, -45),
+                        new Point2d(60, -55),
+                        new Point2d(62, pickupWallY-1)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(600, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -370,7 +370,7 @@ public class FarBlueAuto extends BaseAuto {
                 .addTurnTo(-80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new AutonomousShootCommand().schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();

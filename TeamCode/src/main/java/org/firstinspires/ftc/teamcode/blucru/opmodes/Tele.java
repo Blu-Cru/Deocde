@@ -131,7 +131,7 @@ public class Tele extends BluLinearOpMode{
                 .loop(() -> {
                     if (gamepad1.left_trigger > 0.2 || gamepad2.right_trigger > 0.2){
                         intake.setIn();
-                    } else if (gamepad1.right_trigger > 0.2){
+                    } else if (gamepad1.right_trigger > 0.2 || gamepad2.left_trigger > 0.2){
                         intake.setOut();
                     } else {
                         intake.setPID();
@@ -401,8 +401,9 @@ public class Tele extends BluLinearOpMode{
 
 
         if (driver1.pressedY()){
-            gamepad2.rumble(200);
-            autoTagUpdating = !autoTagUpdating;
+            telemetry.addLine("offset increasing");
+            Intake.offset += 100;
+            Intake.offset = ((Intake.offset + 1000) % 2000 + 2000) % 2000 - 1000;
         }
 
         //manual heading update
@@ -452,12 +453,6 @@ public class Tele extends BluLinearOpMode{
                     Globals.telemetry.addLine("Bad re-loc :( ");
                 }
             }
-        }
-
-        if (driver2.pressedLeftTrigger()){
-            telemetry.addLine("offset increasing");
-            Intake.offset += 100;
-            Intake.offset = ((Intake.offset + 1000) % 2000 + 2000) % 2000 - 1000;
         }
 
         //if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){

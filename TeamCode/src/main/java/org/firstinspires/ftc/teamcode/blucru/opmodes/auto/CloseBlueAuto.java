@@ -17,6 +17,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.elevator.ElevatorDownCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStartCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.AutoAimCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.IdleShooterCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetShooterVelocityIndependentCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.TurnOffShooterCommand;
@@ -42,7 +43,7 @@ public class CloseBlueAuto extends BaseAuto {
     double hood = 40;
     double intakeCycleSimulatedVoltage = 12.5;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
-    private Point2d shootingPose = new Point2d(3.71, -7.22);
+    private Point2d shootingPose = new Point2d(-4, -12);
 
     enum State {
         PRELOAD, MIDDLE_SPIKE, FIRST_GATE_CYCLE, GATE_CYCLE, CLOSE_SPIKE,
@@ -175,6 +176,13 @@ public class CloseBlueAuto extends BaseAuto {
                         : new AutonomousTransferThenLockOnCommand(hoodAngle)
         ).schedule();
     }
+    private void scheduleVelocityTransferThenLockOn(int delayBeforeTransferMs) {
+        new SequentialCommandGroup(
+                new AutoAimCommand(),
+                new WaitCommand(delayBeforeTransferMs),
+                new AutonomousTransferThenLockOnCommand()
+        ).schedule();
+    }
 
     /**
      *
@@ -210,7 +218,7 @@ public class CloseBlueAuto extends BaseAuto {
                         new Point2d(9.19,-24.39),
                         new Point2d(10.95, -32.45),
                         new Point2d(10.55, -45.45),
-                        new Point2d(5.22, -56.29)
+                        new Point2d(10, -56.29)
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
@@ -312,7 +320,7 @@ public class CloseBlueAuto extends BaseAuto {
                 }, 1300)
                 .waitMilliseconds(400)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(400, velo - 120, veloMiddle - 120, velo - 120, 30.0);
+                    scheduleVelocityTransferThenLockOn(400);
                 })
 
                 .addPurePursuitPath(new Point2d[] {

@@ -308,9 +308,9 @@ public class FarRedAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(56, 44),
-                        new Point2d(59, 54),
-                        new Point2d(61, pickupWallY)
+                        new Point2d(57, 40),
+                        new Point2d(60, 54),
+                        new Point2d(62, pickupWallY)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
