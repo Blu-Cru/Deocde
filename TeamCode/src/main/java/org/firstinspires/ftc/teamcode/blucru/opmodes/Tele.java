@@ -54,7 +54,7 @@ public class Tele extends BluLinearOpMode{
 
     public static boolean dashfield = true;
     public boolean autoTagUpdating = false;
-    private boolean usingBrushlands = true;
+    private boolean usingBrushlands = false;
     public int rumbleDur = 200;
     public int shot = 0;
     public boolean targetHit = false;
