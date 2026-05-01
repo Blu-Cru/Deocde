@@ -39,9 +39,8 @@ public class CloseBlueAuto extends BaseAuto {
     double preAimTurretAngle = -120;
     double gateCyclePreAimAngle = -120;
     double velo = 1170;
-    double veloMiddle = 1270;
-    double hood = 40;
-    double intakeCycleSimulatedVoltage = 12.5;
+    double veloMiddle = 1230;
+    double hood = 43;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
     private Point2d shootingPose = new Point2d(-4, -12);
 
@@ -222,7 +221,7 @@ public class CloseBlueAuto extends BaseAuto {
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(0, velo, veloMiddle, velo, hood);
+                    scheduleVelocityTransferThenLockOn(200, velo, veloMiddle, velo, hood);
                 })
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(10.28, -54.44),
@@ -258,7 +257,7 @@ public class CloseBlueAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(7.13, -59.35),
                         new Point2d(13.37, -51.53),
-                        new Point2d(11.04,-29.45),
+                        new Point2d(4,-29.45),
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(400)
@@ -286,7 +285,7 @@ public class CloseBlueAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(7.13, -59.35),
                         new Point2d(13.37, -51.53),
-                        new Point2d(11.04,-29.45),
+                        new Point2d(4,-29.45),
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(200)
@@ -379,7 +378,7 @@ public class CloseBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(-16.49,-13.61),
-                        new Point2d(-16.49, -30)
+                        new Point2d(-16.49, -45)
                 }, 5000)
                 .build();
     }

@@ -37,7 +37,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 public class CloseRedAuto extends BaseAuto {
     double velo = 1170;
     double veloMiddle = 1230;
-    double hood = 40;
+    double hood = 43;
     double GATE_CYCLE_TIME_THRESHOLD = 21;
     private Point2d shootingPose = new Point2d(-4, 12);
 
@@ -266,7 +266,7 @@ public class CloseRedAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(11.22-1, 62.37),
                         new Point2d(15.92, 51.22),
-                        new Point2d(12.34,29.30),
+                        new Point2d(4,29.30),
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(500)
@@ -294,7 +294,7 @@ public class CloseRedAuto extends BaseAuto {
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(11.22-1, 62.37),
                         new Point2d(15.92, 51.22),
-                        new Point2d(12.34,29.30),
+                        new Point2d(4,29.30),
                         shootingPose
                 }, 2000, true)
                 .waitMilliseconds(400)
