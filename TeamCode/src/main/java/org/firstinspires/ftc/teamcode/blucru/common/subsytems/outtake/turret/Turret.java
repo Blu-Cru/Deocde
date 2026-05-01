@@ -38,6 +38,14 @@ public class Turret implements BluSubsystem, Subsystem {
     private double lastGoalTrackingRateDegPerSec = 0;
     private double lastGoalDistanceIn = 0;
     private boolean lastUsingClosePid = false;
+    private double lastMotionLeadAngleDeg = 0;
+    private double lastMotionLeadPixelOffset = 0;
+    private double lastMotionLeadVelX = 0;
+    private double lastMotionLeadVelY = 0;
+    private double lastMotionLeadAccelX = 0;
+    private double lastMotionLeadAccelY = 0;
+    private long lastMotionLeadSampleTimeNanos = 0;
+    private boolean hasMotionLeadSample = false;
 
     private final double TICKS_PER_REV = 4000 * 212.0 / 35;
     // Far PID (large errors)
@@ -80,6 +88,17 @@ public class Turret implements BluSubsystem, Subsystem {
     public static double robotTurnFeedForwardPowerPerDegPerSec = 0.00135;
     public static double robotTurnFeedForwardMaxPower = 0.45;
     public static boolean useLocalizationDuringTagDropout = true;
+    public static boolean useMotionLead = true;
+    public static double motionLeadFlightTimeSec = 0.45;
+    public static double motionLeadShotDelaySec = 0.08;
+    public static double motionLeadAccelGain = 0.5;
+    public static double motionLeadAccelFilterAlpha = 0.35;
+    public static double motionLeadMaxAngleDeg = 8.0;
+    public static double motionLeadMaxVelInPerSec = 80.0;
+    public static double motionLeadVelDeadbandInPerSec = 1.5;
+    public static double motionLeadMaxAccelInPerSec2 = 180.0;
+    public static double motionLeadMinSampleSec = 0.005;
+    public static double motionLeadMaxSampleSec = 0.15;
 
     // Hysteresis: number of consecutive "no tag" frames required before falling back to LOC
     public static int TAG_DROPOUT_THRESHOLD = 20;
@@ -265,6 +284,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private void enterLockOnGoal() {
         if (state != State.LOCK_ON_GOAL) {
             resetControllers(getAngle());
+            resetMotionLeadState();
             centeredTagFrames = 0;
             tagDropoutCounter = 0;
             lastAutoAimMode = LastAutoAimMode.LOC;
@@ -525,6 +545,7 @@ public class Turret implements BluSubsystem, Subsystem {
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         double totalPixelOffset = tagAutoAimPixelOffset
                 + getShotLinePixelOffset(robotPose)
+                + getMotionLeadPixelOffset(robotPose)
                 + getGoalSweepPixelOffset();
         double angleError = getTagAngleError(detection, totalPixelOffset);
 
@@ -552,7 +573,8 @@ public class Turret implements BluSubsystem, Subsystem {
     public void saveTurretOffset(double detectedAngle) {
         Pose2d robotPose = Robot.getInstance().sixWheelDrivetrain.getPos();
         double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
-        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
+        double modeledTurretOffset = getShotLineTurretOffset(robotPose)
+                + getMotionLeadAngleDeg(robotPose, getGoalTarget());
 
         // Store the learned correction in turret space so localization can keep tracking
         // the goal after the tag disappears.
@@ -571,7 +593,8 @@ public class Turret implements BluSubsystem, Subsystem {
 
     private double getLocalizationAutoAimTarget(Pose2d robotPose) {
         double theoreticalTurretAngle = getTheoreticalTurretAngle(robotPose);
-        double modeledTurretOffset = getShotLineTurretOffset(robotPose);
+        double modeledTurretOffset = getShotLineTurretOffset(robotPose)
+                + getMotionLeadAngleDeg(robotPose, getGoalTarget());
         double correctedTurretAngle = applyTurretOffset(theoreticalTurretAngle) - locAutoAimAngleOffset;
 
         return resolveTargetAngle(correctedTurretAngle + modeledTurretOffset, getAngle());
@@ -659,6 +682,145 @@ public class Turret implements BluSubsystem, Subsystem {
         return TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(turretOffsetDeg));
     }
 
+    private double getMotionLeadPixelOffset(Pose2d robotPose) {
+        double leadAngleDeg = getMotionLeadAngleDeg(robotPose, getGoalTarget());
+        lastMotionLeadPixelOffset = TAG_CAMERA_FOCAL_LENGTH_PX * Math.tan(Math.toRadians(leadAngleDeg));
+        return lastMotionLeadPixelOffset;
+    }
+
+    private double getMotionLeadAngleDeg(Pose2d robotPose, Vector2d goal) {
+        if (!useMotionLead || robotPose == null || goal == null || Robot.getInstance().sixWheelDrivetrain == null) {
+            return zeroMotionLead();
+        }
+
+        Pose2d robotVel = Robot.getInstance().sixWheelDrivetrain.getVel();
+        if (robotVel == null) {
+            return zeroMotionLead();
+        }
+
+        Vector2d turretCenter = getTurretCenterPosition(robotPose);
+        double staticX = goal.getX() - turretCenter.getX();
+        double staticY = goal.getY() - turretCenter.getY();
+        if (staticX * staticX + staticY * staticY < 1e-6) {
+            return zeroMotionLead();
+        }
+
+        double robotHeading = robotPose.getH();
+        double robotHeadingVel = robotVel.getH();
+        double turretVelX = robotVel.getX() - distFromCenter * Math.sin(robotHeading) * robotHeadingVel;
+        double turretVelY = robotVel.getY() + distFromCenter * Math.cos(robotHeading) * robotHeadingVel;
+        double[] clippedVel = clipVectorMagnitude(turretVelX, turretVelY, motionLeadMaxVelInPerSec);
+        turretVelX = clippedVel[0];
+        turretVelY = clippedVel[1];
+        if (Math.hypot(turretVelX, turretVelY) < Math.max(0, motionLeadVelDeadbandInPerSec)) {
+            turretVelX = 0;
+            turretVelY = 0;
+        }
+
+        updateMotionLeadAcceleration(turretVelX, turretVelY);
+
+        double shotDelaySec = Math.max(0, motionLeadShotDelaySec);
+        double flightTimeSec = Math.max(0, motionLeadFlightTimeSec);
+        double accelGain = Range.clip(motionLeadAccelGain, 0, 2);
+        double accelX = lastMotionLeadAccelX * accelGain;
+        double accelY = lastMotionLeadAccelY * accelGain;
+
+        double releaseX = turretCenter.getX()
+                + turretVelX * shotDelaySec
+                + 0.5 * accelX * shotDelaySec * shotDelaySec;
+        double releaseY = turretCenter.getY()
+                + turretVelY * shotDelaySec
+                + 0.5 * accelY * shotDelaySec * shotDelaySec;
+        double releaseVelX = turretVelX + accelX * shotDelaySec;
+        double releaseVelY = turretVelY + accelY * shotDelaySec;
+
+        double shotX = goal.getX() - releaseX - releaseVelX * flightTimeSec;
+        double shotY = goal.getY() - releaseY - releaseVelY * flightTimeSec;
+        if (shotX * shotX + shotY * shotY < 1e-6) {
+            return zeroMotionLead();
+        }
+
+        double staticHeadingDeg = Math.toDegrees(Math.atan2(staticY, staticX));
+        double leadHeadingDeg = Math.toDegrees(Math.atan2(shotY, shotX));
+        double leadAngleDeg = normalizeDegrees(leadHeadingDeg - staticHeadingDeg);
+        if (Double.isNaN(leadAngleDeg) || Double.isInfinite(leadAngleDeg)) {
+            return zeroMotionLead();
+        }
+
+        lastMotionLeadAngleDeg = Range.clip(
+                leadAngleDeg,
+                -Math.abs(motionLeadMaxAngleDeg),
+                Math.abs(motionLeadMaxAngleDeg)
+        );
+        return lastMotionLeadAngleDeg;
+    }
+
+    private void updateMotionLeadAcceleration(double turretVelX, double turretVelY) {
+        long now = System.nanoTime();
+        if (!hasMotionLeadSample) {
+            hasMotionLeadSample = true;
+            lastMotionLeadSampleTimeNanos = now;
+            lastMotionLeadVelX = turretVelX;
+            lastMotionLeadVelY = turretVelY;
+            lastMotionLeadAccelX = 0;
+            lastMotionLeadAccelY = 0;
+            return;
+        }
+
+        double dt = (now - lastMotionLeadSampleTimeNanos) / 1e9;
+        if (dt < Math.max(0, motionLeadMinSampleSec)) {
+            return;
+        }
+
+        if (dt > Math.max(motionLeadMaxSampleSec, motionLeadMinSampleSec)) {
+            lastMotionLeadSampleTimeNanos = now;
+            lastMotionLeadVelX = turretVelX;
+            lastMotionLeadVelY = turretVelY;
+            lastMotionLeadAccelX = 0;
+            lastMotionLeadAccelY = 0;
+            return;
+        }
+
+        double rawAccelX = (turretVelX - lastMotionLeadVelX) / dt;
+        double rawAccelY = (turretVelY - lastMotionLeadVelY) / dt;
+        double[] clippedAccel = clipVectorMagnitude(rawAccelX, rawAccelY, motionLeadMaxAccelInPerSec2);
+        double alpha = Range.clip(motionLeadAccelFilterAlpha, 0, 1);
+
+        lastMotionLeadAccelX = alpha * clippedAccel[0] + (1 - alpha) * lastMotionLeadAccelX;
+        lastMotionLeadAccelY = alpha * clippedAccel[1] + (1 - alpha) * lastMotionLeadAccelY;
+        lastMotionLeadSampleTimeNanos = now;
+        lastMotionLeadVelX = turretVelX;
+        lastMotionLeadVelY = turretVelY;
+    }
+
+    private double[] clipVectorMagnitude(double x, double y, double maxMagnitude) {
+        double max = Math.max(0, maxMagnitude);
+        double magnitude = Math.hypot(x, y);
+        if (max == 0 || magnitude <= max || magnitude < 1e-6) {
+            return new double[]{x, y};
+        }
+
+        double scale = max / magnitude;
+        return new double[]{x * scale, y * scale};
+    }
+
+    private double zeroMotionLead() {
+        lastMotionLeadAngleDeg = 0;
+        lastMotionLeadPixelOffset = 0;
+        return 0;
+    }
+
+    private void resetMotionLeadState() {
+        hasMotionLeadSample = false;
+        lastMotionLeadSampleTimeNanos = 0;
+        lastMotionLeadAngleDeg = 0;
+        lastMotionLeadPixelOffset = 0;
+        lastMotionLeadVelX = 0;
+        lastMotionLeadVelY = 0;
+        lastMotionLeadAccelX = 0;
+        lastMotionLeadAccelY = 0;
+    }
+
     private double getGoalSweepPixelOffset() {
         if (!goalSweepEnabled) {
             return 0;
@@ -731,6 +893,8 @@ public class Turret implements BluSubsystem, Subsystem {
         telemetry.addData("Turret State", state);
 //        telemetry.addData("Goal Sweep", goalSweepEnabled ? goalSweepStage : "OFF");
         telemetry.addData("Auto Aim Mode: ", lastAutoAimMode);
+        telemetry.addData("Motion Lead Deg", lastMotionLeadAngleDeg);
+        telemetry.addData("Motion Lead Vel", Math.hypot(lastMotionLeadVelX, lastMotionLeadVelY));
     }
 
     @Override
