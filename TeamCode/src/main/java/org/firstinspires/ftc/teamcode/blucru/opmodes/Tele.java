@@ -332,9 +332,13 @@ public class Tele extends BluLinearOpMode{
 //            sixWheel.setPosition(llTagDetector.getLLBotPose());
 //        }
 
-        if (driver2.pressedA() && !driver2.pressedOptions()) {
+        if (driver2.pressedA() && !driver2.pressedOptions() && Globals.alliance == Alliance.RED) {
             gamepad2.rumble(1000);
-            sixWheel.setPosition(new Pose2d(0, 0, 0));
+            sixWheel.setPosition(new Pose2d(62, -59, Math.toRadians(-90)));
+        }
+        if (driver2.pressedA() && !driver2.pressedOptions() && Globals.alliance == Alliance.BLUE) {
+            gamepad2.rumble(1000);
+            sixWheel.setPosition(new Pose2d(62, 59, Math.toRadians(90)));
         }
 
         /**if (driver1.pressedRightTrigger()){
