@@ -30,8 +30,6 @@ public class FarBluePreload extends BaseAuto {
     double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(47, -9);
-
     double hood = 50;
 
     double pickupWallY = -62;
@@ -193,12 +191,12 @@ public class FarBluePreload extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(62, -7),
-                        new Point2d(60,pickupWallY)
+                        new Point2d(61,pickupWallY)
                 },3000)
                 .waitMilliseconds(1000)
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(60, pickupWallY),
-                        new Point2d(57, -40)
+                        new Point2d(61, pickupWallY),
+                        new Point2d(61, -35)
                 }, 5000)
                 .build();
     }
