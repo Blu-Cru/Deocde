@@ -29,6 +29,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.IntakeStopCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.SetHoodAngleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.shooterCommands.ShootReverseWithVelocityCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretFrom180To0TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
@@ -296,6 +297,7 @@ public class Tele extends BluLinearOpMode{
         telemetry.addLine("SHOOT: RIGHT BUMPER");
         telemetry.addLine("INTAKE FROM ABOVE: X");
         telemetry.addLine("DRIVER 2 CONTROLS: TRANSFER: RIGHT BUMPER");
+        telemetry.addLine("D2 RIGHT STICK: SHOT LINE, D2 OPTIONS + RIGHT STICK: SOTM");
 
 
     }
@@ -468,9 +470,12 @@ public class Tele extends BluLinearOpMode{
                 usingBrushlands = !usingBrushlands;
         }
 
-        //toggle
-        if (driver2.pressedRightStickButton()){
-            turret.useShotLineOffset = !turret.useShotLineOffset;
+        if (driver2.pressedRightStickButton() && gamepad2.options) {
+            Turret.useMotionLead = !Turret.useMotionLead;
+            gamepad2.rumble(250);
+        } else if (driver2.pressedRightStickButton()){
+            Turret.useShotLineOffset = !Turret.useShotLineOffset;
+            gamepad2.rumble(150);
         }
 //        if (driver2.pressedDpadLeft()){
 //            llTagDetector.switchToPosition();
@@ -514,6 +519,9 @@ public class Tele extends BluLinearOpMode{
         telemetry.addData("Auto Tag Update", autoTagUpdating);
         telemetry.addData("Brushlands", usingBrushlands);
         telemetry.addData("Turreting", turreting);
+        telemetry.addData("SOTM", Turret.useMotionLead);
+        telemetry.addData("SOTM Flight/Delay", "%.2f / %.2f",
+                Turret.motionLeadFlightTimeSec, Turret.motionLeadShotDelaySec);
         telemetry.addData("Shot", shot);
         telemetry.addData("Target Hit", targetHit);
 
