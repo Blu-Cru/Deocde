@@ -194,7 +194,7 @@ public class FarBluePreload extends BaseAuto {
                 .addPurePursuitPath(new Point2d[]{
                         new Point2d(62, -7),
                         new Point2d(60,pickupWallY)
-                },100)
+                },3000)
                 .waitMilliseconds(1000)
                 .addPurePursuitPath(new Point2d[] {
                         new Point2d(60, pickupWallY),
