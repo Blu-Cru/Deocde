@@ -39,9 +39,9 @@ public class TransferCommand extends InstantCommand { // 1. Extend SequentialCom
                 new AutoAimCommand(),
                 new WaitCommand(30),
                 new ElevatorUpCommand(),
-                new WaitCommand(400),
+                new WaitCommand(330),
                 new ElevatorMiddleCommand(),
-                new WaitCommand(200),
+                new WaitCommand(130),
                 new AllTransferMiddleCommand(),
                 new ConditionalCommand(
                         new LockOnGoalCommand(),
