@@ -131,7 +131,7 @@ public class CloseBlueAuto extends BaseAuto {
     public void onStart() {
         Globals.matchTime.reset();
         Globals.setAlliance(Alliance.BLUE);
-        shooter.shootWithVelocityIndependent(925,950,925);
+        shooter.shootWithVelocityIndependent(940,960,940);
         turret.setAngle(2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
@@ -218,7 +218,7 @@ public class CloseBlueAuto extends BaseAuto {
                         new Point2d(9.19,-24.39),
                         new Point2d(10.95, -32.45),
                         new Point2d(10.55, -45.45),
-                        new Point2d(10, -56.29)
+                        new Point2d(9, -56.29)
                 },2000)
 //                        .waitMilliseconds(500)
                 .callback(() -> {
