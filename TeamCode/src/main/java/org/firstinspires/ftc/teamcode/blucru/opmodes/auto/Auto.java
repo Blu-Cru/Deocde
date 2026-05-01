@@ -34,6 +34,7 @@ public class Auto extends BluLinearOpMode {
         CLOSE,
         CLOSE_MOTIF,
         FAR,
+        FAR_BLUE_PRELOAD,
         FAR_SWEEP
     }
     Alliance CurrentSelectedAlliance = Alliance.BLUE;
@@ -72,7 +73,7 @@ public class Auto extends BluLinearOpMode {
                     telemetry.addData("Alliance", CurrentSelectedAlliance);
                     telemetry.addLine("Press Right Bumper to Confirm Selection! >.<");
 
-                    for (AUTOSTARTINGPOS autoOption : AUTOSTARTINGPOS.values()) {
+                    for (AUTOSTARTINGPOS autoOption : getAvailableAutoOptions()) {
                         telemetry.addLine(getAutoDisplayName(autoOption)
                                 + (autoOption == CurrentSelectedAuto ? " <--" : ""));
                     }
@@ -98,6 +99,7 @@ public class Auto extends BluLinearOpMode {
                     if (CurrentSelectedAlliance == Alliance.BLUE) {
                         if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE) autoEnum = AutoConfig.AUTOS.CLOSE_BLUE;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR) autoEnum = AutoConfig.AUTOS.FAR_BLUE;
+                        else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_BLUE_PRELOAD) autoEnum = AutoConfig.AUTOS.FAR_BLUE_PRELOAD;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.FAR_SWEEP) autoEnum = AutoConfig.AUTOS.FAR_BLUE_SWEEP;
                         else if (CurrentSelectedAuto == AUTOSTARTINGPOS.CLOSE_MOTIF) autoEnum = AutoConfig.AUTOS.CLOSE_BLUE_MOTIF;
                     } else {
@@ -245,9 +247,29 @@ public class Auto extends BluLinearOpMode {
     }
 
     private AUTOSTARTINGPOS cycleAutoSelection(int delta) {
-        AUTOSTARTINGPOS[] values = AUTOSTARTINGPOS.values();
-        int nextIndex = (CurrentSelectedAuto.ordinal() + delta + values.length) % values.length;
+        AUTOSTARTINGPOS[] values = getAvailableAutoOptions();
+        int currentIndex = 0;
+        for (int i = 0; i < values.length; i++) {
+            if (values[i] == CurrentSelectedAuto) {
+                currentIndex = i;
+                break;
+            }
+        }
+        int nextIndex = (currentIndex + delta + values.length) % values.length;
         return values[nextIndex];
+    }
+
+    private AUTOSTARTINGPOS[] getAvailableAutoOptions() {
+        if (CurrentSelectedAlliance == Alliance.BLUE) {
+            return AUTOSTARTINGPOS.values();
+        }
+
+        return new AUTOSTARTINGPOS[] {
+                AUTOSTARTINGPOS.CLOSE,
+                AUTOSTARTINGPOS.CLOSE_MOTIF,
+                AUTOSTARTINGPOS.FAR,
+                AUTOSTARTINGPOS.FAR_SWEEP
+        };
     }
 
     private String getAutoDisplayName(AUTOSTARTINGPOS autoOption) {
@@ -256,6 +278,8 @@ public class Auto extends BluLinearOpMode {
                 return "Close Auto";
             case FAR:
                 return "Far Auto";
+            case FAR_BLUE_PRELOAD:
+                return "Far Blue Preload";
             case FAR_SWEEP:
                 return "Far Auto Sweep";
             case CLOSE_MOTIF:

@@ -4,6 +4,7 @@ public abstract class AutoConfig {
     public enum AUTOS {
         CLOSE_BLUE,
         FAR_BLUE,
+        FAR_BLUE_PRELOAD,
         FAR_BLUE_SWEEP,
         CLOSE_RED,
         FAR_RED,
@@ -22,6 +23,8 @@ public abstract class AutoConfig {
             autoToReturn = new CloseBlueAuto();
         } else if (givenauto == AUTOS.FAR_BLUE) {
             autoToReturn = new FarBlueAuto();
+        } else if (givenauto == AUTOS.FAR_BLUE_PRELOAD) {
+            autoToReturn = new FarBluePreload();
         } else if (givenauto == AUTOS.FAR_BLUE_SWEEP) {
             autoToReturn = new FarBlueAutoSweep();
         } else if (givenauto == AUTOS.CLOSE_RED) {
