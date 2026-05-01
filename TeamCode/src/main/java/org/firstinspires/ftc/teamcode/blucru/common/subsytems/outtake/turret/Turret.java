@@ -30,6 +30,7 @@ public class Turret implements BluSubsystem, Subsystem {
     private double position;
     private Double lastSetpoint = null;
     private static final double TAG_CAMERA_FOCAL_LENGTH_PX = 563.115;
+    private static final double TAG_CAMERA_CENTER_X_PX = 312.667;
     private double lastControlError = 0;
     private double lastControlPower = 0;
     private double lastRobotHeadingVelDegPerSec = 0;
@@ -577,7 +578,7 @@ public class Turret implements BluSubsystem, Subsystem {
     }
 
     private double getTagAngleError(AprilTagDetection detection, double totalPixelOffset) {
-        double rawXDelta = detection.center.x - (320 - totalPixelOffset);
+        double rawXDelta = detection.center.x - (TAG_CAMERA_CENTER_X_PX - totalPixelOffset);
         double angleError = Math.toDegrees(Math.atan2(rawXDelta, TAG_CAMERA_FOCAL_LENGTH_PX)) * tagAngleGain;
         angleError = Range.clip(angleError, -tagMaxCorrectionAngle, tagMaxCorrectionAngle);
 
