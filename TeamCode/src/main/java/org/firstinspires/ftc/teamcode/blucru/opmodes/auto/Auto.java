@@ -63,7 +63,9 @@ public class Auto extends BluLinearOpMode {
                     }
                     //telemetry.update();
                 })
-                .transition(() -> driver1.pressedRightBumper(), State.AUTO_PICK)
+                .transition(() -> driver1.pressedRightBumper(), State.AUTO_PICK, () -> {
+                    Globals.setAlliance(CurrentSelectedAlliance);
+                })
 
                 .state(State.AUTO_PICK)
                 .loop(() -> {
@@ -87,6 +89,7 @@ public class Auto extends BluLinearOpMode {
                 .state(State.INITAlIZE)
                 .onEnter(() -> {
                     selectedauto = true;
+                    Globals.setAlliance(CurrentSelectedAlliance);
                     telemetry.addLine("Building Paths . . .");
                     telemetry.update();
 

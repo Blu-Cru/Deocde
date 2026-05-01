@@ -313,7 +313,7 @@ public class Shooter implements BluSubsystem, Subsystem {
         double camDistToTag = detection.ftcPose.range;
         Globals.telemetry.addData("Cam dist to tag", camDistToTag);
         double middleShooterDistToTag = Robot.getInstance().turretCam.getDistance();
-        Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, detection.ftcPose.yaw);
+        Vector2d middleShooterToTag = Vector2d.polarToCartesian(middleShooterDistToTag, Math.toRadians(detection.ftcPose.yaw));
         Vector2d a = middleShooterToTag; // vector from mid shooter to goal
         Vector2d b = Globals.mapVector(Globals.lineVector.getX(), Globals.lineVector.getY());;      // reference direction
 

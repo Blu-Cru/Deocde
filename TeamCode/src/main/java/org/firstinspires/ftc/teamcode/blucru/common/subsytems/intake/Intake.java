@@ -35,29 +35,35 @@ public class Intake implements BluSubsystem, Subsystem {
         OUT,
         IDlE,
         CUSTOM_POWER,
-        PID
+        PID,
+        PARALLELED
     }
     private State state;
     private double power;
     private boolean parallelingArms;
 
     public void setIn() {
+        brakeIntakeMotor();
         state = State.IN;
     }
 
     public void setOut() {
+        brakeIntakeMotor();
         state = State.OUT;
     }
 
     public void stop(){
+        brakeIntakeMotor();
         state = State.IDlE;
     }
 
     public void setIdle() {
+        brakeIntakeMotor();
         state = State.IDlE;
     }
 
     public void setPower(double power){
+        brakeIntakeMotor();
         this.power = power;
         state = State.CUSTOM_POWER;
     }
@@ -80,7 +86,16 @@ public class Intake implements BluSubsystem, Subsystem {
     }
 
     public void setPID(){
+        brakeIntakeMotor();
         state = State.PID;
+    }
+
+    private void brakeIntakeMotor() {
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    private void floatIntakeMotor() {
+        motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
     @Override
@@ -106,14 +121,17 @@ public class Intake implements BluSubsystem, Subsystem {
             switch(state){
                 case IN:
                     armsParallel = false;
+                    withinRange = false;
                     motor.setPower(1);
                     break;
                 case OUT:
                     armsParallel = false;
+                    withinRange = false;
                     motor.setPower(-1);
                     break;
                 case IDlE:
                     armsParallel = false;
+                    withinRange = false;
                     if (motor.getPower() > 0.05){
                         motor.setPower(-0.01);
                     } else if (motor.getPower() < -0.05){
@@ -124,6 +142,7 @@ public class Intake implements BluSubsystem, Subsystem {
                     break;
                 case CUSTOM_POWER:
                     armsParallel = false;
+                    withinRange = false;
                     motor.setPower(power);
                 case PID:
 //                    parallelSensor.read();
@@ -146,8 +165,22 @@ public class Intake implements BluSubsystem, Subsystem {
                         armsParallel = Math.abs(error) < 20;
                         withinRange = Math.abs(error) < 50;
 
+                        if (armsParallel) {
+                            state = State.PARALLELED;
+                            floatIntakeMotor();
+                            motor.setPower(0);
+                            break;
+                        }
+
                         double power = pid.calculate(error, -motor.getPower());
                         motor.setPower(power);
+                        break;
+                case PARALLELED:
+                    armsParallel = true;
+                    withinRange = true;
+                    floatIntakeMotor();
+                    motor.setPower(0);
+                    break;
 //                    } else {
 //                        //resetEncoder();
 //                        armsParallel = true;

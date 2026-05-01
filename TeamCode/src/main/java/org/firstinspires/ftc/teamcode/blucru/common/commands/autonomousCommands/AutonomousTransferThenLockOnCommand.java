@@ -27,7 +27,7 @@ public class AutonomousTransferThenLockOnCommand extends SequentialCommandGroup 
     public AutonomousTransferThenLockOnCommand() {
         addCommands(
                 new IntakeSpitCommand(),
-                new WaitCommand(300),
+                new WaitCommand(250),
                 new ElevatorUpCommand(),
                 new IntakeStopCommand(),
                 new ParallelizeIntakeCommand(),

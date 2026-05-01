@@ -43,13 +43,13 @@ public class FarBlueAuto extends BaseAuto {
     double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
     double shootVeloRight = 1430;
-    Point2d shootingPoint = new Point2d(48, -9);
+    Point2d shootingPoint = new Point2d(47, -9);
 
     double hood = 50;
 
     double pickupWallY = -62;
     double pickupWallX = 61; // default for hp
-    private static final double CYCLE_HP_PATH_MIN_X = 54.0;
+    private static final double CYCLE_HP_PATH_MIN_X = 53.0;
 
     enum State {
         PRELOAD,
@@ -71,11 +71,12 @@ public class FarBlueAuto extends BaseAuto {
 
     @Override
     public Pose2d getStartPose() {
-        return new Pose2d(63, -7, Math.toRadians(-90));
+        return new Pose2d(62, -7, Math.toRadians(-90));
     }
 
     @Override
     public void initialize() {
+        Globals.setAlliance(Alliance.BLUE);
         addAutoSubsystems(true);
 
 
@@ -202,9 +203,9 @@ public class FarBlueAuto extends BaseAuto {
     @Override
     public void onStart() {
         matchTimer.reset();
+        Globals.setAlliance(Alliance.BLUE);
         shooter.shootWithVelocityIndependent(1460, 1520, 1500);
         sixWheel.setPosition(startPose);
-        Globals.setAlliance(Alliance.BLUE);
 
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
@@ -248,8 +249,8 @@ public class FarBlueAuto extends BaseAuto {
     private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 24; // x value the closest we would ever want to intake towards the gate
-            double maxX = 62; // max x value we would want to intake towards the wall
+            double minX = 23; // x value the closest we would ever want to intake towards the gate
+            double maxX = 61; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
             return true;
         }
@@ -267,11 +268,11 @@ public class FarBlueAuto extends BaseAuto {
     private Path buildPreloadPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(63, -7),
-                        new Point2d(63, -8)
+                        new Point2d(62, -7),
+                        new Point2d(62, -8)
                 }, 50)
                 .callback(()->{
-                    new TurnTurretToPosCommand(turretAnglePreaim).schedule();
+                    new LockOnGoalCommand().schedule();
                 })
                 .waitMilliseconds(1700)
                 .callback(() -> {
@@ -286,14 +287,14 @@ public class FarBlueAuto extends BaseAuto {
         // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(63, -8),
-                        new Point2d(47, -41),
+                        new Point2d(62, -8),
+                        new Point2d(46, -41),
                         // INTAKE FIRST SET
-                        new Point2d(37, -50)
+                        new Point2d(36, -50)
                 }, 1700)
                 .waitMilliseconds(200)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(500, shootVeloLeft,shootVeloMiddle,shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(400, shootVeloLeft,shootVeloMiddle,shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -303,15 +304,15 @@ public class FarBlueAuto extends BaseAuto {
         // for the far spike
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(40, -40),
-                        new Point2d(48, -25),
+                        new Point2d(39, -40),
+                        new Point2d(47, -25),
                         shootingPoint
                 }, 2000)
                 .waitMilliseconds(600)
                 .callback(() -> {
                     new AutonomousShootFlipTurretCommand().schedule();
                 })
-                .waitMilliseconds(2000)
+                .waitMilliseconds(200)
                 .build();
     }
 
@@ -319,13 +320,13 @@ public class FarBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(55, -45),
-                        new Point2d(58, -55),
-                        new Point2d(60, pickupWallY-1)
+                        new Point2d(57, -45),
+                        new Point2d(60, -55),
+                        new Point2d(62, pickupWallY-1)
                 }, 1600)
                 .waitMilliseconds(0)
                 .callback(() -> {
-                    scheduleVelocityTransferThenLockOn(800, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
+                    scheduleVelocityTransferThenLockOn(600, shootVeloLeft, shootVeloMiddle, shootVeloRight, hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -334,7 +335,7 @@ public class FarBlueAuto extends BaseAuto {
     private Path buildShootHPPath() {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[] {
-                        new Point2d(62, pickupWallY),
+                        new Point2d(61, pickupWallY),
                         shootingPoint
                 }, 3000, true)
                 .addTurnTo(-80, 500)
@@ -355,7 +356,7 @@ public class FarBlueAuto extends BaseAuto {
                         new Point2d(pickupWallX, pickupWallY-3)
                 }, 1500)
                 .callback(() -> {
-                        scheduleVelocityTransferThenLockOn(600, shootVeloLeft,shootVeloMiddle,shootVeloRight,hood);
+                        scheduleVelocityTransferThenLockOn(400, shootVeloLeft,shootVeloMiddle,shootVeloRight,hood);
                 })
                 .waitMilliseconds(0)
                 .build();
@@ -370,7 +371,7 @@ public class FarBlueAuto extends BaseAuto {
                 .addTurnTo(-80, 500)
                 .waitMilliseconds(600)
                 .callback(() -> {
-                    new AutonomousShootCommand().schedule();
+                    new AutonomousShootFlipTurretCommand().schedule();
                 })
                 .waitMilliseconds(200)
                 .build();
@@ -380,14 +381,14 @@ public class FarBlueAuto extends BaseAuto {
         return new SixWheelPIDPathBuilder()
                 .addPurePursuitPath(new Point2d[]{
                         shootingPoint,
-                        new Point2d(45,-9)
+                        new Point2d(44,-9)
                 },100)
                 .callback(()->{
                     new CenterTurretCommand().schedule();
                 })
                 .addPurePursuitPath(new Point2d[] {
                         shootingPoint,
-                        new Point2d(58, -50)
+                        new Point2d(57, -50)
                 }, 5000)
                 .build();
     }

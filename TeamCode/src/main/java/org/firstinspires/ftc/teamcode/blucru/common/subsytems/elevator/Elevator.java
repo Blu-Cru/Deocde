@@ -17,12 +17,12 @@ public class Elevator implements BluSubsystem, Subsystem {
     public static double DOWN_POSITION_LEFT = 0.39;// TODO: find positions
     public static double UP_POSITION_LEFT = 0.57;
     public static double MIDDLE_POSITION_LEFT = 0.48;
-    public static double INTAKE_MIDDLE_POSITION_LEFT = 0.45;
+    public static double INTAKE_MIDDLE_POSITION_LEFT = 0.42;
 
     public static double DOWN_POSITION_RIGHT = 0.39;// TODO: find positions
     public static double UP_POSITION_RIGHT = 0.57;
     public static double MIDDLE_POSITION_RIGHT = 0.48;
-    public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.46;
+    public static double INTAKE_MIDDLE_POSITION_RIGHT = 0.43;
     private BluBrushlandLabsColorRangefinder leftSensorRight, leftSensorLeft, middlesensorFront, middlesensorBack, rightSensorLeft,
             rightSensorRight;
 

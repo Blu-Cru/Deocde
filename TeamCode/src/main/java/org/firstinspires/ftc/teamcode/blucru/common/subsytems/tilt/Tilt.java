@@ -58,10 +58,10 @@ public class Tilt implements Subsystem, BluSubsystem {
     }
 
     public void goUp(){
-        tilt.setPower(-1);
+        tilt.setPower(-.8);
     }
     public void goDown(){
-        tilt.setPower(1);
+        tilt.setPower(.8);
     }
 
 }
