@@ -110,6 +110,7 @@ public class CloseBlueAuto extends BaseAuto {
 
     @Override
     public void initialize() {
+        Globals.setAlliance(Alliance.BLUE);
         addAutoSubsystems(false);
         shooter.setHoodAngle(26);
         shooter.write();
@@ -129,12 +130,12 @@ public class CloseBlueAuto extends BaseAuto {
 
     public void onStart() {
         Globals.matchTime.reset();
+        Globals.setAlliance(Alliance.BLUE);
         shooter.shootWithVelocityIndependent(925,950,925);
         turret.setAngle(2);
         sixWheel.setPosition(startPose);
         currentPath = buildPreloadPath();
         startPath(currentPath);
-        Globals.setAlliance(Alliance.BLUE);
         sm.setState(State.PRELOAD);
         sm.start();
     }

@@ -63,6 +63,7 @@ public class FarRedAuto extends BaseAuto {
 
     @Override
     public void initialize() {
+        Globals.setAlliance(Alliance.RED);
         addAutoSubsystems(true);
 
 
@@ -190,9 +191,9 @@ public class FarRedAuto extends BaseAuto {
     @Override
     public void onStart() {
         matchTimer.reset();
+        Globals.setAlliance(Alliance.RED);
         shooter.shootWithVelocityIndependent(1460, 1520, 1500);
         sixWheel.setPosition(startPose);
-        Globals.setAlliance(Alliance.RED);
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
         sm.start();
