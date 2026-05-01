@@ -32,6 +32,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.sh
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretFrom180To0TransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.MoveTurretTo180DegreeTransferCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands.TurnTurretToPosCommand;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.tiltCommands.ResetTiltCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.tiltCommands.TiltCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.AllTransferMiddleCommand;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.transferCommands.LeftTransferUpCommand;
@@ -57,6 +58,7 @@ public class Tele extends BluLinearOpMode{
     public int rumbleDur = 200;
     public int shot = 0;
     public boolean targetHit = false;
+    boolean tiltActive = false;
 
     public static double ELEVATOR_FULL_DELAY_MS = 50;
     public static int INTAKE_REVERSE_MS = 300;
@@ -83,6 +85,7 @@ public class Tele extends BluLinearOpMode{
     public void initialize(){
         reportTelemetry = true;
         manageTelemetry = true;
+        tiltActive = false;
         robot.clear();
         addSixWheel();
         addTurret();
@@ -450,14 +453,16 @@ public class Tele extends BluLinearOpMode{
                     }
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
-                    Globals.telemetry.addLine("Bad re-loc :( ");
+          m          Globals.telemetry.addLine("Bad re-loc :( ");
                 }
             }
         }
 
-        //if (driver2.pressedLeftStickButton() && driver2.pressedRightStickButton()){
-          //  new TiltCommand().schedule();
-        //}
+        if (gamepad2.left_bumper){
+            tilt.goDown();
+        } else {
+            tilt.reset();
+        }
 
         if (driver2.pressedLeftStickButton()){
                 usingBrushlands = !usingBrushlands;
