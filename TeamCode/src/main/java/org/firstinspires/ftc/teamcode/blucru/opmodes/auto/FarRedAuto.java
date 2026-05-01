@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 
 public class FarRedAuto extends BaseAuto {
     // Turret angle to be set while the robot is driving to shooting position
-    double turretAnglePreaim = 116; // TODO: Change for Red
+    double turretAnglePreaim = 117; // TODO: Change for Red
 
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
@@ -36,7 +36,7 @@ public class FarRedAuto extends BaseAuto {
 
     double pickupWallY = 63; // TODO: Change for Red
     double pickupWallX = 60; // TODO: Change for Red
-    private static final double CYCLE_HP_PATH_MIN_X = 53.0; // TODO: Change for Red
+    private static final double CYCLE_HP_PATH_MIN_X = 46.0;
 
     enum State {
         PRELOAD,
@@ -192,7 +192,7 @@ public class FarRedAuto extends BaseAuto {
     public void onStart() {
         matchTimer.reset();
         Globals.setAlliance(Alliance.RED);
-        shooter.shootWithVelocityIndependent(1460, 1520, 1500);
+        shooter.shootWithVelocityIndependent(1500, 1520, 1460);
         sixWheel.setPosition(startPose);
         startPath(buildPreloadPath());
         sm.setState(State.PRELOAD);
@@ -236,7 +236,7 @@ public class FarRedAuto extends BaseAuto {
     private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 23; // x value the closest we would ever want to intake towards the gate
+            double minX = 34; // x value the closest we would ever want to intake towards the gate
             double maxX = 61; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
             return true;
@@ -260,7 +260,7 @@ public class FarRedAuto extends BaseAuto {
                 }, 50)
                 .callback(()->{
                     new SequentialCommandGroup(
-                            new LockOnGoalCommand()
+                            new TurnTurretToPosCommand(turretAnglePreaim)
                     ).schedule();
                 })
                 .waitMilliseconds(1700)

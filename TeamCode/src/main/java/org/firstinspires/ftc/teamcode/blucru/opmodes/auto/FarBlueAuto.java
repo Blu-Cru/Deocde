@@ -49,7 +49,7 @@ public class FarBlueAuto extends BaseAuto {
 
     double pickupWallY = -62;
     double pickupWallX = 61; // default for hp
-    private static final double CYCLE_HP_PATH_MIN_X = 53.0;
+    private static final double CYCLE_HP_PATH_MIN_X = 46.0;
 
     enum State {
         PRELOAD,
@@ -249,7 +249,7 @@ public class FarBlueAuto extends BaseAuto {
     private boolean updateIntakeXPosition() {
         if (ballDetector.hasValidClump()) {
             double fieldX = ballDetector.getClumpFieldX();
-            double minX = 23; // x value the closest we would ever want to intake towards the gate
+            double minX = 34; // x value the closest we would ever want to intake towards the gate
             double maxX = 61; // max x value we would want to intake towards the wall
             pickupWallX = Range.clip(fieldX, minX, maxX);  //limits the x value from which we intake to a set range
             return true;
