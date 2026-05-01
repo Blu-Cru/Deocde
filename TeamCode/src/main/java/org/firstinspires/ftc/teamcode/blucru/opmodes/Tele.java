@@ -453,7 +453,7 @@ public class Tele extends BluLinearOpMode{
                     }
                     Globals.telemetry.addLine("Re-loc yay!");
                 } else {
-          m          Globals.telemetry.addLine("Bad re-loc :( ");
+                    Globals.telemetry.addLine("Bad re-loc :( ");
                 }
             }
         }
