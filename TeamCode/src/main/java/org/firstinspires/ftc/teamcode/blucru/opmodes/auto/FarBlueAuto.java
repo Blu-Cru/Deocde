@@ -42,7 +42,7 @@ public class FarBlueAuto extends BaseAuto {
     // Turret angle to be set to once the bot reaches the shooting position
     double shootVeloLeft = 1420;
     double shootVeloMiddle = 1450;
-    double shootVeloRight = 1430;
+    double shootVeloRight = 1450;
     Point2d shootingPoint = new Point2d(47, -9);
 
     double hood = 50;
