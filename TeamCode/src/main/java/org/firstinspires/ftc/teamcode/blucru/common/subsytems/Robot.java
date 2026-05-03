@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems;
 
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
@@ -11,12 +12,14 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.Tilt;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.motor.BluEncoder;
 import org.firstinspires.ftc.teamcode.blucru.common.hardware.servo.BluCRServo;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.sixWheelDrive.SixWheelDrive;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightBallDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
@@ -41,7 +44,9 @@ public class Robot {
     public SixWheelDrive sixWheelDrivetrain;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public LimelightBallDetector ballDetector;
     public TagCamera turretCam;
+    public Tilt tilt;
     public PoseHistory positionHistory;
     private static Robot instance;
     HardwareMap hwMap;
@@ -102,17 +107,21 @@ public class Robot {
     }
 
     public double getVoltage(){
+        // Legacy voltage used by existing power correction code.
+        return Math.min(12.0, getRawVoltage());
+    }
 
-        //start at 12 bc that is the max power, otherwsie the power correction returns values < 1
-        double result = 12;
-        //read voltage sensor and
-        for (VoltageSensor sensor: hwMap.voltageSensor){
+    public double getRawVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+
+        for (VoltageSensor sensor : hwMap.voltageSensor) {
             double voltage = sensor.getVoltage();
-            if (voltage > 0){
+            if (voltage > 0) {
                 result = Math.min(result, voltage);
             }
         }
-        return result;
+
+        return Double.isFinite(result) ? result : 12.0;
     }
 
     public void telemetry(Telemetry telemetry){
@@ -161,7 +170,7 @@ public class Robot {
         return intake;
     }
     public Turret addTurret(){
-        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluEncoder(Globals.frMotorName));
+        turret = new Turret(new BluCRServo("turret1"), new BluCRServo("turret2"), new BluCRServo("turret3", DcMotorSimple.Direction.REVERSE),new BluEncoder(Globals.frMotorName));
         subsystems.add(turret);
         return turret;
     }
@@ -178,16 +187,27 @@ public class Robot {
         return llTagDetector;
     }
 
-    public TagCamera addTurretCam(){
+    public LimelightBallDetector addBallDetector() {
+        ballDetector = new LimelightBallDetector();
+        subsystems.add(ballDetector);
+        return ballDetector;
+    }
+
+    public TagCamera addTurretCam() {
         turretCam = new TagCamera();
         subsystems.add(turretCam);
         return turretCam;
     }
 
-
     public Elevator addElevator() {
         elevator = new Elevator();
         subsystems.add(elevator);
         return elevator;
+    }
+
+    public Tilt addTilt(){
+        tilt = new Tilt("tilt");
+        subsystems.add(tilt);
+        return tilt;
     }
 }

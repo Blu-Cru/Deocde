@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.turretCommands;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
-import com.arcrobotics.ftclib.command.RunCommand;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.RunCommand;
 
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.Robot;
 

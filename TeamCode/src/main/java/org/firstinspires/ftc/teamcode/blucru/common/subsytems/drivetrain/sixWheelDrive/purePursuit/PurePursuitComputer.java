@@ -55,10 +55,10 @@ public class PurePursuitComputer {
 
         double discriminant = lookAheadDist * lookAheadDist * dr * dr - D * D;
 
-        if (discriminant < 0) {
+        /*if (discriminant < 0) {
             Globals.telemetry.addData("Negative Discriminant, Discriminant Value", discriminant);
             return new Point2d[0];
-        }
+        }*/
 
         Point2d sol1Unshifted = new Point2d((D * dy + sgn(dy) * dx * Math.sqrt(discriminant)) / (dr * dr),
                 (-D * dx + Math.abs(dy) * Math.sqrt(discriminant)) / (dr * dr));
@@ -147,7 +147,7 @@ public class PurePursuitComputer {
                     // setting lastFoundIndex to always be the point ahead in case the robot cant
                     // find a point in later sols
                     lastFoundIndex = Math.min(i + 1, path.length - 2);
-                    Globals.telemetry.addLine("1 sol, and it moves the robot farther away");
+                    //Globals.telemetry.addLine("1 sol, and it moves the robot farther away");
                 } else {
                     lastFoundIndex = i;
                     goalPoint = sols[0];
@@ -160,7 +160,7 @@ public class PurePursuitComputer {
                 Point2d closerPoint = sols[1];
 
                 if (findDistBetween2Points(sols[0], path[i + 1]) < findDistBetween2Points(sols[1], path[i + 1])) {
-                    Globals.telemetry.addLine("closer sol");
+                    //Globals.telemetry.addLine("closer sol");
                     closerPoint = sols[0];
                 }
 
@@ -170,7 +170,7 @@ public class PurePursuitComputer {
                     // there should be a better point
                     // setting lastFoundIndex to always be the point ahead in case the robot cant
                     // find a point in later sols
-                    Globals.telemetry.addLine("2 sols, and closer one moves the robot farther away");
+                    //Globals.telemetry.addLine("2 sols, and closer one moves the robot farther away");
                     lastFoundIndex = Math.min(i + 1, path.length - 2);
                 } else {
                     lastFoundIndex = i;
@@ -183,7 +183,7 @@ public class PurePursuitComputer {
 
         if (goalPoint == null) {
             // no goal point chosen, then go to the end of the current segment (point ahead)
-            Globals.telemetry.addLine("No goal point set");
+            //Globals.telemetry.addLine("No goal point set");
             // Clamp lastFoundIndex to prevent out of bounds
             if (lastFoundIndex >= path.length - 1) {
                 lastFoundIndex = path.length - 2;
@@ -222,20 +222,20 @@ public class PurePursuitComputer {
         return pid.getHeadingVel(robotPose, goalPoint, angleVel, isDrivingBackwards);
     }
 
-    public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid) {
+    public double compute(Point2d[] path, Pose2d robotPose, double angleVel, double lookAheadDist, SixWheelPID pid, Boolean forceReverse) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        boolean isDrivingBackwards = (forceReverse != null) ? forceReverse : pid.shouldDriveBackwards(robotPose, goalPoint);
 
         return getReqAngleVelTowardsTargetPoint(robotPose, goalPoint, angleVel, pid, isDrivingBackwards);
     }
 
     public double[] computeRotAndXY(Point2d[] path, Pose2d robotPose, Pose2d robotVel, double lookAheadDist,
-            SixWheelPID pid) {
+            SixWheelPID pid, Boolean forceReverse) {
         Point2d goalPoint = findOptimalGoToPoint(robotPose, path, lookAheadDist);
-        Globals.telemetry.addData("Target Point", goalPoint);
+        //Globals.telemetry.addData("Target Point", goalPoint);
 
-        // Determine backwards driving once, use for both linear and heading control
-        boolean isDrivingBackwards = pid.shouldDriveBackwards(robotPose, goalPoint);
+        // Determine backwards driving: use forceReverse if provided, otherwise fallback to PID logic
+        boolean isDrivingBackwards = (forceReverse != null) ? forceReverse : pid.shouldDriveBackwards(robotPose, goalPoint);
 
         // --- Path Following Improvements ---
 
@@ -274,10 +274,10 @@ public class PurePursuitComputer {
             // Smoothly blend from look-ahead heading to segment tangent as distToEnd -> 0
             double weight = Math.max(0, distToEnd / SixWheelPID.TANGENT_BLEND_DISTANCE);
             targetHeadingDeg = (weight * lookAheadHeadingDeg) + ((1.0 - weight) * segmentAngleDeg);
-            Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
+            //Globals.telemetry.addData("Heading Mode", "BLENDING TANGENT");
         } else {
             targetHeadingDeg = lookAheadHeadingDeg;
-            Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
+            //Globals.telemetry.addLine("Heading Mode: PURE PURSUIT");
         }
 
         // Apply CTE correction
@@ -314,13 +314,13 @@ public class PurePursuitComputer {
         // We use a modified version of getHeadingVel that takes an explicit target heading
         double rot = pid.getHeadingVelToTargetTurnTo(robotPose, adjustedTargetHeadingDeg, robotVel.getH());
 
-        Globals.telemetry.addData("Rot", rot);
+        /*Globals.telemetry.addData("Rot", rot);
         Globals.telemetry.addData("Linear", linear);
         Globals.telemetry.addData("Dist to End", dist);
         Globals.telemetry.addData("CTE", cte);
         Globals.telemetry.addData("Heading Error", deltaAngle);
         Globals.telemetry.addData("Effective Lookahead", lastEffectiveLookahead);
-        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);
+        Globals.telemetry.addData("Driving Backwards (PP)", isDrivingBackwards);*/
 
         return new double[] { linear, rot };
     }

@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 
 public class TurretPIDTuning extends BluLinearOpMode {
 
@@ -22,11 +22,12 @@ public class TurretPIDTuning extends BluLinearOpMode {
         super.reportTelemetry = true;
         robot.clear();
         addTurret();
-        Globals.multiTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
+        turret.resetEncoder();
+        enableDash();
     }
 
     public void periodic() throws InterruptedException {
-        Thread.sleep(34);
+        Thread.sleep(26);
 
         if (state == 0) {
             turret.setAngle(angle);
@@ -36,11 +37,11 @@ public class TurretPIDTuning extends BluLinearOpMode {
             turret.setPower(power);
         }
 
-        Globals.multiTelemetry.addData("Turret Pos", -turret.getAngle());
-        Globals.multiTelemetry.addData("Target Pos", angle);
-        Globals.multiTelemetry.addData("Target Power", turret.getPower());
+        Globals.telemetry.addData("Turret Pos", -turret.getAngle());
+        Globals.telemetry.addData("Target Pos", angle);
+        Globals.telemetry.addData("Target Power", turret.getPower());
         //Globals.multiTelemetry.addData("Error", turret.getRotateError(turret.getAngle(), angle));
         turret.telemetry(telemetry);
-        Globals.multiTelemetry.update();
+        Globals.telemetry.update();
     }
 }

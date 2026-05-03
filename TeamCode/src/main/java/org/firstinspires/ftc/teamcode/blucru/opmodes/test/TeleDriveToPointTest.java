@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Pose2d;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 @Config
-@TeleOp(group = "test")
+//@TeleOp(group = "test")
 public class TeleDriveToPointTest extends BluLinearOpMode {
     double initAmountOfSubsystems;
     public static double dx = -72;

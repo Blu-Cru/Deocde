@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@TeleOp(name = "IMU Init + YawPitchRoll Test", group = "test")
+//@TeleOp(name = "IMU Init + YawPitchRoll Test", group = "test")
 public class ImuOrientationTest extends LinearOpMode {
 
     // Change these to match your Control Hub mount

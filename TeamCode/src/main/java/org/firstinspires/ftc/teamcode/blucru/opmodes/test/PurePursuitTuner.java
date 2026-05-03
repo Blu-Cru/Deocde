@@ -22,7 +22,7 @@ import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
  *
  * Use FTC Dashboard to adjust gains in real-time while testing!
  */
-@TeleOp(name = "Pure Pursuit Tuner", group = "Tuning")
+//@TeleOp(name = "Pure Pursuit Tuner", group = "Tuning")
 @Config
 public class PurePursuitTuner extends BluLinearOpMode {
 

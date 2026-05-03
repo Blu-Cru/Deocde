@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.blucru.opmodes;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.CommandScheduler;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -14,9 +14,11 @@ import org.firstinspires.ftc.teamcode.blucru.common.subsytems.intake.Intake;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.drivetrain.mecanumDrivetrain.Drivetrain;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.TagCamera;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.shooter.Shooter;
+import org.firstinspires.ftc.teamcode.blucru.common.subsytems.tilt.Tilt;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.transfer.Transfer;
 import org.firstinspires.ftc.teamcode.blucru.common.subsytems.outtake.turret.Turret;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
+import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightBallDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.LimelightObeliskTagDetector;
 import org.firstinspires.ftc.teamcode.blucru.common.util.ObeliskTagDetector;
 
@@ -36,6 +38,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public Turret turret;
     public ObeliskTagDetector obeliskTagDetector;
     public LimelightObeliskTagDetector llTagDetector;
+    public LimelightBallDetector ballDetector;
+    public Tilt tilt;
 
     // ===============================
     // CONTROL FLAGS
@@ -52,6 +56,13 @@ public abstract class BluLinearOpMode extends LinearOpMode {
      * RoadRunner autos should set this to FALSE and manage IO themselves.
      */
     protected boolean manageRobotLoop = true;
+
+    /**
+     * If true, BluLinearOpMode will NOT auto-call robot.telemetry(telemetry).
+     * The opmode's telemetry() override is responsible for printing all
+     * subsystem telemetry itself (with whatever layout it wants).
+     */
+    protected boolean manageTelemetry = false;
 
     // ===============================
     // GAMEPADS
@@ -71,7 +82,7 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     // ===============================
     @Override
     public final void runOpMode() throws InterruptedException {
-
+        enableDash();
         Globals.matchTime = new ElapsedTime();
         Globals.hwMap = hardwareMap;
         Globals.telemetry = telemetry;
@@ -135,6 +146,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
             driver1.update();
             driver2.update();
 
+            Globals.updateVoltage(Robot.getInstance().getVoltage());
+
             periodic();
 
             if (manageRobotLoop) {
@@ -145,7 +158,9 @@ public abstract class BluLinearOpMode extends LinearOpMode {
 
             if (reportTelemetry) {
                 telemetry();
-                robot.telemetry(telemetry);
+                if (!manageTelemetry) {
+                    robot.telemetry(telemetry);
+                }
             }
             double[] loopTimes = getLoopTimes();
             telemetry.addData("Loop (ms)", loopTimes[0]);
@@ -167,7 +182,10 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void initialize() {}
     public void initializePeriodic() {}
     public void onStart() {}
-    public void periodic() throws InterruptedException {}
+    public void periodic() throws InterruptedException {
+
+    }
+
     public void telemetry() {}
     public void end() {}
 
@@ -183,6 +201,10 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     public void addSixWheel()   { sixWheel = robot.addSixWheelDrivetrain(); }
     public void addObeliskTagDetector() { obeliskTagDetector = robot.addObeliskTagDetector(); }
     public void addLLTagDetector()      { llTagDetector = robot.addLLTagDetector(); }
+    public void addBallDetector() {
+        ballDetector = robot.addBallDetector();
+    }
+    public void addTilt(){tilt = robot.addTilt();}
 
     public void enableDash() {
         telemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
@@ -192,6 +214,8 @@ public abstract class BluLinearOpMode extends LinearOpMode {
     // ===============================
     // LOOP TIMING UTILS
     // ===============================
+    private double currentLoopTimeSegmentAvg = 0;
+
     public double[] getLoopTimes() {
         double now = Globals.matchTime.milliseconds();
         loopTimeSegmentSum += now - lastTimeLoopWasRun;
@@ -204,10 +228,11 @@ public abstract class BluLinearOpMode extends LinearOpMode {
         res[1] = amountOfLoopsOverall / Math.max(Globals.matchTime.seconds(), 0.001);
 
         if (amountOfLoopsInSegment > 20) {
-            res[0] = loopTimeSegmentSum / amountOfLoopsInSegment;
+            currentLoopTimeSegmentAvg = loopTimeSegmentSum / amountOfLoopsInSegment;
             loopTimeSegmentSum = 0;
             amountOfLoopsInSegment = 0;
         }
+        res[0] = currentLoopTimeSegmentAvg;
 
         return res;
     }

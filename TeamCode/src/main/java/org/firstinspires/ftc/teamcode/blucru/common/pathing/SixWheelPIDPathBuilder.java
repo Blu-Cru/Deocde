@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.blucru.common.pathing;
 
 
-import com.arcrobotics.ftclib.command.Command;
+import com.seattlesolvers.solverslib.command.Command;
 
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Point2d;
@@ -26,12 +26,40 @@ public class SixWheelPIDPathBuilder {
         return this;
     }
 
+    public SixWheelPIDPathBuilder addPurePursuitPath(Point2d[] path, double maxTime, boolean reverse){
+        segments.add(new PurePursuitSegment(path, maxTime, reverse));
+        return this;
+    }
+
+    public SixWheelPIDPathBuilder addPurePursuitPath(Point2d[] path, double maxTime, double targetheading){
+        addPurePursuitPath(path, maxTime);
+        return addMappedTurnTo(targetheading, maxTime);
+    }
+
+    public SixWheelPIDPathBuilder waitUntil(java.util.function.BooleanSupplier condition, double timeoutMs) {
+        segments.add(new WaitUntilSegment(segments.get(segments.size() - 1), condition, timeoutMs));
+        return this;
+    }
     public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double maxTime){
+
         for (int i = 0; i<path.length; i++){
             path[i] = Globals.mapPoint(path[i]);
         }
 
         return addPurePursuitPath(path, maxTime);
+    }
+
+    public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double maxTime, boolean reverse){
+
+        for (int i = 0; i<path.length; i++){
+            path[i] = Globals.mapPoint(path[i]);
+        }
+
+        return addPurePursuitPath(path, maxTime, reverse);
+    }
+    public SixWheelPIDPathBuilder addMappedPurePursuitPath(Point2d[] path, double maxTime, double targetheading){
+        addMappedPurePursuitPath(path, maxTime);
+        return addMappedTurnTo(targetheading, maxTime);
     }
 
     public SixWheelPIDPathBuilder addTurnTo(double heading, double maxTime){

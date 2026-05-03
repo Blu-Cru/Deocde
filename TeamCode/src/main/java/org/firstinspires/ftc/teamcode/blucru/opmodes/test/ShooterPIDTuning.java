@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.blucru.common.util.Globals;
 import org.firstinspires.ftc.teamcode.blucru.opmodes.BluLinearOpMode;
 
-@TeleOp
+//@TeleOp
 @Config
 public class ShooterPIDTuning extends BluLinearOpMode {
 
@@ -17,8 +17,7 @@ public class ShooterPIDTuning extends BluLinearOpMode {
     public void initialize(){
         robot.clear();
         addShooter();
-        Globals.multiTelemetry = new MultipleTelemetry(telemetry
-                , FtcDashboard.getInstance().getTelemetry());
+        enableDash();
         vel = 0;
     }
 
@@ -41,11 +40,11 @@ public class ShooterPIDTuning extends BluLinearOpMode {
     }
 
     public void telemetry(){
-        Globals.multiTelemetry.addData("shooter left vel", shooter.getLeftVel());
-        Globals.multiTelemetry.addData("shooter middle vel", shooter.getMiddleVel());
-        Globals.multiTelemetry.addData("shooter right vel", shooter.getRightVel());
-        Globals.multiTelemetry.addData("target vel", vel);
-        Globals.multiTelemetry.update();
+        Globals.telemetry.addData("shooter left vel", shooter.getLeftVel());
+        Globals.telemetry.addData("shooter middle vel", shooter.getMiddleVel());
+        Globals.telemetry.addData("shooter right vel", shooter.getRightVel());
+        Globals.telemetry.addData("target vel", vel);
+        Globals.telemetry.update();
     }
 
 }

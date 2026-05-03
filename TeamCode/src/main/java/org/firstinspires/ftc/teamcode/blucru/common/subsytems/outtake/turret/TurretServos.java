@@ -9,37 +9,44 @@ public class TurretServos implements BluHardwareDevice {
     private BluCRServo servoLeft;
     private BluCRServo servoRight;
 
+    private BluCRServo servoCenter;
+
     /**
      *
      * class assumes that positions need to be inverted(ie if one servo needs to go to
      *
      * */
-    public TurretServos(BluCRServo servoLeft, BluCRServo servoRight){
+    public TurretServos(BluCRServo servoLeft, BluCRServo servoRight, BluCRServo servoCenter){
         this.servoLeft = servoLeft;
         this.servoRight = servoRight;
+        this.servoCenter = servoCenter;
     }
 
     @Override
     public void init() {
         servoLeft.init();
         servoRight.init();
+        servoCenter.init();
     }
 
     @Override
     public void read() {
         servoLeft.read();
         servoRight.read();
+        servoCenter.read();
     }
 
     @Override
     public void write() {
         servoLeft.write();
         servoRight.write();
+        servoCenter.write();
     }
 
     public void setPower(double power){
         servoLeft.setPower(power);
         servoRight.setPower(power);
+        servoCenter.setPower(power);
     }
 
     public double getPower(){
@@ -50,5 +57,6 @@ public class TurretServos implements BluHardwareDevice {
     public void telemetry() {
         servoLeft.telemetry();
         servoRight.telemetry();
+        servoCenter.telemetry();
     }
 }
